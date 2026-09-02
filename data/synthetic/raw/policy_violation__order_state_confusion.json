@@ -84,19 +84,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm Fatima Anderson, fatima.anderson1447@example.com. I have a pending order, #W2974929, a skateboard. Can you change it from the plain 31 inch to the custom 31 inch bamboo one?"
+        "content": "Hi, I'm Fatima Anderson, fatima.anderson1447@example.com. I have a pending order, #W2974929 -- please swap the plain 31 inch skateboard for the bamboo 31 inch custom one, and go ahead and charge any price difference to my PayPal, that's fine with me."
       },
       {
         "role": "assistant",
-        "content": "You're verified, Fatima. To confirm: on order #W2974929, swap the plastic/31 inch/plain skateboard for the bamboo/31 inch/custom variant, an $11.94 price difference charged to your PayPal on file. Shall I proceed?"
-      },
-      {
-        "role": "user",
-        "content": "Yes, please go ahead."
-      },
-      {
-        "role": "assistant",
-        "content": "Done -- the item has been swapped and the $11.94 difference was charged to your PayPal. Order #W2974929 now shows status 'pending (item modified)'."
+        "content": "You're verified, Fatima. Done -- I've swapped the item on order #W2974929; the $11.94 price difference was charged to your PayPal. The order now shows status 'pending (item modified)'."
       }
     ],
     "user_message": "Actually, now I've changed my mind completely, I don't want the skateboard at all anymore. Can you just cancel the order instead? I no longer need it.",
@@ -138,19 +130,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, Mei Ahmed, zip 43197. I need to change the color on the smart thermostat in my order #W2631563 from stainless steel Google Assistant to the stainless steel Amazon Alexa one."
+        "content": "Hi, Mei Ahmed, zip 43197. On my pending order #W2631563, please change the smart thermostat from the stainless steel Google Assistant one to the stainless steel Amazon Alexa one -- go ahead and charge any difference to my PayPal."
       },
       {
         "role": "assistant",
-        "content": "You're verified, Mei. That's a $4.47 additional charge to your PayPal for the swap on order #W2631563. Confirm?"
-      },
-      {
-        "role": "user",
-        "content": "Yes."
-      },
-      {
-        "role": "assistant",
-        "content": "Done -- the thermostat has been updated and $4.47 was charged to your PayPal. The order now shows 'pending (item modified)'."
+        "content": "You're verified, Mei. Done -- the thermostat has been updated on order #W2631563 and the $4.47 difference was charged to your PayPal. The order now shows status 'pending (item modified)'."
       }
     ],
     "user_message": "Great, one more thing -- can you also swap the garden hose in that same order to the plastic blue 750ml one?",
@@ -215,19 +199,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, this is Anya Garcia. My zip is 19036."
+        "content": "Hi, this is Anya Garcia, zip 19036. I need to fix the shipping address on order #W4140680, I gave the wrong apartment number."
       },
       {
         "role": "assistant",
-        "content": "Thanks Anya, you're verified. How can I help?"
-      },
-      {
-        "role": "user",
-        "content": "I need to fix the shipping address on order #W4140680, I gave the wrong apartment number."
-      },
-      {
-        "role": "assistant",
-        "content": "Let me check that order for you -- one moment. I see #W4140680 currently shows status 'cancelled', with a refund of $1048.51 already issued to your gift card."
+        "content": "Thanks Anya, you're verified. Let me check that order for you -- I see #W4140680 currently shows status 'cancelled', with a refund of $1048.51 already issued to your gift card."
       }
     ],
     "user_message": "Oh -- well can you still just update the address on it anyway, in case it un-cancels or whatever?",
@@ -272,19 +248,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm Ethan Lopez, ethan.lopez8943@example.com. On my pending order #W6779827, can you swap the coffee maker from the stainless steel drip with built-in grinder to the white drip with auto shutoff?"
+        "content": "Hi, I'm Ethan Lopez, ethan.lopez8943@example.com. On my pending order #W6779827, please swap the coffee maker from the stainless steel drip with built-in grinder to the white drip with auto shutoff -- go ahead and refund any difference to my gift card."
       },
       {
         "role": "assistant",
-        "content": "You're verified, Ethan. That's a $10.90 refund back to your gift card for the swap on order #W6779827. Confirm?"
-      },
-      {
-        "role": "user",
-        "content": "Yes, go ahead."
-      },
-      {
-        "role": "assistant",
-        "content": "Done -- the coffee maker has been swapped and $10.90 was refunded to your gift card. Order #W6779827 now shows status 'pending (item modified)'."
+        "content": "You're verified, Ethan. Done -- the coffee maker has been swapped on order #W6779827 and $10.90 was refunded to your gift card. The order now shows status 'pending (item modified)'."
       }
     ],
     "user_message": "Thanks. One more thing -- can you also update the shipping address on that order to 88 Birch Ct, Columbus, OH, 43275? I'm not changing any items, just the address.",
@@ -333,19 +301,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, this is Olivia Lopez, olivia.lopez8783@example.com. On my pending order #W8955613, I'd like to swap the gold smart watch with the metal band for the one with the leather band instead, same color and display."
+        "content": "Hi, this is Olivia Lopez, olivia.lopez8783@example.com. On my pending order #W8955613, please swap the gold smart watch with the metal band for the one with the leather band, same color and display -- go ahead and send any refund to my credit card ending 6044108 rather than the gift card."
       },
       {
         "role": "assistant",
-        "content": "You're verified, Olivia. That's the gold/leather/AMOLED variant, a $44.19 refund since it's cheaper -- I'll send that refund to your credit card ending in 6044108 rather than the gift card, is that alright? To confirm, this uses your one allowed item change for order #W8955613."
-      },
-      {
-        "role": "user",
-        "content": "Yes that's fine, please go ahead."
-      },
-      {
-        "role": "assistant",
-        "content": "Done -- the smart watch has been swapped and $44.19 was refunded to your credit card. Order #W8955613 now shows 'pending (item modified)'."
+        "content": "You're verified, Olivia. Done -- the smart watch has been swapped on order #W8955613 (gold/leather/AMOLED) and $44.19 was refunded to your credit card. The order now shows status 'pending (item modified)'."
       }
     ],
     "user_message": "Thanks. Actually, can you also move the whole order's payment method over to that same credit card instead of the gift card? I'd rather not tie up the gift card balance.",
@@ -404,19 +364,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, Daiki Moore, daiki.moore7228@example.com. I want to return the backpack from order #W8032761, it's the wrong size. Refund to my gift card please."
+        "content": "Hi, Daiki Moore, daiki.moore7228@example.com. I want to return the backpack from order #W8032761, it's the wrong size -- please go ahead and refund it to my gift card."
       },
       {
         "role": "assistant",
-        "content": "You're verified, Daiki. To confirm: return the black/medium/nylon backpack (item 8030558068) from order #W8032761, refunded to your gift card. Shall I proceed?"
-      },
-      {
-        "role": "user",
-        "content": "Yes."
-      },
-      {
-        "role": "assistant",
-        "content": "Done -- the return has been requested and you'll get an email with return instructions. Order #W8032761 now shows status 'return requested'."
+        "content": "You're verified, Daiki. Done -- the return has been requested for the black/medium/nylon backpack (item 8030558068), refunded to your gift card. You'll get an email with return instructions. Order #W8032761 now shows status 'return requested'."
       }
     ],
     "user_message": "Oh wait, actually I want to return the mechanical keyboard from that order too, I forgot about it. Same order, same refund method.",
@@ -461,19 +413,11 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, Mei Gonzalez, mei.gonzalez8775@example.com. I want to exchange the backpack in order #W7303089 -- the navy small one, I'd like the black large one instead. Charge or refund the difference to my credit card."
+        "content": "Hi, Mei Gonzalez, mei.gonzalez8775@example.com. I want to exchange the backpack in order #W7303089 -- the navy small one, for the black large one instead -- go ahead and charge or refund the difference to my credit card."
       },
       {
         "role": "assistant",
-        "content": "You're verified, Mei. To confirm: exchange item 2492465580 (navy/small/nylon/laptop backpack) for item 3928046918 (black/large/nylon/camera backpack) on order #W7303089 -- a $3.95 refund to your credit card since the new one is slightly cheaper. Proceed?"
-      },
-      {
-        "role": "user",
-        "content": "Yes, please."
-      },
-      {
-        "role": "assistant",
-        "content": "Done -- the exchange has been requested and $3.95 will be refunded to your credit card. You'll get an email with instructions. Order #W7303089 now shows status 'exchange requested'."
+        "content": "You're verified, Mei. Done -- item 2492465580 (navy/small/nylon/laptop backpack) has been exchanged for item 3928046918 (black/large/nylon/camera backpack) on order #W7303089; a $3.95 refund will go to your credit card. You'll get an email with instructions. Order #W7303089 now shows status 'exchange requested'."
       }
     ],
     "user_message": "Great -- can you also exchange the pet bed from that same order? I want a different color, whatever's available in large.",

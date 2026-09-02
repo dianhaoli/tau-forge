@@ -14,8 +14,8 @@ continuity across sessions).
 | Phase | Description | Status |
 |---|---|---|
 | 0 | Repo setup + data substrate extraction | Done |
-| 1 | Environment wrapper / mock tool executor | **Done — awaiting review** |
-| 2 | Synthetic scenario generation (methodology + first cells) | Not started |
+| 1 | Environment wrapper / mock tool executor | Done |
+| 2 | Synthetic scenario generation (methodology + first cells) | **Pilot done (3/30 cells) — awaiting review** |
 | 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
 | 4 | Reward function + adversarial tests | Not started |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
@@ -110,3 +110,38 @@ results and DB side effects are exactly what the real benchmark would produce.
   error handling for bad ids/state/reasons, snapshot/mutation isolation,
   `execute_against` determinism and non-mutation of its input, and the schema
   validation edge cases above. All passing against the real shipped `db.json`.
+
+## Synthetic generation (`tau_forge/gen/`) — Phase 2 pilot
+
+`taxonomy.py` defines 5 categories x 6 domain-grounded themes = 30 cells (see its
+docstring for why "subscription/recurring-order edge cases" from the original task
+spec was replaced — no subscription concept exists anywhere in this domain).
+`prompt_template.py` renders the full per-cell generation brief programmatically
+(real tool source/policy/schema read fresh off disk, plus the running dedup
+registry) — reused for all 30 cells, not copy-pasted per cell.
+
+Piloted 3 cells (one subagent each, run in parallel) before committing to the full
+sweep: `happy_path`×electronics (20 scenarios), `ambiguous`×apparel (17),
+`policy_violation`×order_state_confusion (20) — 57 total, in
+`data/synthetic/raw/*.json`. Each subagent authored gold answers interactively
+against the Phase 1 `RetailEnv` (executing real calls, not just asserting
+correctness) and ran its own post-hoc verification pass against the written JSON.
+Per-cell one-line summaries are merged into `data/synthetic/registry.jsonl` for
+the next wave's dedup context.
+
+**Finding surfaced during the pilot, not before:** `modify_pending_order_address`
+and `modify_pending_order_payment` gate on `RetailTools._is_pending_order`, a
+*substring* check (`"pending" in order.status`), while `cancel_pending_order` and
+`modify_pending_order_items` gate on exact equality (`order.status == "pending"`).
+On an order in `"pending (item modified)"`, the substring check still matches --
+so `modify_pending_order_address` will **not** raise, even though policy.md is
+explicit that no further modification is allowed once items have been modified.
+`modify_pending_order_payment` happens to still be blocked in that state by an
+independent invariant (payment history must have exactly one entry), but
+`modify_pending_order_address` has no such backstop. Verified directly against
+`third_party/tau2-bench/src/tau2/domains/retail/tools.py` (not just taken on the
+pilot subagent's word) and encoded as `policy_violation__order_state_confusion__011`.
+Implication for Phase 3/4: "the tool call didn't raise" is not sufficient evidence
+of policy compliance for this action -- the rule checker and reward function both
+need to consult policy.md's written rule for this specific state transition, not
+just tool-level exceptions.
