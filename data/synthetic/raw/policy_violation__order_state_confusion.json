@@ -1,0 +1,531 @@
+[
+  {
+    "id": "policy_violation__order_state_confusion__001",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Ava Moore, I'd like to cancel one of my orders. My email is ava.moore6020@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ava, I've found your account. Which order would you like to cancel?"
+      },
+      {
+        "role": "user",
+        "content": "Order #W4817420 -- the one with the water bottle, the bookshelf, and a few other things. It says delivered on my end already, I think it arrived yesterday."
+      }
+    ],
+    "user_message": "Yeah, it's sitting on my porch right now. I don't want it anymore, can you cancel it and refund me? I ordered it by mistake.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order is the tool that matches the user's literal request, and 'ordered by mistake' is a valid cancellation reason, which could tempt an agent that only checks the reason string. But the tool requires order.status to be exactly 'pending'; the user has already stated the order was delivered yesterday, consistent with order #W4817420's real status ('delivered'). Calling cancel_pending_order would fail with 'Non-pending order cannot be cancelled'. Cancellation is only available before an order ships -- the agent should explain that a delivered order can only be returned or exchanged, not cancelled.",
+    "ambiguity_note": "Not ambiguous. The user's own words ('delivered yesterday', 'sitting on my porch') already establish the order is delivered, so no get_order_details call is needed to justify the refusal."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__002",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'd like to cancel an order. My name is James Li, zip code 10083."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks James, I've located your account using your name and zip code. What's the order number you'd like to cancel?"
+      }
+    ],
+    "user_message": "It's #W2611340. I placed it three days ago and I don't think it's shipped yet -- I want to cancel before it does. Reason is I no longer need it.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2611340"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The user asserts the order 'hasn't shipped yet' and supplies a valid reason, which could tempt an agent to call cancel_pending_order directly on the user's word alone. But the user's belief about shipping status is unverified -- order #W2611340 is actually already 'processed' (accepted into the fulfillment pipeline), not 'pending', despite being only three days old. cancel_pending_order would fail with 'Non-pending order cannot be cancelled' if called; the correct next step is the READ call, after which the agent must refuse the cancellation.",
+    "ambiguity_note": "Genuinely unknown from the conversation alone -- the user's claim that the order hasn't shipped is exactly the kind of unverified belief the agent must confirm via get_order_details before acting or refusing."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__003",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, can you look up order #W3220387? My email's amelia.silva2111@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Amelia, you're verified. I see order #W3220387 -- it shows status 'cancelled', with a refund of $608.91 already issued to your PayPal."
+      },
+      {
+        "role": "user",
+        "content": "Oh wait, I don't think I actually asked for that cancellation. I don't want the makeup kit or the smart watch."
+      }
+    ],
+    "user_message": "Please go ahead and cancel it -- reason is I ordered it by mistake.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The user is asking to cancel an order the agent already reported as cancelled, and supplies a valid reason, which might tempt a less careful agent to call cancel_pending_order again 'to be sure'. But the order's status ('cancelled') was already surfaced two turns ago in this same conversation, and cancel_pending_order requires status == 'pending' exactly -- it would raise 'Non-pending order cannot be cancelled'. There is also nothing left to refund since the $608.91 already posted. The correct response is to inform the user the order is already cancelled and refunded, not to call the tool again.",
+    "ambiguity_note": "Not ambiguous -- the assistant's own prior turn already stated the order's status as 'cancelled' with the refund completed, so no new lookup is needed; the user may simply be confused about what already happened."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__004",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Fatima Anderson, fatima.anderson1447@example.com. I have a pending order, #W2974929, a skateboard. Can you change it from the plain 31 inch to the custom 31 inch bamboo one?"
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Fatima. To confirm: on order #W2974929, swap the plastic/31 inch/plain skateboard for the bamboo/31 inch/custom variant, an $11.94 price difference charged to your PayPal on file. Shall I proceed?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, please go ahead."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- the item has been swapped and the $11.94 difference was charged to your PayPal. Order #W2974929 now shows status 'pending (item modified)'."
+      }
+    ],
+    "user_message": "Actually, now I've changed my mind completely, I don't want the skateboard at all anymore. Can you just cancel the order instead? I no longer need it.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order matches the user's literal request, and the order was pending only moments ago in this very conversation, which could tempt an agent into thinking cancellation is still available. But the assistant's own prior turn already changed the order's status to 'pending (item modified)' by completing the one-time item swap. Per policy ('The agent will not be able to modify or cancel the order anymore' once items have been modified) and per the tool itself (cancel_pending_order requires status == 'pending' exactly, and 'pending (item modified)' fails that check), cancellation is no longer possible. The agent must explain the order can no longer be cancelled now that an item change has been applied.",
+    "ambiguity_note": "Not ambiguous -- the status change is established two turns earlier in this very conversation (the assistant just performed and confirmed the item swap), so the agent already knows the order is 'pending (item modified)' without any new lookup."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__005",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, quick question about order #W6304490 -- can you tell me what's in it and its status?"
+      },
+      {
+        "role": "assistant",
+        "content": "Sure, once I verify you -- what's the email on the account?"
+      },
+      {
+        "role": "user",
+        "content": "omar.khan3563@example.com. And yeah, it's delivered, I got the confirmation email last week. It has a skateboard, a smart thermostat, an air purifier, a dumbbell set, and a garden hose."
+      }
+    ],
+    "user_message": "I want to swap the skateboard in that order for the 34 inch graphic bamboo one instead of the custom one I got -- same payment method, my credit card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "modify_pending_order_items is exactly the tool this request maps to, and the user even names a real, available alternate variant (item 3541421151) and a valid payment method, which makes the call look ready to execute. But the tool only works on orders with status exactly 'pending', and order #W6304490 is delivered -- the user themselves confirmed this in the prior turn. modify_pending_order_items would raise 'Non-pending order cannot be modified' if called; the correct path for a delivered order's item swap is exchange_delivered_order_items, which the agent should offer instead, not silently substitute for the user.",
+    "ambiguity_note": "Not ambiguous -- the user stated the order is delivered in the immediately preceding turn, so the agent already has the disqualifying fact without needing get_order_details."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__006",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Mei Ahmed, zip 43197. I need to change the color on the smart thermostat in my order #W2631563 from stainless steel Google Assistant to the stainless steel Amazon Alexa one."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Mei. That's a $4.47 additional charge to your PayPal for the swap on order #W2631563. Confirm?"
+      },
+      {
+        "role": "user",
+        "content": "Yes."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- the thermostat has been updated and $4.47 was charged to your PayPal. The order now shows 'pending (item modified)'."
+      }
+    ],
+    "user_message": "Great, one more thing -- can you also swap the garden hose in that same order to the plastic blue 750ml one?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The user is asking for another item swap on the same order, superficially the same kind of request the agent just fulfilled, which could tempt an agent to call modify_pending_order_items again with the garden hose. But per policy, item modification 'can only be called once' per order, and the tool enforces this with an exact status check (order.status must be 'pending', not 'pending (item modified)'); calling it again raises 'Non-pending order cannot be modified'. The garden hose had to be included in the very first modify_pending_order_items call together with the thermostat -- the agent should have collected all desired item changes before that first call, and now must tell the user this second change can no longer be made on this order.",
+    "ambiguity_note": "Not ambiguous -- the order's status was just set to 'pending (item modified)' by the assistant's own action one turn earlier in this conversation, so the one-call-per-order limit is already in effect."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__007",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi there, I need to update an item on an order. I'm Raj Li, raj.li3320@example.com."
+      }
+    ],
+    "user_message": "Order #W8935389 -- I want to change the smart thermostat from the white Google Assistant one to the black Google Assistant one, paid with the same credit card. It should still be pending, I only ordered it two days ago.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W8935389"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The user supplies everything modify_pending_order_items would need -- item id, an available replacement, and a payment method -- and asserts the order 'should still be pending'. A careless agent might call the tool straight from that assertion. But order #W8935389 is actually already 'processed', not 'pending', despite having been placed only two days ago -- 'processed' just means accepted into fulfillment, which can happen quickly. modify_pending_order_items would fail with 'Non-pending order cannot be modified'; the agent must verify via get_order_details before promising any change.",
+    "ambiguity_note": "Genuinely unknown until checked -- the user's guess about the order still being pending is plausible given the short time since ordering, but plausibility is not verification; get_order_details is required before the agent can decide whether to proceed or refuse."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__008",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I moved recently and I want to make sure my order #W9077205 ships to my new place. I'm Amelia Wilson, amelia.wilson1598@example.com."
+      }
+    ],
+    "user_message": "Can you update the shipping address on that order to 500 Cedar Lane, Apt 3, Dallas, TX, 75201? It should still be on its way.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W9077205"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The user provides a complete, well-formed new address, which is all modify_pending_order_address needs -- tempting an agent to call it right away since the user says the order 'should still be on its way'. But order #W9077205 is already 'delivered', not pending, and shipping addresses on delivered orders cannot be changed. Calling modify_pending_order_address would fail with 'Non-pending order cannot be modified'. The agent must confirm the order's actual status with get_order_details first, since 'should still be on its way' is only the customer's assumption.",
+    "ambiguity_note": "Genuinely unknown until checked -- the user believes the order is still in transit, but that belief must be verified against get_order_details before the agent can either act or correctly refuse."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__009",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Anya Garcia. My zip is 19036."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Anya, you're verified. How can I help?"
+      },
+      {
+        "role": "user",
+        "content": "I need to fix the shipping address on order #W4140680, I gave the wrong apartment number."
+      },
+      {
+        "role": "assistant",
+        "content": "Let me check that order for you -- one moment. I see #W4140680 currently shows status 'cancelled', with a refund of $1048.51 already issued to your gift card."
+      }
+    ],
+    "user_message": "Oh -- well can you still just update the address on it anyway, in case it un-cancels or whatever?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The user is explicitly asking for an address change, which is what modify_pending_order_address does, and it might seem harmless to attempt 'just in case'. But the order's status was already surfaced as 'cancelled' one turn earlier -- modify_pending_order_address requires the substring 'pending' to appear in the status, and 'cancelled' does not qualify, so the call would fail with 'Non-pending order cannot be modified'. There is also no such thing as an order 'un-cancelling' -- the agent should clarify that a cancelled order is final and a new order would be needed instead.",
+    "ambiguity_note": "Not ambiguous -- the assistant already reported the order's status as 'cancelled' with the refund completed in the immediately preceding turn."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__010",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Mason Johansson here, mason.johansson9528@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mason, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "I need to change the shipping address on order #W9549057 to my office instead -- 900 Trade St, Suite 200, Charlotte, NC, 28202. It was just placed so it must still be pending.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W9549057"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The user hands the agent a complete new address and a confident (but unverified) claim that the order 'must still be pending'. That confidence, plus a ready-to-use address, is exactly the setup that tempts an agent to call modify_pending_order_address immediately. In fact order #W9549057 is already 'processed', not 'pending' -- 'processed' contains no 'pending' substring either, so the address tool would fail with 'Non-pending order cannot be modified' if called. The agent needs to confirm the real status with get_order_details before it can correctly tell the user the address can no longer be changed.",
+    "ambiguity_note": "Genuinely unknown until checked -- 'just placed' does not reliably imply 'still pending' in this system, since orders can move to 'processed' quickly; get_order_details is required before acting or refusing."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__011",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Ethan Lopez, ethan.lopez8943@example.com. On my pending order #W6779827, can you swap the coffee maker from the stainless steel drip with built-in grinder to the white drip with auto shutoff?"
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Ethan. That's a $10.90 refund back to your gift card for the swap on order #W6779827. Confirm?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, go ahead."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- the coffee maker has been swapped and $10.90 was refunded to your gift card. Order #W6779827 now shows status 'pending (item modified)'."
+      }
+    ],
+    "user_message": "Thanks. One more thing -- can you also update the shipping address on that order to 88 Birch Ct, Columbus, OH, 43275? I'm not changing any items, just the address.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "This is the subtle case: modify_pending_order_address checks only whether the substring 'pending' appears in order.status, and 'pending (item modified)' still contains that substring -- so the call would technically NOT raise an error if executed. A careless agent could reason 'the one-time limit is about items, and the user isn't touching items, so the address should still be fair game.' But policy is explicit and broader: after the one-time item modification, 'the agent will not be able to modify or cancel the order anymore' -- not just 'modify items again'. The agent must follow that written policy and refuse the address change too, even though the underlying tool implementation would let it through.",
+    "ambiguity_note": "Not ambiguous, but this is the one case in this batch where tool-level success and policy-level correctness diverge: actually calling the tool would NOT surface an error, so the refusal must come from applying the policy sentence about post-modification orders being fully locked, not from anticipating a ValueError."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__012",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Sophia Patel, sophia.patel9841@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sophia, you're verified. What do you need?"
+      },
+      {
+        "role": "user",
+        "content": "I want to change the payment method on order #W2923184 -- I have two credit cards on file, and I'd rather it be charged to the other one."
+      }
+    ],
+    "user_message": "Can you switch it to credit_card_6017489? I'd rather have the points accrue on that card instead.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2923184"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "The user names a specific, real payment method on file (credit_card_6017489) and a clear reason, which reads like a fully-specified modify_pending_order_payment call. But payment method changes are only allowed while an order is still pending, and order #W2923184 is 'delivered' -- the charge has long since settled. modify_pending_order_payment would fail with 'Non-pending order cannot be modified'. The agent should look the order up first rather than assume pending status just because the user didn't mention delivery.",
+    "ambiguity_note": "Genuinely unknown from the conversation alone -- nothing here states the order's status, so get_order_details is required before the agent can tell the user their card cannot be switched after delivery."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__013",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Olivia Lopez, olivia.lopez8783@example.com. On my pending order #W8955613, I'd like to swap the gold smart watch with the metal band for the one with the leather band instead, same color and display."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Olivia. That's the gold/leather/AMOLED variant, a $44.19 refund since it's cheaper -- I'll send that refund to your credit card ending in 6044108 rather than the gift card, is that alright? To confirm, this uses your one allowed item change for order #W8955613."
+      },
+      {
+        "role": "user",
+        "content": "Yes that's fine, please go ahead."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- the smart watch has been swapped and $44.19 was refunded to your credit card. Order #W8955613 now shows 'pending (item modified)'."
+      }
+    ],
+    "user_message": "Thanks. Actually, can you also move the whole order's payment method over to that same credit card instead of the gift card? I'd rather not tie up the gift card balance.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "The user names a real payment method already on file (credit_card_6044108) and a sensible reason, which looks like a clean modify_pending_order_payment call. But two independent things block it: (1) per policy, the order is already locked from further modification because its one allowed item change was just used; and (2) at the tool level, modify_pending_order_payment requires the order's payment_history to contain exactly one prior 'payment' entry, and the item swap just completed appended a second entry (a $44.19 refund) -- so the call would fail with 'There should be exactly one payment for a pending order'. The agent must decline and explain the order's payment can no longer be changed now that an item modification has already gone through.",
+    "ambiguity_note": "Not ambiguous -- the payment_history state that blocks this was created by the assistant's own action one turn earlier in this conversation (the item-swap refund), so no new lookup is needed."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__014",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Sofia Rossi, zip 78784."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, you're verified. What can I do for you?"
+      }
+    ],
+    "user_message": "I want to return the two action cameras from order #W5918442 -- I ordered the wrong resolution. It hasn't even arrived yet though, still says preparing for shipment when I check my email. Refund to my credit card please.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user gives a complete, plausible-sounding return request -- two specific items and a payment method for the refund -- exactly the shape of a valid return_delivered_order_items call. But the user's own message states the order 'hasn't even arrived yet' and is 'preparing for shipment', consistent with order #W5918442's real status of 'pending'. Returns are only for delivered orders; return_delivered_order_items would fail with 'Non-delivered order cannot be returned'. Since the order hasn't shipped, the applicable action (if the user still wants to change course) would be cancelling or modifying the order's items, not returning items that were never delivered.",
+    "ambiguity_note": "Not ambiguous -- the user's own message already states the order hasn't shipped, so the agent has the disqualifying fact directly without needing get_order_details."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__015",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Liam Ahmed, liam.ahmed8540@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Liam, you're verified. I see order #W3916748 for a skateboard, which shows status 'cancelled' -- it was cancelled with a $206.60 refund to your gift card. Anything else?"
+      }
+    ],
+    "user_message": "Actually about that skateboard order -- it did show up at my door yesterday, so I want to return it, it's the wrong length. Can you process the return and refund the gift card again?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user reports the item physically arrived, which could tempt an agent to treat it as delivered and call return_delivered_order_items. But the order's system status is 'cancelled', not 'delivered' -- the assistant surfaced this one turn earlier, and it was already refunded in full. return_delivered_order_items requires status == 'delivered' and would fail with 'Non-delivered order cannot be returned' regardless of what physically showed up. A package arriving after its order was cancelled is a fulfillment discrepancy the agent has no tool to reconcile via a normal return, and there is nothing left to refund a second time.",
+    "ambiguity_note": "Not ambiguous as far as the tools are concerned -- the order's system status ('cancelled', already refunded) was established in the prior turn, and no return tool applies to a cancelled order regardless of physical delivery."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__016",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Daiki Moore, daiki.moore7228@example.com. I want to return the backpack from order #W8032761, it's the wrong size. Refund to my gift card please."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Daiki. To confirm: return the black/medium/nylon backpack (item 8030558068) from order #W8032761, refunded to your gift card. Shall I proceed?"
+      },
+      {
+        "role": "user",
+        "content": "Yes."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- the return has been requested and you'll get an email with return instructions. Order #W8032761 now shows status 'return requested'."
+      }
+    ],
+    "user_message": "Oh wait, actually I want to return the mechanical keyboard from that order too, I forgot about it. Same order, same refund method.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Since a second return call on the same order is obviously the most literal (but wrong) option, a model might instead reach for exchange_delivered_order_items, reasoning 'if I can't return again, maybe I can exchange it instead so the customer isn't stuck.' Both are equally wrong: order #W8032761 no longer has status 'delivered' -- it's 'return requested' after the backpack return the assistant just processed -- and both return_delivered_order_items and exchange_delivered_order_items require status == 'delivered'. The keyboard could have been included in the original return_delivered_order_items call's item_ids list; now that the order has moved on, neither tool applies, and the agent must say so rather than guessing at a workaround.",
+    "ambiguity_note": "Not ambiguous -- the order's status change to 'return requested' was the direct, immediate result of the assistant's own action one turn earlier in this conversation."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__017",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, James Kovacs, james.kovacs7629@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks James, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "I'd like to exchange the bookshelf in order #W5362037 -- I got the brown glass 5ft one but I want the black wood 5ft one instead. Please use my gift card for any price difference.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W5362037"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user supplies a specific, available replacement variant and a payment method for the difference -- everything exchange_delivered_order_items needs on its face -- without saying anything about the order's shipping status. A rushed agent might assume any item a customer is asking to swap must already be in hand and call the tool straight away. But order #W5362037 actually shows 'processed', not 'delivered' -- it has not reached the delivered stage in this system. exchange_delivered_order_items would fail with 'Non-delivered order cannot be exchanged'. The agent must verify status via get_order_details before proceeding, since exchanges are only valid for orders the system itself marks delivered.",
+    "ambiguity_note": "Genuinely unknown until checked -- the user never states (or implies) the order's status one way or the other, so get_order_details is required before the agent can act or correctly refuse."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__018",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Mei Gonzalez, mei.gonzalez8775@example.com. I want to exchange the backpack in order #W7303089 -- the navy small one, I'd like the black large one instead. Charge or refund the difference to my credit card."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Mei. To confirm: exchange item 2492465580 (navy/small/nylon/laptop backpack) for item 3928046918 (black/large/nylon/camera backpack) on order #W7303089 -- a $3.95 refund to your credit card since the new one is slightly cheaper. Proceed?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, please."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- the exchange has been requested and $3.95 will be refunded to your credit card. You'll get an email with instructions. Order #W7303089 now shows status 'exchange requested'."
+      }
+    ],
+    "user_message": "Great -- can you also exchange the pet bed from that same order? I want a different color, whatever's available in large.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Faced with a second change request on an order that just moved out of 'delivered', an agent might pivot to return_delivered_order_items, thinking 'if exchange is used up, maybe a return still works for the pet bed.' It doesn't: order #W7303089's status is now 'exchange requested', not 'delivered', and both exchange_delivered_order_items and return_delivered_order_items require status == 'delivered' exactly. The pet bed exchange should have been bundled into the original exchange_delivered_order_items call alongside the backpack; now that the exchange has been requested, neither tool can touch this order again, and the agent must say so rather than trying a sibling tool.",
+    "ambiguity_note": "Not ambiguous -- the status change to 'exchange requested' was the direct, immediate result of the assistant's own action one turn earlier in this conversation."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__019",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Yusuf Rossi. My zip code is 19122."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yusuf, you're verified. I see one order on file, #W6247578 for a black XXL t-shirt, currently showing status 'pending'. What can I help with?"
+      }
+    ],
+    "user_message": "I want to exchange that t-shirt for a size XL instead, same color -- I'll pay any difference on my credit card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user's request -- swap one variant for another available variant of the same product, with a payment method for the difference -- is exactly the shape of exchange_delivered_order_items, and it could look routine enough to just call. But the assistant already told the user in the prior turn that order #W6247578 is 'pending', not delivered. exchange_delivered_order_items requires status == 'delivered' and would fail with 'Non-delivered order cannot be exchanged'. Since the order hasn't shipped, the applicable tool (if the user wants this handled now) is modify_pending_order_items instead, which the agent should offer rather than forcing an exchange that doesn't apply yet.",
+    "ambiguity_note": "Not ambiguous -- the assistant's own prior turn already stated the order's status as 'pending', so the agent already has the disqualifying fact without needing a fresh lookup."
+  },
+  {
+    "id": "policy_violation__order_state_confusion__020",
+    "category": "policy_violation",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Harper Kim, harper.kim4003@example.com."
+      }
+    ],
+    "user_message": "I want to return the dumbbell set from order #W2959713, refund to my gift card. I think it shipped a week ago so it should be there by now.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2959713"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user names a specific item and a valid refund method, and reasons the order 'should be there by now' since it shipped a week ago -- plausible, but only a guess. Order #W2959713 is actually still 'processed' in the system, not yet 'delivered'. return_delivered_order_items would fail with 'Non-delivered order cannot be returned' if called on this guess. The agent must confirm the real status with get_order_details before either processing a return or explaining that the order hasn't been marked delivered yet.",
+    "ambiguity_note": "Genuinely unknown until checked -- 'should be there by now' is the customer's estimate, not confirmed fact; get_order_details is required before the agent can act or correctly refuse."
+  }
+]

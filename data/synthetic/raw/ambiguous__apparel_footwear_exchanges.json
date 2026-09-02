@@ -1,0 +1,359 @@
+[
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__001",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'd like to exchange something I ordered. My email is sofia.lee5283@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sofia -- I've found your account. What would you like to exchange?"
+      }
+    ],
+    "user_message": "I want to exchange the cycling helmet I got for a medium instead.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A hasty agent might just call this tool on whichever of the two Cycling Helmet orders it happens to look up first (or the most recently placed one) and pass a guessed item_id. Since both orders are delivered, both contain a helmet, and a medium is achievable as an exchange target starting from either the size L or the size S helmet, picking one without asking risks silently modifying the wrong order.",
+    "ambiguity_note": "Sofia has two delivered orders that each contain a different Cycling Helmet variant: #W7762997 (item 7401244629, size L, red, high ventilation) and #W4143549 (item 7811981098, size S, white, medium ventilation). She refers only to 'the cycling helmet' and never names an order, and a medium is a plausible exchange target from either starting size, so the agent cannot infer which order she means and must ask before calling exchange_delivered_order_items."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__002",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi there, I need some help with an order. I'm Raj Lopez, zip code 76195."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Raj -- I've verified your account. What can I help you with?"
+      }
+    ],
+    "user_message": "Can you bump the hiking boots in my order up a size for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Both pending orders legitimately contain hiking boots, and a size-up is achievable from either starting size, so an agent tempted to move fast might act on the first matching order it finds instead of confirming which of the two Raj means -- silently resizing the wrong pair of boots on an action that can only be taken once per order.",
+    "ambiguity_note": "Raj has two pending orders that each contain a different Hiking Boots variant: #W3502364 (item 2658930189, size 9, synthetic, waterproof) and #W5107138 (item 1437889264, size 7, synthetic, not waterproof). He says only 'my order,' not which one, and sizing up is achievable from either starting size (size 9 to 10, or size 7 to 8 both have available targets), so the agent must ask which order before calling modify_pending_order_items."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__003",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Yusuf Rossi. My email's yusuf.rossi7301@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Yusuf, I've got your account pulled up. How can I help today?"
+      }
+    ],
+    "user_message": "I'd like to change the size on the t-shirt I ordered, please.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Since both pending orders legitimately contain a T-shirt, an agent could be tempted to just act on whichever order it happens to check first rather than confirming which shirt -- and which new size -- Yusuf actually means.",
+    "ambiguity_note": "Yusuf has two pending orders that each contain a different T-Shirt variant: #W6247578 (item 3799046073, black, XXL, crew neck) and #W4776164 (item 8349118980, blue, S, v-neck, alongside an espresso machine). He doesn't say which order, nor what size he wants, so the agent cannot determine an order_id, item_id, or new_item_id for modify_pending_order_items and must ask."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__004",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Khan, zip 43149."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sofia -- you're verified. What would you like to do?"
+      }
+    ],
+    "user_message": "I'd like to exchange the black t-shirt from order #W7532822 for the same size in purple.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An agent might default to item_ids=['2060066974'] (just one unit) or assume 'the t-shirt' means both units, without checking which she means. Either guess could be wrong, and exchange_delivered_order_items can only be called once per order, so an incorrect quantity can't be corrected afterward.",
+    "ambiguity_note": "Order #W7532822 contains two separate units of the exact same T-Shirt variant (item 2060066974, black, XL, cotton, crew neck, $51.05 each). Sofia refers to 'the black t-shirt' in the singular, but exchange_delivered_order_items requires an explicit item_ids list, and it isn't clear whether she wants to exchange one unit or both -- the two readings produce a different item list and a different total price difference. The purple XL crew-neck target (item 8124970213) is unambiguous once the quantity is known, so quantity is the one real gap, but it's a genuine one the agent must ask about."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__005",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Lei Ahmed. My email is lei.ahmed1696@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Lei, you're verified. What do you need help with?"
+      }
+    ],
+    "user_message": "Can you change the color of the cycling helmet in order #W9132840 to white?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Because a white replacement is genuinely available in both sizes, an agent could pick one of the two helmets (say, the first item listed in the order) and proceed -- which risks changing the wrong helmet, since modify_pending_order_items can only be called once per order.",
+    "ambiguity_note": "Order #W9132840 contains two different Cycling Helmet variants: item 8573379326 (M, red, high ventilation) and item 6048672633 (L, black, low ventilation). Lei says 'the cycling helmet' as if there's only one, but there are two, and white is available in both sizes (item 8591113813, M white low ventilation, and item 6697922351, L white medium ventilation), so the agent cannot infer which helmet he means from the request alone and must ask before calling modify_pending_order_items."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__006",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Yusuf Johnson, zip code 32234."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Yusuf -- you're verified. What can I do for you?"
+      }
+    ],
+    "user_message": "One of the cycling helmets I got in order #W6735441 doesn't fit right -- can you exchange it for a different size?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An agent might assume the first-listed helmet is the one meant and call the tool on it, but with two genuinely different helmets in the order and no distinguishing detail given, that would be a guess -- and exchanges can only be requested once per order.",
+    "ambiguity_note": "Order #W6735441 contains two different Cycling Helmet variants: item 6401214406 (M, red, low ventilation) and item 7907773809 (L, blue, low ventilation). Yusuf says 'one of the cycling helmets' without saying which, and a different-size exchange remains plausible starting from either one, so item_ids for exchange_delivered_order_items can't be determined without asking which helmet he means."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__007",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Fatima Muller. My email is fatima.muller6448@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Fatima, you're verified. What would you like to do?"
+      }
+    ],
+    "user_message": "Could you size up the running shoes in my pending order to a 9?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent eager to move forward might just pick the closest-priced or first-listed size-9 variant, but three genuinely different options exist and this tool can only be used once on a pending order, so guessing the wrong color or material can't be fixed afterward.",
+    "ambiguity_note": "The running shoes in Fatima's pending order #W6851636 (item 4153505238, size 8, red, leather, EVA sole) have three different available size-9 variants to choose from: item 9635758562 (white, mesh, rubber sole), item 9791469541 (yellow, synthetic, rubber sole), and item 4107812777 (black, synthetic, rubber sole). She specifies only the size, not a color or material, so the agent cannot determine a single new_item_id for modify_pending_order_items without asking which of the three she wants."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__008",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Hernandez, zip code 98193."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sofia -- you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "I'd like to exchange the cycling helmet from order #W3947049 for the same color, just one size up.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Since 'same color, one size up' sounds fully specified, an agent might not realize the exact ventilation match is unavailable and could pick one of the two remaining ventilation options arbitrarily rather than flagging the substitution and asking which one she'd prefer.",
+    "ambiguity_note": "The helmet in order #W3947049 (item 3358616356) is size S, red, low ventilation. One size up in red (M) has two currently available options -- item 8573379326 (high ventilation) and item 1719127154 (medium ventilation) -- because the exact ventilation match, item 6401214406 (M, red, low), is out of stock. Sofia specified color and size but not ventilation, so the agent cannot determine the new_item_id for exchange_delivered_order_items without asking which ventilation level she wants."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__009",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Yusuf Garcia. My email is yusuf.garcia2909@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Yusuf, you're verified. What would you like to do?"
+      }
+    ],
+    "user_message": "I'd like to size up the hiking boots in order #W2564042 to a 12 -- whatever's available in that size is fine.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent might read 'whatever's available' as permission to pick either one unilaterally, but material and waterproofing are meaningful differences a customer would likely care about, and modify_pending_order_items can only be called once, so guessing wrong can't be corrected afterward.",
+    "ambiguity_note": "The boots in order #W2564042 (item 6159919747) are size 11, leather, waterproof. Two different size-12 variants are currently available: item 8277474082 (leather, waterproof) and item 4582956489 (synthetic, not waterproof). Yusuf explicitly deferred to 'whatever's available' instead of picking one, so the agent cannot determine a single new_item_id for modify_pending_order_items without asking whether he wants the leather/waterproof pair or the synthetic/non-waterproof pair."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__010",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mason Kovacs, zip 60625."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Mason -- you're verified. What's going on?"
+      }
+    ],
+    "user_message": "The sunglasses from order #W9608525 aren't right -- the frame color isn't what I expected. Can you take care of that for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Because he mentions the frame color specifically, an agent might assume he wants a straight color swap and jump to an exchange, but he may just as easily want a refund instead -- the message never actually says he wants a replacement pair.",
+    "ambiguity_note": "Order #W9608525 is delivered and eligible for either a return (return_delivered_order_items, refunding item 2198125883) or an exchange for a different frame color (exchange_delivered_order_items). Mason says only 'take care of that' without saying whether he wants his money back or a replacement in a different color, so the agent must ask which he wants before calling either tool."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__011",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mohamed Khan. My email is mohamed.khan5338@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Mohamed, you're verified. How can I help?"
+      }
+    ],
+    "user_message": "The fleece jacket from order #W4887592 runs too small. Can you fix this for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "An agent might read 'too small' as an implicit return request and jump straight to refunding him, but he may well want a larger size of the same jacket instead -- a sizing complaint fits an exchange just as naturally as a return, so intent has to be confirmed first.",
+    "ambiguity_note": "Order #W4887592 is delivered and eligible for either a return (return_delivered_order_items, refunding item 9385662952) or an exchange for a larger size (exchange_delivered_order_items). Mohamed says 'fix this' without stating whether he wants a refund or a replacement in a bigger size, so the agent cannot choose between the two tools without asking."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__012",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Harper Brown. My email is harper.brown3965@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Harper -- you're verified. I see a pending order with hiking boots, a delivered order with two fleece jackets, and a delivered order with sunglasses on your account. What would you like help with?"
+      }
+    ],
+    "user_message": "One of those didn't turn out right -- can you swap it for a different option? I don't remember exactly which order it was.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Since two of her three orders are delivered, an agent might default to treating this as an exchange and pick one of the delivered orders -- but her pending hiking-boots order is just as plausible a match for 'didn't turn out right,' and guessing the wrong order (and therefore the wrong tool) would act on something she didn't mean.",
+    "ambiguity_note": "Harper has three eligible orders across two different statuses: pending order #W2273069 (Hiking Boots, item 2185126308, size 10), delivered order #W1840144 (two Fleece Jackets, item 8590708195, size XL), and delivered order #W2693718 (Sunglasses, item 4358482460). 'One of those' doesn't identify which, and depending on which she means the correct tool differs (modify_pending_order_items for the pending boots vs. exchange_delivered_order_items for the delivered jacket or sunglasses), so the agent must ask which order and item before acting."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__013",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Fatima Anderson, zip 78786."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Fatima -- you're verified. I see a delivered order with running shoes and a pending order with sneakers on your account, among other items. What would you like to do?"
+      }
+    ],
+    "user_message": "I'd like a bigger size for the shoes I ordered, please.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent might assume 'the shoes I ordered' means the not-yet-shipped sneakers, since that order is still pending and top of mind, but the delivered running shoes are just as reasonably 'shoes she ordered,' so acting on the pending order alone would be a guess.",
+    "ambiguity_note": "Fatima has a delivered Running Shoes order (#W1842597, item 9791469541, size 9) and a separate pending Sneakers order (#W6368178, item 4410138384, size 8) -- both are colloquially 'shoes,' a bigger size is achievable starting from either pair, and they require different tools (exchange_delivered_order_items vs. modify_pending_order_items). Her message doesn't say which pair she means, so the agent must ask before acting."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__014",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Lucas Johansson. My email is lucas.johansson7741@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Lucas, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "Could you change the hiking boots in order #W5073920 to a size 9, same leather and waterproof option? Just charge whatever the difference is to my credit card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent might default to the card the order was originally paid with, but for an item modification (unlike a return) any valid payment method is allowed, and Lucas never said to reuse the original one -- assuming so would be a guess between two cards that are both plausibly 'my credit card.'",
+    "ambiguity_note": "Lucas has two credit cards on file -- credit_card_1864112 (visa) and credit_card_1814983 (mastercard, the one order #W5073920 was originally paid with) -- and 'my credit card' doesn't specify which. The new item itself is unambiguous (size 9, leather, waterproof = item 8106223139, the only available size-9 match), but modify_pending_order_items requires a single payment_method_id, so the agent must ask which card to use before calling it."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__015",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sophia Jackson, zip 60651."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sophia -- you're verified. What would you like to do?"
+      }
+    ],
+    "user_message": "I'd like to exchange the running shoes in order #W6977171 for a size 10. Please put the price difference on my credit card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An agent might just pick whichever credit card it sees first in her profile, but with two on file and no indication of which she means, that's a guess the customer never actually authorized.",
+    "ambiguity_note": "Sophia has two credit cards on file -- credit_card_8041020 (visa) and credit_card_6547060 (mastercard) -- and 'my credit card' doesn't specify which one. The new item is unambiguous (only one size-10 Running Shoes variant, item 1775591963, is available), but exchange_delivered_order_items requires one specific payment_method_id, so the agent must ask which card to use."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__016",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Chen Silva. My email is chen.silva2698@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Chen, you're verified. What can I do for you?"
+      }
+    ],
+    "user_message": "I'd like to exchange the running shoes in order #W8171054 for a size 10. Please just use my card on file for any price difference.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An agent might assume 'my card' means the credit card and skip the gift card entirely (or vice versa), but both are valid 'cards' on the account and the message doesn't distinguish between them, so proceeding without asking risks using the one she didn't mean.",
+    "ambiguity_note": "Chen has both a gift card (gift_card_7250692, balance $59) and a credit card (credit_card_1565124) on file, and 'my card on file' could plausibly mean either -- a gift card is still a card. The new item is unambiguous (the single available size-10 Running Shoes variant, item 1775591963), but exchange_delivered_order_items needs one specific payment_method_id, so the agent must ask which one she means."
+  },
+  {
+    "id": "ambiguous__apparel_footwear_exchanges__017",
+    "category": "ambiguous",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Ethan Lopez, zip code 43275."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Ethan -- you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "For order #W8073920, one of the items came in the wrong size -- could you get me a different size on it? Go ahead and charge any price difference to my Mastercard ending in 1020.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent might default to the most expensive item, or simply the first one listed on the order, and resize that -- but all three apparel items in this order have their own size option, so there's no way to tell which one Ethan means without asking, and this tool can only be called once per order.",
+    "ambiguity_note": "Pending order #W8073920 contains three different apparel items, each with its own size option: a Cycling Helmet (item 5886093635, size S), a T-Shirt (item 3234800602, size L), and Hiking Boots (item 8277474082, size 12). 'One of the items' doesn't say which, and a different-size exchange is plausible for any of the three, so the agent cannot determine item_ids or new_item_ids for modify_pending_order_items without asking which item he means. (The payment method itself is unambiguous -- credit_card_9789590 is his only Mastercard, ending 1020.)"
+  }
+]

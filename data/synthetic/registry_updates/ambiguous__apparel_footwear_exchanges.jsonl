@@ -1,0 +1,17 @@
+{"id": "ambiguous__apparel_footwear_exchanges__001", "one_line": "User has 2 delivered orders each w/ a different Cycling Helmet; asks to exchange 'the helmet' for a medium."}
+{"id": "ambiguous__apparel_footwear_exchanges__002", "one_line": "User has 2 pending orders each w/ different Hiking Boots; asks to size up 'my order' without naming which."}
+{"id": "ambiguous__apparel_footwear_exchanges__003", "one_line": "User has 2 pending orders each w/ a different T-Shirt; asks to resize 'the t-shirt I ordered', no order/size given."}
+{"id": "ambiguous__apparel_footwear_exchanges__004", "one_line": "Delivered order holds 2 identical T-shirt units; user says 'the black t-shirt' (singular), quantity to exchange unclear."}
+{"id": "ambiguous__apparel_footwear_exchanges__005", "one_line": "Pending order has 2 distinct Cycling Helmets; user asks to recolor 'the helmet' to white, doesn't say which one."}
+{"id": "ambiguous__apparel_footwear_exchanges__006", "one_line": "Delivered order has 2 distinct Cycling Helmets; user says 'one of them' doesn't fit, wants a different size, unspecified which."}
+{"id": "ambiguous__apparel_footwear_exchanges__007", "one_line": "Pending Running Shoes order, user wants size 9; 3 available size-9 variants differ by color/material, none picked."}
+{"id": "ambiguous__apparel_footwear_exchanges__008", "one_line": "Delivered Cycling Helmet, user wants same color one size up; exact ventilation match OOS, 2 other ventilations available."}
+{"id": "ambiguous__apparel_footwear_exchanges__009", "one_line": "Pending Hiking Boots order (id given), user wants size 12 'whatever's available'; 2 distinct size-12 variants exist."}
+{"id": "ambiguous__apparel_footwear_exchanges__010", "one_line": "Delivered Sunglasses, wrong frame color; user says 'take care of it', unclear if wants refund (return) or color swap (exchange)."}
+{"id": "ambiguous__apparel_footwear_exchanges__011", "one_line": "Delivered Fleece Jacket runs small; user says 'fix this', unclear if wants refund (return) or bigger size (exchange)."}
+{"id": "ambiguous__apparel_footwear_exchanges__012", "one_line": "User has pending boots + 2 delivered orders (jacket, sunglasses); vague 'one of those' request spans orders and tools."}
+{"id": "ambiguous__apparel_footwear_exchanges__013", "one_line": "User has delivered Running Shoes order + pending Sneakers order; 'the shoes I ordered' ambiguous between the two."}
+{"id": "ambiguous__apparel_footwear_exchanges__014", "one_line": "Pending Hiking Boots resize to clear target size; user has 2 credit cards, says 'my credit card' for price diff, unspecified."}
+{"id": "ambiguous__apparel_footwear_exchanges__015", "one_line": "Delivered Running Shoes exchange to clear target size; user has 2 credit cards, 'my credit card' for refund unspecified."}
+{"id": "ambiguous__apparel_footwear_exchanges__016", "one_line": "Delivered Running Shoes exchange to clear target size; user has gift card + credit card, 'my card on file' ambiguous."}
+{"id": "ambiguous__apparel_footwear_exchanges__017", "one_line": "Pending order (id given) has 3 different apparel items (helmet/shirt/boots) all with sizes; 'one of the items' unspecified."}
