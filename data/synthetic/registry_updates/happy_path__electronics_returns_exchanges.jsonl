@@ -1,0 +1,20 @@
+{"id": "happy_path__electronics_returns_exchanges__001", "one_line": "Delivered order, single headphones item returned for refund to the original credit card used."}
+{"id": "happy_path__electronics_returns_exchanges__002", "one_line": "Delivered espresso machine order returned; refund redirected to a different existing gift card."}
+{"id": "happy_path__electronics_returns_exchanges__003", "one_line": "Delivered laptop exchanged for pricier i9 config; price difference charged to a non-original credit card."}
+{"id": "happy_path__electronics_returns_exchanges__004", "one_line": "Delivered smart watch exchanged for a cheaper color/band variant; refund of difference to a gift card."}
+{"id": "happy_path__electronics_returns_exchanges__005", "one_line": "One tablet item returned out of a 5-item delivered order, refunded to the order's original gift card."}
+{"id": "happy_path__electronics_returns_exchanges__006", "one_line": "Delivered espresso machine exchanged for pricier model; gift card balance just barely covers the charge."}
+{"id": "happy_path__electronics_returns_exchanges__007", "one_line": "Single-item delivered vacuum cleaner order returned, refunded to the sole original credit card."}
+{"id": "happy_path__electronics_returns_exchanges__008", "one_line": "Delivered gaming mouse exchanged for a cheaper wireless variant; refund to a non-original credit card."}
+{"id": "happy_path__electronics_returns_exchanges__009", "one_line": "Delivered smartphone order returned in full, refunded to the original gift card payment method."}
+{"id": "happy_path__electronics_returns_exchanges__010", "one_line": "Action camera exchanged for a same-spec silver variant found by product lookup, paid via gift card."}
+{"id": "happy_path__electronics_returns_exchanges__011", "one_line": "One Bluetooth speaker returned from a 4-item delivered order, refunded to a different existing gift card."}
+{"id": "happy_path__electronics_returns_exchanges__012", "one_line": "Delivered security camera exchanged for a wider-FOV variant; gift card balance comfortably covers diff."}
+{"id": "happy_path__electronics_returns_exchanges__013", "one_line": "Delivered mechanical keyboard exchanged for no-backlight variant; gift card balance nearly exactly covers diff."}
+{"id": "happy_path__electronics_returns_exchanges__014", "one_line": "Delivered smart thermostat exchanged for a different ecosystem/color variant; refund to sole gift card."}
+{"id": "happy_path__electronics_returns_exchanges__015", "one_line": "Delivered e-reader exchanged for a higher-storage variant that is actually cheaper; refund to credit card."}
+{"id": "happy_path__electronics_returns_exchanges__016", "one_line": "Air purifier return confirmed across two turns of clarification, refunded to the original gift card."}
+{"id": "happy_path__electronics_returns_exchanges__017", "one_line": "Delivered portable charger exchanged for higher-capacity USB-C variant; charge to original credit card."}
+{"id": "happy_path__electronics_returns_exchanges__018", "one_line": "User asks only whether a coffee maker order has been delivered yet, before deciding on a return."}
+{"id": "happy_path__electronics_returns_exchanges__019", "one_line": "Delivered digital camera exchanged for a lighter zoom-lens variant; refund to original credit card."}
+{"id": "happy_path__electronics_returns_exchanges__020", "one_line": "Delivered wireless earbuds exchanged for a more water-resistant variant; charge to original credit card."}

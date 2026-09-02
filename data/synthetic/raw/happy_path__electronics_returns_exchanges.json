@@ -1,0 +1,664 @@
+[
+  {
+    "id": "happy_path__electronics_returns_exchanges__001",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'd like to return the headphones from order #W7736708. They're not as comfortable as I expected for long calls."
+      },
+      {
+        "role": "assistant",
+        "content": "I can help with that. Order #W7736708 is delivered and includes an on-ear wireless Headphones (red) at $377.97, along with a few other items I won't touch. I'd process a return for just the Headphones, with the $377.97 refunded to the credit card you originally paid with (credit_card_3362387). Shall I go ahead? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7736708",
+          "item_ids": [
+            "3104857380"
+          ],
+          "payment_method_id": "credit_card_3362387"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user wants their money back on headphones they don't like, not a replacement pair -- exchange_delivered_order_items would swap for a different headphones variant instead of issuing a refund, which isn't what was asked or confirmed.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__002",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Can you pull up order #W3134391? I got an espresso machine there."
+      },
+      {
+        "role": "assistant",
+        "content": "Sure -- order #W3134391 is delivered and contains one Espresso Machine (9 bar, 1L, capsule) for $2742.67, originally paid with your credit card ending in ...1719121. What would you like to do with it?"
+      }
+    ],
+    "user_message": "I'd like to return it, but instead of the credit card please put the $2742.67 back on my gift card, gift_card_6445682. Yes, go ahead with that.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W3134391",
+          "item_ids": [
+            "7806008610"
+          ],
+          "payment_method_id": "gift_card_6445682"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order might seem to fit since the user is walking away from the purchase entirely, but this order's status is 'delivered', not 'pending' -- cancellation only applies before an order ships, so a delivered order can only be handled through return_delivered_order_items.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__003",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I want to upgrade the laptop from order #W1840144 to the i9 configuration -- 15-inch, 32GB RAM, 512GB SSD, black -- if it's in stock."
+      },
+      {
+        "role": "assistant",
+        "content": "That configuration is available for $2701.89. Your current laptop (15-inch, i7, 32GB RAM, 1TB SSD, space grey) was $2292.37, so the exchange would add a charge of $409.52. Since you'd like that charged to your credit card on file (credit_card_3240550) rather than the PayPal account you originally paid with, can you confirm you'd like me to proceed? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, that's correct, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W1840144",
+          "item_ids": [
+            "6017636844"
+          ],
+          "new_item_ids": [
+            "2913673670"
+          ],
+          "payment_method_id": "credit_card_3240550"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a higher-spec laptop, not a refund -- returning the item would just give their money back instead of swapping in the i9 configuration they specifically asked for and confirmed.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__004",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "My smart watch from order #W7808613 turned out to be too fancy for the gym -- the leather band keeps slipping when I sweat. Can I switch the silver leather LCD one for the black silicone LCD version instead? Please refund any price difference to my gift card, gift_card_9832062."
+      },
+      {
+        "role": "assistant",
+        "content": "Sure -- the black silicone LCD Smart Watch is $315.61, versus $370.38 for the silver leather one you have, so that's a $54.77 refund of the difference to gift_card_9832062. Shall I proceed? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7808613",
+          "item_ids": [
+            "9811090008"
+          ],
+          "new_item_ids": [
+            "2860956907"
+          ],
+          "payment_method_id": "gift_card_9832062"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "modify_pending_order_items takes the same item_ids/new_item_ids/payment_method_id shape and is easy to reach for on a 'swap this variant' request, but it only works on orders still in 'pending' status -- #W7808613 is already delivered, so exchange_delivered_order_items is the only valid tool.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__005",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I want to return the tablet from order #W8046874. Everything else in that order I'm keeping."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it. That order has a Tablet (8-inch, 64GB, silver) at $938.92, originally paid with gift_card_2446065. I'll return just the tablet, with the $938.92 refunded back to that same gift card. Confirm you'd like me to proceed? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, that's right, go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8046874",
+          "item_ids": [
+            "8551474201"
+          ],
+          "payment_method_id": "gift_card_2446065"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user only wants the tablet gone and their money back -- they didn't ask for a different tablet variant, so exchange_delivered_order_items (which requires new_item_ids) doesn't fit; only a subset of the order's items should be touched, which return_delivered_order_items handles cleanly by item_ids.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__006",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified. What can I help you with today?"
+      },
+      {
+        "role": "user",
+        "content": "The espresso machine from order #W2329074 doesn't have enough pressure for me -- I'd like to switch from the 15 bar, 1.5L, capsule model to the 19 bar, 1L, capsule model instead."
+      },
+      {
+        "role": "assistant",
+        "content": "The 19 bar, 1L, capsule Espresso Machine is $2955.17, versus $2866.37 for your current 15 bar, 1.5L one, so that's an $88.80 charge. Your gift card gift_card_2491643 has a $96.00 balance, which covers it. Would you like me to go ahead with that exchange, charged to that gift card? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W2329074",
+          "item_ids": [
+            "7441167885"
+          ],
+          "new_item_ids": [
+            "6200867091"
+          ],
+          "payment_method_id": "gift_card_2491643"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a higher-pressure espresso machine, not a refund -- a return would just send the current unit back for money, not get them the 19 bar model they asked to switch to.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__007",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I'd like to return the vacuum cleaner I got in order #W8535951. It's too heavy for me to carry up the stairs."
+      },
+      {
+        "role": "assistant",
+        "content": "No problem. That order has one Vacuum Cleaner (canister, bagless, HEPA filter) at $565.79, paid with your credit card credit_card_5051208. I'll return it and refund the $565.79 to that same card. Shall I proceed? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8535951",
+          "item_ids": [
+            "1304426904"
+          ],
+          "payment_method_id": "credit_card_5051208"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user's complaint is about the vacuum's weight in general, not a wish for a different variant of the same vacuum -- they asked to send it back for a refund, so exchange_delivered_order_items (which requires picking a replacement variant) doesn't match the request.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__008",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The gaming mouse from order #W7387996 is the RGB wired one -- I'd rather have the plain black wireless version instead, my desk doesn't have a spare USB port. Please put any price difference on my credit card, credit_card_3124723, and go ahead with the swap."
+      }
+    ],
+    "user_message": "Yes, that's right -- please process it.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7387996",
+          "item_ids": [
+            "5796612084"
+          ],
+          "new_item_ids": [
+            "8214883393"
+          ],
+          "payment_method_id": "credit_card_3124723"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a wireless mouse instead of the wired one, not their money back -- returning it would just refund the purchase rather than swap in the wireless variant they specifically named.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__009",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "Thanks, I have your account pulled up. What can I do for you?"
+      }
+    ],
+    "user_message": "I'd like to return the smartphone from order #W5382576 -- I ended up getting a work phone and don't need this one. Please refund it to the gift card I paid with, gift_card_1776915, and go ahead and process the return.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W5382576",
+          "item_ids": [
+            "9929635042"
+          ],
+          "payment_method_id": "gift_card_1776915"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user explicitly wants a refund because they no longer need a second phone at all, not a different phone variant -- exchange_delivered_order_items would require a replacement item, which contradicts the request.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__010",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "Thanks, you're all set. What can I help you with?"
+      }
+    ],
+    "user_message": "I'd like to swap the action camera in order #W4817420 for the silver version instead of black -- still 4K and still waterproof, just the color. Please use my gift card, gift_card_8168843, for any price difference, and go ahead and make the swap.",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "3377618313"
+        }
+      },
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W4817420",
+          "item_ids": [
+            "6700049080"
+          ],
+          "new_item_ids": [
+            "6117189161"
+          ],
+          "payment_method_id": "gift_card_8168843"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "modify_pending_order_items has the same 'swap variant + pay difference' shape and might look right for an unshipped-sounding request, but order #W4817420 is already delivered -- only exchange_delivered_order_items applies, and the matching silver/4K/waterproof variant still has to be looked up via get_product_details since only its options (not its item id) were given.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__011",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Order #W1539823 has a Bluetooth speaker in it that I want to send back -- the sound cuts out constantly. Everything else in that order is fine."
+      },
+      {
+        "role": "assistant",
+        "content": "Understood. That's the black Bluetooth Speaker (10 hours, not water resistant) at $310.47, originally paid with credit_card_5869505. Since you also have gift_card_6023546 on file, would you like the $310.47 refunded there instead, or back to the original card?"
+      }
+    ],
+    "user_message": "The gift card is fine -- yes, please refund it there and go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W1539823",
+          "item_ids": [
+            "7597543861"
+          ],
+          "payment_method_id": "gift_card_6023546"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The complaint is that the speaker itself is defective (cutting out), and the user asked to send it back, not to trade it for another Bluetooth speaker -- exchange_delivered_order_items would require picking a replacement variant, which was never requested.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__012",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The indoor security camera in order #W7764382 doesn't cover enough of the room. Can I switch it for the wider field-of-view option -- the 160 degree one?"
+      },
+      {
+        "role": "assistant",
+        "content": "That would be the 1080p, 160 degree, Ethernet camera at $320.55, up from $308.38 for your current 4K, 110 degree one -- a $12.17 charge. You have gift_card_2519457 on file with enough balance to cover that. Want me to go ahead and charge the difference there? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7764382",
+          "item_ids": [
+            "3909704820"
+          ],
+          "new_item_ids": [
+            "1569829406"
+          ],
+          "payment_method_id": "gift_card_2519457"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a wider-angle camera, not a refund -- they asked to switch to a specific different variant, so return_delivered_order_items (which just sends the item back for money) doesn't satisfy the request.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__013",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Can you look up order #W8032761? There's a mechanical keyboard in it."
+      },
+      {
+        "role": "assistant",
+        "content": "Yes -- it's the linear switch, RGB backlight, 80% size Mechanical Keyboard at $230.15, paid with gift_card_2977513. What would you like to do with it?"
+      },
+      {
+        "role": "user",
+        "content": "I'd like to switch it to the version with no backlight instead -- same linear switches, same 80% size. The RGB glow keeps my partner awake at night. Go ahead and charge whatever the difference is to that same gift card."
+      }
+    ],
+    "user_message": "Yes, that's fine, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8032761",
+          "item_ids": [
+            "8484921793"
+          ],
+          "new_item_ids": [
+            "1421289881"
+          ],
+          "payment_method_id": "gift_card_2977513"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a different backlight variant of the same keyboard, not their money back -- and since gift_card_2977513's $39.00 balance only just covers the $38.62 price difference, a careful agent needs to actually check that number rather than assume any gift card on file will do (or default to a refund instead of the requested swap).",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__014",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I switched from Apple gear to an Echo, so the smart thermostat from order #W6378322 (the Apple HomeKit one) is useless to me now. Can I trade it for the Amazon Alexa version in black instead? Refund any difference to my gift card."
+      }
+    ],
+    "user_message": "Yes, go ahead and make that swap.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6378322",
+          "item_ids": [
+            "3377900078"
+          ],
+          "new_item_ids": [
+            "4953074738"
+          ],
+          "payment_method_id": "gift_card_6662365"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants the Alexa-compatible thermostat in exchange for the HomeKit one, not a plain refund -- they still want a working smart thermostat, just for a different ecosystem, which is exactly what exchange_delivered_order_items is for.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__015",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The e-reader from order #W6239298 is the 8-inch Wi-Fi model with 8GB -- can I trade it for the 32GB version instead? Same screen size and connectivity, just more storage."
+      },
+      {
+        "role": "assistant",
+        "content": "Good news -- the 32GB version is actually $243.40, which is $8.66 less than the $252.06 you paid for the 8GB one, so that difference would come back to you. I'll refund it to your credit card, credit_card_2112420, since that's the only payment method on file. Shall I proceed? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6239298",
+          "item_ids": [
+            "9494281769"
+          ],
+          "new_item_ids": [
+            "7609274509"
+          ],
+          "payment_method_id": "credit_card_2112420"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "This looks like a routine 'swap for more storage' item modification, but order #W6239298 is delivered, not pending -- modify_pending_order_items would fail outright, so exchange_delivered_order_items is the correct tool for a variant swap on an already-delivered order.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__016",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I have an air purifier in order #W2582045 that I need to send back."
+      },
+      {
+        "role": "assistant",
+        "content": "That order has one Air Purifier (small room, ionic filter, quiet operation) at $543.68, paid with gift_card_3767667. Can you tell me a bit more -- are you returning it, and if so, should the refund go back to that same gift card?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, returning it, and yes, back to that gift card is fine."
+      }
+    ],
+    "user_message": "Please go ahead and process that.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W2582045",
+          "item_ids": [
+            "5669664287"
+          ],
+          "payment_method_id": "gift_card_3767667"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user confirmed this is a return, not a swap for a different air purifier model -- exchange_delivered_order_items would need a new_item_ids selection that was never given or wanted here.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__017",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I'm traveling more for work and the 5000mAh portable charger from order #W2905754 isn't cutting it. Can I trade it for the 20000mAh one, white, with USB-C output instead of USB-A?"
+      },
+      {
+        "role": "assistant",
+        "content": "That's the 20000mAh, USB-C, white charger at $98.25, versus $90.32 for your current 5000mAh USB-A one -- a $7.93 charge. I'll put that on your credit card, credit_card_3677959, the one you originally paid with. Want me to go ahead? (yes/no)"
+      }
+    ],
+    "user_message": "Yes, that works, go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W2905754",
+          "item_ids": [
+            "7903094618"
+          ],
+          "new_item_ids": [
+            "1178356107"
+          ],
+          "payment_method_id": "credit_card_3677959"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a higher-capacity charger, not a refund -- they asked to trade up to the 20000mAh USB-C model, so a plain return would leave them without any charger at all, which isn't what was requested.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__018",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Quick question -- has order #W7736983 actually been delivered yet? I'm thinking about returning the coffee maker in it if it has, but I'm not sure I've made up my mind."
+      }
+    ],
+    "user_message": "Can you just check that for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W7736983"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user hasn't decided to return anything yet and hasn't named a refund method or given explicit confirmation to proceed -- they only asked to check the order's delivery status, so jumping straight to return_delivered_order_items would mutate the order on a question that was never actually a return request.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__019",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "You're verified -- what can I help you with?"
+      }
+    ],
+    "user_message": "The digital camera from order #W3065353 has the 10x zoom lens and it's too bulky for travel. I'd like to switch to the 5x zoom version instead, same 30MP resolution. Refund whatever the difference is to my credit card, credit_card_7422485, and please go ahead with the swap.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W3065353",
+          "item_ids": [
+            "9228757377"
+          ],
+          "new_item_ids": [
+            "6384525445"
+          ],
+          "payment_method_id": "credit_card_7422485"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The variant-swap-plus-payment-method shape matches modify_pending_order_items closely, but order #W3065353 is delivered, not pending -- exchange_delivered_order_items is the only tool that can act on it.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "happy_path__electronics_returns_exchanges__020",
+    "category": "happy_path",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I run in the rain a lot and the blue earbuds from order #W8808917 (the IPX4 ones) aren't quite waterproof enough -- I keep seeing the black IPX7 version listed. I don't mind the shorter battery life if it means better water resistance. Can you make that swap and charge any difference to the card I paid with, credit_card_1893409? Yes, please go ahead."
+      }
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8808917",
+          "item_ids": [
+            "8555936349"
+          ],
+          "new_item_ids": [
+            "9580569596"
+          ],
+          "payment_method_id": "credit_card_1893409"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user still wants a working pair of earbuds, just a more water-resistant model -- they asked for a specific swap, not their money back, so return_delivered_order_items would leave them without earbuds at all.",
+    "ambiguity_note": null
+  }
+]
