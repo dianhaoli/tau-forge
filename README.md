@@ -13,8 +13,8 @@ continuity across sessions).
 
 | Phase | Description | Status |
 |---|---|---|
-| 0 | Repo setup + data substrate extraction | **Done — awaiting review** |
-| 1 | Environment wrapper / mock tool executor | Not started |
+| 0 | Repo setup + data substrate extraction | Done |
+| 1 | Environment wrapper / mock tool executor | **Done — awaiting review** |
 | 2 | Synthetic scenario generation (methodology + first cells) | Not started |
 | 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
 | 4 | Reward function + adversarial tests | Not started |
@@ -76,3 +76,37 @@ no values). No task content (description text, scenarios, evaluation criteria) h
 been read or is present anywhere in this repo or in generation context. This file's
 actual content is only to be loaded in Phase 5, as an isolated decontamination
 check, never fed into scenario generation prompts.
+
+## Environment wrapper (`tau_forge/envs/retail.py`)
+
+Our own lightweight executor — not `tau2.gym`, not the `tau2 run` orchestrator
+(those are reserved for Phase 9's live-harness evaluation only). `RetailEnv` wraps
+one `RetailDB` snapshot and calls tau2's own `RetailTools` methods directly, so
+results and DB side effects are exactly what the real benchmark would produce.
+
+- `RetailEnv(db=None)` — live, stateful; `execute(tool_name, arguments)` mutates
+  `self.db` in place. Used for interactive gold-answer authoring (Phase 2) and DB
+  inspection.
+- `execute_against(db, tool_name, arguments)` — stateless; runs one call against a
+  deep copy of `db` and returns `(ToolResult, resulting_db)` without touching the
+  input. This is the primitive the Phase 4 reward function uses to compare a
+  rollout's and the gold action's end states from the same starting snapshot.
+- Tool metadata (`tool_names`, `tool_type`, `openai_schema`, `args_model`) is read
+  straight from tau2's own `Tool` objects — not reimplemented — so schemas shown to
+  the policy model match the real benchmark exactly.
+- `tool_mutates_state(name)` exposes tau2's own READ/WRITE/GENERIC-derived flag
+  (e.g. `transfer_to_human_agents` is GENERIC but does *not* mutate state). Phase
+  4's reward function should use this to pick `state_match_score` (DB side effect
+  exists) vs. `arg_match_score` (no DB state to diff — read tools, `transfer_to_human_agents`-style actions) — this is the fallback rule the plan calls for, not a
+  guess.
+- **Confirmed empirically** (see `tests/test_retail_env.py`): tau2's auto-generated
+  per-tool pydantic parameter model uses pydantic's default `extra` policy
+  (`ignore`), so `validate_arguments()` alone does **not** catch a hallucinated
+  extra argument the tool doesn't accept — it silently passes. Use
+  `extra_arguments(name, arguments)` for that; Phase 4's hallucination penalty
+  needs it, not `validate_arguments()` alone.
+- 18 tests in `tests/test_retail_env.py`, run via `uv run pytest`, covering:
+  execution correctness for a READ and two WRITE tools, clean (non-exception)
+  error handling for bad ids/state/reasons, snapshot/mutation isolation,
+  `execute_against` determinism and non-mutation of its input, and the schema
+  validation edge cases above. All passing against the real shipped `db.json`.
