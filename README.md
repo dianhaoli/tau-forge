@@ -15,9 +15,9 @@ continuity across sessions).
 |---|---|---|
 | 0 | Repo setup + data substrate extraction | Done |
 | 1 | Environment wrapper / mock tool executor | Done |
-| 2 | Synthetic scenario generation (methodology + first cells) | **Pilot done (3/30 cells) — awaiting review** |
+| 2 | Synthetic scenario generation (methodology + first cells) | **Pilot done (3/30 cells) — paused for reordering, see below** |
 | 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
-| 4 | Reward function + adversarial tests | Not started |
+| 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
 | 6 | Harness smoke test on real 74 train tasks | Not started |
 | 7 | Real GRPO training run | Not started |
@@ -26,6 +26,17 @@ continuity across sessions).
 Each phase after the current one is gated on a STOP checkpoint for review — see the
 originating task spec. Do not advance a phase past its STOP without explicit
 go-ahead.
+
+**Sequencing note:** the task spec's own recommended execution order is
+`0 → 1 → 4 → (Phase 6 data prep) → 6 → 2 → 3 → 5 → 7 → 8`, specifically so a
+broken harness/reward function surfaces against the 74 trusted real train tasks
+before a full 400-500-scenario synthetic sweep is built on top of it. This repo's
+history went `0 → 1 → 2 (pilot)` instead, skipping straight to the Phase 2 pilot.
+That pilot (3/30 cells, 57 scenarios) is not wasted — it's a valid dry run of the
+generation methodology — but the full 30-cell sweep is being held pending Phase 6.
+Phase 4 (this session) was done next, out of file order, to get back on the
+recommended track. **Do not run the remaining Phase 2 cells until Phase 6's
+harness smoke test has passed.**
 
 ## Data substrate
 
@@ -145,3 +156,76 @@ Implication for Phase 3/4: "the tool call didn't raise" is not sufficient eviden
 of policy compliance for this action -- the rule checker and reward function both
 need to consult policy.md's written rule for this specific state transition, not
 just tool-level exceptions.
+
+## Reward function (`tau_forge/reward/reward.py`) — Phase 4
+
+Grades a rollout `Action(tool_name, tool_input)` against a scenario's gold `Action`
+by comparing **outcomes** through the Phase 1 `RetailEnv`/`execute_against`, not
+literal arguments -- matching how tau2-bench itself grades (DB-end-state
+equivalence, not trajectory match). Score tiers:
+
+- `0.0` -- wrong tool, or a call made/withheld when the opposite was correct
+  (message-only is itself the correct action for `ambiguous`/`policy_violation`
+  scenarios with no `expected_tool_calls`, so calling a tool there scores 0, not
+  just "unhelpful").
+- `0.2` -- schema-invalid args, a hallucinated argument outside the tool's schema
+  (checked via `RetailEnv.extra_arguments`, since pydantic's auto-derived param
+  model on tau2's tools uses `extra="ignore"`, not `"forbid"` -- confirmed in
+  Phase 1's own tests, not assumed here), or the call raising at execution despite
+  valid schema (bad id / wrong state).
+- `0.3 - 1.0` -- right tool, schema-valid, executes cleanly: graded on how close
+  the outcome is to gold. For a **mutating** tool, diffs the resulting DB record
+  (touching a different order/user than gold scores at the floor; a mismatch on a
+  *critical* field -- status, items, payment history, exchange/return ids -- also
+  floors; a mismatch confined to a *graded* field -- `cancel_reason`,
+  `exchange_price_difference` -- gets real partial credit). For a **read-only or
+  generic** tool with no DB side effect, falls back to `arg_match_score` (exact for
+  IDs/enums/short strings, numeric tolerance, similarity-with-a-floor for free
+  text) -- except tools in `OUTPUT_DETERMINES_CORRECTNESS` (the READ tools, plus
+  `calculate`), where matching the *returned value* is checked first, so two
+  different-but-equivalent inputs both score 1.0.
+
+**Finding surfaced while building this, not before:** `transfer_to_human_agents`
+always returns the literal string `"Transfer successful"` regardless of `summary`
+-- so an output-equality shortcut applied uniformly to all non-mutating tools would
+let a padded, content-free `summary` score a perfect 1.0 purely because the return
+value matched. `OUTPUT_DETERMINES_CORRECTNESS` deliberately excludes it (and any
+other tool whose return value doesn't actually vary with its arguments) so it's
+always graded via `arg_match_score` on the argument content itself.
+
+A second, separate finding from writing the adversarial tests: `modify_pending_order_items`
+has a latent bug in tau2's own implementation (not ours) where `item.price` /
+`item.options` get set from the **last** variant processed in an earlier loop, not
+each item's own new variant -- so reordering the `item_ids`/`new_item_ids` pairs in
+that tool's call *does* change the resulting DB state, unlike a well-behaved
+"order shouldn't matter" tool. Verified empirically (see the comment in
+`tests/test_reward.py`) before picking `exchange_delivered_order_items` instead for
+the equivalent-args test, since that tool sorts `exchange_items`/`exchange_new_items`
+independently and never mutates `order.items` directly.
+
+### Adversarial test results (`tests/test_reward.py`, `uv run pytest`)
+
+All 6 cases the Phase 4 spec calls out, plus baseline sanity checks (exact match →
+1.0 for both a mutating and a read-only tool; correctly withholding a call → 1.0;
+calling one when none was expected → 0.0) -- 12 tests total, all passing:
+
+| Case | Score | Reason |
+|---|---|---|
+| Padded, generic free-text `summary` (right tool/record) | **0.300** | `arg_match` (similarity floored to 0) |
+| Subtly wrong item variant (schema-valid, off-by-one choice) | **0.300** | `state_match_partial` / critical field mismatch |
+| Right tool/args + one hallucinated extra field | **0.200** | `schema_invalid_or_hallucinated_args` |
+| Equivalent reordered args, identical resulting DB state | **1.000** | `state_match_exact` |
+| Equivalent `calculate` expression (`"4 - 0"` vs `"2 + 2"`) | **1.000** | `output_match` |
+| Near miss: same order, only `cancel_reason` differs | **0.948** | `state_match_partial` (graded field only) |
+| Wrong order touched entirely (same tool, same call shape) | **0.300** | `state_match_partial` / `wrong_record` |
+
+The wrong-record case (0.300) scores well below the descriptive-field near miss
+(0.948) despite superficially looking similar (same tool, same argument shape) --
+the two are not just numerically different, `state_match_score` tags the
+wrong-record case explicitly (`detail.reason == "wrong_record"`) so this
+distinction is inspectable, not just a coincidence of the weights chosen.
+
+STOP for review, per the Phase 4 spec: reward function built and adversarially
+tested before any training or further synthetic-data generation. Next per the
+reordering above is Phase 6's data prep (converting the real 74 train tasks to
+static snapshots) and smoke test, not the remaining 27 Phase 2 cells.
