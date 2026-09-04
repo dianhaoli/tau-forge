@@ -247,6 +247,112 @@ re-adding only if you deliberately switch back.
 - [ ] Confirm the held-out data policy before any live run: only Phase 2 synthetic
       data, never the 114 real τ²-bench retail tasks, touches model weights.
 
+## Launch runbook (AWS CLI)
+
+Concrete, copy-pasteable steps. Console equivalents exist for every step (EC2 →
+Launch Instance) if you'd rather click through, but the CLI is what the checklist
+above means by "reproducible and diffable." Run these from your own machine (or
+CloudShell) — this session has no AWS credentials and cannot run them for you.
+Replace `us-east-1` throughout if you're in a different region; `g6e` availability
+varies by region, so check first (step 0).
+
+**0. Confirm `aws` is configured and `g6e` is available/quota'd in your region**
+```
+aws sts get-caller-identity
+aws ec2 describe-instance-type-offerings --location-type region \
+    --filters Name=instance-type,Values=g6e.12xlarge --region us-east-1
+```
+If that returns nothing, `g6e` isn't offered in that region — pick another (check
+the docs' fallback options) or a nearby region. Then check your quota — new/
+lightly-used accounts often start at **0** for GPU instances:
+```
+aws service-quotas get-service-quota --service-code ec2 \
+    --quota-code L-DB2E81BA --region us-east-1  # "Running On-Demand G and VT instances" (vCPUs)
+```
+`g6e.12xlarge` needs 48 vCPUs of quota. If the value is below that, request an
+increase (`request-service-quota-increase` or via Service Quotas console) — this
+is the single most common thing that silently blocks a first GPU launch, and
+approval can take from minutes to a business day, so do this check first.
+
+**1. Set a billing alarm** (console: Billing → Budgets → Create budget — a CLI
+path exists too but the console is faster for a one-off alarm) before doing
+anything else below.
+
+**2. Create a key pair** (skip if reusing one you already trust for this):
+```
+aws ec2 create-key-pair --key-name tau-forge-phase7 \
+    --query 'KeyMaterial' --output text > ~/.ssh/tau-forge-phase7.pem
+chmod 400 ~/.ssh/tau-forge-phase7.pem
+```
+
+**3. Create a security group, SSH-only from your own IP:**
+```
+VPC_ID=$(aws ec2 describe-vpcs --filters Name=is-default,Values=true \
+    --query 'Vpcs[0].VpcId' --output text)
+SG_ID=$(aws ec2 create-security-group --group-name tau-forge-phase7 \
+    --description "Phase 7 GPU box, SSH only" --vpc-id "$VPC_ID" \
+    --query 'GroupId' --output text)
+MY_IP=$(curl -s https://checkip.amazonaws.com)
+aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+    --protocol tcp --port 22 --cidr "${MY_IP}/32"
+```
+No other inbound rules — confirms the checklist's "no public HTTP/Jupyter
+exposure" item by construction.
+
+**4. Find the current Deep Learning AMI (Ubuntu, GPU PyTorch) for your region:**
+```
+AMI_ID=$(aws ec2 describe-images --owners amazon \
+    --filters "Name=name,Values=Deep Learning AMI GPU PyTorch*Ubuntu*" \
+              "Name=state,Values=available" \
+    --query 'sort_by(Images, &CreationDate)[-1].ImageId' --output text \
+    --region us-east-1)
+echo "$AMI_ID"
+```
+Sanity-check the returned name/date look right before using it — AMI naming
+occasionally changes; if this comes back empty, search "Deep Learning AMI GPU
+PyTorch" in the EC2 console's AMI catalog instead and copy the ID.
+
+**5. Launch the instance:**
+```
+aws ec2 run-instances \
+    --image-id "$AMI_ID" \
+    --instance-type g6e.12xlarge \
+    --key-name tau-forge-phase7 \
+    --security-group-ids "$SG_ID" \
+    --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":300,"VolumeType":"gp3"}}]' \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=tau-forge-phase7}]' \
+    --region us-east-1
+```
+Note the returned `InstanceId`. Get its public IP once it's running:
+```
+aws ec2 describe-instances --instance-ids <InstanceId> \
+    --query 'Reservations[0].Instances[0].PublicIpAddress' --output text
+```
+
+**6. SSH in and run the bootstrap script:**
+```
+ssh -i ~/.ssh/tau-forge-phase7.pem ubuntu@<PublicIpAddress>
+# on the box:
+curl -O https://raw.githubusercontent.com/dianhaoli/tau-forge/main/infra/ec2_bootstrap.sh
+chmod +x ec2_bootstrap.sh
+./ec2_bootstrap.sh
+```
+(Deep Learning AMIs use the `ubuntu` login user; double-check the AMI's own
+listing if that doesn't connect.) The bootstrap script prints the exact
+zero-shot-baseline / smoke-test / full-run commands at the end, matching "Next
+steps" below.
+
+**7. When done for the session:**
+```
+aws ec2 stop-instances --instance-ids <InstanceId>   # keeps the EBS volume, resume later
+# or, once truly finished with this box:
+aws ec2 terminate-instances --instance-ids <InstanceId>
+```
+`stop` (not `terminate`) is the right default between working sessions — it
+keeps the 300 GB volume (and anything on it: cloned repo, downloaded model
+weights, checkpoints) so you're not re-downloading the model each time, at the
+cost of EBS storage while stopped (much cheaper than the running GPU-hour rate).
+
 ## Next steps (not done by this doc)
 
 1. Review this sizing/instance choice — confirm `g6e.12xlarge` (or an alternative
