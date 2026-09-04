@@ -45,7 +45,7 @@ Concretely:
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
 | 6 | Harness smoke test on real 74 train tasks (scoring code only, no model) | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
-| 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not started — needs a GPU box, none available in this environment |
+| 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not started — needs a GPU box, none available in this environment. AWS EC2 setup (instance sizing, bootstrap script) prepped in `docs/phase7_aws_setup.md` / `infra/`; training itself still awaits go-ahead |
 | 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Not started |
 
 Each phase after the current one is gated on a STOP checkpoint for review — see the
@@ -466,8 +466,10 @@ it's the sanctioned exception to the held-out-data policy above (no model weight
 are ever produced or updated here). It does not run the "50-100 step GRPO smoke
 test" the Phase 6 spec also calls for -- that needs a GPU box (Phase 7) and, per
 the held-out policy, must run against the **Phase 2 synthetic pilot data**, not
-these 74 real tasks (draft EC2 setup notes are being worked out with the user
-separately).
+these 74 real tasks. AWS EC2 setup for that GPU box is prepped in
+`docs/phase7_aws_setup.md` and `infra/ec2_bootstrap.sh` (instance sizing reasoning,
+bootstrap script, security checklist) — launching the instance and writing the
+actual training script are separate, still-gated next steps.
 
 STOP for review, per the Phase 6 spec: harness validated against real trusted
 data before resuming Phase 2/3 or attempting any GPU training.
