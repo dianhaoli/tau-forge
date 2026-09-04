@@ -1,0 +1,94 @@
+[
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__001",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__002",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__003",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__004",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__005",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__006",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__007",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__008",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__009",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__010",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__011",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__012",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__013",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__014",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__015",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__016",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__017",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "requires_earlier_context__apparel_footwear_exchanges__018",
+    "issues": [
+      "expected_tool_calls uses user_id 'sofia_lee_8857' for get_user_details, but no name, email, or user_id is ever stated anywhere in prior_turns or user_message -- unlike every other get_user_details/modify_user_address scenario in this dataset (which always grounds the user_id in a stated name+zip or email), this one gives the agent no textual basis to know who 'the customer' even is, let alone derive this specific user_id."
+    ],
+    "severity": "major"
+  }
+]
