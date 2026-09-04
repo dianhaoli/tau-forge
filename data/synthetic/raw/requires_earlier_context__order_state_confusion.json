@@ -1,0 +1,272 @@
+[
+  {
+    "id": "requires_earlier_context__order_state_confusion__001",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Fatima Anderson. My email is fatima.anderson1447@example.com."},
+      {"role": "assistant", "content": "Thanks Fatima, I've verified your account. I see order #W2974929 for a Skateboard is still showing as pending -- it hasn't shipped yet."}
+    ],
+    "user_message": "Great, please go ahead and cancel it -- I ordered it by mistake.",
+    "expected_tool_calls": [{"name": "cancel_pending_order", "arguments": {"order_id": "#W2974929", "reason": "ordered by mistake"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Both tools apply only to pending orders, so a careless agent could reach for an item swap. But the user has clearly asked to cancel the whole order, not change what's in it.",
+    "ambiguity_note": "The order id and its pending status only appear in the assistant's prior turn -- the user's current message says 'it' and never restates '#W2974929', so the correct target is only recoverable from earlier context."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__002",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Evelyn Gonzalez, zip 19186."},
+      {"role": "assistant", "content": "Thanks, I've located order #W8341134 -- it shows a Notebook that was delivered, originally paid via PayPal."}
+    ],
+    "user_message": "I'd like to send that notebook back for a refund to the card I paid with.",
+    "expected_tool_calls": [{"name": "return_delivered_order_items", "arguments": {"order_id": "#W8341134", "item_ids": ["7579176349"], "payment_method_id": "paypal_4191414"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Exchange is also a valid action on a delivered order, but the user explicitly wants their money back, not a replacement notebook.",
+    "ambiguity_note": "The order id, item id, and delivered status all come from the assistant's earlier lookup; the current message never repeats the order number or item, only 'that notebook'."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__003",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Evelyn Kovacs, email evelyn.kovacs5369@example.com. I have a pending tea kettle order, #W5694685, and I saw the 1.5-liter gas stovetop version, item 9647374798, is in stock -- I'd like that one instead of the 1-liter I ordered."},
+      {"role": "assistant", "content": "I can look into that. Item 9647374798 is available at $109.58, versus your current item at $98.25, so there'd be an $11.33 charge to your PayPal on file. Should I proceed?"}
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [{"name": "modify_pending_order_items", "arguments": {"order_id": "#W5694685", "item_ids": ["3909406921"], "new_item_ids": ["9647374798"], "payment_method_id": "paypal_7732922"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Same family of action (swap an item), but the order is pending, not delivered, so the exchange tool would reject it -- modify_pending_order_items is the only valid call for this order's actual status.",
+    "ambiguity_note": "The current message is just 'Yes, please go ahead' -- the order id, the specific old/new item ids, and the payment method are all only stated in the prior turns and must be carried forward."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__004",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Harper Li, harper.li3262@example.com. My tablet order #W9495141 arrived, but I actually want the 8-inch 128GB gold version, item 6065192424, instead of the 7-inch 32GB gold one I got."},
+      {"role": "assistant", "content": "I found order #W9495141, status delivered. Item 6065192424 is available at $989.70, versus your current item at $1018.68, so you'd get a $28.98 refund to your gift card on file. Shall I proceed?"}
+    ],
+    "user_message": "Yes, that works for me.",
+    "expected_tool_calls": [{"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W9495141", "item_ids": ["6501071631"], "new_item_ids": ["6065192424"], "payment_method_id": "gift_card_8862145"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A same-family delivered-order action, but the user wants a different tablet, not just a refund without a replacement.",
+    "ambiguity_note": "The confirming 'Yes' carries no ids -- order id, old item id, new item id, and payment method are all only established in the prior turns."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__005",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Aarav Nguyen, aarav.nguyen1293@example.com. I have two orders -- #W2443586 with the mechanical keyboard, hiking boots and garden hose, and #W7728728 which already arrived."},
+      {"role": "assistant", "content": "Got it -- I see #W2443586 is still pending, and #W7728728 shows as delivered."}
+    ],
+    "user_message": "I just moved -- can you update the shipping address on the one that hasn't shipped yet to 900 Lakeview Dr, Denver, CO 80202?",
+    "expected_tool_calls": [{"name": "modify_pending_order_address", "arguments": {"order_id": "#W2443586", "address1": "900 Lakeview Dr", "address2": "", "city": "Denver", "state": "CO", "country": "USA", "zip": "80202"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "The user wants only this one order's shipping address changed, not their permanent account default address -- modify_user_address would silently affect future orders too.",
+    "ambiguity_note": "'The one that hasn't shipped yet' only resolves to #W2443586 because the assistant's prior turn stated which of the two orders is pending versus delivered; neither order id is repeated in the current message."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__006",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Ethan Lopez here, ethan.lopez8943@example.com. For my pending order #W6779827, I'd rather not use my gift card -- please charge my Visa on file instead, credit_card_9789590."},
+      {"role": "assistant", "content": "Understood -- order #W6779827 is currently pending, paid via gift card. Switching payment to credit_card_9789590 will refund the gift card and charge the card instead. Should I go ahead?"}
+    ],
+    "user_message": "Yes, please make that switch.",
+    "expected_tool_calls": [{"name": "modify_pending_order_payment", "arguments": {"order_id": "#W6779827", "payment_method_id": "credit_card_9789590"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Also a valid pending-order action, but nothing in the conversation indicates the user wants to cancel; they only want to change how they pay.",
+    "ambiguity_note": "The order id and the target payment method were both stated only in the user's earlier turn; the confirming message carries neither."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__007",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, James Li, james.li4495@example.com. Random question -- a while back I placed order #W2611340 for a water bottle and an office chair."},
+      {"role": "assistant", "content": "Thanks James, I've verified your identity."}
+    ],
+    "user_message": "By the way, has that order shipped yet?",
+    "expected_tool_calls": [{"name": "get_order_details", "arguments": {"order_id": "#W2611340"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The agent hasn't confirmed the order is actually pending -- it could be processed, delivered, or cancelled -- so acting on it before checking status would be premature; the correct move here is only to look it up.",
+    "ambiguity_note": "The order id '#W2611340' was mentioned once, in the user's first turn, and is not repeated in 'that order' -- the agent must recall it to know which order to check."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__008",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Lei Hernandez, lei.hernandez7247@example.com. Earlier today you helped me exchange the medium red cycling helmet on order #W2982823 for the high-ventilation version, item 8573379326."},
+      {"role": "assistant", "content": "That's right, I submitted that exchange request and refunded $9.53 to your gift card for the price difference."}
+    ],
+    "user_message": "Has that swap shipped back to me yet?",
+    "expected_tool_calls": [{"name": "get_order_details", "arguments": {"order_id": "#W2982823"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "This order already has an exchange requested against it (each delivered order can only be exchanged once by the agent), so re-issuing the exchange tool would fail -- the correct next step is simply checking the current record.",
+    "ambiguity_note": "The order is already in 'exchange requested' status from the action described in the prior turn; the user's current message names no order id at all, only 'that swap'."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__009",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Liam Ahmed, liam.ahmed8540@example.com. You cancelled my skateboard order #W3916748 for me last week since I ordered it by mistake."},
+      {"role": "assistant", "content": "Correct, that order was cancelled and the refund was issued back to your gift card immediately."}
+    ],
+    "user_message": "Can you check that the refund actually landed?",
+    "expected_tool_calls": [{"name": "get_order_details", "arguments": {"order_id": "#W3916748"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The order is already cancelled, so attempting to cancel it again would fail immediately -- the right move is to just look up the current record to confirm the refund.",
+    "ambiguity_note": "The order id only appears in the prior user turn; the current message refers to it only as 'the refund' with no order number restated."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__010",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Olivia Silva, olivia.silva3776@example.com. I want to cancel a yoga mat order I placed -- I just don't need it anymore, so it'd be 'no longer needed' as the reason."},
+      {"role": "assistant", "content": "No problem, I can help with that once I have the order id."}
+    ],
+    "user_message": "It's order #W6940125.",
+    "expected_tool_calls": [{"name": "cancel_pending_order", "arguments": {"order_id": "#W6940125", "reason": "no longer needed"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Another pending-order action in the same family, but the user has stated an intent to cancel entirely, not to swap items.",
+    "ambiguity_note": "The cancellation reason was given only in the earlier turn and is not repeated alongside the order id here -- both pieces have to be combined across turns."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__011",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Noah Hernandez, noah.hernandez4161@example.com. Earlier you swapped the 8GB Wi-Fi+Cellular e-reader on my order #W3897284 for the 32GB version, item 4273929280."},
+      {"role": "assistant", "content": "That's right, I made that item change and refunded $22.63 to your gift card. The order is now showing 'pending (item modified)'."}
+    ],
+    "user_message": "One more thing -- can you also update the shipping address on that order to 55 Wacker Dr, Chicago, IL 60601?",
+    "expected_tool_calls": [{"name": "modify_pending_order_address", "arguments": {"order_id": "#W3897284", "address1": "55 Wacker Dr", "address2": "", "city": "Chicago", "state": "IL", "country": "USA", "zip": "60601"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The order is no longer strictly 'pending' (it's 'pending (item modified)') -- cancel_pending_order requires the status to be exactly 'pending' and would reject it, while the address tool's looser pending check still allows this update.",
+    "ambiguity_note": "Knowing the order is still address-modifiable (despite its item having already been changed once) depends entirely on the exact status reported in the prior turn -- the current message only says 'that order'."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__012",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Lucas Martin, lucas.martin5733@example.com. For my pending order #W9318778, I'd like to switch the payment off my gift card and onto my Visa, credit_card_7862034, so I can save the gift card balance."},
+      {"role": "assistant", "content": "Sure -- that order is pending, paid via gift card. Switching to credit_card_7862034 will refund the gift card and charge the card. Just confirm and I'll process it."}
+    ],
+    "user_message": "Confirmed, please proceed.",
+    "expected_tool_calls": [{"name": "modify_pending_order_payment", "arguments": {"order_id": "#W9318778", "payment_method_id": "credit_card_7862034"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Also a pending-order family action, but nothing about the items was discussed in this conversation -- only the payment method is changing.",
+    "ambiguity_note": "The order id and target payment method id are stated only once, in the user's earlier turn; 'Confirmed, please proceed' carries no identifying details on its own."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__013",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Olivia Davis, olivia.davis4495@example.com. My jigsaw puzzle order #W7623533 arrived but it's missing pieces."},
+      {"role": "assistant", "content": "Sorry to hear that -- I see order #W7623533 is marked delivered. I can start a return for the puzzle."}
+    ],
+    "user_message": "Yes, please refund it back to whatever I originally paid with.",
+    "expected_tool_calls": [{"name": "return_delivered_order_items", "arguments": {"order_id": "#W7623533", "item_ids": ["4772738468"], "payment_method_id": "paypal_8673863"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Same-family delivered-order action, but the user wants their money back, not a replacement puzzle.",
+    "ambiguity_note": "The user says 'whatever I originally paid with' rather than naming a payment method -- the agent must recall from the order's payment history (established via the earlier lookup) that the original method was paypal_8673863, since it's never spelled out in the dialogue."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__014",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Emma Nguyen, emma.nguyen8892@example.com. My dog outgrew the medium pet bed from order #W3754544 -- I saw the large grey polyester one, item 7917269097, is available."},
+      {"role": "assistant", "content": "I found order #W3754544, status delivered. Item 7917269097 is $184.25 versus your current $204.09, so you'd get a $19.84 refund to your PayPal. Want me to proceed?"}
+    ],
+    "user_message": "Yes please, go ahead with that exchange.",
+    "expected_tool_calls": [{"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W3754544", "item_ids": ["2405281423"], "new_item_ids": ["7917269097"], "payment_method_id": "paypal_2499655"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "User wants a differently-sized bed, not a refund with no replacement -- return would end the transaction rather than deliver the larger bed the user asked for.",
+    "ambiguity_note": "The current message names none of the order, item, or new item ids -- all three, plus the payment method, are only findable in the prior turns."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__015",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Emma Santos, emma.santos7683@example.com. I own a cycling helmet from order #W3113816. A few weeks ago I checked and the medium black with medium ventilation, item 3264130640, was out of stock -- I was hoping to exchange into it eventually."},
+      {"role": "assistant", "content": "Got it, I've noted that."}
+    ],
+    "user_message": "Could you check if that variant is back in stock now?",
+    "expected_tool_calls": [{"name": "get_item_details", "arguments": {"item_id": "3264130640"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "It would be premature to submit an exchange before confirming the target item is actually available -- it was out of stock as of the earlier turn and needs to be re-checked first, not assumed available.",
+    "ambiguity_note": "The specific item id '3264130640' is stated only in the prior turn; 'that variant' in the current message has no meaning without recalling it."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__016",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Liam Li, liam.li5782@example.com. My running shoes order #W4503264 is a size 9 but I actually need a size 10 -- same white leather EVA style, item 1775591963."},
+      {"role": "assistant", "content": "That order is pending. Item 1775591963 is $154.75 versus your current $148.95, so there'd be a $5.80 charge to your gift card, which has enough balance. Should I proceed?"}
+    ],
+    "user_message": "Yes, that's fine, go ahead.",
+    "expected_tool_calls": [{"name": "modify_pending_order_items", "arguments": {"order_id": "#W4503264", "item_ids": ["9635758562"], "new_item_ids": ["1775591963"], "payment_method_id": "gift_card_5800903"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The intent (swap to a different size) is the same, but the order is pending, not delivered, so exchange is the wrong tool for this order's actual state.",
+    "ambiguity_note": "The order id, current item id, and target item id are all only stated in the prior turn; the confirmation message supplies none of them."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__017",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Chen Silva, chen.silva2698@example.com. Earlier you started a return on my jigsaw puzzle order #W2598834, refunding $46.00 to my gift card."},
+      {"role": "assistant", "content": "That's right, I requested the return on that order."}
+    ],
+    "user_message": "Any update on when I'll see that money back?",
+    "expected_tool_calls": [{"name": "get_order_details", "arguments": {"order_id": "#W2598834"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "This order already has a return requested against it, so calling the return tool again is not a valid or needed action -- the correct next step is only to check the current record.",
+    "ambiguity_note": "The order is already in 'return requested' status per the earlier turn; the current message never restates the order id, only 'that money'."
+  },
+  {
+    "id": "requires_earlier_context__order_state_confusion__018",
+    "category": "requires_earlier_context",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Mei Gonzalez, mei.gonzalez8775@example.com. We talked about my pending order #W2052757 last time, and I think I also have a delivered one somewhere."},
+      {"role": "assistant", "content": "Yes, that's right, #W2052757 is still pending."}
+    ],
+    "user_message": "Can you pull up my whole account so I can see everything at once?",
+    "expected_tool_calls": [{"name": "get_user_details", "arguments": {"user_id": "mei_gonzalez_4785"}}],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "The user is asking for their full account/order list, not the details of the one already-known order id -- get_order_details would only surface #W2052757 and miss the other orders the user is asking about.",
+    "ambiguity_note": "The user id is never stated directly; it is only recoverable from the earlier identity verification (name + email), which the current message does not repeat."
+  }
+]

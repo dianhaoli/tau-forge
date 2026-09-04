@@ -217,3 +217,39 @@
 {"id": "requires_earlier_context__identity_and_order_lookup__016", "one_line": "Delivered order with espresso machine among several items established earlier; user requests item-only return now."}
 {"id": "requires_earlier_context__identity_and_order_lookup__017", "one_line": "User confirms own pending-order cancellation from earlier turn while also asking to cancel a friend's order; only own order proceeds."}
 {"id": "requires_earlier_context__identity_and_order_lookup__018", "one_line": "User with many pending orders resolves target via item description earlier turn; gives new address for 'that one' now."}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__001", "one_line": "Delivered t-shirt style exchange confirmed after prior turn picked new card, not original PayPal"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__002", "one_line": "Pending t-shirt resized XXL to XL after prior turn agreed refund to sole card, terse confirm"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__003", "one_line": "Delivered running shoe size-up exchange confirmed after prior turn chose gift card for diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__004", "one_line": "Delivered sunglasses frame-color exchange confirmed after prior turn agreed same card for diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__005", "one_line": "Pending sunglasses lens-color swap confirmed after prior turn redirected refund to credit card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__006", "one_line": "Delivered hiking boots size-up exchange confirmed after prior turn approved gift card charge"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__007", "one_line": "Pending hiking boots size-up modification confirmed after prior turn picked PayPal refund"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__008", "one_line": "Delivered fleece jacket size/zip exchange confirmed after prior turn chose credit card over PayPal"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__009", "one_line": "Pending fleece jacket size/color modification confirmed after prior turn chose gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__010", "one_line": "Delivered cycling helmet size/color exchange confirmed after prior turn redirected refund to gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__011", "one_line": "Pending cycling helmet color/ventilation modification confirmed after prior turn approved gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__012", "one_line": "Delivered sneaker size-up exchange confirmed after prior turn agreed same card for price diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__013", "one_line": "Pending fleece jacket swap already proposed; current turn only asks to verify new variant stock"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__014", "one_line": "Delivered hiking boots resize already proposed; current turn only asks to check size availability"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__015", "one_line": "Order id for a sneaker order surfaced last turn; current turn just asks whether it delivered"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__016", "one_line": "Pending order with two helmets identified earlier; current turn asks helmet product's ventilation options"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__017", "one_line": "Pending running shoe resize floated last turn; current turn only checks new size/material stock"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__018", "one_line": "Possible helmet exchange floated but undecided; current turn only asks to list saved payment methods"}
+{"id": "requires_earlier_context__order_state_confusion__001", "one_line": "Pending skateboard order id given only earlier; user now just says cancel, mistake reason."}
+{"id": "requires_earlier_context__order_state_confusion__002", "one_line": "Delivered notebook order id/item from earlier lookup; user asks refund to original card without repeating ids."}
+{"id": "requires_earlier_context__order_state_confusion__003", "one_line": "Pending tea kettle swap negotiated across turns; user just confirms yes, ids only stated earlier."}
+{"id": "requires_earlier_context__order_state_confusion__004", "one_line": "Delivered tablet exchange to cheaper variant negotiated earlier; bare 'yes' confirms it now."}
+{"id": "requires_earlier_context__order_state_confusion__005", "one_line": "User has one pending, one delivered order; asks address change on 'the one that hasn't shipped', resolved via earlier status."}
+{"id": "requires_earlier_context__order_state_confusion__006", "one_line": "Pending order payment switch to named card stated earlier; current turn is bare confirmation only."}
+{"id": "requires_earlier_context__order_state_confusion__007", "one_line": "Order id mentioned once earlier in passing; user later asks if 'that order' shipped, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__008", "one_line": "Exchange already requested per earlier turn; user asks status of 'that swap', lookup-only given exchange-once limit."}
+{"id": "requires_earlier_context__order_state_confusion__009", "one_line": "Order already cancelled/refunded per earlier turn; user asks to confirm refund landed, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__010", "one_line": "Cancellation reason given in one turn, order id supplied only in the next; combine both to cancel."}
+{"id": "requires_earlier_context__order_state_confusion__011", "one_line": "Order already item-modified once per earlier turn; user asks separate address change, still allowed by looser pending check."}
+{"id": "requires_earlier_context__order_state_confusion__012", "one_line": "Pending order payment switch to new card discussed earlier; current message is bare 'confirmed, proceed'."}
+{"id": "requires_earlier_context__order_state_confusion__013", "one_line": "Delivered puzzle order return; user says refund 'whatever I originally paid with', payment method looked up not stated."}
+{"id": "requires_earlier_context__order_state_confusion__014", "one_line": "Delivered pet bed exchange to larger size negotiated earlier; bare 'yes please' confirms with no ids restated."}
+{"id": "requires_earlier_context__order_state_confusion__015", "one_line": "Target helmet variant noted out-of-stock in an earlier turn; user later asks to recheck stock, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__016", "one_line": "Pending running shoes resize negotiated earlier with exact item ids; current turn is bare confirmation."}
+{"id": "requires_earlier_context__order_state_confusion__017", "one_line": "Return already requested on puzzle order per earlier turn; user asks refund timing, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__018", "one_line": "User previously identified with one pending order noted; now asks to see whole account, needs recalled user id."}

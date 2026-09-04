@@ -1,0 +1,18 @@
+{"id": "requires_earlier_context__apparel_footwear_exchanges__001", "one_line": "Delivered t-shirt style exchange confirmed after prior turn picked new card, not original PayPal"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__002", "one_line": "Pending t-shirt resized XXL to XL after prior turn agreed refund to sole card, terse confirm"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__003", "one_line": "Delivered running shoe size-up exchange confirmed after prior turn chose gift card for diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__004", "one_line": "Delivered sunglasses frame-color exchange confirmed after prior turn agreed same card for diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__005", "one_line": "Pending sunglasses lens-color swap confirmed after prior turn redirected refund to credit card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__006", "one_line": "Delivered hiking boots size-up exchange confirmed after prior turn approved gift card charge"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__007", "one_line": "Pending hiking boots size-up modification confirmed after prior turn picked PayPal refund"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__008", "one_line": "Delivered fleece jacket size/zip exchange confirmed after prior turn chose credit card over PayPal"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__009", "one_line": "Pending fleece jacket size/color modification confirmed after prior turn chose gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__010", "one_line": "Delivered cycling helmet size/color exchange confirmed after prior turn redirected refund to gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__011", "one_line": "Pending cycling helmet color/ventilation modification confirmed after prior turn approved gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__012", "one_line": "Delivered sneaker size-up exchange confirmed after prior turn agreed same card for price diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__013", "one_line": "Pending fleece jacket swap already proposed; current turn only asks to verify new variant stock"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__014", "one_line": "Delivered hiking boots resize already proposed; current turn only asks to check size availability"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__015", "one_line": "Order id for a sneaker order surfaced last turn; current turn just asks whether it delivered"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__016", "one_line": "Pending order with two helmets identified earlier; current turn asks helmet product's ventilation options"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__017", "one_line": "Pending running shoe resize floated last turn; current turn only checks new size/material stock"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__018", "one_line": "Possible helmet exchange floated but undecided; current turn only asks to list saved payment methods"}

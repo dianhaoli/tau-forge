@@ -1,0 +1,319 @@
+[
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__001",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I'd like to exchange the red XXL crew neck t-shirt on order #W6552785. I actually want the v-neck style instead, same red, but size L this time."},
+      {"role": "assistant", "content": "I found that item on order #W6552785 -- the red, XXL, crew neck cotton t-shirt at $46.85. I can exchange it for the red, L, v-neck cotton t-shirt at $46.66, a refund of $0.19. That order was originally paid with your PayPal account, but I see you also have a Visa credit card on file ending in the number tied to credit_card_5650467 -- which would you like the refund to go to?"},
+      {"role": "user", "content": "Put it on that Visa, not the PayPal."}
+    ],
+    "user_message": "Yes, that all sounds right -- go ahead and make the swap.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W6552785", "item_ids": ["9354168549"], "new_item_ids": ["3234800602"], "payment_method_id": "credit_card_5650467"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order and item are delivered and return-eligible, so a careless agent could reach for a return; but the user wants a different style of the same product, not a refund, so exchange_delivered_order_items is correct and the payment method (the Visa, not PayPal) only appears in the prior turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__002",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The black crew neck t-shirt on my pending order #W6247578 runs huge on me. It's an XXL right now -- can you drop it down to XL, same black crew neck cotton?"},
+      {"role": "assistant", "content": "Sure -- that would take the item from $53.27 down to $51.05, a $2.22 refund back to the credit card that paid for the order. Want me to go ahead?"}
+    ],
+    "user_message": "Yep, do it.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_items", "arguments": {"order_id": "#W6247578", "item_ids": ["3799046073"], "new_item_ids": ["2060066974"], "payment_method_id": "credit_card_9513926"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Cancellation is also a valid action on a pending order, which makes it tempting in this context, but the user only wants a size swap and never asked to cancel; the specific new size only appears in the earlier turn, not in 'do it'.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__003",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My running shoes on order #W6977171 are a size 9 in the white mesh with rubber sole, but they're tight. I want to size up to 10, same white color, but I'm fine switching to the leather/EVA pair if that's what's available in that size."},
+      {"role": "assistant", "content": "The size 10 white leather pair with an EVA sole is available at $154.75, which is $5.80 more than what you paid. You have a gift card on file with a $10.00 balance -- should the difference come out of that?"},
+      {"role": "user", "content": "Yes, use the gift card."}
+    ],
+    "user_message": "Great, please go ahead and process that.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W6977171", "item_ids": ["9635758562"], "new_item_ids": ["1775591963"], "payment_method_id": "gift_card_6052478"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The item is delivered and return-eligible, tempting an agent that ignores context, but the customer already agreed to a same-product size/material swap and a specific gift card in the prior turns -- an exchange, not a refund.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__004",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "On order #W6015009, I got the brown frame, brown polarized lenses, plastic sunglasses. I'd actually like the black frame version instead, still brown polarized lenses and plastic."},
+      {"role": "assistant", "content": "That variant is available at $290.94, which is $8.96 more than the $281.98 you paid. The order was originally charged to your credit card on file -- should the extra $8.96 go there too?"},
+      {"role": "user", "content": "Yes, same card is fine."}
+    ],
+    "user_message": "Perfect, please make that exchange.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W6015009", "item_ids": ["9672174103"], "new_item_ids": ["4358482460"], "payment_method_id": "credit_card_5884162"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A delivered sunglasses order could plausibly be returned instead, but the customer wants a different frame color of the same product, which requires the exchange tool; the exact new frame color was only specified in the earlier turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__005",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My pending order #W8327915 has the black frame, brown lens, polarized plastic sunglasses. Can you switch the lens color to green instead, keeping everything else the same?"},
+      {"role": "assistant", "content": "The black frame, green lens, polarized plastic pair is $287.79, which is $3.15 less than what's on the order now. That order was paid with a gift card, but I also see a credit card on your account -- which should get the $3.15 refund?"},
+      {"role": "user", "content": "Send it to the credit card, please, not the gift card."}
+    ],
+    "user_message": "Okay, go ahead and update it.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_items", "arguments": {"order_id": "#W8327915", "item_ids": ["4358482460"], "new_item_ids": ["4548300368"], "payment_method_id": "credit_card_7772870"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "The user's mention of routing money to the credit card could tempt an agent into treating this as a payment-method change on the whole order, but the actual request is a lens-color item swap where the credit card is only the refund destination for the price difference.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__006",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The hiking boots on my delivered order #W4817420 are size 7, leather, waterproof. They're too narrow -- can I get a size 8 instead? I don't mind giving up the waterproofing if that's what's in stock, synthetic material is fine."},
+      {"role": "assistant", "content": "The size 8, synthetic, non-waterproof pair is available at $253.54, which is $9.20 more than the $244.34 you paid. Your gift card on file has a $69.00 balance, which covers that. Should I charge the difference there?"},
+      {"role": "user", "content": "Yes, gift card works."}
+    ],
+    "user_message": "Alright, please process that exchange now.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W4817420", "item_ids": ["3812493782"], "new_item_ids": ["3613716226"], "payment_method_id": "gift_card_8168843"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Since the boots are delivered and eligible for a return, a shallow reading could suggest a refund, but the customer explicitly wants a different size of the same boots, confirmed in the prior turn, which calls for an exchange.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__007",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "On my pending order #W2443586, the hiking boots are size 7, synthetic, non-waterproof. Please bump those up to size 8, same synthetic material and no waterproofing."},
+      {"role": "assistant", "content": "The size 8 synthetic, non-waterproof pair is $253.54, a $4.55 refund from the $258.09 you paid. Should that go back to the PayPal account the order was paid with?"},
+      {"role": "user", "content": "Yes, refund it to the PayPal."}
+    ],
+    "user_message": "Great, please make that swap now.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_items", "arguments": {"order_id": "#W2443586", "item_ids": ["1437889264"], "new_item_ids": ["3613716226"], "payment_method_id": "paypal_7859314"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Both tools operate on a pending order, but nothing in the conversation touches the shipping address -- the customer only asked for a size change, whose target size and refund destination were set two turns earlier.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__008",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The fleece jacket on delivered order #W1840144 is XL, navy, half-zip. Can I swap it for a size L, black, full-zip instead?"},
+      {"role": "assistant", "content": "The L, black, full-zip jacket is $159.92, which is $2.31 more than the $157.61 you paid. The order was originally paid with PayPal, but you also have a credit card on file -- which one should I charge the $2.31 to?"},
+      {"role": "user", "content": "Charge the credit card, not PayPal."}
+    ],
+    "user_message": "Yes, let's do the exchange.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W1840144", "item_ids": ["8590708195"], "new_item_ids": ["9385662952"], "payment_method_id": "credit_card_3240550"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A delivered jacket is return-eligible, which could tempt a careless agent, but the customer wants a different size and zip style of the same jacket, plus the exact payment card was only specified in the earlier turn -- both point to an exchange.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__009",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My pending order #W8367380 has an L, red, half-zip fleece jacket. Can you change that to XL, navy, still half-zip?"},
+      {"role": "assistant", "content": "The XL navy half-zip jacket is $157.61, which is $4.43 more than the $153.18 you paid. The order was charged to your credit card, but you also have a gift card on file -- should the extra $4.43 come from the gift card instead?"},
+      {"role": "user", "content": "Yes please, use the gift card, not the credit card."}
+    ],
+    "user_message": "Okay, go ahead with that change.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_items", "arguments": {"order_id": "#W8367380", "item_ids": ["8733974883"], "new_item_ids": ["8590708195"], "payment_method_id": "gift_card_1994993"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Cancellation is another valid pending-order action that could tempt an agent scanning only the current short confirmation, but the customer has been negotiating a size/color swap the whole time, and the chosen new item and gift card only appear in earlier turns.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__010",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The cycling helmet on delivered order #W3113816 is a size L, blue, high ventilation. I'd like to switch to a size M, red, but medium ventilation is fine too if that's what's available."},
+      {"role": "assistant", "content": "The M, red, medium-ventilation helmet is available at $206.26, which is $3.65 less than the $209.91 you paid. Your gift card on file has a $36.00 balance -- want the refund sent there instead of the credit card that paid for the order?"},
+      {"role": "user", "content": "Yes, send it to the gift card."}
+    ],
+    "user_message": "Sounds good, please go ahead with that.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W3113816", "item_ids": ["2206116040"], "new_item_ids": ["1719127154"], "payment_method_id": "gift_card_6023546"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The helmet is delivered and return-eligible, which is tempting, but the customer wants a different size/color helmet of the same product rather than a refund, and the chosen variant and refund destination were only stated earlier.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__011",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The cycling helmet on my pending order #W8557584 is size S, white, low ventilation. It's too stuffy for summer rides -- can you bump the ventilation up to medium? I'd like black instead of white too, if that's an option."},
+      {"role": "assistant", "content": "The S, black, medium-ventilation helmet is $204.47, which is $24.45 more than the $180.02 you paid. Your gift card on file has a $91.00 balance, more than enough to cover it -- should I charge the gift card for the difference?"},
+      {"role": "user", "content": "Yes, use the gift card."}
+    ],
+    "user_message": "Great, please make the change.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_items", "arguments": {"order_id": "#W8557584", "item_ids": ["1596993217"], "new_item_ids": ["5537798301"], "payment_method_id": "gift_card_3749819"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Talk of the gift card covering a charge could tempt an agent into treating this as a payment-method change for the whole order, but the underlying request is a color/ventilation item swap and the gift card is only paying the price difference.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__012",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The sneakers on my delivered order #W3445693 are a size 6, black, synthetic. They run small -- I'd like to go up to a size 10, and I'm fine with the gray leather pair if that's what's in stock at that size."},
+      {"role": "assistant", "content": "The size 10, gray, leather sneakers are available at $189.50, which is $3.05 more than the $186.45 you paid. Your order was paid by credit card -- should the extra $3.05 go there as well?"},
+      {"role": "user", "content": "Yes, same card."}
+    ],
+    "user_message": "Perfect, go ahead and process that exchange.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W3445693", "item_ids": ["6477915553"], "new_item_ids": ["2509076505"], "payment_method_id": "credit_card_1620755"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The sneakers are delivered and return-eligible, tempting a careless agent, but the customer wants a larger size of the same product rather than a refund, and the exact new variant was agreed to two turns earlier.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__013",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My pending order #W4802126 has an L, red, half-zip fleece jacket. I'd like to switch it to XL, navy, full-zip instead."},
+      {"role": "assistant", "content": "Let me check that variant before we make the change."}
+    ],
+    "user_message": "Actually hold on -- before you touch anything, can you just confirm that XL navy full-zip jacket is actually in stock?",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "7528037711"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The prior turns already contain a fully-specified size/color/zip-style swap, which could tempt an agent to jump straight to modifying the order, but the current message explicitly asks only for a stock check first -- the correct next action is the lookup, not the mutation.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__014",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The hiking boots on my delivered order #W5272531 are size 10, leather, waterproof. I'd like to size up to 11, keeping the leather and waterproofing."},
+      {"role": "assistant", "content": "Got it -- let me look into that size before we take any action."}
+    ],
+    "user_message": "Can you check whether that size 11 leather waterproof pair is actually available before we go any further?",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "6159919747"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The desired new size/material variant is already spelled out in the prior turn, which could tempt an agent to place the exchange immediately, but the current message only asks for an availability check -- placing the exchange before confirming the variant is real skips a needed step.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__015",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I'm trying to remember -- I ordered a pair of black synthetic sneakers a few weeks ago and paid part of it with a gift card. I think the order number was #W7449508."},
+      {"role": "assistant", "content": "Yes, I see that order under your account."}
+    ],
+    "user_message": "Did that one ever actually show as delivered? I want to know before I decide whether to send anything back.",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W7449508"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer is hinting at a possible return, which could tempt an agent to jump straight to the return tool, but they haven't named an item to return or confirmed the order actually arrived -- the correct next step is checking the order's current status, whose order id only appears in the earlier turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__016",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I want to ask about my pending order #W9132840 -- the one with the two cycling helmets on it."},
+      {"role": "assistant", "content": "I have that order pulled up -- it has a medium red high-ventilation helmet and a large black low-ventilation helmet, both from our cycling helmet line."}
+    ],
+    "user_message": "Before I decide what to change, what ventilation levels does that helmet line even come in?",
+    "expected_tool_calls": [
+      {"name": "get_product_details", "arguments": {"product_id": "7765186836"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The pending order context could tempt an agent to treat this as a request to change one of the helmets, but the customer is only asking a general product question about available options before deciding anything -- the product id itself is only established in the earlier turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__017",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My pending order #W7534214 has a size 9, white, mesh running shoe with a rubber sole. I want to size up to 10, still white, and I'd take the leather pair with an EVA sole if that's what's available."},
+      {"role": "assistant", "content": "Let me look into that before we change anything."}
+    ],
+    "user_message": "Quick check first -- is that size 10 white leather pair actually in stock?",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "1775591963"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The exact target size and material were already specified in the prior turn, tempting an agent to modify the order right away, but the current message only asks to verify availability first -- the target item id needed for the lookup is only in the earlier turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__apparel_footwear_exchanges__018",
+    "category": "requires_earlier_context",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I might want to exchange the red, high-ventilation, large cycling helmet on my delivered order #W7762997 for a different size, but I'm not sure yet."},
+      {"role": "assistant", "content": "No problem, take your time -- happy to help whenever you decide."}
+    ],
+    "user_message": "Actually, before I decide, can you remind me what payment methods I have saved on my account?",
+    "expected_tool_calls": [
+      {"name": "get_user_details", "arguments": {"user_id": "sofia_lee_8857"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The earlier turn already floats a possible helmet size exchange, which could tempt an agent to place that exchange, but the customer explicitly said they haven't decided yet and only asked to see their saved payment methods -- there is no new item or payment method chosen to act on.",
+    "ambiguity_note": ""
+  }
+]
