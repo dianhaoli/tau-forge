@@ -9,6 +9,31 @@ Companion design doc: `qwen3-4b-rl-toolcalling-plan.md` (referenced by the origi
 task spec; not yet present in this repo — add it here if/when available for
 continuity across sessions).
 
+## Held-out data policy — all 114 real retail tasks, always
+
+**All 114 real τ²-bench retail tasks — the full `train` (74) + `test` (40) split,
+not just `test` — are permanently off-limits to anything that updates real model
+weights.** This is a deliberate project-level decision, and it overrides τ²-bench's
+own upstream convention (where `train` is meant to be trained on and only `test` is
+held out) -- final evaluation here runs against **all 114**, so training on the
+`train` half would contaminate that evaluation.
+
+Concretely:
+- No GRPO training run, and no *live* (real-model) GRPO smoke test, may use any of
+  the 114 real retail tasks as training data. Live smoke tests use the Phase 2
+  synthetic pilot data (`data/synthetic/raw/*.json`) instead.
+- Phase 6's smoke test (below) is the one sanctioned exception, and only because it
+  never touches model weights at all -- it runs two scripted stand-in policies
+  (`gold`, `noisy`) through the scoring code on CPU to validate the harness itself,
+  not a trained model. No neural network has ever seen any of the 114 tasks in this
+  repo.
+- If a live smoke test is ever run against real data *for validation purposes only*
+  (not recommended -- the synthetic pilot data validates the same code path without
+  this risk), the resulting checkpoint must be discarded and Phase 7's real run
+  started from a fresh, untouched copy of the base model. Given the synthetic data
+  works just as well for that check with none of this discipline required, prefer
+  it and skip this case entirely.
+
 ## Phase status
 
 | Phase | Description | Status |
@@ -19,8 +44,8 @@ continuity across sessions).
 | 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
-| 6 | Harness smoke test on real 74 train tasks | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
-| 7 | Real GRPO training run | Not started — needs a GPU box, none available in this environment |
+| 6 | Harness smoke test on real 74 train tasks (scoring code only, no model) | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
+| 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not started — needs a GPU box, none available in this environment |
 | 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Not started |
 
 Each phase after the current one is gated on a STOP checkpoint for review — see the
@@ -307,9 +332,13 @@ constant. Full per-task breakdown in `data/trusted/phase6_smoke_report.json`
 **Scope note -- no GRPO steps run here.** This environment has no GPU and no ML
 training stack (`torch`/`trl`/`vllm` all absent -- confirmed, not assumed). This
 smoke test validates the *plumbing* a GRPO trainer sits on top of using scripted
-policies as a stand-in for a live model; it does not run the "50-100 step GRPO
-smoke test" the Phase 6 spec also calls for. That needs a GPU box (Phase 7)
--- draft EC2 setup notes are being worked out with the user separately.
+policies as a stand-in for a live model, not a trained one -- which is exactly why
+it's the sanctioned exception to the held-out-data policy above (no model weights
+are ever produced or updated here). It does not run the "50-100 step GRPO smoke
+test" the Phase 6 spec also calls for -- that needs a GPU box (Phase 7) and, per
+the held-out policy, must run against the **Phase 2 synthetic pilot data**, not
+these 74 real tasks (draft EC2 setup notes are being worked out with the user
+separately).
 
 STOP for review, per the Phase 6 spec: harness validated against real trusted
 data before resuming Phase 2/3 or attempting any GPU training.
