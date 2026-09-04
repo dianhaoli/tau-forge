@@ -106,6 +106,105 @@ time via the EC2 console or `aws ec2 describe-spot-price-history`.
   and dataset this size — "reasonable but fast" reads as "enough headroom to move
   quickly, not paying for capacity that can't be used."
 
+## Timing estimate
+
+Compute isn't the bottleneck for this run (see FLOPs section above) — wall-clock
+time scales roughly linearly with **total rollouts** `R = 541 prompts × epochs ×
+GRPO group size`. Per-rollout time has two dominant pieces (generation, training),
+plus an overhead multiplier for reward computation, generation↔training weight
+sync, logging, and checkpointing:
+
+```
+T ≈ R × [ L_completion / TP_gen  +  (L_prompt + L_completion) × 32 GFLOPs / TP_train ] × overhead
+```
+
+using `L_completion` ≈ 150 tok, `L_prompt` ≈ 1000 tok, `TP_gen` (aggregate decode
+throughput on 4x L40S) 4,000–12,000 tok/s, `TP_train` (aggregate sustained training
+FLOPs, ZeRO-2 comm overhead included) 150–300 TFLOPS, and 32 GFLOPs/token = 24
+(policy fwd+bwd) + 8 (reference-model forward, for the KL term). Overhead
+multiplier: 1.15x (optimistic) – 1.5x (conservative).
+
+That works out to **~0.15–0.4 sec/rollout** (~3–7 rollouts/sec) on `g6e.12xlarge`:
+
+| Total rollouts R | Optimistic | Conservative |
+|---|---|---|
+| 5,000 | ~13 min | ~35 min |
+| 17,312 *(541 × 4 epochs × group 8)* | ~45 min | ~2.0 hr |
+| 30,000 | ~1.3 hr | ~3.5 hr |
+| 50,000 | ~2.2 hr | ~5.9 hr |
+| 100,000 | ~4.3 hr | ~11.8 hr |
+
+`R = 541 × epochs × group_size` for whatever hyperparameters end up chosen.
+
+**Weakest parts of this estimate** — not modeled precisely, and the reason to treat
+the table as a planning number, not a commitment:
+- Reward computation (`RetailEnv` deep-copy + tool exec + diff, per rollout, on
+  CPU) — folded into the overhead multiplier, but could dominate if not
+  parallelized across the box's ~48 vCPUs.
+- Generation↔training weight-sync cost — a known real bottleneck in RL
+  post-training pipelines, depends on implementation (in-process weight sharing
+  vs. reload-from-disk) that doesn't exist yet.
+- All throughput numbers are first-principles, not measured on this model/box.
+
+The smoke test below (50-100 steps) replaces this estimate with a real measured
+seconds/rollout number — plug that into the same formula for a trustworthy
+full-run estimate instead of the first-principles range.
+
+## Methodology risks — and why full-parameter GRPO needs more than just the box
+
+Getting the instance right doesn't by itself mean the training run works well.
+Three risks are specific to this project's data/setup, not to the infra, and are
+worth deciding on *before* spending GPU-hours on the full run:
+
+1. **GRPO's signal needs within-group reward variance — untested here.** GRPO
+   normalizes advantage by each group's own mean/std across its `G` sampled
+   completions. If a scenario is trivially easy (base model gets it right every
+   time) or too hard/ambiguous (consistently wrong for reasons unrelated to
+   sampling), every sample in the group gets the same reward and that prompt
+   contributes ~zero gradient. **Phase 3 stage 4 (difficulty calibration) was never
+   done** — nobody has measured how hard the 541 scenarios are for
+   `Qwen3-4B-Instruct-2507` zero-shot. Running the full training job before knowing
+   this risks a lot of compute going into degenerate, zero-signal groups.
+2. **Full-parameter capacity + a small, static, repeatedly-seen prompt set is real
+   overfitting/reward-hacking exposure.** 541 unique prompts seen across multiple
+   epochs, full-parameter updates (much more capacity to memorize or exploit than
+   LoRA would allow), against an engineered reward function that already has one
+   documented edge case (`transfer_to_human_agents`'s constant return value, fixed
+   in Phase 4 but a sign more exist). Mitigate with a meaningfully tuned KL penalty
+   against the frozen reference, a small learning rate (RLVR full fine-tunes
+   typically want `1e-6`–`5e-6`, well below supervised-FT LRs), held-out-eval-based
+   checkpoint selection rather than last-step, and watching the reward-tier
+   distribution (Phase 4's 0 / 0.2 / 0.3-1.0 tiers) over training for a shift toward
+   suspiciously uniform near-miss behavior.
+3. **Train/eval mismatch already flagged in the README.** Every synthetic scenario
+   is a single decision point graded in isolation; real τ²-bench tasks average 4.8
+   sequential tool calls per conversation (Phase 2 section). Training here is
+   closer to a contextual bandit than long-horizon RL — good for GRPO stability
+   (no credit-assignment problem), but it means strong training reward doesn't
+   guarantee proportional Phase 8 live-benchmark improvement, since Phase 8 chains
+   errors across multiple sequential actions that this training never rehearses
+   together.
+
+**Concrete recommended approach, in order:**
+1. Zero-shot base-model pass over all 541 scenarios (inference only, no training)
+   — gives the missing difficulty signal and a pre-training baseline.
+2. The Phase 6-flagged 50-100 step GRPO smoke test — confirms the
+   generation→training→reward loop works end-to-end and gives a real
+   seconds/rollout number (see Timing estimate above) before committing to a full
+   run blind.
+3. Tuned KL coefficient, small LR with warmup, GRPO group size ~16 (better
+   advantage estimate given how few unique prompts exist).
+4. Held-out eval during training, checkpoint by best held-out score rather than
+   final step.
+5. Track tier-distribution / generation-length / tool-diversity metrics during
+   training as cheap reward-hacking tripwires.
+
+None of this changes the instance pick — `g6e.12xlarge` runs whichever of these
+gets decided. It does mean "will it work well" is a methodology question the
+hardware can't answer by itself, and steps 1-2 above are cheap enough to be the
+actual first thing run on the box, not something skipped on the way to the full
+job.
+
 ## AMI and software
 
 Use an AWS Deep Learning AMI (Ubuntu, GPU PyTorch variant) so CUDA/cuDNN/NVIDIA
@@ -149,7 +248,37 @@ re-adding only if you deliberately switch back.
    that costs money and should be a deliberate, explicit action.
 3. Run `infra/ec2_bootstrap.sh` on the box to get the repo + training deps
    installed.
-4. Only then does Phase 7 itself (writing the full-parameter GRPO training script
-   with a ZeRO-2 `accelerate`/`deepspeed` config, wiring it to
+4. Zero-shot base-model pass over all 541 scenarios (difficulty signal +
+   baseline) — cheap, inference-only, do this before writing a line of training
+   code.
+5. The 50-100 step GRPO smoke test (Phase 6 spec) — validates the loop end-to-end
+   and produces a real seconds/rollout number to replace the Timing estimate
+   above.
+6. Only then does Phase 7's full run itself (the full-parameter GRPO training
+   script with a ZeRO-2 `accelerate`/`deepspeed` config, wiring it to
    `tau_forge.reward`/`tau_forge.harness`/`tau_forge.envs`) start — still gated on
    its own explicit go-ahead per the phase-status table.
+
+## Why finish this setup
+
+Every phase after the current one is gated on an explicit go-ahead (README,
+"Phase status") — Phase 7 has been sitting as **"Not started — needs a GPU box,
+none available in this environment"** since Phase 6 passed. That's not a soft
+blocker: Phases 0, 1, 4, and 6 are all done and green (env wrapper, reward
+function adversarially tested, harness validated against all 74 real trusted
+tasks scoring a perfect 1.0), and Phase 2/3-stage-1 produced 541 rule-checker-clean
+synthetic scenarios — the entire project is built and validated up to the one step
+that actually produces a trained model. Phase 8 (the real evaluation against
+τ²-bench retail, airline zero-shot, and BFCL v3 — the actual point of this repo)
+can't start until Phase 7 has a checkpoint to evaluate. Finishing this setup is the
+difference between "everything is ready and waiting" and "everything is ready
+except the one step nothing downstream can happen without."
+
+What "finishing this setup" concretely unblocks, once you give the go-ahead:
+launch `g6e.12xlarge` → run `infra/ec2_bootstrap.sh` → run the zero-shot pass and
+smoke test above to de-risk the full run methodologically (not just
+infra-wise) → write and run the actual full-parameter GRPO training script → get a
+checkpoint → Phase 8 evaluates it. Every piece up to "write and run the training
+script" is either already done (this doc/scripts) or a cheap, fast diagnostic step
+(zero-shot pass, smoke test) — the setup work here removes the excuse for Phase 7
+to keep sitting idle once you're ready to say go.

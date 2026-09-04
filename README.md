@@ -45,7 +45,7 @@ Concretely:
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
 | 6 | Harness smoke test on real 74 train tasks (scoring code only, no model) | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
-| 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not started — needs a GPU box, none available in this environment. AWS EC2 setup (instance sizing, bootstrap script) prepped in `docs/phase7_aws_setup.md` / `infra/`; training itself still awaits go-ahead |
+| 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not started — needs a GPU box, none available in this environment. AWS EC2 setup fully prepped in `docs/phase7_aws_setup.md` / `infra/`: full-parameter GRPO (not LoRA — this is RLVR), `g6e.12xlarge` (4x L40S, ZeRO-2) sizing, timing model, and a methodology risk writeup (difficulty calibration gap, overfitting/reward-hacking mitigations, train/eval mismatch) with a recommended zero-shot-pass + smoke-test-first sequence; training itself still awaits go-ahead |
 | 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Not started |
 
 Each phase after the current one is gated on a STOP checkpoint for review — see the
