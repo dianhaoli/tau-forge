@@ -1,0 +1,18 @@
+{"id": "policy_violation__electronics_returns_exchanges__001", "one_line": "Delivered order; user wants to exchange laptop for headphones, a different product type entirely."}
+{"id": "policy_violation__electronics_returns_exchanges__002", "one_line": "Delivered order; user wants to exchange espresso machine item for a vacuum cleaner item in same order."}
+{"id": "policy_violation__electronics_returns_exchanges__003", "one_line": "Delivered order; user wants to exchange smart thermostat for an air purifier, different product types."}
+{"id": "policy_violation__electronics_returns_exchanges__004", "one_line": "Delivered espresso machine exchange to pricier model; gift card balance far short of price difference."}
+{"id": "policy_violation__electronics_returns_exchanges__005", "one_line": "Delivered espresso machine exchange to named variant; gift card balance only $2, nowhere near diff."}
+{"id": "policy_violation__electronics_returns_exchanges__006", "one_line": "Delivered smart thermostat exchange to a described-but-unavailable Apple HomeKit variant; needs product lookup."}
+{"id": "policy_violation__electronics_returns_exchanges__007", "one_line": "Delivered keyboard exchange to a named item id that is actually out of stock; needs item lookup first."}
+{"id": "policy_violation__electronics_returns_exchanges__008", "one_line": "Delivered digital camera return; user wants refund to a different, non-original credit card on file."}
+{"id": "policy_violation__electronics_returns_exchanges__009", "one_line": "Delivered headphones return; user wants refund to a second, non-original credit card, not the original."}
+{"id": "policy_violation__electronics_returns_exchanges__010", "one_line": "Delivered action camera order has 1 unit; user insists on returning two, quantity mismatch, needs order check."}
+{"id": "policy_violation__electronics_returns_exchanges__011", "one_line": "Delivered single-tablet order; user asks to also return a bundled charger item that isn't actually on the order."}
+{"id": "policy_violation__electronics_returns_exchanges__012", "one_line": "Order already had its one allowed exchange (laptop); user now wants to exchange a second item too."}
+{"id": "policy_violation__electronics_returns_exchanges__013", "one_line": "Order already had its one allowed return (earbuds); user now wants to return the digital camera too."}
+{"id": "policy_violation__electronics_returns_exchanges__014", "one_line": "Pending order already had its one allowed item modification; user wants to change the same item again."}
+{"id": "policy_violation__electronics_returns_exchanges__015", "one_line": "Pending espresso machine order; user asks to 'modify' item to the exact same variant it already is."}
+{"id": "policy_violation__electronics_returns_exchanges__016", "one_line": "Authenticated user asks to also return a smart thermostat from a friend's separate, different-owner order."}
+{"id": "policy_violation__electronics_returns_exchanges__017", "one_line": "Authenticated user asks to exchange a digital camera on an ex-roommate's order under a different account."}
+{"id": "policy_violation__electronics_returns_exchanges__018", "one_line": "Delivered espresso machine exchange to a named variant; gift card balance $40 far short of price diff."}
