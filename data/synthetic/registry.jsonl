@@ -253,3 +253,37 @@
 {"id": "requires_earlier_context__order_state_confusion__016", "one_line": "Pending running shoes resize negotiated earlier with exact item ids; current turn is bare confirmation."}
 {"id": "requires_earlier_context__order_state_confusion__017", "one_line": "Return already requested on puzzle order per earlier turn; user asks refund timing, lookup only."}
 {"id": "requires_earlier_context__order_state_confusion__018", "one_line": "User previously identified with one pending order noted; now asks to see whole account, needs recalled user id."}
+{"id": "ambiguous__address_payment_modification__001", "one_line": "User with 3 pending orders asks to change shipping address on 'my order' without naming which one."}
+{"id": "ambiguous__address_payment_modification__002", "one_line": "User references 'the order with the makeup kit' but two of their pending orders both contain one."}
+{"id": "ambiguous__address_payment_modification__003", "one_line": "User with 4 pending orders asks to switch payment on 'my order' to their credit card, order unnamed."}
+{"id": "ambiguous__address_payment_modification__004", "one_line": "User asks to switch payment on 'the order with the cycling helmet' but two orders each contain one."}
+{"id": "ambiguous__address_payment_modification__005", "one_line": "User asks to update payment on their 'most recent' order; no order-date field exists to resolve this."}
+{"id": "ambiguous__address_payment_modification__006", "one_line": "User asks to switch order payment to 'my other card'; both a spare credit card and a gift card qualify."}
+{"id": "ambiguous__address_payment_modification__007", "one_line": "User asks to move order payment from PayPal to 'my credit card'; two different credit cards are on file."}
+{"id": "ambiguous__address_payment_modification__008", "one_line": "User asks to switch order payment to 'my card'; user has a gift card plus two different credit cards."}
+{"id": "ambiguous__address_payment_modification__009", "one_line": "User gives a new address and says 'update my address'; unclear if account default or their pending order."}
+{"id": "ambiguous__address_payment_modification__010", "one_line": "User gives a new address with no order reference; unclear if it's their account default or the pending order."}
+{"id": "ambiguous__address_payment_modification__011", "one_line": "User reports their address changed with a new address; account-vs-order scope is unstated."}
+{"id": "ambiguous__address_payment_modification__012", "one_line": "User gives new address; their pending order and account default already ship to two different places."}
+{"id": "ambiguous__address_payment_modification__013", "one_line": "User with 2 pending orders, each on a different card, asks to switch 'my order's' payment without naming which order."}
+{"id": "ambiguous__address_payment_modification__014", "one_line": "User asks to update address on 'the order with the tea kettle' but two of their pending orders both contain one."}
+{"id": "ambiguous__address_payment_modification__015", "one_line": "User with 4 pending orders (3 same address, 1 different) asks to update 'my order's' address, unnamed."}
+{"id": "ambiguous__address_payment_modification__016", "one_line": "User with 2 pending orders shipping to different addresses asks to update 'my order's' address, unnamed."}
+{"id": "ambiguous__address_payment_modification__017", "one_line": "User with 2 pending orders (both on PayPal) and 2 credit cards asks to switch 'my order' to 'a credit card'."}
+{"id": "ambiguous__electronics_returns_exchanges__001", "one_line": "Two delivered orders hold the identical security camera variant; user asks to return it, no order named."}
+{"id": "ambiguous__electronics_returns_exchanges__002", "one_line": "Two delivered laptop orders differ by RAM; user asks to exchange 'my laptop' for more RAM, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__003", "one_line": "Two delivered speaker orders; user says 'take care of it', unclear which order and return vs exchange."}
+{"id": "ambiguous__electronics_returns_exchanges__004", "one_line": "Two pending tablet orders differ by storage/color; user asks to change storage size, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__005", "one_line": "Two pending smart watch orders; user asks to switch band material, no order or target material given."}
+{"id": "ambiguous__electronics_returns_exchanges__006", "one_line": "Two pending Bluetooth speaker orders in different colors; user asks to switch to 'the other color', order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__007", "one_line": "Two pending espresso machine orders differ by pressure; user asks to change pressure, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__008", "one_line": "Digital camera in one pending and one delivered order; user asks to return 'my camera', order unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__009", "one_line": "Action camera in one delivered and one pending order; user asks to return it, order unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__010", "one_line": "Tablet in one pending and one delivered order; user asks to exchange for more storage, order unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__011", "one_line": "Named pending order holds two distinct digital cameras; user asks to change zoom on 'the' camera, item unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__012", "one_line": "Named pending order holds two distinct espresso machines; user asks to swap capacity on 'the' machine, item unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__013", "one_line": "Delivered order has smart watch and keyboard; user forgets which one is broken and asks to return 'it'."}
+{"id": "ambiguous__electronics_returns_exchanges__014", "one_line": "Named delivered order has two distinct wireless earbuds units; user asks to return 'the earbuds', quantity unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__015", "one_line": "User has two credit cards, asks to charge exchange price difference to 'my credit card', card unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__016", "one_line": "Two pending laptop orders differ by processor; user asks to upgrade processor, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__017", "one_line": "Bluetooth speaker in pending, delivered, and cancelled orders; user asks for color exchange, order unresolved."}

@@ -1,0 +1,359 @@
+[
+  {
+    "id": "ambiguous__address_payment_modification__001",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is sofia.rossi2645@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sofia -- I've located your account. What can I help you with?"
+      }
+    ],
+    "user_message": "I need to change the shipping address on my order. I moved and want the package sent to the new place.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Sofia has three pending orders (#W5918442, #W5500815, #W2818151). A hasty agent might just grab the first one it finds and apply the new address to it, but nothing in her message narrows down which order she means, and modify_pending_order_address can only target one order at a time.",
+    "ambiguity_note": "Sofia has three pending orders -- #W5918442, #W5500815, and #W2818151 -- and her message says only 'my order,' with no order id or distinguishing detail. Two of the three currently ship to her Austin address and one to a different Jacksonville address, so guessing wrong would silently redirect the wrong shipment. The agent must ask which order before calling modify_pending_order_address."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__002",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sofia Rossi, zip 78784."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sofia -- you're verified. How can I help?"
+      }
+    ],
+    "user_message": "Can you update the address on the order with the makeup kit in it? I moved to a new place.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Both #W5500815 and #W2818151 contain a Makeup Kit line item (different variants), so 'the order with the makeup kit' does not uniquely identify one of Sofia's three pending orders. An agent that jumps straight to the first Makeup Kit order it finds would risk changing the wrong shipment.",
+    "ambiguity_note": "Sofia has two different pending orders that each contain a Makeup Kit item: #W5500815 (item 7902309762) and #W2818151 (item 4624254797). Her description 'the order with the makeup kit' matches both, so the agent cannot tell which order to modify without asking her to disambiguate."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__003",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Ethan Lopez, zip code 43275."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Ethan -- I've verified your identity. What would you like to do?"
+      }
+    ],
+    "user_message": "Can you switch the payment method on my order to my credit card, please?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Ethan has four pending orders. An agent tempted to move quickly might apply the switch to whichever order it looked up first, but two of the four are already paid by his credit card and two by his gift card, and he never says which order he means.",
+    "ambiguity_note": "Ethan has four pending orders (#W6779827, #W6426438, #W8073920, #W9409203). His message says only 'my order,' but two of them are already paid via credit_card_9789590 and two via gift_card_7219486, so 'switch to my credit card' does not identify a single target -- the agent must ask which order before calling modify_pending_order_payment."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__004",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Ethan Lopez, zip 43275."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Ethan -- you're verified. What can I do for you?"
+      }
+    ],
+    "user_message": "Switch the payment on the order with the cycling helmet to my gift card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Two of Ethan's pending orders each contain a different Cycling Helmet item, so 'the order with the cycling helmet' matches both #W8073920 and #W9409203. Picking either one without confirming risks moving the payment method on the wrong order.",
+    "ambiguity_note": "Ethan has two pending orders that each contain a Cycling Helmet variant: #W8073920 (item 5886093635) and #W9409203 (item 7811981098). His description does not distinguish between them, so the agent cannot determine which order's payment method to change without asking."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__005",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Ethan Lopez again, zip 43275."
+      },
+      {
+        "role": "assistant",
+        "content": "Welcome back, Ethan -- you're verified. What do you need?"
+      }
+    ],
+    "user_message": "Can you update the payment method on my most recent order to my gift card?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "An agent might pick whichever pending order it happens to return first from the database and treat that as 'most recent,' but order records carry no placement date or timestamp field, so there is no way to determine which of Ethan's four pending orders is actually the newest.",
+    "ambiguity_note": "Ethan has four pending orders (#W6779827, #W6426438, #W8073920, #W9409203), but the order record schema has no date or timestamp field, so 'my most recent order' cannot be determined from any data the agent can look up. The agent must ask Ethan to identify the order directly (by id or contents) rather than guessing which one is newest."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__006",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email's isabella.lopez3271@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Isabella -- I've found your account. How can I help?"
+      }
+    ],
+    "user_message": "Please switch the payment on my order to my other card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Isabella has a Mastercard currently on the order, a Visa credit card, a gift card, and a PayPal account. An agent might assume 'other card' means the Visa and switch straight to it, but the gift card is just as plausibly what a customer means by 'card,' and picking the wrong one changes both which balance is drawn from and the refund timing rules.",
+    "ambiguity_note": "Isabella's pending order #W4923227 is currently paid with credit_card_8554680 (Mastercard). She also has credit_card_8897086 (Visa), gift_card_8245350 (balance $60), and paypal_1621947 on file. 'My other card' could mean the Visa credit card or the gift card -- both are commonly called 'cards' and both differ from the current payment method -- so the agent cannot resolve payment_method_id without asking which one she means."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__007",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sophia Thomas, zip 75396."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sophia -- you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "Can you move my order's payment from PayPal to my credit card?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Sophia has two credit cards on file. An agent might default to whichever one appears first in her profile, but nothing in her message picks between them, and the two cards are different accounts with different balances/statements, so guessing has real consequences.",
+    "ambiguity_note": "Sophia's pending order #W4862767 is currently paid via paypal_5297429. She has two credit cards on file -- credit_card_7326294 (Visa) and credit_card_1034663 (Mastercard) -- and her message just says 'my credit card,' not which one, so the agent must ask before calling modify_pending_order_payment."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__008",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is olivia.khan2360@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Olivia -- I've pulled up your account. What do you need?"
+      }
+    ],
+    "user_message": "Switch my order's payment method to my card, please.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Olivia has a gift card and two different credit cards, none of which is the PayPal account currently on the order. An agent might default to the first credit card it sees, but 'my card' is genuinely ambiguous across three eligible non-PayPal payment methods on her account.",
+    "ambiguity_note": "Olivia's pending order #W3840181 is currently paid via paypal_4992138. She also has gift_card_8367886 (balance $58), credit_card_7376788 (Mastercard), and credit_card_1936578 (Visa) on file -- three different payment methods a customer might mean by 'my card.' The agent cannot pick a payment_method_id without asking which one."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__009",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is sofia.li7352@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sofia -- I've found your account. What can I do for you?"
+      }
+    ],
+    "user_message": "I moved. My new address is 512 Birchwood Lane, Suite 12, Denver, CO, 80203. Can you update my address?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "Sofia also has a pending order (#W8855135) that hasn't shipped yet. An agent might assume 'update my address' always means the permanent profile address and call modify_user_address, but it's equally plausible she wants just the shipping address on her still-pending order changed -- these are two different tools with different scope, and picking the wrong one either silently leaves the pending order shipping to her old address or fails to update her account for future orders.",
+    "ambiguity_note": "Sofia has one pending order, #W8855135, currently shipping to her old address. She says only 'update my address' without saying whether she means her permanent account default address (modify_user_address) or just the shipping address on the pending order (modify_pending_order_address). Both readings are plausible and the tools have different scope, so the agent must ask which she means before acting."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__010",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sophia Patel, zip 76169."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Sophia -- you're verified. How can I help?"
+      }
+    ],
+    "user_message": "Please update my address to 200 Willow Court, Suite 5, Miami, FL, 33101.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Sophia has one pending order (#W7905419). An agent might assume the request is about that order simply because it's the only order in play, but she never mentions the order at all, and a plain 'update my address' from a customer is just as often about their saved account address as any specific order.",
+    "ambiguity_note": "Sophia asks to 'update my address' and gives a new address, but never says whether she means her account default address on file or the shipping address of her pending order #W7905419. Both modify_user_address and modify_pending_order_address are valid readings of her request, so the agent must clarify scope before acting."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__011",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is isabella.gonzalez1317@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Isabella -- I've located your account. What can I help with?"
+      }
+    ],
+    "user_message": "My address changed. Please update it to 88 Ocean View Dr, Suite 2, Miami, FL, 33109.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "Isabella has one pending order (#W1258841) that hasn't shipped. An agent could default to updating her permanent profile address since that's the more common phrase, but she could equally mean just that pending order's destination, and the two tools change very different things -- one affects only this shipment, the other affects every future order too.",
+    "ambiguity_note": "Isabella gives a new address and says only 'my address changed,' with no mention of whether she wants her permanent account default updated (modify_user_address) or just the shipping address on her pending order #W1258841 (modify_pending_order_address). Nothing disambiguates scope, so the agent must ask before choosing either tool."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__012",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Harper Thomas, zip 90891."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Harper -- you're verified. What do you need?"
+      }
+    ],
+    "user_message": "I need to update my address -- I'm at 900 Baker Street, Suite 4, Seattle, WA, 98101 now.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Harper's pending order (#W7425646) already ships to a different address (Houston) than her account default (Los Angeles), so the two tools would leave the data in very different states. An agent might assume she means the order because that's the one in front of it, but she may just as easily be updating her permanent profile address and expect the order to keep shipping to Houston as originally set up.",
+    "ambiguity_note": "Harper's account default address is in Los Angeles, but her one pending order #W7425646 ships to a different address in Houston. She says 'update my address' and gives a new Seattle address without saying whether she means her account default (modify_user_address) or the pending order's shipping address (modify_pending_order_address) -- since the two are already different, guessing wrong has a concrete, visible consequence."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__013",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is lucas.johansson7741@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Lucas -- I've found your account. What can I help with?"
+      }
+    ],
+    "user_message": "Can you switch my order's payment to a different card?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Lucas has two pending orders paid with two different credit cards. An agent could resolve 'a different card' correctly for either order (since he only has two cards total), but that doesn't help it know which order he's even asking about -- committing to either #W5073920 or #W8379216 without confirmation risks changing the wrong one.",
+    "ambiguity_note": "Lucas has two pending orders: #W5073920 (currently paid via credit_card_1814983, Mastercard) and #W8379216 (currently paid via credit_card_1864112, Visa). He says 'my order' without naming either one, so even though he only has two credit cards total (making the target card resolvable once the order is known), the order itself is still ambiguous and the agent must ask which one he means."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__014",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is fatima.muller6448@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Fatima -- I've pulled up your account. What can I do for you?"
+      }
+    ],
+    "user_message": "Can you update the shipping address on the order with the tea kettle? I moved.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Fatima has four pending orders, and two of them each contain a different Tea Kettle item. An agent that finds the first Tea Kettle order and updates it risks leaving the other one shipping to her old address.",
+    "ambiguity_note": "Fatima has four pending orders (#W9962383, #W6851636, #W4160705, #W2040365). Two of them, #W9962383 (item 4238115171) and #W2040365 (item 2820119811), each contain a Tea Kettle. Her description 'the order with the tea kettle' matches both, so the agent must ask which order she means before calling modify_pending_order_address."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__015",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Evelyn Kovacs, zip 32117."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Evelyn -- you're verified. How can I help?"
+      }
+    ],
+    "user_message": "I need the address on my order updated -- I moved to a new place.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Evelyn has four pending orders. Three currently ship to the same Jacksonville address and one ships to a different San Antonio address. An agent that just picks one of the three identical-address orders to update, or assumes she means the odd one out, would be guessing without any basis in her message.",
+    "ambiguity_note": "Evelyn has four pending orders (#W5694685, #W9651773, #W7398274, #W6689278). Three ship to the same Jacksonville address and one, #W6689278, ships to a different San Antonio address. She says only 'my order,' with no order id or item description, so the agent cannot determine which of the four to update without asking."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__016",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is fatima.nguyen1348@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, Fatima -- I've found your account. What can I help with?"
+      }
+    ],
+    "user_message": "Please update the shipping address on my order, I moved recently.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Fatima has two pending orders that already ship to two different addresses in Columbus. An agent might assume she means whichever order it happens to look up first, but nothing in her message points to either #W8808563 or #W2904339 specifically.",
+    "ambiguity_note": "Fatima has two pending orders -- #W8808563 (zip 43230) and #W2904339 (zip 43211) -- already shipping to two different addresses in Columbus. She says only 'my order' with no distinguishing detail, so the agent must ask which one she wants updated before calling modify_pending_order_address."
+  },
+  {
+    "id": "ambiguous__address_payment_modification__017",
+    "category": "ambiguous",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is james.martin9857@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, James -- I've found your account. What do you need?"
+      }
+    ],
+    "user_message": "Switch the payment on my order to a credit card instead of PayPal.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "James has two pending orders, both currently paid via the same PayPal account, plus two different credit cards on file. An agent could easily lock onto the first order and first credit card it sees, but neither his target order nor his target card is identified in his message, and both matter for a correct modify_pending_order_payment call.",
+    "ambiguity_note": "James has two pending orders, #W3043531 and #W3529525, both currently paid via paypal_6661566. He also has two credit cards on file, credit_card_6932154 (Mastercard) and credit_card_7083997 (Visa). His message names neither the order nor which credit card, so the agent needs to clarify both before it can call modify_pending_order_payment with a specific order_id and payment_method_id."
+  }
+]

@@ -1,0 +1,17 @@
+{"id": "ambiguous__address_payment_modification__001", "one_line": "User with 3 pending orders asks to change shipping address on 'my order' without naming which one."}
+{"id": "ambiguous__address_payment_modification__002", "one_line": "User references 'the order with the makeup kit' but two of their pending orders both contain one."}
+{"id": "ambiguous__address_payment_modification__003", "one_line": "User with 4 pending orders asks to switch payment on 'my order' to their credit card, order unnamed."}
+{"id": "ambiguous__address_payment_modification__004", "one_line": "User asks to switch payment on 'the order with the cycling helmet' but two orders each contain one."}
+{"id": "ambiguous__address_payment_modification__005", "one_line": "User asks to update payment on their 'most recent' order; no order-date field exists to resolve this."}
+{"id": "ambiguous__address_payment_modification__006", "one_line": "User asks to switch order payment to 'my other card'; both a spare credit card and a gift card qualify."}
+{"id": "ambiguous__address_payment_modification__007", "one_line": "User asks to move order payment from PayPal to 'my credit card'; two different credit cards are on file."}
+{"id": "ambiguous__address_payment_modification__008", "one_line": "User asks to switch order payment to 'my card'; user has a gift card plus two different credit cards."}
+{"id": "ambiguous__address_payment_modification__009", "one_line": "User gives a new address and says 'update my address'; unclear if account default or their pending order."}
+{"id": "ambiguous__address_payment_modification__010", "one_line": "User gives a new address with no order reference; unclear if it's their account default or the pending order."}
+{"id": "ambiguous__address_payment_modification__011", "one_line": "User reports their address changed with a new address; account-vs-order scope is unstated."}
+{"id": "ambiguous__address_payment_modification__012", "one_line": "User gives new address; their pending order and account default already ship to two different places."}
+{"id": "ambiguous__address_payment_modification__013", "one_line": "User with 2 pending orders, each on a different card, asks to switch 'my order's' payment without naming which order."}
+{"id": "ambiguous__address_payment_modification__014", "one_line": "User asks to update address on 'the order with the tea kettle' but two of their pending orders both contain one."}
+{"id": "ambiguous__address_payment_modification__015", "one_line": "User with 4 pending orders (3 same address, 1 different) asks to update 'my order's' address, unnamed."}
+{"id": "ambiguous__address_payment_modification__016", "one_line": "User with 2 pending orders shipping to different addresses asks to update 'my order's' address, unnamed."}
+{"id": "ambiguous__address_payment_modification__017", "one_line": "User with 2 pending orders (both on PayPal) and 2 credit cards asks to switch 'my order' to 'a credit card'."}

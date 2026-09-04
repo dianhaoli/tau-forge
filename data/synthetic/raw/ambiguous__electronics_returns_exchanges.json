@@ -1,0 +1,257 @@
+[
+  {
+    "id": "ambiguous__electronics_returns_exchanges__001",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Lee, sofia.lee5283@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, I've pulled up your account. How can I help today?"}
+    ],
+    "user_message": "The indoor security camera I bought keeps disconnecting from Wi-Fi. Can you process a return for it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A model could see the Indoor Security Camera line item show up on a user lookup and immediately call the return on the first matching order without asking which of the two identical-item orders the customer means.",
+    "ambiguity_note": "Sofia has two delivered orders (#W7762997 and #W4143549) that both contain the exact same Indoor Security Camera variant (item 6867855179, $319.53). Nothing in the conversation indicates which order's unit is the disconnecting one, and return_delivered_order_items requires a specific order_id -- guessing either order risks returning the wrong purchase's item."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__002",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hey, it's Harper Brown, harper.brown3965@example.com."},
+      {"role": "assistant", "content": "Thanks Harper, I've found your account. What can I help with?"}
+    ],
+    "user_message": "I want to exchange my laptop for one with more RAM.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Seeing two laptop-containing delivered orders, a model might pick the higher-priced one or the most recently placed one and issue the exchange directly instead of asking which order the customer means.",
+    "ambiguity_note": "Harper has two delivered orders each containing a different Laptop configuration: #W1840144 (i7, 32GB RAM) and #W2693718 (i7, 16GB RAM). Only the 16GB one would sensibly need a RAM upgrade, but the customer never names an order, and exchange_delivered_order_items requires a specific order_id and item_id -- inferring the target order from the RAM detail would be guessing her intent rather than confirming it."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__003",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "This is Mason Sanchez, mason.sanchez2341@example.com."},
+      {"role": "assistant", "content": "Thanks Mason, you're verified. What's going on?"}
+    ],
+    "user_message": "Something's wrong with the Bluetooth speaker I got -- can you take care of it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A model might assume a defect implies wanting a replacement and default to exchange_delivered_order_items on whichever speaker order it finds first, without confirming either the order or whether the customer actually wants a refund instead.",
+    "ambiguity_note": "Mason has two delivered orders each containing a Bluetooth Speaker (#W6209538, blue, and #W9342124, black). Two things are unresolved: which order has the problem speaker, and whether 'take care of it' means a return (refund via return_delivered_order_items) or an exchange for a new unit (exchange_delivered_order_items) -- neither the order_id nor the intended action can be determined from this message."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__004",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Mei Kovacs, mei.kovacs4296@example.com."},
+      {"role": "assistant", "content": "Thanks Mei, I've located your account. How can I help?"}
+    ],
+    "user_message": "Can you change the tablet on my order to a different storage size?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "A model might pick whichever order appeared first when listing Mei's pending orders and issue the modification without clarifying which one she means.",
+    "ambiguity_note": "Mei has two pending orders that each contain a Tablet: #W8997398 (8-inch, 128GB, silver) and #W2022128 (7-inch, 32GB, gold). She doesn't give an order id or say which tablet, so modify_pending_order_items has no way to know which order's item to modify, and the target storage size is also unstated."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__005",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Yusuf Ahmed, yusuf.ahmed5476@example.com."},
+      {"role": "assistant", "content": "Thanks Yusuf, you're verified. What can I do for you?"}
+    ],
+    "user_message": "I'd like to switch the band material on my smart watch order.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "It's tempting to just grab the first pending order with a watch and swap the band, but neither the target order nor the destination band material has actually been established.",
+    "ambiguity_note": "Yusuf has two pending orders each with a Smart Watch: #W7007896 (black, metal band, AMOLED) and #W1302858 (gold, metal band, LCD). Both already have metal bands, so which order he means and what new material he wants are both unspecified -- modify_pending_order_items can't be called without an order_id, item_id, and new_item_id."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__006",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hey, it's Ava Nguyen, ava.nguyen2868@example.com."},
+      {"role": "assistant", "content": "Thanks Ava, I've got your account pulled up. What's up?"}
+    ],
+    "user_message": "Can you switch my Bluetooth speaker to the other color?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent could infer 'the other color' means swapping red for black (or vice versa) and just act on one order, but that guesses both which order she means and what the target variant actually is.",
+    "ambiguity_note": "Ava has two pending orders with Bluetooth Speakers in different colors: red in #W8367380 and black in #W6272294. 'The other color' is ambiguous on two fronts -- which order she's referring to, and, since both speakers are different colors of the same product, what 'the other color' even resolves to without knowing which one she started from."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__007",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "This is Juan Lopez, juan.lopez7539@example.com."},
+      {"role": "assistant", "content": "Thanks Juan, you're verified. How can I help?"}
+    ],
+    "user_message": "I want to change the pressure setting on my espresso machine order.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "With only one product type in mind, a model might not realize there are two separate orders involved and act on whichever one it finds first.",
+    "ambiguity_note": "Juan has two pending orders, each containing a different Espresso Machine: #W3386832 (9 bar, automatic) and #W4466964 (19 bar, capsule). His message doesn't name an order id or the target pressure, so modify_pending_order_items has no determinable order_id or new_item_id to act on."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__008",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Noah Sanchez, noah.sanchez7461@example.com."},
+      {"role": "assistant", "content": "Thanks Noah, I've found your account. What's going on?"}
+    ],
+    "user_message": "I want to return my digital camera, it arrived scratched.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A model could reason 'only the delivered order qualifies for return_delivered_order_items, so it must be that one' and call the tool directly -- but that's inferring the customer's intent from tool eligibility rather than confirming which order he actually means.",
+    "ambiguity_note": "Noah has a Digital Camera in two separate orders -- a pending one (#W8645374, 20MP/5x) and a delivered one (#W4864669, 30MP/10x). Only the delivered order is even eligible for return_delivered_order_items, but the message doesn't identify which camera 'arrived scratched,' and assuming it's the delivered one just because that's the only order the tool would accept is not the same as confirming it."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__009",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, it's Daiki Khan, daiki.khan2146@example.com."},
+      {"role": "assistant", "content": "Thanks Daiki, you're verified. What can I help with?"}
+    ],
+    "user_message": "The action camera I ordered isn't what I expected -- can you return it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "It's tempting to default to the delivered order since it's the only one eligible for this tool, but that assumes rather than confirms which action camera he's disappointed with.",
+    "ambiguity_note": "Daiki has an Action Camera in a delivered order (#W2329074, 5K resolution) and a separate still-pending order (#W8461477, 1080p resolution) that hasn't shipped. The message doesn't say which purchase disappointed him, and only the delivered one can go through return_delivered_order_items -- guessing risks acting on the wrong purchase or missing that the other order would need a different action (like cancellation) entirely."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__010",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sophia Hernandez, sophia.hernandez3499@example.com."},
+      {"role": "assistant", "content": "Thanks Sophia, I've pulled up your account. What can I do for you?"}
+    ],
+    "user_message": "I'd like to exchange the tablet I ordered for one with more storage.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A model might assume 'exchange' implies the delivered order, since exchange_delivered_order_items only works on delivered items, and act without confirming -- but she could just as easily mean modifying the still-pending order's tablet instead.",
+    "ambiguity_note": "Sophia has a Tablet in both a pending order (#W4614740, 8-inch, 64GB) and a delivered order (#W1326557, 7-inch, 32GB). The delivered one already has less storage than the pending one, so which 'more storage' swap she wants depends entirely on which order she means, and she never specifies."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__011",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "This is Liam Thomas, my order is #W3761872."},
+      {"role": "assistant", "content": "Thanks Liam, I've located order #W3761872 on your account. What would you like to change?"}
+    ],
+    "user_message": "In order #W3761872, please change the digital camera to a different zoom option.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "A model might pick whichever camera item id appears first in the order's item list rather than asking which of the two cameras the customer wants changed.",
+    "ambiguity_note": "Order #W3761872 contains two different Digital Camera items (item 6384525445, 30MP/5x zoom, and item 9644439410, 20MP/5x zoom). 'The digital camera' is singular but the order has two distinct camera units, so modify_pending_order_items can't determine which item_id to change (or to what new zoom) without the customer specifying which camera he means."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__012",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Fatima Muller, my order is #W2040365."},
+      {"role": "assistant", "content": "Thanks Fatima, I've got order #W2040365 pulled up. How can I help?"}
+    ],
+    "user_message": "Can you swap the espresso machine in order #W2040365 for a different capacity?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "An agent could just grab the first espresso machine line item in the order rather than confirming which of the two units the request refers to.",
+    "ambiguity_note": "Order #W2040365 already contains two Espresso Machine units: item 9884666842 (19 bar, 1L, manual) and item 3709608322 (9 bar, 2L, automatic). Her singular 'the espresso machine' doesn't indicate which one she wants swapped, so modify_pending_order_items lacks a determinable item_id."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__013",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Fatima Johnson, fatima.johnson2300@example.com."},
+      {"role": "assistant", "content": "Thanks Fatima, I've found your account, including your delivered order #W9389413. What's going on?"}
+    ],
+    "user_message": "One of the things I got in that order is broken -- either the smart watch or the keyboard, I honestly forget which. Can you just return it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A model might default to returning both items to be safe, or arbitrarily pick one to satisfy her singular 'it' -- neither choice is actually grounded in what she said, since she stated outright that she doesn't know which item is broken.",
+    "ambiguity_note": "Order #W9389413 contains both a Smart Watch (item 2554056026) and a Mechanical Keyboard (item 6342039236). The customer explicitly says she doesn't remember which one is broken. return_delivered_order_items requires an explicit item_ids list, and there is no basis for picking one item, both items, or a payment method for the refund without her identifying the specific item first."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__014",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Noah Sanchez, order #W4864669."},
+      {"role": "assistant", "content": "Thanks Noah, I've got order #W4864669 pulled up -- it shows delivered. What's the issue?"}
+    ],
+    "user_message": "Please return the wireless earbuds from order #W4864669, they stopped charging.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A model could assume the singular 'the wireless earbuds' means just one item and arbitrarily pick whichever earbuds item is listed first in the order, or assume both are meant, without confirming either way.",
+    "ambiguity_note": "Order #W4864669 actually contains two separate Wireless Earbuds units: item 9580569596 (4-hour battery) and item 5565631513 (6-hour battery). His singular phrasing 'the wireless earbuds' doesn't establish whether he means one specific unit (and if so, which) or both, so the item_ids for return_delivered_order_items can't be filled in without asking."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__015",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Li, sofia.li7352@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, I've found your account and your delivered order #W4689314. What would you like to do?"}
+    ],
+    "user_message": "I'd like to exchange the camera for the 10x zoom version, and just put the price difference on my credit card.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A model might default to the order's original payment method (the Mastercard) without confirming, but she has two credit cards on file and explicitly didn't name either one.",
+    "ambiguity_note": "Sofia has two credit cards on file -- a Visa (credit_card_3951670) and a Mastercard (credit_card_8105988, the one that originally paid for order #W4689314) -- but says only 'my credit card' for the price difference on the exchange. exchange_delivered_order_items requires one specific payment_method_id, and nothing here indicates which of the two she means."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__016",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Harper Johansson, harper.johansson4006@example.com."},
+      {"role": "assistant", "content": "Thanks Harper, I've pulled up your account. How can I help?"}
+    ],
+    "user_message": "I need to upgrade the processor on my laptop order.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Since only one of the two laptops (the i5 one) would sensibly need a processor 'upgrade,' a model might infer that order without her actually confirming it -- inferring intent from configuration details rather than what she said.",
+    "ambiguity_note": "Harper has two pending orders each containing a different Laptop configuration: #W4720269 (i7, 32GB) and #W9677982 (i5, 16GB). She never names an order, and modify_pending_order_items requires an explicit order_id and item_id -- picking the i5 order because it's the one that 'needs' an upgrade would be guessing her intent, not confirming it."
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__017",
+    "category": "ambiguous",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Isabella Sanchez, isabella.sanchez6218@example.com."},
+      {"role": "assistant", "content": "Thanks Isabella, I've found your account. What can I help with?"}
+    ],
+    "user_message": "I want to exchange the Bluetooth speaker for a different color.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A model could reason that only the delivered order qualifies for exchange_delivered_order_items and act on it directly -- again inferring eligibility rather than confirming which order she actually means.",
+    "ambiguity_note": "Isabella has Bluetooth Speakers in three orders: a pending one (#W4386313, black), a delivered one (#W1713682, green), and a cancelled one (#W4277243, not actionable). Exchange only applies to delivered orders, but she hasn't said which order she means, and she could just as easily be referring to modifying the still-pending order's color instead of exchanging the delivered one."
+  }
+]
