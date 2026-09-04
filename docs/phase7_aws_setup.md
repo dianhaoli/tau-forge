@@ -156,15 +156,22 @@ Getting the instance right doesn't by itself mean the training run works well.
 Three risks are specific to this project's data/setup, not to the infra, and are
 worth deciding on *before* spending GPU-hours on the full run:
 
-1. **GRPO's signal needs within-group reward variance — untested here.** GRPO
-   normalizes advantage by each group's own mean/std across its `G` sampled
-   completions. If a scenario is trivially easy (base model gets it right every
-   time) or too hard/ambiguous (consistently wrong for reasons unrelated to
-   sampling), every sample in the group gets the same reward and that prompt
-   contributes ~zero gradient. **Phase 3 stage 4 (difficulty calibration) was never
-   done** — nobody has measured how hard the 541 scenarios are for
-   `Qwen3-4B-Instruct-2507` zero-shot. Running the full training job before knowing
-   this risks a lot of compute going into degenerate, zero-signal groups.
+1. **GRPO's signal needs within-group reward variance.** GRPO normalizes
+   advantage by each group's own mean/std across its `G` sampled completions. If a
+   scenario is trivially easy (base model gets it right every time) or too
+   hard/ambiguous (consistently wrong for reasons unrelated to sampling), every
+   sample in the group gets the same reward and that prompt contributes ~zero
+   gradient. **Phase 3 stage 4 (difficulty calibration) has since landed**
+   (`tau_forge/validate/difficulty.py`, `data/synthetic/difficulty/*.json`) — but
+   it's a *structural* heuristic (category, action-kind, distractor closeness,
+   stage-2 model-checker flags), not an empirical measurement of this specific
+   model's zero-shot behavior. It's a good prior for which scenarios are likely
+   risky, not a substitute for actually checking: a scenario the heuristic calls
+   "easy" can still turn out zero-variance for a *different* reason (the model
+   is confidently, consistently wrong on it, not confidently right). `python -m
+   tau_forge.train.zero_shot_baseline` (written alongside this doc, see below) is
+   the empirical check — run it and cross-reference against the heuristic scores
+   before trusting either alone.
 2. **Full-parameter capacity + a small, static, repeatedly-seen prompt set is real
    overfitting/reward-hacking exposure.** 541 unique prompts seen across multiple
    epochs, full-parameter updates (much more capacity to memorize or exploit than
