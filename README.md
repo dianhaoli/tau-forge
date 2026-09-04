@@ -56,15 +56,16 @@ go-ahead.
 `0 → 1 → 4 → (Phase 6 data prep) → 6 → 2 → 3 → 5 → 7 → 8`, specifically so a
 broken harness/reward function surfaces against the 74 trusted real train tasks
 before a full 400-500-scenario synthetic sweep is built on top of it. This repo's
-history went `0 → 1 → 2 (pilot)` instead, skipping straight to the Phase 2 pilot.
-That pilot (3/30 cells, 57 scenarios) is not wasted — it's a valid dry run of the
-generation methodology — but the full 30-cell sweep is being held pending Phase 6.
-Phase 4 was done next, out of file order, to get back on the recommended track.
-Phase 6 (this session) is now done and passing — see below, which removes the
-technical blocker on resuming Phase 2. Per the STOP-checkpoint policy above,
-resuming the full 30-cell sweep still needs explicit go-ahead, not just a green
-smoke test — and note there is a concurrent session already working the Phase 2
-cells; coordinate before starting new ones to avoid duplicate work.
+actual history split into parallel lines of work that have since been merged
+back together: one line went `0 → 1 → 2 (pilot) → 4 → 6` (reward function built
+and the harness smoke-tested against real trusted data before touching more
+synthetic data, per the recommended order), while a concurrent line did the
+`2 (full 30-cell sweep) → 3 (stage-1 rule checker)` work in parallel rather than
+waiting on Phase 6 to land first. Both lines are now reconciled into this
+history: Phase 2 is done (30/30 cells), Phase 3 stage 1 is done, Phase 4 and 6
+are both done and passing. Per the STOP-checkpoint policy above, Phase 3 stages
+2-4, Phase 5, and Phase 7 all still need explicit go-ahead before starting —
+none of this reconciliation implies permission to advance further un-asked.
 
 ## Data substrate
 
@@ -188,6 +189,19 @@ appended its one-line summaries to the registry for the next wave.
 `happy_path`×electronics cell (generated before the target existed, and
 intentionally not regenerated) sits off it at 2/20 = 10%, exactly as expected per
 the "Rule checker" section above.
+
+**A related gap this dataset does not close, surfaced by an independent
+resemblance check against the real 114 τ²-bench retail tasks** (tasks.json
+read for aggregate comparison only, never fed into a generation prompt): real
+reference trajectories average **4.8 tool calls per task** (median 5, up to
+13), since a real task makes the agent do the *entire* chain -- authenticate,
+look up the order, look up the product, then act -- while every synthetic
+scenario here is a single static snapshot graded as one decision point (by
+construction, per the one-call cap below), averaging under 1 call each. This
+is a static-snapshot-vs-live-multi-turn-conversation difference in what's
+being measured, not a bug to fix in this dataset -- but it means aggregate
+tool-count resemblance to the real benchmark is out of scope for Phase 2/3 and
+stays an open question for Phase 8's live-benchmark evaluation.
 
 A few real-data findings surfaced during the sweep, beyond the pilot's finding
 above (all independently re-discoverable from `third_party/tau2-bench/src/tau2/domains/retail/tools.py`,
@@ -366,6 +380,12 @@ STOP for review, per the Phase 4 spec: reward function built and adversarially
 tested before any training or further synthetic-data generation. Next per the
 reordering above is Phase 6's data prep (converting the real 74 train tasks to
 static snapshots) and smoke test, not the remaining 27 Phase 2 cells.
+
+*(Editorial note from reconciling parallel work: a concurrent session did not
+wait for this STOP and completed the remaining 27 Phase 2 cells plus Phase 3's
+stage-1 rule checker in parallel with this session's Phase 6 work -- see the
+"Phase 2 full sweep" and "Rule checker" sections above. Recorded here as
+historical fact, not as retroactive permission for either session's choice.)*
 
 ## Data prep + harness smoke test (`tau_forge/data_prep/`, `tau_forge/harness/`) — Phase 6
 
