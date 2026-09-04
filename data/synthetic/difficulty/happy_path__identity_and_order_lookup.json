@@ -1,0 +1,272 @@
+[
+  {
+    "id": "happy_path__identity_and_order_lookup__001",
+    "difficulty_score": 0.22,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__002",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__003",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__004",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__005",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__006",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__007",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__008",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__009",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__010",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__011",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__012",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__013",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__014",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__015",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__016",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__017",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__018",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

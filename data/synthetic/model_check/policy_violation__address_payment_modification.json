@@ -1,0 +1,128 @@
+[
+  {
+    "scenario_id": "policy_violation__address_payment_modification__001",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__002",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__003",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__004",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__005",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__006",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__007",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__008",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__009",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__010",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__011",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__012",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__013",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__014",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__015",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__016",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__017",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__address_payment_modification__018",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  }
+]

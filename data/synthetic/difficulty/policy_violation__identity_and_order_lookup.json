@@ -1,0 +1,302 @@
+[
+  {
+    "id": "policy_violation__identity_and_order_lookup__001",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__002",
+    "difficulty_score": 0.57,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__003",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__004",
+    "difficulty_score": 0.585,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "read_distractor_no_answer_call",
+      "distractor_score": 0.4,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__005",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__006",
+    "difficulty_score": 0.585,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "read_distractor_no_answer_call",
+      "distractor_score": 0.4,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__007",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__008",
+    "difficulty_score": 0.47,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__009",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__010",
+    "difficulty_score": 0.47,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__011",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__012",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__013",
+    "difficulty_score": 0.585,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "read_distractor_no_answer_call",
+      "distractor_score": 0.4,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__014",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__015",
+    "difficulty_score": 0.47,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__016",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__017",
+    "difficulty_score": 0.47,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__018",
+    "difficulty_score": 0.585,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "read_distractor_no_answer_call",
+      "distractor_score": 0.4,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__019",
+    "difficulty_score": 0.585,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "read_distractor_no_answer_call",
+      "distractor_score": 0.4,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "policy_violation__identity_and_order_lookup__020",
+    "difficulty_score": 0.685,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

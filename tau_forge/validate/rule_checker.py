@@ -10,9 +10,9 @@ just at the end -- see README's "Rule checker -- Phase 3, stage 1" section for
 the rationale and the two prompt-template fixes it drove.
 
 This is stage 1 only: mechanical correctness. It says nothing about scenario
-quality, realism, or difficulty calibration -- that's stage 2 (model checker),
-stage 3 (human review), stage 4 (difficulty calibration), none of which are
-built yet.
+quality, realism, or difficulty calibration -- that's stage 2 (model checker,
+`model_checker.py`), stage 3 (human review, `human_review.py`), and stage 4
+(difficulty calibration, `difficulty.py`).
 """
 
 from __future__ import annotations

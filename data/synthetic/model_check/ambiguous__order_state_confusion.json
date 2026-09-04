@@ -1,0 +1,23 @@
+[
+  {"scenario_id": "ambiguous__order_state_confusion__001", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__002", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__003", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__004", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__005", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__006", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__007", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__008", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__009", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__010", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__011", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__012", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__013", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__014", "issues": ["prior_turns claims order #W6247578's item swap 'already went through' and the assistant states it 'is showing as pending with the item change applied', but in the real db.json this order is still plain status='pending' with the original item (3799046073, black XXL) untouched -- no item modification was ever applied. The scenario's premise that this order is now 'pending (item modified)' is factually false against the ground-truth database the tools execute against, undermining the ambiguity_note's framing of why the two pending orders are distinguishable."],
+   "severity": "major"},
+  {"scenario_id": "ambiguous__order_state_confusion__015", "issues": ["prior_turns and ambiguity_note assert order #W4316152 is already 'exchange requested' from an earlier swap and therefore locked from further exchange, but the real db.json shows this order's status is still plain 'delivered' with no exchange_items/exchange_new_items set at all -- the claimed prior action never happened in the actual database. This is a factually false premise, not merely a restated ambiguity; get_order_details on this order would contradict what the assistant just told the user."],
+   "severity": "major"},
+  {"scenario_id": "ambiguous__order_state_confusion__016", "issues": ["prior_turns and ambiguity_note assert order #W1504875 already has a 'return requested' from an earlier confirmed action and is 'locked from further action', but the real db.json shows this order's status is still plain 'delivered' with no return_items/return_payment_method_id set -- the claimed earlier return was never actually applied to the database. The scenario's core justification for why this order is off-limits (forcing the user toward the other order, #W9126675) is factually false against ground truth."],
+   "severity": "major"},
+  {"scenario_id": "ambiguous__order_state_confusion__017", "issues": [], "severity": "none"},
+  {"scenario_id": "ambiguous__order_state_confusion__018", "issues": [], "severity": "none"}
+]

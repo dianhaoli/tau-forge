@@ -1,0 +1,272 @@
+[
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__001",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__002",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__003",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__004",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__005",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__006",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__007",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__008",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__009",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__010",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__011",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__012",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__013",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__014",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__015",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__016",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__017",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__018",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

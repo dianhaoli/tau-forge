@@ -1,0 +1,208 @@
+{
+  "seed": 42,
+  "base_per_cell": 4,
+  "max_flagged_extra": 3,
+  "total_sampled": 140,
+  "cells": {
+    "happy_path__electronics_returns_exchanges": [
+      "happy_path__electronics_returns_exchanges__011",
+      "happy_path__electronics_returns_exchanges__020",
+      "happy_path__electronics_returns_exchanges__013",
+      "happy_path__electronics_returns_exchanges__007",
+      "happy_path__electronics_returns_exchanges__014"
+    ],
+    "happy_path__apparel_footwear_exchanges": [
+      "happy_path__apparel_footwear_exchanges__013",
+      "happy_path__apparel_footwear_exchanges__005",
+      "happy_path__apparel_footwear_exchanges__015",
+      "happy_path__apparel_footwear_exchanges__018"
+    ],
+    "happy_path__address_payment_modification": [
+      "happy_path__address_payment_modification__004",
+      "happy_path__address_payment_modification__009",
+      "happy_path__address_payment_modification__015",
+      "happy_path__address_payment_modification__006"
+    ],
+    "happy_path__order_state_confusion": [
+      "happy_path__order_state_confusion__006",
+      "happy_path__order_state_confusion__005",
+      "happy_path__order_state_confusion__003",
+      "happy_path__order_state_confusion__015",
+      "happy_path__order_state_confusion__013",
+      "happy_path__order_state_confusion__010",
+      "happy_path__order_state_confusion__018"
+    ],
+    "happy_path__identity_and_order_lookup": [
+      "happy_path__identity_and_order_lookup__005",
+      "happy_path__identity_and_order_lookup__003",
+      "happy_path__identity_and_order_lookup__002",
+      "happy_path__identity_and_order_lookup__016"
+    ],
+    "happy_path__damaged_or_defective_item_narratives": [
+      "happy_path__damaged_or_defective_item_narratives__018",
+      "happy_path__damaged_or_defective_item_narratives__003",
+      "happy_path__damaged_or_defective_item_narratives__002",
+      "happy_path__damaged_or_defective_item_narratives__005",
+      "happy_path__damaged_or_defective_item_narratives__015",
+      "happy_path__damaged_or_defective_item_narratives__008",
+      "happy_path__damaged_or_defective_item_narratives__011"
+    ],
+    "requires_earlier_context__electronics_returns_exchanges": [
+      "requires_earlier_context__electronics_returns_exchanges__004",
+      "requires_earlier_context__electronics_returns_exchanges__008",
+      "requires_earlier_context__electronics_returns_exchanges__009",
+      "requires_earlier_context__electronics_returns_exchanges__014"
+    ],
+    "requires_earlier_context__apparel_footwear_exchanges": [
+      "requires_earlier_context__apparel_footwear_exchanges__016",
+      "requires_earlier_context__apparel_footwear_exchanges__007",
+      "requires_earlier_context__apparel_footwear_exchanges__014",
+      "requires_earlier_context__apparel_footwear_exchanges__006",
+      "requires_earlier_context__apparel_footwear_exchanges__018"
+    ],
+    "requires_earlier_context__address_payment_modification": [
+      "requires_earlier_context__address_payment_modification__001",
+      "requires_earlier_context__address_payment_modification__008",
+      "requires_earlier_context__address_payment_modification__017",
+      "requires_earlier_context__address_payment_modification__005"
+    ],
+    "requires_earlier_context__order_state_confusion": [
+      "requires_earlier_context__order_state_confusion__009",
+      "requires_earlier_context__order_state_confusion__007",
+      "requires_earlier_context__order_state_confusion__014",
+      "requires_earlier_context__order_state_confusion__013"
+    ],
+    "requires_earlier_context__identity_and_order_lookup": [
+      "requires_earlier_context__identity_and_order_lookup__009",
+      "requires_earlier_context__identity_and_order_lookup__015",
+      "requires_earlier_context__identity_and_order_lookup__012",
+      "requires_earlier_context__identity_and_order_lookup__010"
+    ],
+    "requires_earlier_context__damaged_or_defective_item_narratives": [
+      "requires_earlier_context__damaged_or_defective_item_narratives__009",
+      "requires_earlier_context__damaged_or_defective_item_narratives__018",
+      "requires_earlier_context__damaged_or_defective_item_narratives__007",
+      "requires_earlier_context__damaged_or_defective_item_narratives__017"
+    ],
+    "ambiguous__electronics_returns_exchanges": [
+      "ambiguous__electronics_returns_exchanges__009",
+      "ambiguous__electronics_returns_exchanges__003",
+      "ambiguous__electronics_returns_exchanges__008",
+      "ambiguous__electronics_returns_exchanges__004"
+    ],
+    "ambiguous__apparel_footwear_exchanges": [
+      "ambiguous__apparel_footwear_exchanges__008",
+      "ambiguous__apparel_footwear_exchanges__004",
+      "ambiguous__apparel_footwear_exchanges__002",
+      "ambiguous__apparel_footwear_exchanges__005"
+    ],
+    "ambiguous__address_payment_modification": [
+      "ambiguous__address_payment_modification__013",
+      "ambiguous__address_payment_modification__002",
+      "ambiguous__address_payment_modification__017",
+      "ambiguous__address_payment_modification__014"
+    ],
+    "ambiguous__order_state_confusion": [
+      "ambiguous__order_state_confusion__016",
+      "ambiguous__order_state_confusion__002",
+      "ambiguous__order_state_confusion__014",
+      "ambiguous__order_state_confusion__007",
+      "ambiguous__order_state_confusion__015"
+    ],
+    "ambiguous__identity_and_order_lookup": [
+      "ambiguous__identity_and_order_lookup__016",
+      "ambiguous__identity_and_order_lookup__004",
+      "ambiguous__identity_and_order_lookup__017",
+      "ambiguous__identity_and_order_lookup__010"
+    ],
+    "ambiguous__damaged_or_defective_item_narratives": [
+      "ambiguous__damaged_or_defective_item_narratives__009",
+      "ambiguous__damaged_or_defective_item_narratives__008",
+      "ambiguous__damaged_or_defective_item_narratives__005",
+      "ambiguous__damaged_or_defective_item_narratives__017"
+    ],
+    "policy_violation__electronics_returns_exchanges": [
+      "policy_violation__electronics_returns_exchanges__003",
+      "policy_violation__electronics_returns_exchanges__011",
+      "policy_violation__electronics_returns_exchanges__012",
+      "policy_violation__electronics_returns_exchanges__010",
+      "policy_violation__electronics_returns_exchanges__001",
+      "policy_violation__electronics_returns_exchanges__007",
+      "policy_violation__electronics_returns_exchanges__014"
+    ],
+    "policy_violation__apparel_footwear_exchanges": [
+      "policy_violation__apparel_footwear_exchanges__012",
+      "policy_violation__apparel_footwear_exchanges__014",
+      "policy_violation__apparel_footwear_exchanges__013",
+      "policy_violation__apparel_footwear_exchanges__006",
+      "policy_violation__apparel_footwear_exchanges__005",
+      "policy_violation__apparel_footwear_exchanges__018",
+      "policy_violation__apparel_footwear_exchanges__001"
+    ],
+    "policy_violation__address_payment_modification": [
+      "policy_violation__address_payment_modification__012",
+      "policy_violation__address_payment_modification__010",
+      "policy_violation__address_payment_modification__003",
+      "policy_violation__address_payment_modification__008",
+      "policy_violation__address_payment_modification__005",
+      "policy_violation__address_payment_modification__007",
+      "policy_violation__address_payment_modification__001"
+    ],
+    "policy_violation__order_state_confusion": [
+      "policy_violation__order_state_confusion__011",
+      "policy_violation__order_state_confusion__020",
+      "policy_violation__order_state_confusion__010",
+      "policy_violation__order_state_confusion__002"
+    ],
+    "policy_violation__identity_and_order_lookup": [
+      "policy_violation__identity_and_order_lookup__007",
+      "policy_violation__identity_and_order_lookup__015",
+      "policy_violation__identity_and_order_lookup__004",
+      "policy_violation__identity_and_order_lookup__013"
+    ],
+    "policy_violation__damaged_or_defective_item_narratives": [
+      "policy_violation__damaged_or_defective_item_narratives__004",
+      "policy_violation__damaged_or_defective_item_narratives__008",
+      "policy_violation__damaged_or_defective_item_narratives__009",
+      "policy_violation__damaged_or_defective_item_narratives__002"
+    ],
+    "out_of_scope__electronics_returns_exchanges": [
+      "out_of_scope__electronics_returns_exchanges__001",
+      "out_of_scope__electronics_returns_exchanges__005",
+      "out_of_scope__electronics_returns_exchanges__012",
+      "out_of_scope__electronics_returns_exchanges__009"
+    ],
+    "out_of_scope__apparel_footwear_exchanges": [
+      "out_of_scope__apparel_footwear_exchanges__011",
+      "out_of_scope__apparel_footwear_exchanges__017",
+      "out_of_scope__apparel_footwear_exchanges__001",
+      "out_of_scope__apparel_footwear_exchanges__003",
+      "out_of_scope__apparel_footwear_exchanges__014",
+      "out_of_scope__apparel_footwear_exchanges__007"
+    ],
+    "out_of_scope__address_payment_modification": [
+      "out_of_scope__address_payment_modification__011",
+      "out_of_scope__address_payment_modification__005",
+      "out_of_scope__address_payment_modification__008",
+      "out_of_scope__address_payment_modification__012"
+    ],
+    "out_of_scope__order_state_confusion": [
+      "out_of_scope__order_state_confusion__016",
+      "out_of_scope__order_state_confusion__007",
+      "out_of_scope__order_state_confusion__014",
+      "out_of_scope__order_state_confusion__012"
+    ],
+    "out_of_scope__identity_and_order_lookup": [
+      "out_of_scope__identity_and_order_lookup__014",
+      "out_of_scope__identity_and_order_lookup__009",
+      "out_of_scope__identity_and_order_lookup__017",
+      "out_of_scope__identity_and_order_lookup__011"
+    ],
+    "out_of_scope__damaged_or_defective_item_narratives": [
+      "out_of_scope__damaged_or_defective_item_narratives__010",
+      "out_of_scope__damaged_or_defective_item_narratives__011",
+      "out_of_scope__damaged_or_defective_item_narratives__014",
+      "out_of_scope__damaged_or_defective_item_narratives__018"
+    ]
+  }
+}
