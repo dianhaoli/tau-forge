@@ -80,34 +80,46 @@ has no existing multi-GPU training infra.
 
 ## Recommendation
 
-| Instance | GPU | VRAM | vCPU / RAM | ~On-demand (us-east-1)* | Fit |
-|---|---|---|---|---|---|
-| **g6.2xlarge** (primary) | 1x L4 | 24 GB | 8 / 32 GB | ~$0.98/hr | LoRA GRPO fits with headroom; best $/hr for this workload |
-| g5.2xlarge (fallback) | 1x A10G | 24 GB | 8 / 32 GB | ~$1.21/hr | Same fit as above; use if g6 capacity/region is an issue |
-| g6e.2xlarge (if more headroom wanted) | 1x L40S | 48 GB | 8 / 64 GB | ~$2.5/hr | Room for larger GRPO group size / longer context without tuning |
-| p4d.24xlarge | 8x A100 40GB | 320 GB | 96 / 1152 GB | ~$32/hr | Overkill — only justified for full fine-tune or a much bigger run |
+Cost is not a constraint here (credits available) — but that doesn't mean "biggest
+GPU." AWS has no single-GPU A100/H100 instance at all (`p4d`/`p4de`/`p5` are fixed
+8-GPU boxes); going multi-GPU for a 4B-model, 541-scenario, LoRA run would mean
+either 7 idle GPUs or introducing FSDP/NCCL sharding this project has zero infra
+for, to shave time off a workload that isn't FLOPs-bound in the first place. The
+lever that actually shortens wall-clock time is **memory bandwidth and headroom on
+a single GPU**, since rollout generation (the dominant cost) is bandwidth-bound,
+not compute-bound.
+
+| Instance | GPU | VRAM | Mem bandwidth | vCPU / RAM | ~On-demand (us-east-1)* | Fit |
+|---|---|---|---|---|---|---|
+| **g6e.2xlarge** (primary) | 1x L40S | 48 GB | 864 GB/s | 8 / 64 GB | ~$2.5/hr | Best speed/simplicity trade for this workload |
+| g6e.4xlarge (if CPU-bound on data/env-exec) | 1x L40S | 48 GB | 864 GB/s | 16 / 128 GB | ~$3.4/hr | Same GPU, more CPU for env/reward execution around each rollout |
+| g6.2xlarge (fallback, cheaper) | 1x L4 | 24 GB | 300 GB/s | 8 / 32 GB | ~$0.98/hr | Fine, just slower generation — keep as a budget fallback |
+| p4d.24xlarge | 8x A100 40GB | 320 GB | 8x 1555 GB/s | 96 / 1152 GB | ~$32/hr | Only worth it for a full fine-tune (drop LoRA) — see below |
 
 *Prices are ballpark and change — confirm current on-demand/spot pricing at launch
 time via the EC2 console or `aws ec2 describe-spot-price-history`.
 
-**Pick `g6.2xlarge`.** Reasoning:
-- FLOPs aren't the bottleneck (see above), so paying for an A100/H100's raw compute
-  buys nothing this run will use.
-- 24 GB comfortably fits LoRA GRPO for a 4B model with short episodes, per the
-  memory table above.
-- L4 has good memory bandwidth per dollar, which matters for the
-  memory-bandwidth-bound rollout-generation step.
-- Single GPU avoids all multi-GPU orchestration (FSDP/DeepSpeed/NCCL) complexity,
-  which this project has zero existing infra for — not worth introducing for a
+**Pick `g6e.2xlarge`.** Reasoning:
+- L40S has ~3x the memory bandwidth of the L4 (864 vs 300 GB/s), which directly
+  speeds up the bandwidth-bound rollout-generation step — the actual bottleneck
+  for this workload, not raw FLOPs.
+- 48 GB means the GRPO group size (samples/prompt) can be set for gradient-estimate
+  quality rather than squeezed to fit memory — more headroom than the 24 GB tier
+  without needing multi-GPU.
+- Still single-GPU: no FSDP/DeepSpeed/NCCL orchestration to build or debug for a
   541-scenario run.
-- Spot pricing on g6.2xlarge is typically 50-70% off on-demand and this workload
-  (checkpointed training, not latency-sensitive serving) tolerates interruption
-  fine if checkpointing is wired up — worth using once the run is validated on
-  on-demand first.
+- If env/reward execution (Python-side, CPU) around each rollout turns out to be
+  the actual bottleneck rather than the GPU, `g6e.4xlarge` gives more vCPUs on the
+  same GPU rather than a bigger/more GPUs.
 
-If a first run turns out to need more headroom (bigger GRPO group size, longer
-`prior_turns` context than expected), step up to `g6e.2xlarge` (L40S, 48 GB) rather
-than jumping straight to multi-GPU — still single-GPU, just more room.
+**When multi-GPU would actually be worth it:** only if you decide to drop LoRA for
+a full fine-tune (per the ~72 GB memory table above, that needs sharding). Given
+this dataset (541 short, single-decision-point scenarios), LoRA is very unlikely to
+be a quality bottleneck — the model doesn't need to relearn general capability, just
+adapt to reward on this task distribution — so full fine-tune is not recommended
+even with unlimited budget. If you want it anyway, `p4d.24xlarge` (8x A100 40GB,
+ZeRO-3/FSDP) is the option, at meaningfully more setup complexity for likely no
+measurable quality gain at this scale.
 
 ## AMI and software
 
@@ -132,8 +144,8 @@ install cleanly. On the GPU box: `uv sync --extra train`.
       this is a GPU instance and idle time costs real money.
 - [ ] Prefer launching via a script/CLI you can re-run rather than manual console
       clicks, so the exact config is reproducible and diffable.
-- [ ] **Stop or terminate the instance when not actively training** — a `g6.2xlarge`
-      left running idle overnight is a real, avoidable cost.
+- [ ] **Stop or terminate the instance when not actively training** — even with
+      credits to spend, an idle GPU instance left running overnight is pure waste.
 - [ ] EBS volume sized for base model weights (~8 GB bf16) + checkpoints +
       vLLM/HF caches — 100 GB gp3 is a safe starting point.
 - [ ] Confirm the held-out data policy before any live run: only Phase 2 synthetic
@@ -141,8 +153,8 @@ install cleanly. On the GPU box: `uv sync --extra train`.
 
 ## Next steps (not done by this doc)
 
-1. Review this sizing/instance choice — confirm `g6.2xlarge` (or the fallback) is
-   the pick.
+1. Review this sizing/instance choice — confirm `g6e.2xlarge` (or an alternative
+   above) is the pick.
 2. Actually launch the instance (console or CLI) once ready — this is the step
    that costs money and should be a deliberate, explicit action.
 3. Run `infra/ec2_bootstrap.sh` on the box to get the repo + training deps
