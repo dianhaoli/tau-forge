@@ -1,0 +1,724 @@
+[
+  {
+    "id": "happy_path__apparel_footwear_exchanges__001",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Aarav Davis, my email is aarav.davis2239@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've located your account. How can I help?"
+      },
+      {
+        "role": "user",
+        "content": "My delivered order #W6552785 has a red XXL t-shirt in it, but it's too big."
+      },
+      {
+        "role": "assistant",
+        "content": "I see that item -- a red XXL cotton crew neck t-shirt at $46.85. Since it's a delivered order I can exchange it to a different size or style of the same t-shirt. What would you like to switch it to, and how would you like to pay any price difference?"
+      },
+      {
+        "role": "user",
+        "content": "Swap it for the red L v-neck instead, and put any difference on my Visa card ending 9385."
+      },
+      {
+        "role": "assistant",
+        "content": "To confirm: exchange item 9354168549 (red XXL crew neck) on order #W6552785 for item 3234800602 (red L v-neck), with any price difference charged to your Visa card credit_card_5650467. Shall I proceed?"
+      }
+    ],
+    "user_message": "Yes, that's correct, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6552785",
+          "item_ids": [
+            "9354168549"
+          ],
+          "new_item_ids": [
+            "3234800602"
+          ],
+          "payment_method_id": "credit_card_5650467"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user asked to swap the shirt for a different variant, not get a refund -- a return would drop the item entirely instead of exchanging it, and the user never asked for money back.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__002",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sophia Jackson, sophia.jackson1954@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've pulled up your account, Sophia."
+      },
+      {
+        "role": "user",
+        "content": "The running shoes I got in order #W6977171 run a bit small -- they're a size 9. Can I get them in size 10 instead? Same white color, just a half size up in the closest match you have."
+      },
+      {
+        "role": "assistant",
+        "content": "I can do that. The closest available size 10 running shoe is white with a leather upper and EVA sole, item 1775591963, priced at $154.75 versus your current $148.95. Since this order was delivered, I can exchange the size 9 mesh pair (item 9635758562) for it, with the $5.80 difference charged to your gift card on file. Want me to proceed?"
+      }
+    ],
+    "user_message": "Yes, please go ahead with that.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6977171",
+          "item_ids": [
+            "9635758562"
+          ],
+          "new_item_ids": [
+            "1775591963"
+          ],
+          "payment_method_id": "gift_card_6052478"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "This order status is 'delivered', not 'pending', so the pending-order item-modification tool doesn't apply -- only the delivered-order exchange tool is valid here.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__003",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, it's Yara Sanchez -- yara.sanchez4385@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yara, I've found your account."
+      },
+      {
+        "role": "user",
+        "content": "I want to exchange the sunglasses from order #W6015009. I ordered the brown frame/brown lens pair but I'd rather have the black frame with green lenses, still polarized and plastic."
+      },
+      {
+        "role": "assistant",
+        "content": "That would be item 4548300368 (black frame, green lens, polarized, plastic), priced at $287.79 versus your current $281.98. I'd exchange item 9672174103 for it, charging the $5.81 difference to your mastercard ending 6830, the card you originally paid with. Shall I go ahead?"
+      }
+    ],
+    "user_message": "Yes, that works, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6015009",
+          "item_ids": [
+            "9672174103"
+          ],
+          "new_item_ids": [
+            "4548300368"
+          ],
+          "payment_method_id": "credit_card_5884162"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a different sunglasses variant, not their money back for the item -- an exchange fulfills the request, while a return would just refund and remove it.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__004",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Ava Moore here, ava.moore6020@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ava, you're verified."
+      },
+      {
+        "role": "user",
+        "content": "The hiking boots in my delivered order #W4817420 are too tight -- they're a size 7 leather pair. Can you bump me up to size 8? I don't mind if the material changes, whatever's actually available."
+      },
+      {
+        "role": "assistant",
+        "content": "The only available size 8 option right now is a synthetic, non-waterproof pair, item 3613716226, at $253.54 versus your current $244.34. I'd exchange item 3812493782 for it, with the $9.20 difference charged to your gift card, which has a $69.00 balance. Confirm you'd like to proceed?"
+      }
+    ],
+    "user_message": "Yes, that's fine, go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W4817420",
+          "item_ids": [
+            "3812493782"
+          ],
+          "new_item_ids": [
+            "3613716226"
+          ],
+          "payment_method_id": "gift_card_8168843"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Order #W4817420 is delivered, not pending, so the pending-order modification tool is not applicable -- only the delivered-order exchange tool applies to a size change after delivery.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__005",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Harper Brown, harper.brown3965@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Harper, I've located your account."
+      },
+      {
+        "role": "user",
+        "content": "In order #W1840144 I bought two of the same navy XL fleece jacket with a half-zip. I'd like to exchange just one of them for the full-zip version instead, same size and color."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it -- that would be item 7528037711, the navy XL full-zip fleece, priced at $157.86 versus $157.61 for the half-zip. I'll exchange one unit of item 8590708195 for it, leaving the other half-zip jacket as is. How would you like to pay the $0.25 difference?"
+      },
+      {
+        "role": "user",
+        "content": "Charge it to my Visa ending 3356, not the PayPal I originally paid with."
+      }
+    ],
+    "user_message": "Please go ahead with that exchange.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W1840144",
+          "item_ids": [
+            "8590708195"
+          ],
+          "new_item_ids": [
+            "7528037711"
+          ],
+          "payment_method_id": "credit_card_3240550"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user only wants to swap the zipper style on one unit, not get a refund for it -- a return would remove the item rather than replace it with the full-zip variant.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__006",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Emma Santos, emma.santos7683@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, I've found your account."
+      },
+      {
+        "role": "user",
+        "content": "The cycling helmet from order #W3113816 is blue, size L, high ventilation. I actually wanted the black one in the same size and ventilation level -- can we swap it?"
+      },
+      {
+        "role": "assistant",
+        "content": "Sure -- that's item 1665571435, black, size L, high ventilation, priced at $196.89 versus your current $209.91. I'd exchange item 2206116040 for it, refunding the $13.02 difference to your gift card on file. Should I proceed?"
+      }
+    ],
+    "user_message": "Yes, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W3113816",
+          "item_ids": [
+            "2206116040"
+          ],
+          "new_item_ids": [
+            "1665571435"
+          ],
+          "payment_method_id": "gift_card_6023546"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants the black version of the same helmet, not a refund and no replacement -- exchange is the correct action since they still want a helmet, just a different color.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__007",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Olivia Ito, olivia.ito5204@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Olivia, you're verified."
+      },
+      {
+        "role": "user",
+        "content": "I got sneakers in order #W5866402, size 11 black synthetic, but they run large. Do you have anything in size 10?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes -- size 10 is available in gray leather, item 2509076505, priced at $189.50 versus your current $207.75. I can exchange item 9727387530 for it. Since the new pair is cheaper, you'd get a $18.25 refund -- which payment method should that go to?"
+      },
+      {
+        "role": "user",
+        "content": "Refund it to my Visa card ending 9182."
+      }
+    ],
+    "user_message": "Yes, go ahead with that.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W5866402",
+          "item_ids": [
+            "9727387530"
+          ],
+          "new_item_ids": [
+            "2509076505"
+          ],
+          "payment_method_id": "credit_card_9753331"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a different size of the same sneaker, not to give up the item entirely for a refund -- exchange is correct since they still want a pair of sneakers, just smaller.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__008",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Yusuf Rossi, yusuf.rossi7301@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yusuf, I've pulled up your account."
+      },
+      {
+        "role": "user",
+        "content": "My order #W6247578 hasn't shipped yet -- it's a black XXL crew neck t-shirt. Can you change that to size XL instead, same color and style?"
+      },
+      {
+        "role": "assistant",
+        "content": "Sure, that's item 2060066974, black XL crew neck, at $51.05 versus your current $53.27. Since the order is still pending, I can modify the item directly, refunding the $2.22 difference to your mastercard ending 2478, the card on file. Shall I proceed?"
+      }
+    ],
+    "user_message": "Yes, that's right, please do it.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W6247578",
+          "item_ids": [
+            "3799046073"
+          ],
+          "new_item_ids": [
+            "2060066974"
+          ],
+          "payment_method_id": "credit_card_9513926"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Order #W6247578 is still pending, not delivered, so the delivered-order exchange tool doesn't apply -- the pending-order item modification tool is the one that governs a size swap before shipment.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__009",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Fatima Muller, fatima.muller6448@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Fatima, I've located your account."
+      },
+      {
+        "role": "user",
+        "content": "Order #W6851636 hasn't gone out yet. It has red leather running shoes, size 8. I'd like to switch those to size 9, black is fine, whatever's actually in stock."
+      },
+      {
+        "role": "assistant",
+        "content": "The available size 9 option is black synthetic with a rubber sole, item 4107812777, at $155.33 versus your current $158.67. I'll change item 4153505238 to that, refunding the $3.34 difference to your PayPal account, the payment method on file. Confirm you'd like me to proceed?"
+      }
+    ],
+    "user_message": "Yes, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W6851636",
+          "item_ids": [
+            "4153505238"
+          ],
+          "new_item_ids": [
+            "4107812777"
+          ],
+          "payment_method_id": "paypal_5541158"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "This order is pending, not delivered, so the delivered-order exchange tool cannot be used -- only the pending-order item modification tool applies before shipment.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__010",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Ava Lopez, ava.lopez3569@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ava, you're verified."
+      },
+      {
+        "role": "user",
+        "content": "I have a pending order, #W8327915, with black frame / brown lens polarized plastic sunglasses. Can you switch those to green lenses instead, same black frame and everything else?"
+      },
+      {
+        "role": "assistant",
+        "content": "That would be item 4548300368, black frame, green lens, polarized, plastic, at $287.79 versus your current $290.94. I'll modify item 4358482460 to that, refunding the $3.15 difference. Which payment method should the refund go to?"
+      },
+      {
+        "role": "user",
+        "content": "Put it on my mastercard ending 9677."
+      }
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W8327915",
+          "item_ids": [
+            "4358482460"
+          ],
+          "new_item_ids": [
+            "4548300368"
+          ],
+          "payment_method_id": "credit_card_7772870"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "This order's status is pending, so the delivered-order exchange tool is the wrong one -- item swaps before shipment go through the pending-order modification tool instead.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__011",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Aarav Nguyen, aarav.nguyen1293@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've found your account."
+      },
+      {
+        "role": "user",
+        "content": "Order #W2443586 is still pending. It has size 7 synthetic, non-waterproof hiking boots. Can you switch those to the waterproof leather version, same size 7?"
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, that's item 3812493782, size 7 leather, waterproof, at $244.34 versus your current $258.09. I'll modify item 1437889264 to that, refunding the $13.75 difference to your gift card, which has a $22.00 balance. Should I go ahead?"
+      }
+    ],
+    "user_message": "Yes, that's correct, please proceed.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W2443586",
+          "item_ids": [
+            "1437889264"
+          ],
+          "new_item_ids": [
+            "3812493782"
+          ],
+          "payment_method_id": "gift_card_2742113"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Order #W2443586 has not been delivered, so the delivered-order exchange tool can't be used -- only the pending-order item modification tool governs changes before shipment.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__012",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Omar Kim, omar.kim8981@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Omar, you're verified."
+      },
+      {
+        "role": "user",
+        "content": "My pending order #W8557584 has a size S white low-ventilation cycling helmet. I'd like to upgrade that to medium ventilation instead, same size and color."
+      },
+      {
+        "role": "assistant",
+        "content": "That's item 7811981098, size S white medium-ventilation, priced at $213.86 versus your current $180.02. I'll modify item 1596993217 to that, charging the $33.84 difference to your gift card, which has a $91.00 balance -- enough to cover it. Shall I proceed?"
+      }
+    ],
+    "user_message": "Yes, please go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W8557584",
+          "item_ids": [
+            "1596993217"
+          ],
+          "new_item_ids": [
+            "7811981098"
+          ],
+          "payment_method_id": "gift_card_3749819"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "This order is pending rather than delivered, so the delivered-order exchange tool is not valid -- the pending-order item modification tool is what applies before the order ships.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__013",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Sofia Ito, sofia.ito7258@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've located your account."
+      }
+    ],
+    "user_message": "I placed an order that included a black fleece jacket, a yoga mat, and a skateboard -- it's order #W6075915. Can you tell me if it's been delivered yet, and what condition it's in for a possible exchange later?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W6075915"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user is only asking for the order's current status before deciding whether to request anything -- no exchange details (which item, which new item, which payment method) have been given yet, so acting would be premature; a lookup is the complete correct response this turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__014",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Emma Santos, emma.santos7683@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, you're verified."
+      },
+      {
+        "role": "user",
+        "content": "Before I decide anything about my helmet order, I'm curious -- is the medium, blue, high-ventilation cycling helmet variant, item 9013366374, currently in stock?"
+      }
+    ],
+    "user_message": "Can you check that for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_item_details",
+        "arguments": {
+          "item_id": "9013366374"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user hasn't asked to change anything yet, only whether a specific variant is available -- exchanging would require item ids to swap and a payment method the user hasn't provided, so a stock lookup is the correct and complete action.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__015",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Harper Brown, harper.brown3965@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Harper, I've found your account."
+      }
+    ],
+    "user_message": "Before I decide what to exchange my fleece jacket for, can you tell me what colors and sizes the fleece jacket comes in overall, and which ones are actually available?",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "8560156827"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The user hasn't chosen a replacement item yet or confirmed anything to change -- they're only asking what options exist, so the correct move is to look up the product catalog, not to act on an order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__016",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I need help with an exchange on my apparel order."
+      },
+      {
+        "role": "assistant",
+        "content": "Sure, I can help. Could you share your email so I can locate your account?"
+      },
+      {
+        "role": "user",
+        "content": "I don't remember which email I used. My name is Chen Anderson and my zip code is 19158."
+      }
+    ],
+    "user_message": "Can you look me up that way?",
+    "expected_tool_calls": [
+      {
+        "name": "find_user_id_by_name_zip",
+        "arguments": {
+          "first_name": "Chen",
+          "last_name": "Anderson",
+          "zip": "19158"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "The user hasn't been identified yet -- there is no user id to call get_user_details with. The user must be located first via name and zip before any account or order details can be retrieved.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__017",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mei Kovacs, my user id is mei_kovacs_8020."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei -- even with the user id provided, I still need to confirm your identity. Could you also share your email, or your name and zip code?"
+      },
+      {
+        "role": "user",
+        "content": "Sure, my zip code is 28236."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, that matches. You're verified."
+      }
+    ],
+    "user_message": "Great -- can you pull up all of my orders? I want to see which ones might still be eligible for an exchange.",
+    "expected_tool_calls": [
+      {
+        "name": "get_user_details",
+        "arguments": {
+          "user_id": "mei_kovacs_8020"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "The user hasn't named a specific order -- they want their full order list first, which requires the user-details lookup; get_order_details needs a specific order id the user hasn't given yet.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__apparel_footwear_exchanges__018",
+    "category": "happy_path",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Yusuf Hernandez, yusuf.hernandez6086@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yusuf, I've located your account."
+      }
+    ],
+    "user_message": "Can you check the status of order #W2033238? I ordered sunglasses and want to know if it's shipped yet before I ask about swapping the lens color.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2033238"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The user is only asking for the order's shipping status right now, not requesting the lens swap yet -- no new item or payment method has been specified, so a lookup is the complete correct action this turn.",
+    "ambiguity_note": ""
+  }
+]

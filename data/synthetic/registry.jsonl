@@ -55,3 +55,39 @@
 {"id": "policy_violation__order_state_confusion__018", "one_line": "Customer wants to exchange a second item on an order whose first exchange was just requested."}
 {"id": "policy_violation__order_state_confusion__019", "one_line": "Customer wants to exchange a t-shirt size on an order the agent already called pending."}
 {"id": "policy_violation__order_state_confusion__020", "one_line": "Customer wants to return a dumbbell set, guessing it arrived a week after shipping."}
+{"id": "happy_path__address_payment_modification__001", "one_line": "User gives full new account address inline, requests profile default address update, no order involved"}
+{"id": "happy_path__address_payment_modification__002", "one_line": "User changes street/city/zip on default address, keeps existing suite number from prior lookup"}
+{"id": "happy_path__address_payment_modification__003", "one_line": "User redirects one pending order's shipping address to their office, distinct from default address"}
+{"id": "happy_path__address_payment_modification__004", "one_line": "User switches pending order's payment from credit card to gift card with sufficient balance"}
+{"id": "happy_path__address_payment_modification__005", "one_line": "User switches pending order's payment from PayPal to a credit card on file"}
+{"id": "happy_path__address_payment_modification__006", "one_line": "User moves pending order's payment from gift card to PayPal to preserve gift card balance"}
+{"id": "happy_path__address_payment_modification__007", "one_line": "User switches pending order payment between two different credit cards on file"}
+{"id": "happy_path__address_payment_modification__008", "one_line": "User switches pending order payment from PayPal to a named credit card across two turns"}
+{"id": "happy_path__address_payment_modification__009", "one_line": "User provides full new shipping address for a single pending skateboard order"}
+{"id": "happy_path__address_payment_modification__010", "one_line": "User updates apartment/suite and street on default address, keeps city/state/zip unchanged"}
+{"id": "happy_path__address_payment_modification__011", "one_line": "User moves pending order payment from gift card to PayPal account"}
+{"id": "happy_path__address_payment_modification__012", "one_line": "User corrects only the zip code of a pending order's shipping address across two turns"}
+{"id": "happy_path__address_payment_modification__013", "one_line": "User asks whether an order has shipped yet before deciding on an address change; lookup only"}
+{"id": "happy_path__address_payment_modification__014", "one_line": "User asks agent to list their saved payment methods before picking one to switch to"}
+{"id": "happy_path__address_payment_modification__015", "one_line": "Conversation opens with user supplying email for identity lookup, no user id given"}
+{"id": "happy_path__address_payment_modification__016", "one_line": "User forgets email, authenticates via first name, last name, and zip code instead"}
+{"id": "happy_path__address_payment_modification__017", "one_line": "User asks what shipping address is currently on file for a pending order before deciding"}
+{"id": "happy_path__address_payment_modification__018", "one_line": "User asks to be reminded of their current default address before deciding to update it"}
+{"id": "happy_path__apparel_footwear_exchanges__001", "one_line": "Delivered t-shirt exchanged from red XXL crew to red L v-neck, diff charged to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__002", "one_line": "Delivered running shoes exchanged size 9 to size 10, diff refunded to original gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__003", "one_line": "Delivered sunglasses exchanged brown/brown frame to black/green frame, diff on original card."}
+{"id": "happy_path__apparel_footwear_exchanges__004", "one_line": "Delivered hiking boots exchanged size 7 to size 8 synthetic, diff paid via gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__005", "one_line": "One of two identical delivered fleece jackets exchanged half-zip to full-zip, diff on non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__006", "one_line": "Delivered cycling helmet exchanged blue to black same size/ventilation, refund to gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__007", "one_line": "Delivered sneakers exchanged size 11 black to size 10 gray, refund to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__008", "one_line": "Pending t-shirt order item resized XXL to XL, refund to sole card on file."}
+{"id": "happy_path__apparel_footwear_exchanges__009", "one_line": "Pending running shoes order resized 8 to 9, color changed, refund to sole PayPal on file."}
+{"id": "happy_path__apparel_footwear_exchanges__010", "one_line": "Pending sunglasses order lens color changed brown to green, refund to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__011", "one_line": "Pending hiking boots order changed synthetic to leather waterproof, same size, refund via gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__012", "one_line": "Pending cycling helmet order ventilation upgraded low to medium, gift card covers charge."}
+{"id": "happy_path__apparel_footwear_exchanges__013", "one_line": "User asks delivery status of a fleece-jacket-containing order before deciding on an exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__014", "one_line": "User asks whether a specific medium blue high-ventilation helmet variant is in stock."}
+{"id": "happy_path__apparel_footwear_exchanges__015", "one_line": "User asks what colors/sizes a fleece jacket product comes in before choosing an exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__016", "one_line": "User without email authenticated via name+zip before requesting an apparel exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__017", "one_line": "Verified user asks to see full order list to find one eligible for exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__018", "one_line": "User asks shipping status of a pending sunglasses order before requesting a lens color swap."}

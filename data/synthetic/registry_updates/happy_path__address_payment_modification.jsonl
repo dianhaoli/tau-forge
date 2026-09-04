@@ -1,0 +1,18 @@
+{"id": "happy_path__address_payment_modification__001", "one_line": "User gives full new account address inline, requests profile default address update, no order involved"}
+{"id": "happy_path__address_payment_modification__002", "one_line": "User changes street/city/zip on default address, keeps existing suite number from prior lookup"}
+{"id": "happy_path__address_payment_modification__003", "one_line": "User redirects one pending order's shipping address to their office, distinct from default address"}
+{"id": "happy_path__address_payment_modification__004", "one_line": "User switches pending order's payment from credit card to gift card with sufficient balance"}
+{"id": "happy_path__address_payment_modification__005", "one_line": "User switches pending order's payment from PayPal to a credit card on file"}
+{"id": "happy_path__address_payment_modification__006", "one_line": "User moves pending order's payment from gift card to PayPal to preserve gift card balance"}
+{"id": "happy_path__address_payment_modification__007", "one_line": "User switches pending order payment between two different credit cards on file"}
+{"id": "happy_path__address_payment_modification__008", "one_line": "User switches pending order payment from PayPal to a named credit card across two turns"}
+{"id": "happy_path__address_payment_modification__009", "one_line": "User provides full new shipping address for a single pending skateboard order"}
+{"id": "happy_path__address_payment_modification__010", "one_line": "User updates apartment/suite and street on default address, keeps city/state/zip unchanged"}
+{"id": "happy_path__address_payment_modification__011", "one_line": "User moves pending order payment from gift card to PayPal account"}
+{"id": "happy_path__address_payment_modification__012", "one_line": "User corrects only the zip code of a pending order's shipping address across two turns"}
+{"id": "happy_path__address_payment_modification__013", "one_line": "User asks whether an order has shipped yet before deciding on an address change; lookup only"}
+{"id": "happy_path__address_payment_modification__014", "one_line": "User asks agent to list their saved payment methods before picking one to switch to"}
+{"id": "happy_path__address_payment_modification__015", "one_line": "Conversation opens with user supplying email for identity lookup, no user id given"}
+{"id": "happy_path__address_payment_modification__016", "one_line": "User forgets email, authenticates via first name, last name, and zip code instead"}
+{"id": "happy_path__address_payment_modification__017", "one_line": "User asks what shipping address is currently on file for a pending order before deciding"}
+{"id": "happy_path__address_payment_modification__018", "one_line": "User asks to be reminded of their current default address before deciding to update it"}
