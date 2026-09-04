@@ -250,14 +250,61 @@ re-adding only if you deliberately switch back.
    installed.
 4. Zero-shot base-model pass over all 541 scenarios (difficulty signal +
    baseline) — cheap, inference-only, do this before writing a line of training
-   code.
+   code:
+   ```
+   uv run python3 -m tau_forge.train.zero_shot_baseline
+   ```
 5. The 50-100 step GRPO smoke test (Phase 6 spec) — validates the loop end-to-end
    and produces a real seconds/rollout number to replace the Timing estimate
-   above.
-6. Only then does Phase 7's full run itself (the full-parameter GRPO training
-   script with a ZeRO-2 `accelerate`/`deepspeed` config, wiring it to
-   `tau_forge.reward`/`tau_forge.harness`/`tau_forge.envs`) start — still gated on
-   its own explicit go-ahead per the phase-status table.
+   above:
+   ```
+   uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+       -m tau_forge.train.grpo_train --smoke-test
+   ```
+6. Only after both of those look sane, the full run (still full-parameter GRPO,
+   same ZeRO-2 `accelerate`/`deepspeed` config, wiring
+   `tau_forge.reward`/`tau_forge.envs` via `tau_forge.train.reward_adapter`):
+   ```
+   uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+       -m tau_forge.train.grpo_train
+   ```
+   This last step is still gated on its own explicit go-ahead per the
+   phase-status table — steps 4-5 are cheap diagnostics, not the full job.
+
+## What's implemented vs. what still needs the GPU box
+
+`tau_forge/train/` now has the actual training code, written and unit-tested
+against the real 541 scenarios (`tests/test_train_pipeline.py`, runs without a
+GPU) but never executed end-to-end (no GPU/torch/trl available in the
+environment this was written in):
+
+- `dataset.py` — builds the GRPO training set from `data/synthetic/raw/*.json`,
+  reusing tau2's own real agent system prompt (`tau2.agent.llm_agent`) and real
+  tool schemas (`RetailEnv.all_openai_schemas()`), graded against the plain
+  shipped `db.json` (matching `tau_forge.validate.rule_checker`'s own
+  re-execution methodology, not a derived per-scenario snapshot).
+- `completion_parsing.py` — parses a policy completion's `<tool_call>` block
+  (Qwen's native tool-calling format) into an `Action`. Deliberately treats a
+  *malformed* tool-call attempt differently from *no* attempt (a caught bug,
+  not a design given from the start — see its module docstring) so a garbled
+  call can't be mistaken for correctly-chosen silence on an
+  `ambiguous`/`policy_violation` scenario.
+- `reward_adapter.py` — adapts `tau_forge.reward.reward()` into TRL's
+  `reward_funcs(prompts, completions, **kwargs) -> list[float]` contract.
+- `grpo_train.py` — the actual `GRPOTrainer` entrypoint, `--smoke-test` flag
+  included, `beta` (KL coefficient) deliberately overridden from TRL's default
+  of `0.0` per the methodology risks above.
+- `zero_shot_baseline.py` — step 4's diagnostic script.
+- `infra/ds_zero2.json` / `infra/accelerate_zero2.yaml` — the ZeRO-2 configs
+  for the 4-GPU launch.
+
+**What's unverified**: everything past "does the data/reward plumbing work" —
+the actual `GRPOTrainer`/`accelerate`/`deepspeed` wiring, vLLM integration (off
+by default, see `--use-vllm`'s help text), and whether the chosen
+`per_device_train_batch_size`/`num_generations` combination fits in the ~26
+GB/GPU budget without adjustment. The smoke test (step 5) is what actually
+answers that — treat the first run of it as a debugging session, not a
+guaranteed clean pass, and report back what breaks.
 
 ## Why finish this setup
 

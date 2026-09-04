@@ -49,8 +49,20 @@ cat <<'EOF'
 Repo:        ~/tau-forge
 Training deps: installed via `uv sync --extra train`
 
-Nothing has been trained yet. This box is ready for Phase 7's training script
-once that's written and explicitly greenlit — see docs/phase7_aws_setup.md.
+Nothing has been trained yet. Recommended next steps, in order (see
+docs/phase7_aws_setup.md, "Next steps" / "Methodology risks"):
+
+  1. Zero-shot baseline pass (difficulty signal + pre-training baseline):
+       uv run python3 -m tau_forge.train.zero_shot_baseline
+
+  2. The 50-100 step GRPO smoke test (validates the loop end-to-end, gives a
+     real seconds/rollout number):
+       uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+           -m tau_forge.train.grpo_train --smoke-test
+
+  3. Only after both of those look sane, the full run:
+       uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+           -m tau_forge.train.grpo_train
 
 Remember to stop/terminate this instance when you're done for the session.
 EOF
