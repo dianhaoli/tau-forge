@@ -270,9 +270,23 @@ def reward(rollout: Action, expected: Action, db_state: RetailDB) -> RewardBreak
     gold_result, gold_db = execute_against(db_state, expected.tool_name, expected.tool_input)
 
     if not gold_result.ok:
-        raise ValueError(
-            f"Gold action failed to execute against db_state -- invalid gold label for "
-            f"{expected.tool_name}({expected.tool_input}): {gold_result.error}"
+        # The gold trajectory itself calls this tool expecting it to raise
+        # (e.g. looking up an id that doesn't exist) -- confirmed against
+        # real τ2-bench train tasks in Phase 6 (e.g. task "2": a gold
+        # `get_product_details` call for a product id absent from `db.json`).
+        # The error *is* the correct outcome here, not a broken gold label --
+        # grade by whether the rollout reproduces the same failure.
+        if predicted_result.ok:
+            return RewardBreakdown(
+                0.2, "expected_failure_but_succeeded", {"gold_error": gold_result.error}
+            )
+        if predicted_result.error_type == gold_result.error_type and predicted_result.error == gold_result.error:
+            return RewardBreakdown(1.0, "error_match")
+        sim = _text_similarity_score(predicted_result.error or "", gold_result.error or "")
+        return RewardBreakdown(
+            0.3 + 0.7 * sim,
+            "error_partial_match",
+            {"predicted_error": predicted_result.error, "gold_error": gold_result.error},
         )
 
     if not predicted_result.ok:
