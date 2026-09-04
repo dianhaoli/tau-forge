@@ -152,6 +152,42 @@ retail tool parameters are required, not optional -- where a tool genuinely has
 no optional slots, vary instead how much the user pre-supplies inline vs. leaves
 for the agent to look up itself.)
 
+**Hard cap: `expected_tool_calls` has AT MOST ONE element, always, in every
+category.** This isn't a generation convenience, it's a fact about the domain:
+policy.md itself says the real agent may emit at most one tool call per turn,
+never a tool call and a reply in the same turn. A "scenario" here is one
+decision point -- the single next tool call correct given everything before
+it -- not a multi-step plan. If a real task genuinely needs two calls (e.g.
+look up a product's variant, then exchange using the id you find), do NOT put
+both in expected_tool_calls. Instead, either:
+- write the scenario so the correct next call IS the lookup (the exchange
+  happens on a *later*, separately-written scenario/turn you don't need to
+  produce here), or
+- put the first call and its real result into `prior_turns` (as an
+  assistant tool-call/tool-result exchange, phrased in prose since prior_turns
+  is plain dialogue text) so the current turn's correct action is only the
+  second, final call.
+Pick whichever framing produces a more natural scenario; either is fine, but
+never emit a 2+-element expected_tool_calls list -- the rule checker hard-fails
+on it.
+
+**Lookup-only scenarios: aim for roughly 1 in 3 of your happy_path /
+requires_earlier_context scenarios (those with non-empty expected_tool_calls)
+to have a READ tool as the entire correct answer** (`find_user_id_by_name_zip`,
+`find_user_id_by_email`, `get_order_details`, `get_product_details`,
+`get_item_details`, `get_user_details`, `list_all_product_types`) -- i.e. the
+correct move this turn is to look something up, full stop, not to also act on
+it. This matches how real conversations actually unfold turn-by-turn (per the
+cap above, a lookup-then-act need spans two turns/scenarios, not one), and
+without deliberately aiming for it generators default to writing the mutating
+action as the "real" answer almost every time, which the pilot found produces
+a badly skewed ~1-in-20 lookup share. Don't pad this with trivial lookups --
+each one should be a case where looking something up is genuinely the correct
+and complete next action (e.g. the user references an order by description
+only, or asks a question that IS a lookup, like "what's the status of my
+order" or "is the blue one in stock" with nothing further to act on this
+turn).
+
 Do not reproduce or lightly paraphrase any real tau2-bench benchmark task you
 might recall from pretraining -- write genuinely novel scenarios grounded only
 in the schemas, policy, and live database above. You have not been shown and
@@ -184,17 +220,19 @@ Each element:
 }}
 ```
 
-Rules for `expected_tool_calls` by category:
+Rules for `expected_tool_calls` by category (remember the global one-call cap
+above -- none of these ever exceed length 1):
 - **ambiguous**: must be `[]`; `ambiguity_note` must explain exactly what's
   underspecified and why guessing would be wrong.
 - **policy_violation**: must be `[]`, UNLESS the correct first move is a READ
   tool needed to establish the state that makes the refusal correct (e.g.
   checking order status to discover it's not pending) -- if so, include just
-  that READ call and explain the refusal in a prior_turns/user_message-adjacent
+  that one READ call and explain the refusal in a prior_turns/user_message-adjacent
   way that makes the intended final behavior clear.
 - **out_of_scope**: must be exactly one call to `transfer_to_human_agents` with
   a real, specific `summary` argument.
-- **happy_path / requires_earlier_context**: one or more real, verified calls.
+- **happy_path / requires_earlier_context**: exactly one real, verified call --
+  see the lookup-only guidance above for how to split a naturally two-step need.
 
 Set `expected_tool_calls_verified: true` only if you actually executed every
 call in the list via `env.execute(...)` (or a chained sequence of them) and
@@ -210,6 +248,17 @@ setup as X" without reading the full scenario), one JSON object per line, to:
 ```json
 {{"id": "...", "one_line": "10-15 word summary of the setup+ask, not the answer"}}
 ```
+
+Before reporting done, run the rule checker against everything under
+`data/synthetic/raw/` (it checks all cells present, not just yours, but that's
+fine -- ignore failures in files other than `{out_path.name}`):
+`uv run python3 -m tau_forge.validate.rule_checker`
+Fix anything it flags in your own cell's file (it re-executes every
+expected_tool_calls against the real db.json, so a failure means a real bug --
+a fabricated id, a stale-state assumption, an extra hallucinated argument, or a
+cap/shape violation) before finishing. It also prints your cell's lookup-only
+share -- if it's flagged as far from ~1/3, revise a few scenarios rather than
+ignoring it.
 
 When done, report back in your final message: how many scenarios you produced,
 how many required you to revise your first proposed tool call after seeing a

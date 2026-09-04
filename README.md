@@ -129,6 +129,64 @@ correctness) and ran its own post-hoc verification pass against the written JSON
 Per-cell one-line summaries are merged into `data/synthetic/registry.jsonl` for
 the next wave's dedup context.
 
+### Rule checker -- Phase 3, stage 1 (`tau_forge/validate/rule_checker.py`)
+
+Deterministic, no-LLM, mechanical checks -- run after every cell (or small
+batch), not saved for the end: `uv run python3 -m tau_forge.validate.rule_checker`.
+This is stage 1 only (mechanical correctness); stages 2-4 (model checker,
+human review, difficulty calibration) are not built yet.
+
+What it checks, per scenario:
+- required JSON keys present; `id`/`category`/`theme` consistent with the
+  cell's filename; no duplicate ids within a cell.
+- **global hard cap: `expected_tool_calls` has at most 1 element**, always.
+  This is a fact about the domain, not a generation convenience -- policy.md
+  itself says the real agent emits at most one tool call per turn, so a
+  scenario (one decision point) can never legitimately need a 2-call chain in
+  a single `expected_tool_calls`. A genuinely two-step need must be split:
+  either the correct answer *is* the lookup (the mutating call is a separate,
+  later scenario/turn), or the first call+result is folded into `prior_turns`
+  as already-resolved dialogue, leaving only the final call as this turn's
+  answer.
+- category-specific shape: `ambiguous` → `[]` + non-empty `ambiguity_note`;
+  `policy_violation` → `[]`, or exactly one call that must be a READ tool;
+  `out_of_scope` → exactly one `transfer_to_human_agents` call with a
+  non-empty `summary`; `happy_path`/`requires_earlier_context` → exactly one
+  call.
+- **re-execution**: builds a fresh `RetailEnv` (real shipped `db.json`) and
+  actually runs every `expected_tool_calls` entry against it, in order --
+  catches fabricated ids, stale-state assumptions, and extra/hallucinated
+  arguments (via `extra_arguments()`, not just `validate_arguments()`, per
+  the Phase 1 finding above) that interactive authoring might have missed.
+  This is the check that matters most: a scenario that reads fine but doesn't
+  actually re-execute is not usable gold data.
+- distractor sanity (real tool name, not identical to the expected call).
+- soft/informational: each cell's share of `happy_path`/
+  `requires_earlier_context` scenarios whose single call is a READ tool
+  ("lookup-only") is reported, flagged if it's far from the ~1/3 target below.
+  This isn't a hard failure (doesn't affect PASS/FAIL) since it's a
+  distributional property of a whole cell, not a per-scenario correctness
+  fact.
+
+**Two fixes to `prompt_template.py` this drove**, both required for every cell
+generated after the pilot:
+1. **The one-call hard cap** above -- the pilot's `happy_path` cell had one
+   scenario with a 2-call `expected_tool_calls` (look up a product variant,
+   then exchange using the id found); fixed by making the lookup itself the
+   scenario's answer (`happy_path__electronics_returns_exchanges__010`).
+2. **~1/3 lookup-only share target** -- without deliberately aiming for it,
+   generators default to writing the mutating action as "the" answer almost
+   always; the pilot's `happy_path` cell (pre-fix) was skewed to ~1-in-20
+   lookup-only. The template now explicitly asks for roughly 1 in 3 of a
+   cell's non-empty-`expected_tool_calls` scenarios to be a READ tool as the
+   complete correct answer, matching how a lookup-then-act need actually
+   spans two turns under the cap above rather than being crammed into one.
+
+All 3 pilot cells (57 scenarios) pass the rule checker 57/57 clean after the
+one fix above; the pilot's lookup-only share (reported, not failing) still
+reflects the pre-fix generation and is not being retroactively rebalanced --
+the ~1/3 target applies to cells generated with the fixed template.
+
 **Finding surfaced during the pilot, not before:** `modify_pending_order_address`
 and `modify_pending_order_payment` gate on `RetailTools._is_pending_order`, a
 *substring* check (`"pending" in order.status`), while `cancel_pending_order` and
