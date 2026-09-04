@@ -19,8 +19,8 @@ continuity across sessions).
 | 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
-| 6 | Harness smoke test on real 74 train tasks | Not started |
-| 7 | Real GRPO training run | Not started |
+| 6 | Harness smoke test on real 74 train tasks | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
+| 7 | Real GRPO training run | Not started — needs a GPU box, none available in this environment |
 | 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Not started |
 
 Each phase after the current one is gated on a STOP checkpoint for review — see the
@@ -34,9 +34,12 @@ before a full 400-500-scenario synthetic sweep is built on top of it. This repo'
 history went `0 → 1 → 2 (pilot)` instead, skipping straight to the Phase 2 pilot.
 That pilot (3/30 cells, 57 scenarios) is not wasted — it's a valid dry run of the
 generation methodology — but the full 30-cell sweep is being held pending Phase 6.
-Phase 4 (this session) was done next, out of file order, to get back on the
-recommended track. **Do not run the remaining Phase 2 cells until Phase 6's
-harness smoke test has passed.**
+Phase 4 was done next, out of file order, to get back on the recommended track.
+Phase 6 (this session) is now done and passing — see below, which removes the
+technical blocker on resuming Phase 2. Per the STOP-checkpoint policy above,
+resuming the full 30-cell sweep still needs explicit go-ahead, not just a green
+smoke test — and note there is a concurrent session already working the Phase 2
+cells; coordinate before starting new ones to avoid duplicate work.
 
 ## Data substrate
 
@@ -229,3 +232,84 @@ STOP for review, per the Phase 4 spec: reward function built and adversarially
 tested before any training or further synthetic-data generation. Next per the
 reordering above is Phase 6's data prep (converting the real 74 train tasks to
 static snapshots) and smoke test, not the remaining 27 Phase 2 cells.
+
+## Data prep + harness smoke test (`tau_forge/data_prep/`, `tau_forge/harness/`) — Phase 6
+
+**Data prep.** `tau_forge/data_prep/trusted_tasks.py` converts the real τ²-bench
+retail **train** split (74 tasks) into `TrustedTask`s: a rendered user-scenario
+prompt plus the gold assistant action sequence, pulled straight from tau2's own
+`Task` objects (`tau2.domains.retail.environment.get_tasks("train")`) rather than
+reimplementing any parsing. This is the first point in the project where real task
+*content* is read -- deliberately: the Phase 0/5 decontamination rule is about
+never letting task content leak into the synthetic-data *generator*'s prompts,
+which grounding RLVR training directly on the real train split doesn't touch. The
+real **test** split's content is still never read anywhere in this repo. All 114
+retail tasks ship with `initial_state=None` (confirmed in Phase 0) -- every task
+starts from the same shipped `db.json`, so there is no per-task DB snapshot to
+extract; the actual conversion work is the prompt/action-sequence extraction.
+Output: `data/trusted/train_tasks.json` (74 entries, committed).
+
+**Harness.** `tau_forge/harness/rollout.py` adds multi-turn scoring on top of the
+Phase 4 `reward()` function -- no new grading logic, just sequencing it.
+Teacher-forced: turn `i`'s reward compares the rollout's turn-`i` action against
+gold's turn-`i` action, both executed from the DB state produced by replaying
+**gold's** actions `0..i-1` (not the rollout's own prior actions, which could have
+already diverged). This is a deliberate departure from tau2's own official retail
+grading (`RewardType.DB`: only the *final* DB state after a full conversation has
+to match, any path there is fine) -- that coarse, episode-end signal is what
+Phase 8's live-benchmark eval uses; training needs denser per-step credit
+assignment, which requires a well-defined "correct" context for every step
+regardless of where the rollout diverged. A rollout shorter than gold has its
+missing turns scored via `reward()`'s existing `missing_call` case; a rollout
+longer than gold has its extra turns scored 0 (`extra_unrequested_turn`).
+
+**Two real findings, surfaced by running this harness against the real trusted
+tasks, not synthetic data:**
+
+- Some gold actions are themselves expected to fail. Task `"2"`'s gold trajectory
+  calls `get_product_details` on a product id that genuinely doesn't exist in
+  `db.json` -- the resulting error *is* the correct outcome (the user apparently
+  mentioned a product that isn't real), not a broken label. `reward()` originally
+  raised `ValueError` on this. Fixed: when the gold action itself fails, grade the
+  rollout by whether it reproduces the same failure (`error_match` for an exact
+  reproduction, `error_partial_match` via text similarity otherwise,
+  `expected_failure_but_succeeded` -- scored like the schema-invalid tier -- if the
+  rollout's call succeeds when it was supposed to fail). Also affects tasks `"3"`,
+  `"4"`, `"35"`, `"37"`, `"46"`, `"47"`, `"54"`, `"67"`, `"105"`.
+- Two train tasks (`"24"`, `"57"`) have **zero** gold actions -- the correct
+  behavior is purely conversational (no tool call needed at all, akin to the
+  Phase 2 pilot's `ambiguous`/`policy_violation` scenarios). `score_rollout`
+  originally scored an empty rollout against these as `0.0` (an empty turn-score
+  list's mean defaults to 0, not 1) instead of the `1.0` a correct empty match
+  deserves. Fixed as an explicit `correct_no_call` case.
+
+**Smoke test** (`tau_forge/harness/smoke_test.py`, `uv run python -m
+tau_forge.harness.smoke_test`): runs two scripted stand-in policies over all 74
+trusted tasks --
+
+- `gold` -- replays each task's gold action sequence verbatim against itself.
+- `noisy` -- gold actions with randomly injected corruption (wrong tool, corrupted
+  argument, or a dropped call; ~50% of turns affected).
+
+| Policy | mean-of-task-means | min task mean |
+|---|---|---|
+| `gold` | **1.0000** | **1.0000** |
+| `noisy` | 0.5975 | -- |
+
+**PASSED.** Every one of the 74 trusted train tasks scores a perfect 1.0 when
+graded against itself, confirming env (Phase 1) + reward (Phase 4) + data prep
+(this phase) agree with each other on real, trusted ground truth. The noisy
+policy scoring well below gold confirms the reward function actually
+discriminates good from bad rollouts rather than degenerately returning a
+constant. Full per-task breakdown in `data/trusted/phase6_smoke_report.json`
+(committed).
+
+**Scope note -- no GRPO steps run here.** This environment has no GPU and no ML
+training stack (`torch`/`trl`/`vllm` all absent -- confirmed, not assumed). This
+smoke test validates the *plumbing* a GRPO trainer sits on top of using scripted
+policies as a stand-in for a live model; it does not run the "50-100 step GRPO
+smoke test" the Phase 6 spec also calls for. That needs a GPU box (Phase 7)
+-- draft EC2 setup notes are being worked out with the user separately.
+
+STOP for review, per the Phase 6 spec: harness validated against real trusted
+data before resuming Phase 2/3 or attempting any GPU training.
