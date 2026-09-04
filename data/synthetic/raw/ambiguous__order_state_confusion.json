@@ -1,0 +1,272 @@
+[
+  {
+    "id": "ambiguous__order_state_confusion__001",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, my email is ivan.santos3158@example.com."},
+      {"role": "assistant", "content": "Thanks Ivan, I've located your account and verified your identity."}
+    ],
+    "user_message": "Please cancel my order, I ordered it by mistake.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Calling cancel_pending_order on any one of Ivan's three pending orders (e.g. the most recent) without confirming which one he means risks cancelling a purchase he intended to keep.",
+    "ambiguity_note": "Ivan has three open pending orders (#W8770097 office chair, #W5183325 LED bulb + keyboard, #W3913498 watch + camera + skateboard) and the message doesn't say which one is 'ordered by mistake', so the agent cannot pick a target order to cancel without asking."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__002",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Olivia Jackson, olivia.jackson2465@example.com."},
+      {"role": "assistant", "content": "Thanks Olivia, you're verified. How can I help?"}
+    ],
+    "user_message": "Hey, I just moved -- can you update the shipping address on my order to my new place?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Applying the new address to whichever pending order the agent picks first would leave the other four pending orders shipping to the old address, which likely isn't what Olivia intended.",
+    "ambiguity_note": "Olivia has five pending orders (#W3168895, #W5663445, #W2090453, #W6975922, #W6116680), all equally eligible for an address change, and she never said which order (or all of them) she means by 'my order'."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__003",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Raj Sanchez, raj.sanchez2046@example.com."},
+      {"role": "assistant", "content": "Thanks Raj, you're verified."}
+    ],
+    "user_message": "I want to return something from my last order, it's not what I expected.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Picking either delivered order (or guessing an item within it) to start a return risks opening it against the wrong order -- Raj never named the order or the item.",
+    "ambiguity_note": "Raj has two delivered orders (#W7736708 and #W1067251) and hasn't said which one -- or which item in it -- 'my last order' refers to, so the target order and item are both unknown."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__004",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Evelyn Kovacs, evelyn.kovacs5369@example.com."},
+      {"role": "assistant", "content": "Thanks Evelyn, you're verified."}
+    ],
+    "user_message": "I'm not happy with the digital camera I ordered, can you help me sort it out?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Jumping to an exchange assumes she means the delivered camera order; she also has a different digital camera still pending, where exchange_delivered_order_items wouldn't even apply -- modify_pending_order_items or cancel_pending_order would be the right family instead.",
+    "ambiguity_note": "Evelyn has a digital camera in two different orders -- one delivered (#W2768683) and one still pending (#W9651773) -- and which order she means, and therefore which action applies (return/exchange vs. modify/cancel), is not stated."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__005",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Chen Silva, chen.silva2698@example.com."},
+      {"role": "assistant", "content": "Thanks Chen, you're verified."}
+    ],
+    "user_message": "Can you exchange the tablet from my order for the higher storage version?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Both #W9571698 and #W3069600 are delivered orders containing a tablet; exchanging the item in the wrong one would use up that order's one-time exchange allowance on the wrong purchase.",
+    "ambiguity_note": "Chen has the same tablet product in two separate delivered orders (#W9571698 and #W3069600) and didn't specify which order to exchange from; since each order can only be exchanged once, guessing wrong would waste the one shot on the wrong order."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__006",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Mia Moore, mia.moore8091@example.com."},
+      {"role": "assistant", "content": "Thanks Mia, you're verified."}
+    ],
+    "user_message": "Can you help me with the electric toothbrush order? Something needs to change.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Assuming she means the still-pending order (where modify_pending_order_items would apply) ignores that she also has a delivered order with the same product, where only return or exchange tools are valid -- and the message doesn't say what kind of change she wants either.",
+    "ambiguity_note": "Mia has an electric toothbrush in both a delivered order (#W5544629) and a separate pending order (#W3130288); she names neither the order nor what 'needs to change' (address, items, a return), so neither the target order nor the correct action can be determined."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__007",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Fatima Muller, fatima.muller6448@example.com."},
+      {"role": "assistant", "content": "Thanks Fatima, you're verified."}
+    ],
+    "user_message": "Something's wrong with my espresso machine order, can you take care of it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Fatima has an espresso machine in three different orders across two statuses; defaulting to modifying one of the pending ones ignores the delivered order entirely, and even among the pending ones it's unclear which order -- or which of the two espresso machine units in #W2040365 -- she means.",
+    "ambiguity_note": "The espresso machine appears in three of Fatima's orders -- pending #W4160705, pending #W2040365 (which has two espresso machine units), and delivered #W2435638 -- and she hasn't identified the order or described the problem, so neither the target order nor the correct tool can be chosen."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__008",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Isabella Johansson, isabella.johansson1233@example.com."},
+      {"role": "assistant", "content": "Thanks Isabella, you're verified."}
+    ],
+    "user_message": "Can you take care of my pet bed order? It's not what I wanted.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Assuming the delivered order (#W3489690) is the one in question and opening a return skips over the fact that she also has a pending order with a pet bed, where modify_pending_order_items -- not a return -- would be the correct tool.",
+    "ambiguity_note": "Isabella has a pet bed in a delivered order (#W3489690) and a separate pending order (#W6783532), and 'not what I wanted' doesn't say which order she means or whether she wants a return, an exchange, or an item swap -- clarification is needed before any tool call."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__009",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Hernandez, sofia.hernandez3039@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, you're verified."}
+    ],
+    "user_message": "I want to swap my grill for a different model.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Defaulting to the pending order and calling modify_pending_order_items ignores that Sofia also has a delivered order containing a grill, where exchange_delivered_order_items -- a different tool -- would be the correct one instead.",
+    "ambiguity_note": "Sofia has a grill in a pending order (#W3561391) and a different grill in a delivered order (#W6876713); 'my grill' doesn't distinguish which one, and each status requires a different tool (modify vs. exchange)."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__010",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Harper Santos, harper.santos8390@example.com."},
+      {"role": "assistant", "content": "Thanks Harper, you're verified."}
+    ],
+    "user_message": "Please cancel my digital camera order, I ordered it by mistake.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Both #W6629830 and #W4941028 are pending orders containing a digital camera alongside several other items; cancelling either one outright -- which would also cancel the unrelated items in it -- without confirming which order she means would be a guess.",
+    "ambiguity_note": "Harper has a digital camera in two different multi-item pending orders (#W6629830 and #W4941028); she hasn't said which order to cancel, and cancelling the wrong one would also cancel unrelated items she may want to keep."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__011",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Yusuf Ahmed, yusuf.ahmed5476@example.com."},
+      {"role": "assistant", "content": "Thanks Yusuf, you're verified."}
+    ],
+    "user_message": "Can you update the shipping address on my smart watch order? I need it sent to my work address instead.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Both #W7007896 and #W1302858 are pending orders containing a smart watch alongside several other items; updating the address on the wrong one would misdirect that whole order's shipment, not just the watch.",
+    "ambiguity_note": "Yusuf has a smart watch in two separate pending orders (#W7007896 and #W1302858), and he refers only to 'my smart watch order' with no other identifying detail, so the target order is unclear."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__012",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is James Martin, james.martin9857@example.com."},
+      {"role": "assistant", "content": "Thanks James, you're verified."}
+    ],
+    "user_message": "I need to change the shipping address on the order with my backpack in it -- I'm having it sent to my sister's place instead.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "James has a backpack in two different pending orders (#W3529525 and #W3043531); redirecting whichever one the agent guesses first would send the wrong shipment to his sister's address while the other stays at his own.",
+    "ambiguity_note": "The backpack shows up in two of James's pending orders (#W3529525 and #W3043531) with no other detail distinguishing which one he means, so the agent cannot pick a target order to modify."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__013",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Mason Sanchez, mason.sanchez2341@example.com."},
+      {"role": "assistant", "content": "Thanks Mason, you're verified."}
+    ],
+    "user_message": "I'd like to exchange my bluetooth speaker for a different color.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Mason has a delivered bluetooth speaker in two different orders (#W9342124 and #W6209538); exchanging the item in the wrong one would use up that order's one-time exchange allowance on the wrong purchase.",
+    "ambiguity_note": "The bluetooth speaker appears in two separate delivered orders (#W9342124 and #W6209538), and nothing in the message narrows down which one he means -- each order's exchange can only be requested once, so guessing wrong is costly."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__014",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Yusuf Rossi, yusuf.rossi7301@example.com. Last week I asked you to swap the t-shirt on order #W6247578 for a different size."},
+      {"role": "assistant", "content": "You're verified, Yusuf, and I can see that swap on #W6247578 already went through -- it's showing as pending with the item change applied."}
+    ],
+    "user_message": "Great, one more thing -- can you update the shipping address on my pending order? I'm having it sent to my office now.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Yusuf has two orders that are still open for shipment -- #W6247578 (already item-modified, status 'pending (item modified)') and #W4776164 (untouched, status 'pending') -- and 'my pending order' doesn't distinguish between them; applying the new address to the wrong one would misroute a different shipment.",
+    "ambiguity_note": "Both #W6247578 (status 'pending (item modified)' after last week's swap) and #W4776164 (plain 'pending') still count as open pending orders eligible for an address change, and Yusuf's message doesn't say which one he means by 'my pending order.'"
+  },
+  {
+    "id": "ambiguous__order_state_confusion__015",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Aarav Anderson, aarav.anderson9752@example.com. Earlier I asked you to exchange one of the tea kettles on order #W4316152 for the 1-liter electric version, paid with my gift card."},
+      {"role": "assistant", "content": "Confirmed, Aarav -- that exchange on #W4316152 has been requested and is on file."}
+    ],
+    "user_message": "Actually, can you also swap the finish on my tea kettle order to stainless steel?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "#W4316152 already has an exchange requested and cannot be exchanged again, but Aarav also has a tea kettle in a separate, untouched delivered order (#W9311069); calling exchange on either order without asking which one he means risks a guaranteed failure or acting on the wrong purchase.",
+    "ambiguity_note": "Aarav has a tea kettle in two delivered orders -- #W4316152 (already 'exchange requested' from the earlier swap, so it can't be exchanged again) and #W9311069 (untouched, still plainly delivered) -- and 'my tea kettle order' doesn't say which one this new request is about."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__016",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Ava Nguyen, ava.nguyen3664@example.com. Earlier I asked you to return the smart watch on order #W1504875, refunded to my PayPal."},
+      {"role": "assistant", "content": "That's confirmed, Ava -- #W1504875 shows the return requested with the refund going to your PayPal."}
+    ],
+    "user_message": "One more thing -- can you exchange my smart watch for a different band color?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The smart watch on #W1504875 is already mid-return and can't be touched again, but Ava also has the identical smart watch on a separate delivered order (#W9126675) that's still eligible for exchange; without asking which order she means, the agent risks acting on the wrong one or attempting an action that will fail outright.",
+    "ambiguity_note": "Ava has the same smart watch in two delivered orders -- #W1504875 (now 'return requested', locked from further action) and #W9126675 (still plainly delivered) -- and her message doesn't specify which order this new exchange request is about."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__017",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Amelia Kim, amelia.kim6460@example.com."},
+      {"role": "assistant", "content": "Thanks Amelia, you're verified. I can see your pending order #W7634667 with the desk lamp, two tea kettles, and mechanical keyboard."}
+    ],
+    "user_message": "Yeah, that one -- something's off with it, can you just take care of it for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Jumping straight to cancelling the whole order assumes Amelia wants to be rid of it entirely, but 'something's off' could just as easily mean she wants a single item swapped via modify_pending_order_items -- the message doesn't say which, and cancelling would be irreversible if she only meant to fix one item.",
+    "ambiguity_note": "Amelia's request ('take care of it') doesn't say whether she wants the whole pending order #W7634667 cancelled or just an item on it modified -- both cancel_pending_order and modify_pending_order_items are valid actions on a pending order, and picking the wrong one is a real risk."
+  },
+  {
+    "id": "ambiguous__order_state_confusion__018",
+    "category": "ambiguous",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Noah Brown, noah.brown7922@example.com."},
+      {"role": "assistant", "content": "Thanks Noah, you're verified. I see your delivered order #W7678072 with the electric kettle, gaming mouse, and backpack."}
+    ],
+    "user_message": "One of those isn't working right, can you sort it out for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Starting a return assumes he wants a refund, but he might instead want an exchange for a working replacement -- and he hasn't even said which of the three items is the problem, so neither the tool nor the item can be chosen yet.",
+    "ambiguity_note": "Noah's message doesn't identify which item in delivered order #W7678072 is defective (kettle, mouse, or backpack), nor whether he wants a return or an exchange for it -- both tools are plausible and nothing narrows it down."
+  }
+]

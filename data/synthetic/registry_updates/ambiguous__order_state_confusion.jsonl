@@ -1,0 +1,18 @@
+{"id": "ambiguous__order_state_confusion__001", "one_line": "Customer with 3 pending orders asks to cancel 'my order' by mistake, no order named"}
+{"id": "ambiguous__order_state_confusion__002", "one_line": "Customer with 5 pending orders asks for a shipping address update to new place, order unspecified"}
+{"id": "ambiguous__order_state_confusion__003", "one_line": "Customer with 2 delivered orders wants to return 'something' from last order, item/order unnamed"}
+{"id": "ambiguous__order_state_confusion__004", "one_line": "Digital camera exists in one delivered and one pending order; vague 'sort it out' request doesn't say which"}
+{"id": "ambiguous__order_state_confusion__005", "one_line": "Same tablet product in 2 delivered orders; wants storage upgrade exchange, order unnamed"}
+{"id": "ambiguous__order_state_confusion__006", "one_line": "Electric toothbrush in one delivered and one pending order; 'something needs to change' unspecified"}
+{"id": "ambiguous__order_state_confusion__007", "one_line": "Espresso machine spans 2 pending orders (one with 2 units) plus 1 delivered order; vague complaint"}
+{"id": "ambiguous__order_state_confusion__008", "one_line": "Pet bed in one delivered and one pending order; 'not what I wanted' doesn't say which or what action"}
+{"id": "ambiguous__order_state_confusion__009", "one_line": "Grill in one pending and one delivered order; wants to 'swap for different model', order unnamed"}
+{"id": "ambiguous__order_state_confusion__010", "one_line": "Digital camera in 2 multi-item pending orders; wants to cancel 'my digital camera order' by mistake"}
+{"id": "ambiguous__order_state_confusion__011", "one_line": "Smart watch in 2 pending orders; wants shipping address changed to work address, order unnamed"}
+{"id": "ambiguous__order_state_confusion__012", "one_line": "Backpack in 2 pending orders; wants address redirected to sister's place, order unnamed"}
+{"id": "ambiguous__order_state_confusion__013", "one_line": "Bluetooth speaker in 2 delivered orders; wants color exchange, one-shot exchange risk, order unnamed"}
+{"id": "ambiguous__order_state_confusion__014", "one_line": "One order already item-modified, another still plain pending; address-change request says only 'my pending order'"}
+{"id": "ambiguous__order_state_confusion__015", "one_line": "Tea kettle order already exchange-requested (locked); another delivered order has same kettle untouched, new swap ambiguous"}
+{"id": "ambiguous__order_state_confusion__016", "one_line": "Smart watch order already return-requested (locked); identical watch in separate delivered order, exchange request ambiguous"}
+{"id": "ambiguous__order_state_confusion__017", "one_line": "Single pending multi-item order; 'take care of it' unclear between full cancel and single item modify"}
+{"id": "ambiguous__order_state_confusion__018", "one_line": "Single delivered 3-item order; 'one of those isn't working' names neither item nor return-vs-exchange"}

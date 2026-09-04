@@ -1,0 +1,17 @@
+{"id": "ambiguous__identity_and_order_lookup__001", "one_line": "User gives only a first name, no last name/zip/email; agent can't authenticate via either lookup tool."}
+{"id": "ambiguous__identity_and_order_lookup__002", "one_line": "User gives only a zip code, no name or email; neither authentication tool can be called."}
+{"id": "ambiguous__identity_and_order_lookup__003", "one_line": "User gives full name but no zip; DB actually has two real customers sharing that exact name."}
+{"id": "ambiguous__identity_and_order_lookup__004", "one_line": "User offers two candidate email spellings for their account, unsure which is the real one on file."}
+{"id": "ambiguous__identity_and_order_lookup__005", "one_line": "User gives last name and zip but omits first name, which find_user_id_by_name_zip also requires."}
+{"id": "ambiguous__identity_and_order_lookup__006", "one_line": "User gives name plus two candidate zip codes after a move, unsure which digit is right."}
+{"id": "ambiguous__identity_and_order_lookup__007", "one_line": "User asks to cancel a real order by id but supplies no identity info at all before acting."}
+{"id": "ambiguous__identity_and_order_lookup__008", "one_line": "Authenticated user with three pending orders says 'cancel my order' without naming which one."}
+{"id": "ambiguous__identity_and_order_lookup__009", "one_line": "Authenticated user with five pending orders asks for an address update on 'my order', unspecified."}
+{"id": "ambiguous__identity_and_order_lookup__010", "one_line": "Authenticated user with five orders across statuses asks generic 'status of my order' with no id."}
+{"id": "ambiguous__identity_and_order_lookup__011", "one_line": "Two delivered orders both contain a tea kettle (one with two units); user's return request unspecific."}
+{"id": "ambiguous__identity_and_order_lookup__012", "one_line": "Two delivered orders each hold a different tablet variant; user asks to exchange 'my tablet' generically."}
+{"id": "ambiguous__identity_and_order_lookup__013", "one_line": "Identical jigsaw puzzle item id appears in two delivered orders; user's 'puzzle order' return is ambiguous."}
+{"id": "ambiguous__identity_and_order_lookup__014", "one_line": "Two pending orders each contain a different smart watch variant; user's color-swap request names neither order."}
+{"id": "ambiguous__identity_and_order_lookup__015", "one_line": "Agent surfaced two delivered orders last turn; user's vague 'that one' return request doesn't pick either."}
+{"id": "ambiguous__identity_and_order_lookup__016", "one_line": "User wants to return from 'my most recent order' but the DB has no date field to determine recency."}
+{"id": "ambiguous__identity_and_order_lookup__017", "one_line": "User offers an email and a separate name+zip that resolve to two different real accounts, unreconciled."}

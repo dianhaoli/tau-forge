@@ -1,0 +1,18 @@
+{"id": "ambiguous__damaged_or_defective_item_narratives__001", "one_line": "Two delivered orders each contain a Water Bottle; user says 'the water bottle' is dented, no order/color given."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__002", "one_line": "Delivered order has 2 distinct Backpacks; user says 'one of my backpacks' has a broken zipper, unspecified."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__003", "one_line": "User has a Tablet in two delivered orders (different storage/color); 'the tablet' won't turn on, order unspecified."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__004", "one_line": "User has a Laptop in two delivered orders (different specs); 'my laptop' has a cracked screen, order unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__005", "one_line": "Delivered order has two identical Tea Kettle units; user says 'one of the two' leaks, quantity/replacement unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__006", "one_line": "One order has three distinct Wireless Earbuds items; user says 'the earbuds' cut out, which pair unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__007", "one_line": "Identical security camera item id delivered in two separate orders; user wants to return it, order unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__008", "one_line": "One order has two different Laptop configs; user says 'the laptop' flickers, which unit and replacement unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__009", "one_line": "User reports two damaged items across two different orders (helmet, speaker) in one message; can't act on both at once."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__010", "one_line": "Skateboard deck cracked; user asks 'what can you do', doesn't say return or exchange."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__011", "one_line": "Makeup kit shattered; user says 'fix this' without choosing refund or replacement."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__012", "one_line": "Camera exchange item already settled via prior turns; user says 'charge my card', two credit cards on file."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__013", "one_line": "Yoga mat torn; user asks for refund 'however's easiest', original card and a gift card both valid."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__014", "one_line": "User has two delivered orders totaling six items; 'something broke', no order or item named at all."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__015", "one_line": "User has four electronic-ish items across two orders; says 'the electronic thing' broke, still ambiguous."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__016", "one_line": "Five-item delivered order; user says 'a couple of things' arrived damaged, none named, action unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__017", "one_line": "Camera overheats; user says 'give me any working one', several in-stock replacement variants exist."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__018", "one_line": "Five-item delivered order; user says 'several items' are messed up, unnamed, return/exchange unclear."}

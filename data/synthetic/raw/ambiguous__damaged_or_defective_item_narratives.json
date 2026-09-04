@@ -1,0 +1,396 @@
+[
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__001",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is ava.moore6020@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account. How can I help you today?"
+      },
+      {
+        "role": "user",
+        "content": "One of the water bottles I ordered showed up dented near the base."
+      }
+    ],
+    "user_message": "Can you get me a replacement for the dented water bottle?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Ava has two delivered orders (#W4817420 and #W8951014) that each contain a Water Bottle of a different color, and neither the order nor the color was named, so there is no single order_id/item_id pair to build the call from.",
+    "ambiguity_note": "Ava has a Water Bottle in two separate delivered orders (#W4817420 and #W8951014), and she referred to 'the water bottle' without saying which order or color. Guessing either order risks exchanging the wrong item; the agent must ask which order/bottle she means before acting."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__002",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mohamed Lee, zip 75372, I can't recall my email."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account under mohamed.lee1888@example.com."
+      }
+    ],
+    "user_message": "One of my backpacks from order #W7913362 arrived with a broken zipper, I need it fixed.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Order #W7913362 has two distinct Backpack variants (medium/grey and large/grey, item ids 5917587651 and 6309044598), and 'fixed' doesn't say whether he wants a return or an exchange, so neither the item to act on nor the action itself is settled.",
+    "ambiguity_note": "Order #W7913362 contains two different Backpack variants (a medium and a large, both grey), and the user only said 'one of my backpacks' without indicating which. He also didn't say whether 'fixed' means a refund (return) or a replacement (exchange), so both the target item and the intended action are underspecified."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__003",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's chen.silva2698@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've pulled up your account."
+      }
+    ],
+    "user_message": "The tablet I bought won't turn on anymore, just a black screen. Can you take care of it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Chen has a Tablet in two different delivered orders (#W3069600, silver 64GB, item 8551474201, and #W9571698, gold 128GB, item 6065192424); without knowing which order she means, the order_id and item_id for the call can't be determined.",
+    "ambiguity_note": "Chen has purchased a Tablet in two separate delivered orders with different storage/color variants, and she hasn't said which one is dead or which order it came from. The agent needs to ask before it can even look up the right item, let alone act on it."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__004",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, harper.brown3965@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified."
+      }
+    ],
+    "user_message": "My laptop showed up with a cracked screen.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Harper has two delivered orders each containing a 15-inch i7 Laptop with different RAM/color configurations (#W1840144 item 6017636844 and #W2693718 item 4241599783); 'my laptop' doesn't identify which order or configuration is damaged.",
+    "ambiguity_note": "Harper has a Laptop delivered in two different orders with different specs (32GB space grey vs 16GB black), and she only said 'my laptop' with no order id or spec mentioned. The agent can't tell which laptop, and therefore which order, she's referring to."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__005",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is aarav.anderson9752@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account."
+      }
+    ],
+    "user_message": "One of the two kettles I got in order #W4316152 is leaking around the lid seam, can you swap it out?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order has two identical Tea Kettle units (both item_id 7292993796); the user says 'one of the two' but exchange_delivered_order_items needs an explicit item_ids list (length 1 vs 2) and a new_item_ids target, neither of which the user has given.",
+    "ambiguity_note": "Order #W4316152 has two identical Tea Kettle units under the same item_id, and the user says only one is leaking. It's unclear whether he wants just one unit exchanged or is flagging both as suspect, and he hasn't named a replacement variant, so the call's item_ids/new_item_ids can't be filled in without asking."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__006",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "It's aarav.anderson9752@example.com again."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I have your account pulled up."
+      }
+    ],
+    "user_message": "The wireless earbuds you sent me in order #W3470184 keep cutting out mid-call, I want a working pair.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Order #W3470184 contains three distinct Wireless Earbuds items (item ids 6452271382, 1646531091, 2757705742, differing in battery life/water resistance), and the user's description doesn't distinguish which pair is defective.",
+    "ambiguity_note": "The order has three separate Wireless Earbuds purchases with different battery-life/water-resistance specs, and the user just said 'the wireless earbuds' as if there were only one. The agent must find out which of the three pairs is the defective one before it can act."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__007",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, sofia.lee5283@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified."
+      }
+    ],
+    "user_message": "My security camera stopped connecting to wifi, I'd like to return it.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The exact same Indoor Security Camera item_id (6867855179) was delivered in two different orders (#W7762997 and #W4143549); the order_id argument can't be inferred from the item description alone since it matches both orders equally.",
+    "ambiguity_note": "Sofia ordered the identical Indoor Security Camera variant in two separate delivered orders, so 'my security camera' doesn't disambiguate which order the return should be filed against, even though the item itself is unambiguous."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__008",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, daiki.moore7228@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account."
+      }
+    ],
+    "user_message": "The laptop I got from order #W7766102 has a flickering screen, can you exchange it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Order #W7766102 contains two different Laptop configurations (item 9844888101, 15-inch black, and item 3265035808, 17-inch silver); 'the laptop' doesn't say which one is flickering, and no replacement variant was given either.",
+    "ambiguity_note": "That single order has two distinct Laptop items in it, and the user referred to 'the laptop' as if there were only one. Both which unit is defective and what replacement he wants are unstated."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__009",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, emma.santos7683@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "Both the helmet from one order and the speaker from the other arrived broken -- can you take care of that for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Emma has two delivered orders, one with a damaged Cycling Helmet (#W3113816) and one with a damaged Bluetooth Speaker (#W1539823); an agent limited to one tool call per turn can't process both, and she hasn't said whether she wants either item returned or exchanged, or which to start with.",
+    "ambiguity_note": "The user is describing two separate defective items across two different orders in one message. Per policy the agent can take at most one action per turn, and she hasn't said which item to handle first or whether she wants a return or an exchange for either one, so no single call can be formed yet."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__010",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, omar.khan3563@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account."
+      }
+    ],
+    "user_message": "My skateboard from order #W6304490 arrived with a cracked deck, what can you do for me?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A cracked deck could reasonably be handled with either a refund (return_delivered_order_items) or a replacement (exchange_delivered_order_items); the user asked an open question ('what can you do') rather than choosing one, so picking exchange over return (or vice versa) would be a guess.",
+    "ambiguity_note": "The user described the damage but never said whether he wants a refund or a replacement, and asked the agent what's possible rather than making a request. Return and exchange are both valid remedies for a delivered order, so the agent must ask which one he wants before calling either tool."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__011",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's chen.silva2698@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified."
+      }
+    ],
+    "user_message": "The makeup kit palette from order #W3069600 is shattered inside the box, I'm really frustrated, please fix this.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "'Fix this' doesn't specify a refund or a replacement, and both return_delivered_order_items and exchange_delivered_order_items are equally plausible next steps for a shattered delivered item -- calling either one would be assuming the remedy the user wants.",
+    "ambiguity_note": "The user is clearly upset and wants the situation resolved but never states whether she wants her money back or a replacement palette. 'Fix this' is not itself an instruction to return or exchange, so the agent should ask which outcome she prefers."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__012",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, sofia.li7352@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified. How can I help?"
+      },
+      {
+        "role": "user",
+        "content": "The digital camera from order #W4689314 has a scratched lens and won't focus properly."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry to hear that. I can exchange it for the 30MP, 5x zoom, CF card variant (item 6384525445), which is in stock and priced at $2929.62, a $34.07 increase over your current item. Would you like to proceed, and if so, which payment method should I charge the difference to?"
+      },
+      {
+        "role": "user",
+        "content": "Yeah, let's do that."
+      }
+    ],
+    "user_message": "Go ahead and charge my card for the difference.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Sofia has two credit cards on file (credit_card_3951670 and credit_card_8105988) plus a PayPal account; 'my card' doesn't say which credit card she means, and the payment_method_id argument is required for the call.",
+    "ambiguity_note": "Everything about the exchange itself is settled (order, item, replacement variant), but Sofia has two different credit cards on file and just said 'my card' without naming either one. The agent must ask which card before it can supply payment_method_id."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__013",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, evelyn.anderson6912@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account."
+      }
+    ],
+    "user_message": "The yoga mat from order #W5931168 arrived torn along one edge, I'd like to return it. Just refund me however's easiest.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Evelyn's order was originally paid with credit_card_8033789, and she also has gift_card_6765112 on file; both are valid refund destinations under policy, and 'however's easiest' doesn't pick one, so payment_method_id can't be filled in.",
+    "ambiguity_note": "The order's original payment method (a credit card) and her on-file gift card are both valid places to send the refund per policy, and she explicitly punted the choice back to the agent instead of naming one. The agent must ask which she prefers rather than default to either."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__014",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, raj.davis3587@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "Something I ordered broke after one use and I want a refund.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Raj has two delivered orders (#W5463717: Air Purifier, Headphones, Grill; #W9894882: Bicycle, Bookshelf, Jigsaw Puzzle), six items total, and nothing in the message narrows down which order or which item is broken.",
+    "ambiguity_note": "The user gave no order id, product name, or any distinguishing detail -- he has two delivered orders covering six different products, any of which could be 'something I ordered.' The agent needs to ask what broke before it can look anything up, let alone return it."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__015",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, aarav.garcia8277@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account."
+      }
+    ],
+    "user_message": "The electronic thing I bought recently is broken, can you send a replacement?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Between his two delivered orders, 'electronic' could mean the Smartphone in #W3038897 or the Espresso Machine, Coffee Maker, or Electric Kettle in #W7821216 -- four candidates remain even after narrowing by 'electronic', so no single item_id can be chosen.",
+    "ambiguity_note": "'The electronic thing' still matches four different delivered items across his two orders (a Smartphone, an Espresso Machine, a Coffee Maker, and an Electric Kettle). The word 'electronic' narrows the field but doesn't uniquely identify one, so the agent has to ask which product he means."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__016",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, ava.moore6020@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified."
+      }
+    ],
+    "user_message": "A couple of things from order #W4817420 came in damaged, can you handle it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Order #W4817420 has five different items (Water Bottle, Bookshelf, Action Camera, Electric Kettle, Hiking Boots); 'a couple of things' means at least two are damaged but names none of them, so the item_ids list required by the call can't be built.",
+    "ambiguity_note": "The order has five distinct items and the user says 'a couple' are damaged without naming any of them or saying whether she wants them returned or exchanged. Both which items and what remedy are needed are missing before any call can be made."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__017",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, sofia.li7352@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, you're verified."
+      }
+    ],
+    "user_message": "The digital camera from order #W4689314 keeps overheating and shutting off. Just give me any working one you've got in stock as a replacement.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The Digital Camera product has several other in-stock variants (e.g. items 6384525445, 1804581713, 9644439410, 7255224608, 4326528037, 9228757377, 8363011723, spanning different resolution/zoom/storage combinations and prices); 'any working one' doesn't pick a new_item_id among them.",
+    "ambiguity_note": "There are multiple different in-stock Digital Camera variants that could serve as a replacement, at different price points, and the user explicitly deferred the choice to the agent ('any working one'). Since policy requires an exact new_item_id, the agent should present the real options and let her choose rather than pick one on her behalf."
+  },
+  {
+    "id": "ambiguous__damaged_or_defective_item_narratives__018",
+    "category": "ambiguous",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, mohamed.santos7676@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account."
+      }
+    ],
+    "user_message": "Several items in order #W4840405 came in messed up, not sure how you want to sort it out.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Order #W4840405 has five distinct items (Bluetooth Speaker, Backpack, Wireless Earbuds, Tablet, Luggage Set); 'several' doesn't say how many or which, and the user's phrasing doesn't indicate a preference for return vs. exchange either.",
+    "ambiguity_note": "The order contains five different products, and the user says 'several' are messed up without naming any of them, plus he hasn't indicated whether he wants refunds or replacements. Both the affected items and the intended action are unresolved."
+  }
+]
