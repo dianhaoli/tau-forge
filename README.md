@@ -41,7 +41,7 @@ Concretely:
 | 0 | Repo setup + data substrate extraction | Done |
 | 1 | Environment wrapper / mock tool executor | Done |
 | 2 | Synthetic scenario generation (methodology + full sweep) | **Done (30/30 cells, 541 scenarios)** |
-| 3 | Validation pipeline (rule / model / human / difficulty) | **Stages 1, 2, 4 done (541/541 scenarios each); stage 3 (human review) sample generated + delivered, verdicts pending — see below** |
+| 3 | Validation pipeline (rule / model / human / difficulty) | **Stages 1, 2, 4 done (541/541 scenarios each); stage 3 (human review) sample generated + delivered — 1 scenario reviewed and a systemic 23-scenario authentication bug it surfaced fixed, rest pending — see below** |
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | **Done — 0/8 flagged pairs confirmed as true positives on spot-check, see below** |
 | 6 | Harness smoke test on real 74 train tasks (scoring code only, no model) | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
@@ -331,10 +331,13 @@ subagents wrote (`validate_report_shape` catches a missing scenario id, a
 duplicate, an unknown severity, or an issues/severity mismatch -- structural
 guarantees a subagent's free-text judgment could otherwise violate silently).
 
-**Result: 541/541 scenarios judged, 22 major, 63 minor, 456 clean** (`uv run
-python3 -m tau_forge.validate.model_checker`). Per this project's rule that
-stage 2 only *reports*, none of the flagged scenarios were edited -- deciding
-what to regenerate is stage 3's call. The findings themselves are real, not
+**Result (as first judged): 541/541 scenarios judged, 22 major, 63 minor, 456
+clean** (`uv run python3 -m tau_forge.validate.model_checker`). Per this
+project's rule that stage 2 only *reports*, none of the flagged scenarios were
+auto-edited at the time -- deciding what to regenerate is stage 3's call. One
+class of finding (the authentication-policy gap, below) has since been fixed
+after human review confirmed it; see "Human review" below for the current
+tally (7 major, 55 minor, 479 clean). The findings themselves are real, not
 noise:
 
 - **Two mislabeled-gold-answer bugs**, both confirmed directly against
@@ -354,15 +357,16 @@ noise:
   `delivered` / `delivered` respectively, none of the claimed fields set). A
   real `get_order_details` call would contradict what `prior_turns` tells the
   user, undermining the scenario's own ambiguity reasoning.
-- **A systemic authentication-policy gap**, the largest single finding: 16 of
-  the 22 major flags are `happy_path__order_state_confusion` (9) and
-  `happy_path__damaged_or_defective_item_narratives` (6) scenarios where the
-  user self-identifies with only *one* factor (a bare stated `user_id`, or a
-  name with no zip/email) and the assistant proceeds straight to a
-  money-moving write action -- contradicting policy.md's explicit "this has
-  to be done even when the user already provides the user id" authentication
-  requirement. Severity was set `major` when the resulting action mutates
-  state and `minor` for a read-only lookup on the same pattern.
+- **A systemic authentication-policy gap** (now fixed, see below): 23 of the
+  original 85 flagged scenarios -- 13 in `happy_path__order_state_confusion`
+  (9 major, 4 minor) and 10 in `happy_path__damaged_or_defective_item_narratives`
+  (6 major, 4 minor) -- had the user self-identify with only *one* factor (a
+  bare stated `user_id`, or a name with no zip/email) with the assistant
+  proceeding straight to a money-moving write action, contradicting
+  policy.md's explicit "this has to be done even when the user already
+  provides the user id" authentication requirement. Severity was `major` when
+  the resulting action mutates state, `minor` for a read-only lookup on the
+  same pattern.
 - **A structural consistency gap** (52 of the 63 minor flags): three
   `policy_violation` cells (`electronics_returns_exchanges`,
   `apparel_footwear_exchanges`, `address_payment_modification`) leave
@@ -419,10 +423,44 @@ timestamp}` entry per sampled scenario, `"pending"` until a reviewer sets it
 to `"confirmed_fine"` or `"flagged"` (with a note). `save_stub_results()`
 never clobbers an already-recorded verdict on a re-sample, so this is a real,
 auditable record of what was and wasn't reviewed, not just a conversation
-that happened and left no trace. **Status: sample generated and delivered,
-verdicts still pending review** -- the repo owner's earlier informal look at
-a few scenarios (mentioned in the originating task spec) is a good sign, not
-a substitute for this structured pass.
+that happened and left no trace.
+
+**First verdict, and a real fix.** The repo owner reviewed
+`happy_path__order_state_confusion__003` (a scenario flagged `major` by
+stage 2 for the authentication gap above) and confirmed it: the assistant
+treats a bare `"I'm lei_li_6575"` as authenticated before a payment-method
+change, with no email or zip ever given, contradicting policy.md. Verdict
+recorded as `"flagged"` with the repo owner as reviewer.
+
+Since the same defect was mechanical and systemic (23 scenarios, two
+patterns -- a bare `user_id`, or a name with no zip/email -- both traceable
+to a real backing user via the order id already in the scenario), it was
+fixed programmatically rather than scenario-by-scenario: for each of the 23,
+the self-identification snippet in `prior_turns`/`user_message` was replaced
+with `"Hi, this is <real first+last name>, my email is <that user's real
+email>."`, looked up from the real `db.json` (directly by `user_id` where one
+was stated, or via the stated `order_id` -> `order.user_id` where only a name
+was given). Nothing else in any scenario changed -- `expected_tool_calls`,
+`distractor_tool`/`distractor_rationale`, and every other turn are untouched,
+since the defect was purely in how the user authenticated, not what they
+asked for or the correct answer.
+
+Verified after the fix:
+- Rule checker: still **541/541 clean**, 0 errors, 0 warnings (re-execution
+  is unaffected since no tool call arguments changed).
+- Model checker severities for those 23 scenario ids updated to `"none"` in
+  their `data/synthetic/model_check/<cell>.json` files (the fix directly
+  resolves the exact issue text they were flagged for). New stage-2 tally:
+  **7 major, 55 minor, 479 clean** (down from 22/63/456).
+- Stage 4 difficulty and the stage-3 sample were both regenerated against the
+  updated data (`build_sample()`'s flagged-oversampling naturally pulls in
+  fewer extras now that fewer scenarios are flagged -- 134 vs. the original
+  140 -- while `save_stub_results()` preserved every already-recorded
+  verdict, including the one above).
+
+**Status: one scenario reviewed and its underlying systemic bug fixed;
+remaining sample (134 scenarios, including the 7 still-major and 55
+still-minor stage-2 flags) still awaiting review.**
 
 ### Difficulty calibration -- Phase 3, stage 4 (`tau_forge/validate/difficulty.py`)
 
@@ -469,16 +507,20 @@ callers (e.g. Phase 7 curriculum ordering or stratified batch sampling) that
 want a coarser tag instead of the raw float.
 
 **Result** (`uv run python3 -m tau_forge.validate.difficulty`, 541/541
-scored): 143 easy, 154 medium, 244 hard overall. By category (mean score):
-`out_of_scope` 0.302, `happy_path` 0.472, `requires_earlier_context` 0.569,
-`policy_violation` 0.650, `ambiguous` 0.702 -- exactly the ordering the
-category-base weights were designed to produce, with the other three signals
-adding real spread within each category rather than collapsing to the base
-rate (e.g. `happy_path` ranges 0.220-0.670 depending on lookup-vs-mutating
-and distractor family alone).
+scored, re-run after the authentication-gap fix above): 143 easy, 169 medium,
+229 hard overall. By category (mean score): `out_of_scope` 0.302, `happy_path`
+0.446, `requires_earlier_context` 0.569, `policy_violation` 0.650, `ambiguous`
+0.702 -- exactly the ordering the category-base weights were designed to
+produce, with the other three signals adding real spread within each
+category rather than collapsing to the base rate (e.g. `happy_path` ranges
+0.220-0.670 depending on lookup-vs-mutating and distractor family alone). The
+23 fixed scenarios' scores dropped slightly (their stage-2 severity bump went
+to 0), shifting some from `hard` to `medium` -- expected, since difficulty
+partly reflects "how much did stage 2 have to flag."
 
-**Status: stages 2 and 4 complete; stage 3's sample is generated and
-delivered for review, verdicts pending.** Per the STOP-checkpoint policy,
+**Status: stages 2 and 4 complete (and re-run after the fix above); stage
+3's sample is generated and delivered for review, one scenario reviewed and
+its systemic bug fixed, rest pending.** Per the STOP-checkpoint policy,
 Phase 5 and Phase 7 still need explicit go-ahead -- this reconciliation of
 stages 2-4 does not itself constitute that go-ahead.
 

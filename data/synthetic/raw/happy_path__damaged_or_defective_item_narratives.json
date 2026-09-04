@@ -34,7 +34,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm Mason Ahmed, order #W2101159."
+        "content": "Hi, this is Mason Ahmed, my email is mason.ahmed2802@example.com. Order #W2101159."
       },
       {
         "role": "assistant",
@@ -95,7 +95,7 @@
     "category": "happy_path",
     "theme": "damaged_or_defective_item_narratives",
     "prior_turns": [],
-    "user_message": "Hi, this is Harper Brown, order #W1840144. My desk lamp keeps flickering and I think it might be defective, but before I decide what to do can you first check whether that order actually shows as delivered yet? I lost track of the shipping emails.",
+    "user_message": "Hi, this is Harper Brown, my email is harper.brown3965@example.com. Order #W1840144. My desk lamp keeps flickering and I think it might be defective, but before I decide what to do can you first check whether that order actually shows as delivered yet? I lost track of the shipping emails.",
     "expected_tool_calls": [
       {
         "name": "get_order_details",
@@ -116,7 +116,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "This is Daiki Kovacs, order #W2259015."
+        "content": "Hi, this is Daiki Kovacs, my email is daiki.kovacs3314@example.com. Order #W2259015."
       },
       {
         "role": "assistant",
@@ -149,7 +149,7 @@
     "category": "happy_path",
     "theme": "damaged_or_defective_item_narratives",
     "prior_turns": [],
-    "user_message": "Hi, I'm Raj Ito, order #W8448267. The perfume bottle arrived cracked and about half of it leaked out in the box. I'd like to return it for a refund to the credit card I paid with.",
+    "user_message": "Hi, this is Raj Ito, my email is raj.ito2921@example.com. Order #W8448267. The perfume bottle arrived cracked and about half of it leaked out in the box. I'd like to return it for a refund to the credit card I paid with.",
     "expected_tool_calls": [
       {
         "name": "return_delivered_order_items",
@@ -198,7 +198,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "This is Aarav Garcia, order #W3038897."
+        "content": "Hi, this is Aarav Garcia, my email is aarav.garcia8277@example.com. Order #W3038897."
       },
       {
         "role": "assistant",
@@ -252,7 +252,7 @@
     "category": "happy_path",
     "theme": "damaged_or_defective_item_narratives",
     "prior_turns": [],
-    "user_message": "Hi, this is Daiki Patel. My electric kettle from order #W3135192 won't heat up at all, seems defective out of the box. Before we talk return or exchange, can you just pull up the order and confirm it actually shows delivered? I want to make sure I'm not misremembering.",
+    "user_message": "Hi, this is Daiki Patel, my email is daiki.patel3402@example.com. My electric kettle from order #W3135192 won't heat up at all, seems defective out of the box. Before we talk return or exchange, can you just pull up the order and confirm it actually shows delivered? I want to make sure I'm not misremembering.",
     "expected_tool_calls": [
       {
         "name": "get_order_details",
@@ -273,7 +273,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm Aarav Anderson, order #W9311069."
+        "content": "Hi, this is Aarav Anderson, my email is aarav.anderson9752@example.com. Order #W9311069."
       },
       {
         "role": "assistant",
@@ -336,7 +336,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "This is Amelia Wilson, order #W9077205."
+        "content": "Hi, this is Amelia Wilson, my email is amelia.wilson1598@example.com. Order #W9077205."
       },
       {
         "role": "assistant",
@@ -395,7 +395,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm Lucas Johnson, order #W7016806."
+        "content": "Hi, this is Lucas Johnson, my email is lucas.johnson1683@example.com. Order #W7016806."
       }
     ],
     "user_message": "One of the glass panels on my bookshelf arrived with a crack running through it -- defective. Before we sort out a return, can you confirm the order actually shows as delivered on your end?",
@@ -447,7 +447,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "This is Omar Lopez, order #W7273336."
+        "content": "Hi, this is Omar Lopez, my email is omar.lopez1868@example.com. Order #W7273336."
       },
       {
         "role": "assistant",

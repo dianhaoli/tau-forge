@@ -122,10 +122,10 @@
   {
     "scenario_id": "happy_path__order_state_confusion__003",
     "cell": "happy_path__order_state_confusion",
-    "verdict": "pending",
-    "note": "",
-    "reviewer": "",
-    "timestamp": "2026-09-04T16:15:13.051172+00:00"
+    "verdict": "flagged",
+    "note": "Confirmed by repo owner: prior_turns authenticates via a bare stated user_id with no email/zip, contradicting policy.md's explicit requirement. Same pattern found in 22 other scenarios across this cell and happy_path__damaged_or_defective_item_narratives (real db.json lookup by order_id -> user_id). Fixed programmatically: replaced the self-id snippet with a real name + email for that scenario's actual backing user in all 23 affected scenarios; re-ran rule checker (still 541/541 clean) and re-ran stage 2 severity for these scenario ids (-> none).",
+    "reviewer": "dianhaoli@gmail.com",
+    "timestamp": "2026-09-04T18:01:20.003109+00:00"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__015",

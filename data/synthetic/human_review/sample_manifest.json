@@ -2,7 +2,7 @@
   "seed": 42,
   "base_per_cell": 4,
   "max_flagged_extra": 3,
-  "total_sampled": 140,
+  "total_sampled": 134,
   "cells": {
     "happy_path__electronics_returns_exchanges": [
       "happy_path__electronics_returns_exchanges__011",
@@ -27,10 +27,7 @@
       "happy_path__order_state_confusion__006",
       "happy_path__order_state_confusion__005",
       "happy_path__order_state_confusion__003",
-      "happy_path__order_state_confusion__015",
-      "happy_path__order_state_confusion__013",
-      "happy_path__order_state_confusion__010",
-      "happy_path__order_state_confusion__018"
+      "happy_path__order_state_confusion__015"
     ],
     "happy_path__identity_and_order_lookup": [
       "happy_path__identity_and_order_lookup__005",
@@ -42,10 +39,7 @@
       "happy_path__damaged_or_defective_item_narratives__018",
       "happy_path__damaged_or_defective_item_narratives__003",
       "happy_path__damaged_or_defective_item_narratives__002",
-      "happy_path__damaged_or_defective_item_narratives__005",
-      "happy_path__damaged_or_defective_item_narratives__015",
-      "happy_path__damaged_or_defective_item_narratives__008",
-      "happy_path__damaged_or_defective_item_narratives__011"
+      "happy_path__damaged_or_defective_item_narratives__005"
     ],
     "requires_earlier_context__electronics_returns_exchanges": [
       "requires_earlier_context__electronics_returns_exchanges__004",

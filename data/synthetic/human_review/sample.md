@@ -1,6 +1,6 @@
 # Phase 3 stage 3 -- human review sample
 
-Stratified sample of 140 scenarios across 30 cells (seed 42, 4 random + up to 3 stage-2-flagged per cell). For each scenario: read prior_turns + user_message, check expected_tool_calls is actually the right next action, check the distractor is a plausible wrong answer for the stated reason, and (for ambiguous/policy_violation) check ambiguity_note is specific, not generic.
+Stratified sample of 134 scenarios across 30 cells (seed 42, 4 random + up to 3 stage-2-flagged per cell). For each scenario: read prior_turns + user_message, check expected_tool_calls is actually the right next action, check the distractor is a plausible wrong answer for the stated reason, and (for ambiguous/policy_violation) check ambiguity_note is specific, not generic.
 
 Record your verdict in `data/synthetic/human_review/sample_results.json` (or note it in conversation and have it captured there) -- `"confirmed_fine"` or `"flagged"` with a note.
 
@@ -197,10 +197,10 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 
 ## happy_path__order_state_confusion
 
-### `happy_path__order_state_confusion__006` ⚠️ *(stage-2 flagged)*
+### `happy_path__order_state_confusion__006`
 
 **Prior turns:**
-- **user**: Hi, I'm emma_santos_9753, order #W3113816 already arrived.
+- **user**: Hi, this is Emma Santos, my email is emma.santos7683@example.com. Order #W3113816 already arrived.
 - **assistant**: Got it -- that order includes a size L blue Cycling Helmet (high ventilation), item 2206116040, among other items.
 
 **User message:** That helmet runs big on me. Can you exchange it for the same blue, high-ventilation helmet in size M instead, item 9013366374? Use my gift card for the price difference.
@@ -225,10 +225,10 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 
 ---
 
-### `happy_path__order_state_confusion__003` ⚠️ *(stage-2 flagged)*
+### `happy_path__order_state_confusion__003`
 
 **Prior turns:**
-- **user**: Hi, I'm lei_li_6575, my order #W5166363 hasn't shipped yet.
+- **user**: Hi, this is Lei Li, my email is lei.li8350@example.com. My order #W5166363 hasn't shipped yet.
 - **assistant**: I can see that order, a Laptop currently paid for with your PayPal account. What would you like to change?
 
 **User message:** Can you switch the payment on that order to my Visa credit card ending in 2697 instead of PayPal?
@@ -239,10 +239,10 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 
 ---
 
-### `happy_path__order_state_confusion__015` ⚠️ *(stage-2 flagged)*
+### `happy_path__order_state_confusion__015`
 
 **Prior turns:**
-- **user**: Hi, I'm chen_silva_7485. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769.
+- **user**: Hi, this is Chen Silva, my email is chen.silva2698@example.com. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769.
 - **assistant**: I see that item on the order.
 
 **User message:** Can you exchange it for the 8-inch Wi-Fi version with 32GB storage instead, item 7609274509? Refund whatever the price difference is to my gift card.
@@ -250,48 +250,6 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 **Expected tool call(s):** `exchange_delivered_order_items({"order_id": "#W3069600", "item_ids": ["9494281769"], "new_item_ids": ["7609274509"], "payment_method_id": "gift_card_7250692"})`
 
 **Distractor:** `return_delivered_order_items` -- A return is also possible on this delivered order, but the customer wants a different, cheaper storage variant rather than their money back for the item entirely, so exchange is correct.
-
----
-
-### `happy_path__order_state_confusion__013` ⚠️ *(stage-2 flagged)*
-
-**Prior turns:**
-- **user**: Hi, this is daiki_moore_8567. I already had you exchange the Mechanical Keyboard on my delivered order #W8032761 for the clicky-switch version, paid the difference from my gift card.
-- **assistant**: Yes, that exchange was requested on the order.
-
-**User message:** Great -- can you just confirm the current status of that order for me?
-
-**Expected tool call(s):** `get_order_details({"order_id": "#W8032761"})`
-
-**Distractor:** `exchange_delivered_order_items` -- Since the order was just discussed in exchange terms, it's tempting to call exchange_delivered_order_items again, but the order already has an exchange requested and only one exchange is allowed per order -- the customer is only asking to check status, which is a lookup.
-
----
-
-### `happy_path__order_state_confusion__010` ⚠️ *(stage-2 flagged)*
-
-**Prior turns:**
-- **user**: Hi, I'm yusuf_garcia_3055. My backpack order #W6885344 hasn't shipped.
-- **assistant**: Confirmed, it's currently paid via your PayPal account.
-
-**User message:** Can you move the payment on that order to my Visa credit card instead, ending in the number on file, credit_card_8405687?
-
-**Expected tool call(s):** `modify_pending_order_payment({"order_id": "#W6885344", "payment_method_id": "credit_card_8405687"})`
-
-**Distractor:** `modify_pending_order_items` -- Because the order is still pending, an item change is also in scope in general, but nothing about the items was mentioned -- only the payment method -- so modify_pending_order_payment is the correct call.
-
----
-
-### `happy_path__order_state_confusion__018` ⚠️ *(stage-2 flagged)*
-
-**Prior turns:**
-- **user**: Hi, I'm fatima_muller_6713.
-- **assistant**: Thanks, I've located your account. What can I help with?
-
-**User message:** Has order #W9962383 shipped out yet? I haven't gotten a tracking email.
-
-**Expected tool call(s):** `get_order_details({"order_id": "#W9962383"})`
-
-**Distractor:** `cancel_pending_order` -- The customer hasn't asked to cancel anything -- they only want to know the current status of the order, so the correct move is to look it up, not to assume it's still cancellable and act on it.
 
 ---
 
@@ -382,10 +340,10 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 
 ---
 
-### `happy_path__damaged_or_defective_item_narratives__002` ⚠️ *(stage-2 flagged)*
+### `happy_path__damaged_or_defective_item_narratives__002`
 
 **Prior turns:**
-- **user**: Hi, I'm Mason Ahmed, order #W2101159.
+- **user**: Hi, this is Mason Ahmed, my email is mason.ahmed2802@example.com. Order #W2101159.
 - **assistant**: Thanks Mason, I've pulled up #W2101159 -- delivered, with a charcoal grill among your items. What's going on?
 
 **User message:** The charcoal grill arrived with a dent in the lid and it won't close properly. I'd like to exchange it for the gas portable grill with a side burner instead, item 9724317332 -- charge any difference to the gift card on the order.
@@ -396,10 +354,10 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 
 ---
 
-### `happy_path__damaged_or_defective_item_narratives__005` ⚠️ *(stage-2 flagged)*
+### `happy_path__damaged_or_defective_item_narratives__005`
 
 **Prior turns:**
-- **user**: This is Daiki Kovacs, order #W2259015.
+- **user**: Hi, this is Daiki Kovacs, my email is daiki.kovacs3314@example.com. Order #W2259015.
 - **assistant**: Got it, Daiki -- #W2259015 is delivered, and I see a 14-inch digital wall clock on it.
 
 **User message:** The clock face arrived cracked right across the display. Can you exchange it for the 10-inch black digital one instead, item 8610532516? Charge the price difference to my PayPal.
@@ -407,47 +365,6 @@ Record your verdict in `data/synthetic/human_review/sample_results.json` (or not
 **Expected tool call(s):** `exchange_delivered_order_items({"order_id": "#W2259015", "item_ids": ["9850781806"], "new_item_ids": ["8610532516"], "payment_method_id": "paypal_9103096"})`
 
 **Distractor:** `return_delivered_order_items` -- The customer wants a working replacement clock in a different size, not a refund, so a straight return doesn't satisfy the request even though it's also a valid action on a delivered order.
-
----
-
-### `happy_path__damaged_or_defective_item_narratives__015` ⚠️ *(stage-2 flagged)*
-
-**Prior turns:**
-- **user**: Hi, I'm Lucas Johnson, order #W7016806.
-
-**User message:** One of the glass panels on my bookshelf arrived with a crack running through it -- defective. Before we sort out a return, can you confirm the order actually shows as delivered on your end?
-
-**Expected tool call(s):** `get_order_details({"order_id": "#W7016806"})`
-
-**Distractor:** `return_delivered_order_items` -- The user hasn't yet confirmed they want to return the item or which item ids to return -- they only asked for a status check, so calling return_delivered_order_items now would be premature.
-
----
-
-### `happy_path__damaged_or_defective_item_narratives__008` ⚠️ *(stage-2 flagged)*
-
-**Prior turns:**
-- **user**: This is Aarav Garcia, order #W3038897.
-- **assistant**: Thanks Aarav, I see #W3038897 delivered with a plastic skateboard on it.
-
-**User message:** The wheels on my skateboard are cracked and one won't even spin right -- defective for sure. Before I ask you to swap it, can you check whether the bamboo, 31-inch, custom-design skateboard, item 6313971174, is available?
-
-**Expected tool call(s):** `get_item_details({"item_id": "6313971174"})`
-
-**Distractor:** `exchange_delivered_order_items` -- The user only asked to check availability of a possible replacement and explicitly said they'll ask for the swap afterward -- calling exchange_delivered_order_items now would act before the user has confirmed they want that specific item.
-
----
-
-### `happy_path__damaged_or_defective_item_narratives__011` ⚠️ *(stage-2 flagged)*
-
-**Prior turns:**
-- **user**: Hi, I'm Aarav Anderson, order #W9311069.
-- **assistant**: Thanks Aarav, #W9311069 is delivered and includes a stainless steel tea kettle among other items.
-
-**User message:** The tea kettle's lid doesn't seal right and it whistles constantly even half-full -- defective. Can you exchange it for the glass one instead, item 3909406921? Use the gift card on file for any price difference.
-
-**Expected tool call(s):** `exchange_delivered_order_items({"order_id": "#W9311069", "item_ids": ["4238115171"], "new_item_ids": ["3909406921"], "payment_method_id": "gift_card_7245904"})`
-
-**Distractor:** `return_delivered_order_items` -- The user wants a working replacement kettle, not their money back, so a plain return would not satisfy the request even though returning is also valid on this delivered order.
 
 ---
 

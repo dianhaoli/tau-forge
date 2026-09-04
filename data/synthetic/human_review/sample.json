@@ -456,7 +456,7 @@
   "prior_turns": [
    {
     "role": "user",
-    "content": "Hi, I'm emma_santos_9753, order #W3113816 already arrived."
+    "content": "Hi, this is Emma Santos, my email is emma.santos7683@example.com. Order #W3113816 already arrived."
    },
    {
     "role": "assistant",
@@ -482,11 +482,9 @@
   "distractor_tool": "return_delivered_order_items",
   "distractor_rationale": "A return is also valid on this delivered order, but the customer wants a different size, not a refund, so exchange is the correct tool.",
   "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-  ]
+  "flagged": false,
+  "severity": "none",
+  "issues": []
  },
  {
   "id": "happy_path__order_state_confusion__005",
@@ -531,7 +529,7 @@
   "prior_turns": [
    {
     "role": "user",
-    "content": "Hi, I'm lei_li_6575, my order #W5166363 hasn't shipped yet."
+    "content": "Hi, this is Lei Li, my email is lei.li8350@example.com. My order #W5166363 hasn't shipped yet."
    },
    {
     "role": "assistant",
@@ -551,11 +549,9 @@
   "distractor_tool": "modify_pending_order_items",
   "distractor_rationale": "The order's pending status makes an item swap plausible in this context too, but the customer's request is purely about which payment method is charged, not about the item itself.",
   "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-  ]
+  "flagged": false,
+  "severity": "none",
+  "issues": []
  },
  {
   "id": "happy_path__order_state_confusion__015",
@@ -565,7 +561,7 @@
   "prior_turns": [
    {
     "role": "user",
-    "content": "Hi, I'm chen_silva_7485. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769."
+    "content": "Hi, this is Chen Silva, my email is chen.silva2698@example.com. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769."
    },
    {
     "role": "assistant",
@@ -591,111 +587,9 @@
   "distractor_tool": "return_delivered_order_items",
   "distractor_rationale": "A return is also possible on this delivered order, but the customer wants a different, cheaper storage variant rather than their money back for the item entirely, so exchange is correct.",
   "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-  ]
- },
- {
-  "id": "happy_path__order_state_confusion__013",
-  "cell": "happy_path__order_state_confusion",
-  "category": "happy_path",
-  "theme": "order_state_confusion",
-  "prior_turns": [
-   {
-    "role": "user",
-    "content": "Hi, this is daiki_moore_8567. I already had you exchange the Mechanical Keyboard on my delivered order #W8032761 for the clicky-switch version, paid the difference from my gift card."
-   },
-   {
-    "role": "assistant",
-    "content": "Yes, that exchange was requested on the order."
-   }
-  ],
-  "user_message": "Great -- can you just confirm the current status of that order for me?",
-  "expected_tool_calls": [
-   {
-    "name": "get_order_details",
-    "arguments": {
-     "order_id": "#W8032761"
-    }
-   }
-  ],
-  "distractor_tool": "exchange_delivered_order_items",
-  "distractor_rationale": "Since the order was just discussed in exchange terms, it's tempting to call exchange_delivered_order_items again, but the order already has an exchange requested and only one exchange is allowed per order -- the customer is only asking to check status, which is a lookup.",
-  "ambiguity_note": "",
-  "flagged": true,
-  "severity": "minor",
-  "issues": [
-   "User authenticates only by stating a raw user_id with no email or zip given, and the assistant proceeds without a second verification factor -- lower stakes here since the expected tool call is a read-only lookup, but it still models skipping the required identity check"
-  ]
- },
- {
-  "id": "happy_path__order_state_confusion__010",
-  "cell": "happy_path__order_state_confusion",
-  "category": "happy_path",
-  "theme": "order_state_confusion",
-  "prior_turns": [
-   {
-    "role": "user",
-    "content": "Hi, I'm yusuf_garcia_3055. My backpack order #W6885344 hasn't shipped."
-   },
-   {
-    "role": "assistant",
-    "content": "Confirmed, it's currently paid via your PayPal account."
-   }
-  ],
-  "user_message": "Can you move the payment on that order to my Visa credit card instead, ending in the number on file, credit_card_8405687?",
-  "expected_tool_calls": [
-   {
-    "name": "modify_pending_order_payment",
-    "arguments": {
-     "order_id": "#W6885344",
-     "payment_method_id": "credit_card_8405687"
-    }
-   }
-  ],
-  "distractor_tool": "modify_pending_order_items",
-  "distractor_rationale": "Because the order is still pending, an item change is also in scope in general, but nothing about the items was mentioned -- only the payment method -- so modify_pending_order_payment is the correct call.",
-  "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-  ]
- },
- {
-  "id": "happy_path__order_state_confusion__018",
-  "cell": "happy_path__order_state_confusion",
-  "category": "happy_path",
-  "theme": "order_state_confusion",
-  "prior_turns": [
-   {
-    "role": "user",
-    "content": "Hi, I'm fatima_muller_6713."
-   },
-   {
-    "role": "assistant",
-    "content": "Thanks, I've located your account. What can I help with?"
-   }
-  ],
-  "user_message": "Has order #W9962383 shipped out yet? I haven't gotten a tracking email.",
-  "expected_tool_calls": [
-   {
-    "name": "get_order_details",
-    "arguments": {
-     "order_id": "#W9962383"
-    }
-   }
-  ],
-  "distractor_tool": "cancel_pending_order",
-  "distractor_rationale": "The customer hasn't asked to cancel anything -- they only want to know the current status of the order, so the correct move is to look it up, not to assume it's still cancellable and act on it.",
-  "ambiguity_note": "",
-  "flagged": true,
-  "severity": "minor",
-  "issues": [
-   "User authenticates only by stating a raw user_id with no email or zip given, and the assistant proceeds without a second verification factor -- lower stakes here since the expected tool call is a read-only lookup, but it still models skipping the required identity check"
-  ]
+  "flagged": false,
+  "severity": "none",
+  "issues": []
  },
  {
   "id": "happy_path__identity_and_order_lookup__005",
@@ -898,7 +792,7 @@
   "prior_turns": [
    {
     "role": "user",
-    "content": "Hi, I'm Mason Ahmed, order #W2101159."
+    "content": "Hi, this is Mason Ahmed, my email is mason.ahmed2802@example.com. Order #W2101159."
    },
    {
     "role": "assistant",
@@ -924,11 +818,9 @@
   "distractor_tool": "return_delivered_order_items",
   "distractor_rationale": "The user asked for a replacement grill of a different configuration, not a refund, so a plain return would leave them without a working grill -- exchange is the correct action even though return is also valid on a delivered order.",
   "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User identifies only by first+last name in the opening message (no email, no zip), and the assistant proceeds straight to a money-moving write action (return/exchange) without ever verifying identity via email or name+zip, contradicting policy's identity-verification requirement"
-  ]
+  "flagged": false,
+  "severity": "none",
+  "issues": []
  },
  {
   "id": "happy_path__damaged_or_defective_item_narratives__005",
@@ -938,7 +830,7 @@
   "prior_turns": [
    {
     "role": "user",
-    "content": "This is Daiki Kovacs, order #W2259015."
+    "content": "Hi, this is Daiki Kovacs, my email is daiki.kovacs3314@example.com. Order #W2259015."
    },
    {
     "role": "assistant",
@@ -964,113 +856,9 @@
   "distractor_tool": "return_delivered_order_items",
   "distractor_rationale": "The customer wants a working replacement clock in a different size, not a refund, so a straight return doesn't satisfy the request even though it's also a valid action on a delivered order.",
   "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User identifies only by first+last name in the opening message (no email, no zip), and the assistant proceeds straight to a money-moving write action (return/exchange) without ever verifying identity via email or name+zip, contradicting policy's identity-verification requirement"
-  ]
- },
- {
-  "id": "happy_path__damaged_or_defective_item_narratives__015",
-  "cell": "happy_path__damaged_or_defective_item_narratives",
-  "category": "happy_path",
-  "theme": "damaged_or_defective_item_narratives",
-  "prior_turns": [
-   {
-    "role": "user",
-    "content": "Hi, I'm Lucas Johnson, order #W7016806."
-   }
-  ],
-  "user_message": "One of the glass panels on my bookshelf arrived with a crack running through it -- defective. Before we sort out a return, can you confirm the order actually shows as delivered on your end?",
-  "expected_tool_calls": [
-   {
-    "name": "get_order_details",
-    "arguments": {
-     "order_id": "#W7016806"
-    }
-   }
-  ],
-  "distractor_tool": "return_delivered_order_items",
-  "distractor_rationale": "The user hasn't yet confirmed they want to return the item or which item ids to return -- they only asked for a status check, so calling return_delivered_order_items now would be premature.",
-  "ambiguity_note": "",
-  "flagged": true,
-  "severity": "minor",
-  "issues": [
-   "User identifies only by name (no email, no zip) and the assistant proceeds without a verification step -- lower stakes since the expected tool call here is a read-only lookup, but it still models skipping the required identity check"
-  ]
- },
- {
-  "id": "happy_path__damaged_or_defective_item_narratives__008",
-  "cell": "happy_path__damaged_or_defective_item_narratives",
-  "category": "happy_path",
-  "theme": "damaged_or_defective_item_narratives",
-  "prior_turns": [
-   {
-    "role": "user",
-    "content": "This is Aarav Garcia, order #W3038897."
-   },
-   {
-    "role": "assistant",
-    "content": "Thanks Aarav, I see #W3038897 delivered with a plastic skateboard on it."
-   }
-  ],
-  "user_message": "The wheels on my skateboard are cracked and one won't even spin right -- defective for sure. Before I ask you to swap it, can you check whether the bamboo, 31-inch, custom-design skateboard, item 6313971174, is available?",
-  "expected_tool_calls": [
-   {
-    "name": "get_item_details",
-    "arguments": {
-     "item_id": "6313971174"
-    }
-   }
-  ],
-  "distractor_tool": "exchange_delivered_order_items",
-  "distractor_rationale": "The user only asked to check availability of a possible replacement and explicitly said they'll ask for the swap afterward -- calling exchange_delivered_order_items now would act before the user has confirmed they want that specific item.",
-  "ambiguity_note": "",
-  "flagged": true,
-  "severity": "minor",
-  "issues": [
-   "User identifies only by name (no email, no zip) and the assistant proceeds without a verification step -- lower stakes since the expected tool call here is a read-only lookup, but it still models skipping the required identity check"
-  ]
- },
- {
-  "id": "happy_path__damaged_or_defective_item_narratives__011",
-  "cell": "happy_path__damaged_or_defective_item_narratives",
-  "category": "happy_path",
-  "theme": "damaged_or_defective_item_narratives",
-  "prior_turns": [
-   {
-    "role": "user",
-    "content": "Hi, I'm Aarav Anderson, order #W9311069."
-   },
-   {
-    "role": "assistant",
-    "content": "Thanks Aarav, #W9311069 is delivered and includes a stainless steel tea kettle among other items."
-   }
-  ],
-  "user_message": "The tea kettle's lid doesn't seal right and it whistles constantly even half-full -- defective. Can you exchange it for the glass one instead, item 3909406921? Use the gift card on file for any price difference.",
-  "expected_tool_calls": [
-   {
-    "name": "exchange_delivered_order_items",
-    "arguments": {
-     "order_id": "#W9311069",
-     "item_ids": [
-      "4238115171"
-     ],
-     "new_item_ids": [
-      "3909406921"
-     ],
-     "payment_method_id": "gift_card_7245904"
-    }
-   }
-  ],
-  "distractor_tool": "return_delivered_order_items",
-  "distractor_rationale": "The user wants a working replacement kettle, not their money back, so a plain return would not satisfy the request even though returning is also valid on this delivered order.",
-  "ambiguity_note": "",
-  "flagged": true,
-  "severity": "major",
-  "issues": [
-   "User identifies only by first+last name in the opening message (no email, no zip), and the assistant proceeds straight to a money-moving write action (return/exchange) without ever verifying identity via email or name+zip, contradicting policy's identity-verification requirement"
-  ]
+  "flagged": false,
+  "severity": "none",
+  "issues": []
  },
  {
   "id": "requires_earlier_context__electronics_returns_exchanges__004",
