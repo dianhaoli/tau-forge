@@ -1,0 +1,272 @@
+[
+  {
+    "id": "happy_path__address_payment_modification__001",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__002",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__003",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__004",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__005",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__006",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__007",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__008",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__009",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__010",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__011",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__012",
+    "difficulty_score": 0.42,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "mutating",
+      "action_score": 0.8,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__013",
+    "difficulty_score": 0.27,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__014",
+    "difficulty_score": 0.27,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__015",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__016",
+    "difficulty_score": 0.37,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "same_family_as_answer",
+      "distractor_score": 1.0,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__017",
+    "difficulty_score": 0.27,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "happy_path__address_payment_modification__018",
+    "difficulty_score": 0.27,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "happy_path",
+      "category_score": 0.2,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

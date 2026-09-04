@@ -1,0 +1,272 @@
+[
+  {
+    "id": "out_of_scope__order_state_confusion__001",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__002",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__003",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__004",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__005",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__006",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__007",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__008",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__009",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__010",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__011",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__012",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__013",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__014",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__015",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__016",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__017",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__018",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

@@ -1,0 +1,257 @@
+[
+  {
+    "id": "ambiguous__electronics_returns_exchanges__001",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__002",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__003",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__004",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__005",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__006",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__007",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__008",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__009",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__010",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__011",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__012",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__013",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__014",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__015",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__016",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__electronics_returns_exchanges__017",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

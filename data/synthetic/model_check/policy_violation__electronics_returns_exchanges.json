@@ -1,0 +1,129 @@
+[
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__001",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__002",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__003",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__004",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__005",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__006",
+    "issues": [
+      "distractor_rationale misidentifies the target variant: it claims item 8722653925 is the 'white/Apple HomeKit' Smart Thermostat variant, but per db.json item 8722653925 is actually white/Google Assistant (unavailable). The real white+Apple HomeKit variant is item 3377900078, which IS available (available=true). The scenario's entire premise -- that get_product_details reveals an unavailable target forcing a refusal -- is factually wrong; the correctly-matched variant would actually let the exchange proceed after confirmation, so expected_tool_calls being limited to the READ (with an implied refusal afterward) misrepresents what the correct next turn should be.",
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "major"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__007",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__008",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__009",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__010",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__011",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__012",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__013",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__014",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__015",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__016",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__017",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "policy_violation__electronics_returns_exchanges__018",
+    "issues": [
+      "ambiguity_note is null; category is policy_violation, where axis (c) explicitly applies, and other cells in this same category (order_state_confusion, identity_and_order_lookup, damaged_or_defective_item_narratives) consistently populate this field with violation-specific text -- this cell leaves it unused throughout. The substance is present in distractor_rationale, so this is a structural/consistency gap rather than a missing-information problem."
+    ],
+    "severity": "minor"
+  }
+]

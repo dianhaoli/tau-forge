@@ -1,0 +1,93 @@
+[
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__001",
+    "issues": [
+      "User's request bundles an achievable in-scope action (sneaker size exchange) with an unsupported condition (price match applied to the exchange); the narrative doesn't clearly establish the user wants the plain exchange without the price match, so it's debatable whether the right agent move is a full transfer vs. denying the price-match and continuing to collect exchange details (new size, payment method) for the in-scope part."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__002",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__003",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__004",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__005",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__006",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__007",
+    "issues": [
+      "The message both restates a wrong-size t-shirt exchange request and asks an unrelated customs-duty question; since the exchange itself is achievable in-scope (module item id/payment method still needed, but not inherently blocked), transferring the whole conversation rather than addressing the customs question while continuing the exchange flow is a debatable choice for the single 'correct' next action."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__008",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__009",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__010",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__011",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__012",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__013",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__014",
+    "issues": [
+      "Request bundles an achievable in-scope helmet size exchange with an unsupported overnight-shipping condition; narrative doesn't make clear the user wouldn't want the plain exchange without the shipping upgrade, so full transfer instead of denying the shipping request and proceeding with the exchange is a debatable single correct action."
+    ],
+    "severity": "minor"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__015",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__016",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "out_of_scope__apparel_footwear_exchanges__017",
+    "issues": [],
+    "severity": "none"
+  }
+]

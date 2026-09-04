@@ -1,0 +1,272 @@
+[
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__001",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__002",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__003",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__004",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__005",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__006",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__007",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__008",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__009",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__010",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__011",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__012",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__013",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__014",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__015",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__016",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__017",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__018",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

@@ -1,0 +1,272 @@
+[
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__001",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__002",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__003",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__004",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__005",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__006",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__007",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__008",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__009",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__010",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__011",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__012",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__013",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__014",
+    "difficulty_score": 0.755,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__015",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__016",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__017",
+    "difficulty_score": 0.835,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "major",
+      "model_check_bump": 0.15
+    }
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__018",
+    "difficulty_score": 0.54,
+    "difficulty_label": "medium",
+    "components": {
+      "category": "policy_violation",
+      "category_score": 0.7,
+      "action_kind": "read_only",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  }
+]

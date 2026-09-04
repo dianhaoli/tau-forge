@@ -1,0 +1,257 @@
+[
+  {
+    "id": "ambiguous__address_payment_modification__001",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__002",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__003",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__004",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__005",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__006",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__007",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__008",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__009",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__010",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__011",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__012",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__013",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__014",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__015",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__016",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "ambiguous__address_payment_modification__017",
+    "difficulty_score": 0.705,
+    "difficulty_label": "hard",
+    "components": {
+      "category": "ambiguous",
+      "category_score": 0.75,
+      "action_kind": "no_call",
+      "action_score": 0.75,
+      "distractor_kind": "mutating_distractor_no_answer_call",
+      "distractor_score": 0.9,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

@@ -1,0 +1,257 @@
+[
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__001",
+    "difficulty_score": 0.38,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__002",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__003",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__004",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__005",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__006",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__007",
+    "difficulty_score": 0.38,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__008",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__009",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__010",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__011",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__012",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__013",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__014",
+    "difficulty_score": 0.38,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "minor",
+      "model_check_bump": 0.07
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__015",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__016",
+    "difficulty_score": 0.26,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_read_or_generic",
+      "distractor_score": 0.25,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__017",
+    "difficulty_score": 0.31,
+    "difficulty_label": "easy",
+    "components": {
+      "category": "out_of_scope",
+      "category_score": 0.3,
+      "action_kind": "transfer",
+      "action_score": 0.3,
+      "distractor_kind": "different_family_but_mutating",
+      "distractor_score": 0.5,
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
+    }
+  }
+]

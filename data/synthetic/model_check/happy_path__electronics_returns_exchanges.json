@@ -1,0 +1,105 @@
+[
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__001",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__002",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__003",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__004",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__005",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__006",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__007",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__008",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__009",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__010",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__011",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__012",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__013",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__014",
+    "issues": [
+      "The gold call requires new_item_ids=['4953074738'] and payment_method_id='gift_card_6662365', but neither value is ever stated in the visible conversation -- the user only says 'the Amazon Alexa version in black' (a description, not an item id) and 'my gift card' (no id), and there is no assistant turn resolving these to specific IDs before the single confirming user turn",
+      "Inconsistent with sibling scenario 010 in the same file, which correctly recognizes that an unresolved variant description requires a lookup tool call first rather than guessing the item id directly"
+    ],
+    "severity": "major"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__015",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__016",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__017",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__018",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__019",
+    "issues": [],
+    "severity": "none"
+  },
+  {
+    "scenario_id": "happy_path__electronics_returns_exchanges__020",
+    "issues": [],
+    "severity": "none"
+  }
+]
