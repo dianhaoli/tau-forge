@@ -1,0 +1,490 @@
+[
+  {
+    "id": "out_of_scope__address_payment_modification__001",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is anya.garcia2061@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Anya, I've located your account. How can I help you today?"
+      }
+    ],
+    "user_message": "My old Visa got stolen and cancelled by the bank. Can you add my new Mastercard ending in 4471 to my account so I can use it for future orders?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User anya_garcia_3271 asked to add a brand-new credit card (Mastercard ending 4471) to her account; no tool exists to register a new payment method, only to select among existing ones."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address only changes the shipping address on file and has nothing to do with payment methods, so it cannot register a new card either.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__002",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "It's Raj Sanchez, zip 92147."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Raj. What can I do for you?"
+      }
+    ],
+    "user_message": "Can you just delete the gift card gift_card_2259499 from my account entirely? I never use it and don't want it showing up anymore.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User raj_sanchez_2970 requested permanent removal of a stored gift card payment method (gift_card_2259499) from his account; no tool exists to delete a payment method, only to use existing ones in order actions."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment swaps which payment method is used on a specific pending order; it cannot delete a payment method from the user's account entirely, and no order was even mentioned.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__003",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sofia Li, zip 78260."
+      }
+    ],
+    "user_message": "My Visa credit_card_3951670 on file just got reissued with a new expiration date and CVV after my bank sent a replacement card. Can you update those details for me?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User sofia_li_9219 wants the expiration date and CVV of her existing card credit_card_3951670 updated after a bank reissue; no tool can edit stored payment method card details."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "get_user_details can display the payment methods on file but cannot edit any card's expiration date or CVV, so it wouldn't accomplish what the user asked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__004",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Emma Brown, my email is emma.brown5032@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, you're verified. What would you like to do?"
+      }
+    ],
+    "user_message": "I'd like to save my parents' address as a second shipping address on my account, in addition to my current default one, so I can pick between them on future orders.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User emma_brown_8847 asked to save an additional shipping address alongside her existing default address so she can choose between them later; there is no address-book concept, only a single default address that gets overwritten."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address only replaces the single default address on the account; it cannot add a second saved address and would destroy her current default instead of supplementing it.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__005",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, it's Amelia Kim, zip 28230."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Amelia. How can I help?"
+      }
+    ],
+    "user_message": "My pending order #W7634667 is being shipped to my apartment but under my roommate's name on the label instead of mine. Can you change the recipient name on that shipment to Amelia Kim?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User amelia_kim_4338 wants the recipient name on pending order #W7634667's shipping label corrected to her own name; the address-modification tool only changes street/city/state/zip fields, there is no recipient-name field to edit."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "modify_pending_order_address only takes address1/address2/city/state/country/zip arguments; it has no field for the shipment's recipient name, so it cannot fix a mislabeled name.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__006",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is emma.smith3991@example.com."
+      }
+    ],
+    "user_message": "I won't be home for the next few deliveries. Can you have my pending order #W2417020 rerouted to hold at my local UPS Access Point instead of being delivered to my house?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User emma_smith_8564 asked for pending order #W2417020 to be rerouted to a UPS Access Point / carrier hold location instead of a normal home delivery; this is a carrier-side delivery instruction, not a shipping-address change, and no tool integrates with carrier hold/pickup options."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "modify_pending_order_address can only replace the order's address fields with another postal address; it cannot set a carrier hold-for-pickup instruction, which is a different kind of request the tool has no field for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__007",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Omar Khan, my email is on file, let me check... it's easier if you look me up by name, zip is 75203."
+      }
+    ],
+    "user_message": "I noticed my card credit_card_4420174 was charged $1537.02 for order #W6304490 twice according to my bank statement. I want to formally dispute the duplicate charge with my bank through you.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User omar_khan_2363 wants to file a formal bank dispute/chargeback for an alleged duplicate charge of $1537.02 on credit_card_4420174 tied to delivered order #W6304490; disputing a charge with the card issuer is outside the tool set, which can only refund via return/exchange/cancel flows, not file bank disputes."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "return_delivered_order_items can issue a refund for returned merchandise, but the user isn't asking to return any item -- they're asking the agent to dispute a duplicate charge with their bank, which is a different, unsupported action.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__008",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Ava Nguyen."
+      },
+      {
+        "role": "assistant",
+        "content": "Could you confirm your email or your name and zip code so I can pull up your account?"
+      },
+      {
+        "role": "user",
+        "content": "Sure, my email is ava.nguyen3664@example.com."
+      }
+    ],
+    "user_message": "My gift card gift_card_3324938 only has $1 left on it. Can you add $50 to it so I can use it toward a new order?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User ava_nguyen_2175 asked to add $50 in new funds to her existing gift card gift_card_3324938; no tool can load or increase a gift card's balance, only spend from or refund into an existing balance during order actions."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment can switch which payment method pays for an order, but it never changes a gift card's stored balance, so it cannot add funds the user is requesting.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__009",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Yara Sanchez, zip 75255."
+      }
+    ],
+    "user_message": "Going forward, I'd rather refunds go straight to my checking account instead of a card or gift card. Can you link my bank account ending in 8827 for that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User yara_sanchez_1902 asked to link an external bank account for future refunds; the only payment method types supported are gift card, PayPal, and credit card already on file, and there is no tool to add or link a bank account."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address only edits the user's shipping address fields; it has nothing to do with payment or refund methods, so it cannot link a bank account.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__010",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sophia Patel, my email is sophia.patel9841@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Sophia. What can I help with?"
+      }
+    ],
+    "user_message": "My delivered order #W2923184 was $2767.03 on my credit card, and that's a big hit this month. Can you split that charge into 4 monthly installments instead?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User sophia_patel_6833 asked to convert the existing $2767.03 charge on delivered order #W2923184 into a 4-month installment plan; there is no installment/payment-plan mechanism anywhere in the tool set, which only supports full payments, refunds, and one-time payment-method switches."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment only swaps a pending order's single payment method for another single payment method in one lump amount; it has no way to split a charge into installments, and the order isn't even pending, it's delivered.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__011",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, this is Omar Silva, zip 92107."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Omar. How can I help today?"
+      }
+    ],
+    "user_message": "I still want everything shipped to my current US address, but for tax purposes I need my billing country on file updated to Canada. Can you change just the billing country, not my shipping address?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User omar_silva_7446 asked to change his account's billing country to Canada for tax purposes while explicitly keeping his shipping address unchanged; the system only stores one combined address per user/order and has no separate billing-country or tax-jurisdiction field to modify."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address only sets the single default address (which doubles as both shipping and any billing reference) as one whole unit including country; it cannot set a distinct billing-only country while preserving the current shipping address, which is what the user explicitly wants kept separate.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__012",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Mia Jackson, zip 46227."
+      }
+    ],
+    "user_message": "I want to cancel my monthly subscription box and update the card that was billing it, since my old Visa expired.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User mia_jackson_2250 referenced a monthly subscription box and asked to cancel it and update its billing card; the retail domain has no subscription concept at all -- only individual orders -- so there is nothing to cancel or rebill."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order only cancels a specific pending order in the database; the user is describing a recurring subscription, which is not represented as an order at all, so there's no order id this tool could act on.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__013",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is anya.garcia2061@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Anya, you're verified. What can I help with?"
+      },
+      {
+        "role": "user",
+        "content": "I see order #W4140680 shows as cancelled on my account."
+      },
+      {
+        "role": "assistant",
+        "content": "That's right, order #W4140680 (E-Reader, Bookshelf, Bluetooth Speaker) is cancelled and refunded."
+      }
+    ],
+    "user_message": "I actually still want those items. Can you just resend that same cancelled order to my new address at 220 Larkspur Ln instead of me placing a whole new order?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User anya_garcia_3271 asked the agent to reship the items from already-cancelled order #W4140680 to a new address rather than placing a fresh order; there is no reship/resend tool, and cancelled orders cannot be modified or reactivated by any available action."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "modify_pending_order_address requires the order to be pending, but #W4140680 is cancelled, and even setting that aside, there's no mechanism to reactivate a cancelled order's fulfillment -- placing a new order isn't a capability this agent has either.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__014",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sofia Hernandez, zip 78219."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Sofia. What would you like to do?"
+      }
+    ],
+    "user_message": "I just moved, and my credit card credit_card_3753643 on file still has my old billing zip code attached. Can you update the billing zip on that card to 78240? I don't need my shipping address changed, it's already correct.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User sofia_hernandez_8513 asked to update just the billing zip code stored against her existing credit card credit_card_3753643, distinct from her shipping address which she says is already correct; no tool edits any metadata of an existing payment method, only the account's shipping/default address."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address changes the account's default shipping address, not any billing details attached to a specific card, and the user explicitly said her shipping address should stay as-is, so this tool would change the wrong thing entirely.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__015",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Yara Moore, zip 92162."
+      }
+    ],
+    "user_message": "If I return the digital camera from my delivered order #W8336711, I don't want the refund going back to my card or PayPal -- can you just mail me a paper check to my address instead?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User yara_moore_6466 asked for a prospective return refund on delivered order #W8336711 to be issued as a mailed paper check rather than to a card, PayPal, or gift card; the return tool can only refund to the order's original payment method or an existing gift card, and mailing a physical check isn't an available disbursement option."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "return_delivered_order_items requires a payment_method_id that must be the order's original payment method or a gift card on the account; it has no way to issue a refund as a mailed paper check, which is what the user specifically wants instead.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__016",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Evelyn Ito, zip 92127."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Evelyn. What can I help you with today?"
+      }
+    ],
+    "user_message": "For extra security before I switch my order's payment method, I'd like to upload a photo of my driver's license so you have stronger ID verification on file. How do I send that over?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User evelyn_ito_7643 offered to upload a photo ID (driver's license) for enhanced identity verification before a payment change; there is no document-upload or ID-verification mechanism in the tool set -- authentication is limited to email lookup or name+zip lookup."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "find_user_id_by_name_zip",
+    "distractor_rationale": "find_user_id_by_name_zip only authenticates using a name and zip code text match; it has no capacity to accept, store, or verify an uploaded photo ID document, which is specifically what the user is offering to provide.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__017",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my name is Fatima Wilson, zip 78746."
+      }
+    ],
+    "user_message": "My credit_card_9557278 keeps getting declined for orders over $1000. Can you raise the credit limit on that card through your system so it stops declining?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User fatima_wilson_6873 asked the agent to raise the credit limit on her card credit_card_9557278 to stop declines on large orders; credit limits are set by the card issuer/bank, not the retail system, and no tool has any control over a payment method's credit limit."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment can swap which payment method is used to pay for a pending order, but it has no ability to alter that payment method's credit limit -- the underlying card's limit is entirely outside this system's control.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__address_payment_modification__018",
+    "category": "out_of_scope",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Liam Thomas, zip 85049."
+      },
+      {
+        "role": "assistant",
+        "content": "You're verified, Liam. How can I help?"
+      }
+    ],
+    "user_message": "My wife and I share our orders. Can you add her as an authorized secondary user on my account so she can also use my saved payment methods when she calls in?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User liam_thomas_7882 asked to add his spouse as an authorized secondary user permitted to use his saved payment methods; the system has no multi-user account or authorized-user concept -- each account belongs to a single verified user, and no tool grants shared access."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "get_user_details only returns the existing single account holder's profile and payment methods; it cannot create a secondary authorized user or grant anyone else access to those payment methods.",
+    "ambiguity_note": ""
+  }
+]

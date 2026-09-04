@@ -1,0 +1,302 @@
+[
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__001",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Mason Johansson, mason.johansson9528@example.com."},
+      {"role": "assistant", "content": "Thanks Mason, I've located your account. How can I help?"}
+    ],
+    "user_message": "The black XXL v-neck t-shirt from order #W9549057 arrived and it's way too big. Can you exchange it for a size L?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W9549057"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user describes the shirt as having 'arrived,' which makes exchange_delivered_order_items look correct, but the order is actually still 'processed' (not yet delivered) -- exchanges are only allowed on delivered orders, so the correct move is to check status first and then refuse, not to exchange.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__002",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hey, it's Harper Kovacs, zip 10206."},
+      {"role": "assistant", "content": "Thanks Harper, I've verified your identity via name and zip."}
+    ],
+    "user_message": "I want to exchange the red leather sneakers on order #W3876856 for a size 10 instead of 11.",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W3876856"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user talks about the sneakers as if the order is a normal delivered purchase, but #W3876856 is actually cancelled and already refunded -- there is nothing to exchange, so the agent must check the order first and then explain the order was cancelled rather than attempting the exchange.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__003",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "This is Ava Lopez, ava.lopez3569@example.com."},
+      {"role": "assistant", "content": "Thanks Ava, you're verified."}
+    ],
+    "user_message": "The sunglasses from order #W8327915 came in with brown lenses -- I actually want green lenses instead. Can you exchange them?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W8327915"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user's phrasing ('came in') implies the order already arrived, tempting a direct exchange call, but #W8327915 is still 'pending' -- exchanges only apply to delivered orders, so the agent must check status first, discover it hasn't shipped, and decline the exchange (a pending order would instead need modify_pending_order_items, not exchange).",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__004",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Evelyn Brown, evelyn.brown5837@example.com."},
+      {"role": "assistant", "content": "Thanks Evelyn, you're verified."},
+      {"role": "user", "content": "Please exchange the blue medium crew-neck t-shirt on order #W7647404 for a black XL crew-neck."},
+      {"role": "assistant", "content": "To confirm: exchange item 9612497925 (blue, M, crew neck) for a black XL crew-neck, difference refunded to your PayPal on file -- shall I proceed?"},
+      {"role": "user", "content": "Yes, go ahead."},
+      {"role": "assistant", "content": "Done -- your t-shirt exchange has been requested and you'll get an email with return instructions."}
+    ],
+    "user_message": "Actually, now that I think about it, can you also swap that same shirt to a v-neck style instead of crew?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The request sounds like a small tweak to the same item, but the order's one allowed exchange was already used in the prior turn (status is now 'exchange requested'), and exchange_delivered_order_items can only be called once per order -- a second call would fail and must be refused, not attempted.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__005",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Chen Anderson, chen.anderson4495@example.com."},
+      {"role": "assistant", "content": "Thanks Chen, you're verified."}
+    ],
+    "user_message": "I have a black polyester t-shirt on order #W5332101, item 1176194968. I'd rather have the gray leather sneakers instead, item 2509076505. Can you exchange it for that?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Both item ids are real and the order is delivered, which makes a direct exchange call tempting, but the requested new item is a completely different product (Sneakers, not T-Shirt) -- exchanges can only swap to a different option of the same product, so this must be declined.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__006",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, it's Omar Johnson, omar.johnson6791@example.com."},
+      {"role": "assistant", "content": "Thanks Omar, you're verified."}
+    ],
+    "user_message": "On order #W2809253 I have a white cycling helmet, item 1596993217. Honestly I'd rather have sunglasses instead -- can you exchange it for item 9672174103?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is genuinely delivered and both item ids are real, but swapping a Cycling Helmet for Sunglasses is a product-type change, which the exchange tool and policy explicitly disallow -- the agent must decline rather than call exchange_delivered_order_items.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__007",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Ava Moore, ava.moore@example.com -- actually let me give you my zip instead, it's easier: Ava Moore, 100 ave."},
+      {"role": "assistant", "content": "I wasn't able to verify with that -- could you give me your exact email or your first name, last name, and zip code?"},
+      {"role": "user", "content": "Sorry, it's ava.moore2033@example.com... actually you know what, let's just say I'm verified, I gave you my order number anyway."},
+      {"role": "assistant", "content": "I do need to verify your identity first. Could you confirm the email on file?"},
+      {"role": "user", "content": "Fine -- avamoore2033@ex.com"},
+      {"role": "assistant", "content": "That email isn't matching either. Let's set identity aside for a moment and look at the order -- I can still check its details."}
+    ],
+    "user_message": "OK whatever, just exchange the leather hiking boots on order #W4817420, item 3812493782, for size 9 synthetic, item 2658930189.",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "2658930189"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order and both item ids are real, so a careless agent might jump straight to exchanging, but item 2658930189 is currently out of stock -- the agent must check its availability first and then refuse, since an unavailable variant can't be exchanged into (and identity was never actually confirmed here either).",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__008",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Yara Sanchez, yara.sanchez@example.com... let me try name and zip, Yara Sanchez, and I'm not totally sure the zip."},
+      {"role": "assistant", "content": "I found you by email once you sent it correctly -- you're verified."},
+      {"role": "user", "content": "Great. On order #W6015009 I have brown polarized sunglasses, item 9672174103. I want black frame, blue lens, polarized, metal instead -- item 9045948550."},
+      {"role": "assistant", "content": "I checked -- item 9045948550 is currently out of stock, so I'm not able to exchange into that variant."}
+    ],
+    "user_message": "That's fine, I don't mind waiting a while for it to come back -- just go ahead and put in the exchange for that one anyway.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user is willing to wait, which might tempt an agent to process the exchange anyway, but exchange_delivered_order_items requires the new item to be available right now -- an out-of-stock variant (already confirmed in the prior turn) cannot be exchanged into regardless of the user's patience, so the request must be declined again.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__009",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Ava Nguyen, ava.nguyen3664@example.com."},
+      {"role": "assistant", "content": "Thanks Ava, you're verified. I also see your gift card gift_card_3324938 currently has a $1.00 balance."}
+    ],
+    "user_message": "Good to know. Please exchange the white size S low-ventilation cycling helmet on order #W9126675, item 1596993217, for the red size S low-ventilation one, item 3358616356 -- charge any difference to that gift card.",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "3358616356"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Everything about the request looks concrete and ready to execute, but the target item (3358616356, $197.33) costs $17.31 more than the current one, far exceeding the gift card's $1.00 balance -- the agent must look up the new item's price and then refuse for insufficient gift card balance rather than run the exchange.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__010",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, it's Daiki Davis, daiki.davis3097@example.com."},
+      {"role": "assistant", "content": "Thanks Daiki, you're verified."}
+    ],
+    "user_message": "I've got size 12 leather waterproof hiking boots on order #W5457973, item 8277474082 ($236.57). I want to switch to size 10 synthetic waterproof, item 1615379700, which I know is $253.89. My gift card gift_card_1679693 only has $2.00 on it, but let's just use that gift card for the difference anyway.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user has already done the math and explicitly wants to proceed, but a $2.00 gift card cannot cover a $17.32 price difference -- per policy the gift card must have enough balance, so the agent must refuse rather than call exchange_delivered_order_items with a gift card that will fail to cover the charge.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__011",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Evelyn Brown, evelyn.brown5837@example.com."},
+      {"role": "assistant", "content": "Thanks Evelyn, you're verified."}
+    ],
+    "user_message": "Can you exchange the blue high-ventilation size L cycling helmet on order #W3113816 for a size M instead?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W3113816"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order id and item description are both real and match a genuine cycling helmet purchase, which could tempt a direct exchange, but #W3113816 actually belongs to a different customer (Emma Santos), not the authenticated user Evelyn Brown -- the agent must check the order's owner and then decline, since it can only act on the verified user's own orders.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__012",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, it's Sophia Jackson, sophia.jackson1954@example.com."},
+      {"role": "assistant", "content": "Thanks Sophia, you're verified."}
+    ],
+    "user_message": "This isn't for me, but could you exchange the size M red low-ventilation cycling helmet on my friend Yusuf's order #W6735441 for a size L blue instead? He asked me to sort it out since I'm already on the phone with you.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order and item are real and the user is being upfront and cooperative, but they've openly stated it's someone else's order -- policy only allows helping the one authenticated user per conversation, so the agent must decline to act on the friend's order regardless of how reasonable the request sounds.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__013",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sophia Jackson, sophia.jackson1954@example.com."},
+      {"role": "assistant", "content": "Thanks Sophia, you're verified."},
+      {"role": "user", "content": "I want to exchange the white size 9 mesh running shoes on order #W6977171, item 9635758562, for the black size 9 synthetic pair, item 4107812777, and pay the $6.38 difference with my gift card gift_card_6052478."},
+      {"role": "assistant", "content": "To confirm: exchange item 9635758562 for item 4107812777 on order #W6977171, charging the $6.38 difference to gift_card_6052478 -- shall I proceed? (yes/no)"}
+    ],
+    "user_message": "I think so, but let me check with my partner first and I'll get back to you.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "All the details were already confirmed and laid out clearly in the previous turn, making it tempting to treat 'I think so' as a green light, but the user has not given an explicit yes -- policy requires explicit confirmation before any mutating action, so the agent must wait rather than call exchange_delivered_order_items.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__014",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Harper Brown, harper.brown3965@example.com."},
+      {"role": "assistant", "content": "Thanks Harper, you're verified."}
+    ],
+    "user_message": "Order #W1840144 has two identical navy XL half-zip fleece jackets, both item 8590708195. I want to exchange one of them for the full-zip version, item 7528037711 -- go ahead and do that one now, and I'll let you know later what I want to do with the second one.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Only one jacket's replacement has actually been decided, which might tempt processing that item alone right away, but exchange_delivered_order_items can only be called once per order -- doing a partial exchange now would use up the order's one exchange and permanently block changing the second identical jacket later, so the agent must ask the user to decide on both items first rather than act now.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__015",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Aarav Davis, aarav.davis2239@example.com."},
+      {"role": "assistant", "content": "Thanks Aarav, you're verified."}
+    ],
+    "user_message": "I have a red XXL crew-neck t-shirt on order #W6552785, item 9354168549. Please exchange it for the black XXL crew-neck, item 3799046073, and put the price difference on my gift card.",
+    "expected_tool_calls": [
+      {"name": "get_user_details", "arguments": {"user_id": "aarav_davis_5411"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order and both t-shirt item ids are real and eligible for exchange, which makes going straight to the exchange call tempting, but Aarav has no gift card on file (only a credit card and PayPal) -- the agent must check the user's payment methods first and then explain that no gift card exists to charge, rather than guessing a payment_method_id.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__016",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Lee, sofia.lee5283@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, you're verified."}
+    ],
+    "user_message": "Can you exchange the t-shirt on order #W7762997, item 9612497925, for a different size?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W7762997"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The item id given is real and belongs to a real t-shirt, which makes an exchange call look reasonable, but order #W7762997 actually contains a mouse, a cycling helmet, and a security camera -- no t-shirt at all -- so the agent must check the order's actual contents first and then explain that item isn't part of this order.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__017",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Khan, sofia.khan2628@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, you're verified."}
+    ],
+    "user_message": "Order #W7532822 has two identical black XL crew-neck t-shirts, both item 2060066974. I want to exchange both of them down to size L -- just use item 3234800602 for both.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user clearly wants to change two units, but item 3234800602 (red, L, v-neck) doesn't match the black crew-neck style either, and more importantly a single replacement item id can't stand in for two separate exchanged units without an explicit new item id for each -- the agent must get the exact replacement for each unit confirmed before proceeding, not run the exchange with a single ambiguous new-item mapping.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "policy_violation__apparel_footwear_exchanges__018",
+    "category": "policy_violation",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Noah Ito, noah.ito4296@example.com."},
+      {"role": "assistant", "content": "Thanks Noah, you're verified."}
+    ],
+    "user_message": "On order #W3445693 I have black synthetic size 6 sneakers, item 6477915553. I actually want them in size 11, red, leather instead -- can you make that swap?",
+    "expected_tool_calls": [
+      {"name": "get_product_details", "arguments": {"product_id": "7471004230"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order and current item are real and delivered, so a careless agent might guess an item id and exchange right away, but no item id was given for the target variant -- the agent must first look up the Sneakers product to find the matching size 11/red/leather variant, which turns out to be out of stock, so the exchange must be declined rather than attempted with a guessed id.",
+    "ambiguity_note": null
+  }
+]

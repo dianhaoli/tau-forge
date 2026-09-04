@@ -1,0 +1,18 @@
+{"id": "requires_earlier_context__identity_and_order_lookup__001", "one_line": "Email given last turn, not repeated; agent must authenticate via find_user_id_by_email before answering."}
+{"id": "requires_earlier_context__identity_and_order_lookup__002", "one_line": "Name+zip given last turn, not repeated; agent must authenticate via find_user_id_by_name_zip before order question."}
+{"id": "requires_earlier_context__identity_and_order_lookup__003", "one_line": "Order id given last turn only; user asks 'has that shipped' with no id, needs get_order_details recall."}
+{"id": "requires_earlier_context__identity_and_order_lookup__004", "one_line": "Item id from earlier turn; user asks if 'that exact one' is in stock, needs get_item_details recall."}
+{"id": "requires_earlier_context__identity_and_order_lookup__005", "one_line": "Only an item id given earlier; user asks about other options, requires inferring product id for get_product_details."}
+{"id": "requires_earlier_context__identity_and_order_lookup__006", "one_line": "User already authenticated by email last turn; profile request needs get_user_details with recalled user_id."}
+{"id": "requires_earlier_context__identity_and_order_lookup__007", "one_line": "Pending order id given last turn describing contents; user says 'cancel it, no longer need it', reason now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__008", "one_line": "Order resolved from description (skateboard+speaker) last turn; user says 'cancel that, ordered by mistake'."}
+{"id": "requires_earlier_context__identity_and_order_lookup__009", "one_line": "Pending desk-lamp order id from earlier turn; user gives new address now for 'that' order, not account default."}
+{"id": "requires_earlier_context__identity_and_order_lookup__010", "one_line": "User authenticated via name+zip earlier; requests account-level default address update, not any specific order."}
+{"id": "requires_earlier_context__identity_and_order_lookup__011", "one_line": "Multi-item pending order id from earlier description; user asks to switch payment to a named credit card now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__012", "one_line": "Pending order id and its gift-card payment established earlier; user requests switch to Visa now, keeps order."}
+{"id": "requires_earlier_context__identity_and_order_lookup__013", "one_line": "Old/new bluetooth speaker item ids and order id negotiated earlier; user just confirms 'yes' with PayPal now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__014", "one_line": "Delivered headphones exchange item ids fixed earlier; user just names gift card payment method this turn."}
+{"id": "requires_earlier_context__identity_and_order_lookup__015", "one_line": "Delivered order+item (digital camera) named earlier; user confirms return with gift-card refund this turn."}
+{"id": "requires_earlier_context__identity_and_order_lookup__016", "one_line": "Delivered order with espresso machine among several items established earlier; user requests item-only return now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__017", "one_line": "User confirms own pending-order cancellation from earlier turn while also asking to cancel a friend's order; only own order proceeds."}
+{"id": "requires_earlier_context__identity_and_order_lookup__018", "one_line": "User with many pending orders resolves target via item description earlier turn; gives new address for 'that one' now."}

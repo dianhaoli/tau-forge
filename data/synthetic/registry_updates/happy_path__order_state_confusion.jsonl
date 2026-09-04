@@ -1,0 +1,18 @@
+{"id": "happy_path__order_state_confusion__001", "one_line": "Pending single-item skateboard order; user asks to cancel, no longer needed."}
+{"id": "happy_path__order_state_confusion__002", "one_line": "Pending order; user requests a shipping address change to a new city."}
+{"id": "happy_path__order_state_confusion__003", "one_line": "Pending laptop order paid via PayPal; user asks to switch payment to a credit card."}
+{"id": "happy_path__order_state_confusion__004", "one_line": "Pending order with two Action Cameras; user swaps one camera's color variant."}
+{"id": "happy_path__order_state_confusion__005", "one_line": "Delivered multi-item order; user returns one backpack item to original credit card."}
+{"id": "happy_path__order_state_confusion__006", "one_line": "Delivered order with a cycling helmet; user exchanges it for a larger size, same color."}
+{"id": "happy_path__order_state_confusion__007", "one_line": "User assumes an order is pending and asks to cancel it; order is actually processed."}
+{"id": "happy_path__order_state_confusion__008", "one_line": "User asks whether a cancelled order's refund was actually processed."}
+{"id": "happy_path__order_state_confusion__009", "one_line": "Pending multi-item electronics order; user cancels it, ordered by mistake."}
+{"id": "happy_path__order_state_confusion__010", "one_line": "Pending backpack order; user switches payment method from PayPal to credit card."}
+{"id": "happy_path__order_state_confusion__011", "one_line": "Order already item-modified once; user now asks for a separate address change."}
+{"id": "happy_path__order_state_confusion__012", "one_line": "Delivered order with a return already requested; user asks for a status check."}
+{"id": "happy_path__order_state_confusion__013", "one_line": "Delivered order with an exchange already requested; user asks for a status check."}
+{"id": "happy_path__order_state_confusion__014", "one_line": "User wants to resize hiking boots on a delivered order but first asks what's in stock."}
+{"id": "happy_path__order_state_confusion__015", "one_line": "Delivered e-reader exchanged for a cheaper higher-storage variant, refund to gift card."}
+{"id": "happy_path__order_state_confusion__016", "one_line": "Delivered earbuds returned; refund redirected from PayPal to an existing gift card."}
+{"id": "happy_path__order_state_confusion__017", "one_line": "Pending air purifier swapped to a pricier night-mode variant after checking stock."}
+{"id": "happy_path__order_state_confusion__018", "one_line": "User asks whether a pending order has shipped yet, no action requested."}

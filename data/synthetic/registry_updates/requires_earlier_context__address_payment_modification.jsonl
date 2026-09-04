@@ -1,0 +1,18 @@
+{"id": "requires_earlier_context__address_payment_modification__001", "one_line": "User gave full new order address earlier turn; current message is bare confirmation to proceed"}
+{"id": "requires_earlier_context__address_payment_modification__002", "one_line": "New pending-order address stated earlier including blank address2; current turn just confirms"}
+{"id": "requires_earlier_context__address_payment_modification__003", "one_line": "User earlier specified account default address change, not order-specific; confirms in current turn"}
+{"id": "requires_earlier_context__address_payment_modification__004", "one_line": "Earlier turn requests credit-card-to-PayPal switch on named order; current turn only confirms"}
+{"id": "requires_earlier_context__address_payment_modification__005", "one_line": "Earlier turn picks gift card with sufficient balance for order's payment switch; current turn confirms"}
+{"id": "requires_earlier_context__address_payment_modification__006", "one_line": "User disambiguates between two credit cards by brand earlier; current turn confirms the switch"}
+{"id": "requires_earlier_context__address_payment_modification__007", "one_line": "New address given earlier as general move; current message names order id only, needs earlier address"}
+{"id": "requires_earlier_context__address_payment_modification__008", "one_line": "User earlier states address should be permanent account default, not order-specific; confirms now"}
+{"id": "requires_earlier_context__address_payment_modification__009", "one_line": "Full new address for a named pending order given earlier inline; current turn terse confirmation"}
+{"id": "requires_earlier_context__address_payment_modification__010", "one_line": "Earlier turn requests gift-card-to-credit-card switch to preserve balance; current turn confirms"}
+{"id": "requires_earlier_context__address_payment_modification__011", "one_line": "User clarifies across two earlier turns that new address is account default, not order-specific"}
+{"id": "requires_earlier_context__address_payment_modification__012", "one_line": "New pending-order address trickled across two earlier turns; current turn asks to apply it"}
+{"id": "requires_earlier_context__address_payment_modification__013", "one_line": "Order id established earlier by item description only; current turn asks to verify its address update"}
+{"id": "requires_earlier_context__address_payment_modification__014", "one_line": "Order id named earlier re a past payment-switch attempt; current turn asks agent to recheck it"}
+{"id": "requires_earlier_context__address_payment_modification__015", "one_line": "Email given in earlier turn only; current message requests an address change without repeating it"}
+{"id": "requires_earlier_context__address_payment_modification__016", "one_line": "Name and zip trickled across two earlier turns for authentication before a default-address fix"}
+{"id": "requires_earlier_context__address_payment_modification__017", "one_line": "Two orders mentioned earlier in passing; current turn asks about the pending one's address specifically"}
+{"id": "requires_earlier_context__address_payment_modification__018", "one_line": "User earlier flags intent to switch a pending order's payment method; current turn asks to list methods first"}

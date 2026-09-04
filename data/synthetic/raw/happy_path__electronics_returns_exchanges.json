@@ -312,24 +312,11 @@
         "arguments": {
           "product_id": "3377618313"
         }
-      },
-      {
-        "name": "exchange_delivered_order_items",
-        "arguments": {
-          "order_id": "#W4817420",
-          "item_ids": [
-            "6700049080"
-          ],
-          "new_item_ids": [
-            "6117189161"
-          ],
-          "payment_method_id": "gift_card_8168843"
-        }
       }
     ],
     "expected_tool_calls_verified": true,
-    "distractor_tool": "modify_pending_order_items",
-    "distractor_rationale": "modify_pending_order_items has the same 'swap variant + pay difference' shape and might look right for an unshipped-sounding request, but order #W4817420 is already delivered -- only exchange_delivered_order_items applies, and the matching silver/4K/waterproof variant still has to be looked up via get_product_details since only its options (not its item id) were given.",
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "exchange_delivered_order_items is the eventual right tool once the silver variant id is known, but jumping straight to it this turn would mean guessing the new_item_ids value -- the user only gave options (silver, still 4K, still waterproof), not an item id, so the correct single call this turn is the lookup that resolves it, not the mutating exchange itself.",
     "ambiguity_note": null
   },
   {

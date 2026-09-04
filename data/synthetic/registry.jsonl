@@ -1,3 +1,20 @@
+{"id": "ambiguous__address_payment_modification__001", "one_line": "User with 3 pending orders asks to change shipping address on 'my order' without naming which one."}
+{"id": "ambiguous__address_payment_modification__002", "one_line": "User references 'the order with the makeup kit' but two of their pending orders both contain one."}
+{"id": "ambiguous__address_payment_modification__003", "one_line": "User with 4 pending orders asks to switch payment on 'my order' to their credit card, order unnamed."}
+{"id": "ambiguous__address_payment_modification__004", "one_line": "User asks to switch payment on 'the order with the cycling helmet' but two orders each contain one."}
+{"id": "ambiguous__address_payment_modification__005", "one_line": "User asks to update payment on their 'most recent' order; no order-date field exists to resolve this."}
+{"id": "ambiguous__address_payment_modification__006", "one_line": "User asks to switch order payment to 'my other card'; both a spare credit card and a gift card qualify."}
+{"id": "ambiguous__address_payment_modification__007", "one_line": "User asks to move order payment from PayPal to 'my credit card'; two different credit cards are on file."}
+{"id": "ambiguous__address_payment_modification__008", "one_line": "User asks to switch order payment to 'my card'; user has a gift card plus two different credit cards."}
+{"id": "ambiguous__address_payment_modification__009", "one_line": "User gives a new address and says 'update my address'; unclear if account default or their pending order."}
+{"id": "ambiguous__address_payment_modification__010", "one_line": "User gives a new address with no order reference; unclear if it's their account default or the pending order."}
+{"id": "ambiguous__address_payment_modification__011", "one_line": "User reports their address changed with a new address; account-vs-order scope is unstated."}
+{"id": "ambiguous__address_payment_modification__012", "one_line": "User gives new address; their pending order and account default already ship to two different places."}
+{"id": "ambiguous__address_payment_modification__013", "one_line": "User with 2 pending orders, each on a different card, asks to switch 'my order's' payment without naming which order."}
+{"id": "ambiguous__address_payment_modification__014", "one_line": "User asks to update address on 'the order with the tea kettle' but two of their pending orders both contain one."}
+{"id": "ambiguous__address_payment_modification__015", "one_line": "User with 4 pending orders (3 same address, 1 different) asks to update 'my order's' address, unnamed."}
+{"id": "ambiguous__address_payment_modification__016", "one_line": "User with 2 pending orders shipping to different addresses asks to update 'my order's' address, unnamed."}
+{"id": "ambiguous__address_payment_modification__017", "one_line": "User with 2 pending orders (both on PayPal) and 2 credit cards asks to switch 'my order' to 'a credit card'."}
 {"id": "ambiguous__apparel_footwear_exchanges__001", "one_line": "User has 2 delivered orders each w/ a different Cycling Helmet; asks to exchange 'the helmet' for a medium."}
 {"id": "ambiguous__apparel_footwear_exchanges__002", "one_line": "User has 2 pending orders each w/ different Hiking Boots; asks to size up 'my order' without naming which."}
 {"id": "ambiguous__apparel_footwear_exchanges__003", "one_line": "User has 2 pending orders each w/ a different T-Shirt; asks to resize 'the t-shirt I ordered', no order/size given."}
@@ -15,6 +32,130 @@
 {"id": "ambiguous__apparel_footwear_exchanges__015", "one_line": "Delivered Running Shoes exchange to clear target size; user has 2 credit cards, 'my credit card' for refund unspecified."}
 {"id": "ambiguous__apparel_footwear_exchanges__016", "one_line": "Delivered Running Shoes exchange to clear target size; user has gift card + credit card, 'my card on file' ambiguous."}
 {"id": "ambiguous__apparel_footwear_exchanges__017", "one_line": "Pending order (id given) has 3 different apparel items (helmet/shirt/boots) all with sizes; 'one of the items' unspecified."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__001", "one_line": "Two delivered orders each contain a Water Bottle; user says 'the water bottle' is dented, no order/color given."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__002", "one_line": "Delivered order has 2 distinct Backpacks; user says 'one of my backpacks' has a broken zipper, unspecified."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__003", "one_line": "User has a Tablet in two delivered orders (different storage/color); 'the tablet' won't turn on, order unspecified."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__004", "one_line": "User has a Laptop in two delivered orders (different specs); 'my laptop' has a cracked screen, order unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__005", "one_line": "Delivered order has two identical Tea Kettle units; user says 'one of the two' leaks, quantity/replacement unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__006", "one_line": "One order has three distinct Wireless Earbuds items; user says 'the earbuds' cut out, which pair unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__007", "one_line": "Identical security camera item id delivered in two separate orders; user wants to return it, order unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__008", "one_line": "One order has two different Laptop configs; user says 'the laptop' flickers, which unit and replacement unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__009", "one_line": "User reports two damaged items across two different orders (helmet, speaker) in one message; can't act on both at once."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__010", "one_line": "Skateboard deck cracked; user asks 'what can you do', doesn't say return or exchange."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__011", "one_line": "Makeup kit shattered; user says 'fix this' without choosing refund or replacement."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__012", "one_line": "Camera exchange item already settled via prior turns; user says 'charge my card', two credit cards on file."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__013", "one_line": "Yoga mat torn; user asks for refund 'however's easiest', original card and a gift card both valid."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__014", "one_line": "User has two delivered orders totaling six items; 'something broke', no order or item named at all."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__015", "one_line": "User has four electronic-ish items across two orders; says 'the electronic thing' broke, still ambiguous."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__016", "one_line": "Five-item delivered order; user says 'a couple of things' arrived damaged, none named, action unclear."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__017", "one_line": "Camera overheats; user says 'give me any working one', several in-stock replacement variants exist."}
+{"id": "ambiguous__damaged_or_defective_item_narratives__018", "one_line": "Five-item delivered order; user says 'several items' are messed up, unnamed, return/exchange unclear."}
+{"id": "ambiguous__electronics_returns_exchanges__001", "one_line": "Two delivered orders hold the identical security camera variant; user asks to return it, no order named."}
+{"id": "ambiguous__electronics_returns_exchanges__002", "one_line": "Two delivered laptop orders differ by RAM; user asks to exchange 'my laptop' for more RAM, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__003", "one_line": "Two delivered speaker orders; user says 'take care of it', unclear which order and return vs exchange."}
+{"id": "ambiguous__electronics_returns_exchanges__004", "one_line": "Two pending tablet orders differ by storage/color; user asks to change storage size, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__005", "one_line": "Two pending smart watch orders; user asks to switch band material, no order or target material given."}
+{"id": "ambiguous__electronics_returns_exchanges__006", "one_line": "Two pending Bluetooth speaker orders in different colors; user asks to switch to 'the other color', order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__007", "one_line": "Two pending espresso machine orders differ by pressure; user asks to change pressure, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__008", "one_line": "Digital camera in one pending and one delivered order; user asks to return 'my camera', order unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__009", "one_line": "Action camera in one delivered and one pending order; user asks to return it, order unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__010", "one_line": "Tablet in one pending and one delivered order; user asks to exchange for more storage, order unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__011", "one_line": "Named pending order holds two distinct digital cameras; user asks to change zoom on 'the' camera, item unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__012", "one_line": "Named pending order holds two distinct espresso machines; user asks to swap capacity on 'the' machine, item unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__013", "one_line": "Delivered order has smart watch and keyboard; user forgets which one is broken and asks to return 'it'."}
+{"id": "ambiguous__electronics_returns_exchanges__014", "one_line": "Named delivered order has two distinct wireless earbuds units; user asks to return 'the earbuds', quantity unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__015", "one_line": "User has two credit cards, asks to charge exchange price difference to 'my credit card', card unresolved."}
+{"id": "ambiguous__electronics_returns_exchanges__016", "one_line": "Two pending laptop orders differ by processor; user asks to upgrade processor, order unnamed."}
+{"id": "ambiguous__electronics_returns_exchanges__017", "one_line": "Bluetooth speaker in pending, delivered, and cancelled orders; user asks for color exchange, order unresolved."}
+{"id": "ambiguous__identity_and_order_lookup__001", "one_line": "User gives only a first name, no last name/zip/email; agent can't authenticate via either lookup tool."}
+{"id": "ambiguous__identity_and_order_lookup__002", "one_line": "User gives only a zip code, no name or email; neither authentication tool can be called."}
+{"id": "ambiguous__identity_and_order_lookup__003", "one_line": "User gives full name but no zip; DB actually has two real customers sharing that exact name."}
+{"id": "ambiguous__identity_and_order_lookup__004", "one_line": "User offers two candidate email spellings for their account, unsure which is the real one on file."}
+{"id": "ambiguous__identity_and_order_lookup__005", "one_line": "User gives last name and zip but omits first name, which find_user_id_by_name_zip also requires."}
+{"id": "ambiguous__identity_and_order_lookup__006", "one_line": "User gives name plus two candidate zip codes after a move, unsure which digit is right."}
+{"id": "ambiguous__identity_and_order_lookup__007", "one_line": "User asks to cancel a real order by id but supplies no identity info at all before acting."}
+{"id": "ambiguous__identity_and_order_lookup__008", "one_line": "Authenticated user with three pending orders says 'cancel my order' without naming which one."}
+{"id": "ambiguous__identity_and_order_lookup__009", "one_line": "Authenticated user with five pending orders asks for an address update on 'my order', unspecified."}
+{"id": "ambiguous__identity_and_order_lookup__010", "one_line": "Authenticated user with five orders across statuses asks generic 'status of my order' with no id."}
+{"id": "ambiguous__identity_and_order_lookup__011", "one_line": "Two delivered orders both contain a tea kettle (one with two units); user's return request unspecific."}
+{"id": "ambiguous__identity_and_order_lookup__012", "one_line": "Two delivered orders each hold a different tablet variant; user asks to exchange 'my tablet' generically."}
+{"id": "ambiguous__identity_and_order_lookup__013", "one_line": "Identical jigsaw puzzle item id appears in two delivered orders; user's 'puzzle order' return is ambiguous."}
+{"id": "ambiguous__identity_and_order_lookup__014", "one_line": "Two pending orders each contain a different smart watch variant; user's color-swap request names neither order."}
+{"id": "ambiguous__identity_and_order_lookup__015", "one_line": "Agent surfaced two delivered orders last turn; user's vague 'that one' return request doesn't pick either."}
+{"id": "ambiguous__identity_and_order_lookup__016", "one_line": "User wants to return from 'my most recent order' but the DB has no date field to determine recency."}
+{"id": "ambiguous__identity_and_order_lookup__017", "one_line": "User offers an email and a separate name+zip that resolve to two different real accounts, unreconciled."}
+{"id": "ambiguous__order_state_confusion__001", "one_line": "Customer with 3 pending orders asks to cancel 'my order' by mistake, no order named"}
+{"id": "ambiguous__order_state_confusion__002", "one_line": "Customer with 5 pending orders asks for a shipping address update to new place, order unspecified"}
+{"id": "ambiguous__order_state_confusion__003", "one_line": "Customer with 2 delivered orders wants to return 'something' from last order, item/order unnamed"}
+{"id": "ambiguous__order_state_confusion__004", "one_line": "Digital camera exists in one delivered and one pending order; vague 'sort it out' request doesn't say which"}
+{"id": "ambiguous__order_state_confusion__005", "one_line": "Same tablet product in 2 delivered orders; wants storage upgrade exchange, order unnamed"}
+{"id": "ambiguous__order_state_confusion__006", "one_line": "Electric toothbrush in one delivered and one pending order; 'something needs to change' unspecified"}
+{"id": "ambiguous__order_state_confusion__007", "one_line": "Espresso machine spans 2 pending orders (one with 2 units) plus 1 delivered order; vague complaint"}
+{"id": "ambiguous__order_state_confusion__008", "one_line": "Pet bed in one delivered and one pending order; 'not what I wanted' doesn't say which or what action"}
+{"id": "ambiguous__order_state_confusion__009", "one_line": "Grill in one pending and one delivered order; wants to 'swap for different model', order unnamed"}
+{"id": "ambiguous__order_state_confusion__010", "one_line": "Digital camera in 2 multi-item pending orders; wants to cancel 'my digital camera order' by mistake"}
+{"id": "ambiguous__order_state_confusion__011", "one_line": "Smart watch in 2 pending orders; wants shipping address changed to work address, order unnamed"}
+{"id": "ambiguous__order_state_confusion__012", "one_line": "Backpack in 2 pending orders; wants address redirected to sister's place, order unnamed"}
+{"id": "ambiguous__order_state_confusion__013", "one_line": "Bluetooth speaker in 2 delivered orders; wants color exchange, one-shot exchange risk, order unnamed"}
+{"id": "ambiguous__order_state_confusion__014", "one_line": "One order already item-modified, another still plain pending; address-change request says only 'my pending order'"}
+{"id": "ambiguous__order_state_confusion__015", "one_line": "Tea kettle order already exchange-requested (locked); another delivered order has same kettle untouched, new swap ambiguous"}
+{"id": "ambiguous__order_state_confusion__016", "one_line": "Smart watch order already return-requested (locked); identical watch in separate delivered order, exchange request ambiguous"}
+{"id": "ambiguous__order_state_confusion__017", "one_line": "Single pending multi-item order; 'take care of it' unclear between full cancel and single item modify"}
+{"id": "ambiguous__order_state_confusion__018", "one_line": "Single delivered 3-item order; 'one of those isn't working' names neither item nor return-vs-exchange"}
+{"id": "happy_path__address_payment_modification__001", "one_line": "User gives full new account address inline, requests profile default address update, no order involved"}
+{"id": "happy_path__address_payment_modification__002", "one_line": "User changes street/city/zip on default address, keeps existing suite number from prior lookup"}
+{"id": "happy_path__address_payment_modification__003", "one_line": "User redirects one pending order's shipping address to their office, distinct from default address"}
+{"id": "happy_path__address_payment_modification__004", "one_line": "User switches pending order's payment from credit card to gift card with sufficient balance"}
+{"id": "happy_path__address_payment_modification__005", "one_line": "User switches pending order's payment from PayPal to a credit card on file"}
+{"id": "happy_path__address_payment_modification__006", "one_line": "User moves pending order's payment from gift card to PayPal to preserve gift card balance"}
+{"id": "happy_path__address_payment_modification__007", "one_line": "User switches pending order payment between two different credit cards on file"}
+{"id": "happy_path__address_payment_modification__008", "one_line": "User switches pending order payment from PayPal to a named credit card across two turns"}
+{"id": "happy_path__address_payment_modification__009", "one_line": "User provides full new shipping address for a single pending skateboard order"}
+{"id": "happy_path__address_payment_modification__010", "one_line": "User updates apartment/suite and street on default address, keeps city/state/zip unchanged"}
+{"id": "happy_path__address_payment_modification__011", "one_line": "User moves pending order payment from gift card to PayPal account"}
+{"id": "happy_path__address_payment_modification__012", "one_line": "User corrects only the zip code of a pending order's shipping address across two turns"}
+{"id": "happy_path__address_payment_modification__013", "one_line": "User asks whether an order has shipped yet before deciding on an address change; lookup only"}
+{"id": "happy_path__address_payment_modification__014", "one_line": "User asks agent to list their saved payment methods before picking one to switch to"}
+{"id": "happy_path__address_payment_modification__015", "one_line": "Conversation opens with user supplying email for identity lookup, no user id given"}
+{"id": "happy_path__address_payment_modification__016", "one_line": "User forgets email, authenticates via first name, last name, and zip code instead"}
+{"id": "happy_path__address_payment_modification__017", "one_line": "User asks what shipping address is currently on file for a pending order before deciding"}
+{"id": "happy_path__address_payment_modification__018", "one_line": "User asks to be reminded of their current default address before deciding to update it"}
+{"id": "happy_path__apparel_footwear_exchanges__001", "one_line": "Delivered t-shirt exchanged from red XXL crew to red L v-neck, diff charged to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__002", "one_line": "Delivered running shoes exchanged size 9 to size 10, diff refunded to original gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__003", "one_line": "Delivered sunglasses exchanged brown/brown frame to black/green frame, diff on original card."}
+{"id": "happy_path__apparel_footwear_exchanges__004", "one_line": "Delivered hiking boots exchanged size 7 to size 8 synthetic, diff paid via gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__005", "one_line": "One of two identical delivered fleece jackets exchanged half-zip to full-zip, diff on non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__006", "one_line": "Delivered cycling helmet exchanged blue to black same size/ventilation, refund to gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__007", "one_line": "Delivered sneakers exchanged size 11 black to size 10 gray, refund to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__008", "one_line": "Pending t-shirt order item resized XXL to XL, refund to sole card on file."}
+{"id": "happy_path__apparel_footwear_exchanges__009", "one_line": "Pending running shoes order resized 8 to 9, color changed, refund to sole PayPal on file."}
+{"id": "happy_path__apparel_footwear_exchanges__010", "one_line": "Pending sunglasses order lens color changed brown to green, refund to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__011", "one_line": "Pending hiking boots order changed synthetic to leather waterproof, same size, refund via gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__012", "one_line": "Pending cycling helmet order ventilation upgraded low to medium, gift card covers charge."}
+{"id": "happy_path__apparel_footwear_exchanges__013", "one_line": "User asks delivery status of a fleece-jacket-containing order before deciding on an exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__014", "one_line": "User asks whether a specific medium blue high-ventilation helmet variant is in stock."}
+{"id": "happy_path__apparel_footwear_exchanges__015", "one_line": "User asks what colors/sizes a fleece jacket product comes in before choosing an exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__016", "one_line": "User without email authenticated via name+zip before requesting an apparel exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__017", "one_line": "Verified user asks to see full order list to find one eligible for exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__018", "one_line": "User asks shipping status of a pending sunglasses order before requesting a lens color swap."}
+{"id": "happy_path__damaged_or_defective_item_narratives__001", "one_line": "Delivered vacuum cleaner motor grinds/no suction; single-item order returned, refund to original PayPal."}
+{"id": "happy_path__damaged_or_defective_item_narratives__002", "one_line": "Delivered charcoal grill lid dented; exchanged for gas portable variant, diff charged to on-file gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__003", "one_line": "Delivered leather office chair scratched; returned, refund redirected to a second existing gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__004", "one_line": "Desk lamp flickers; user asks only to confirm order shows delivered before deciding next step."}
+{"id": "happy_path__damaged_or_defective_item_narratives__005", "one_line": "Delivered wall clock face cracked; exchanged for smaller digital variant, diff charged to PayPal."}
+{"id": "happy_path__damaged_or_defective_item_narratives__006", "one_line": "Single-item delivered perfume bottle cracked/leaked; returned, refund to original credit card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__007", "one_line": "Backpack zipper ripped out; user asks to check stock of a specific replacement variant before acting."}
+{"id": "happy_path__damaged_or_defective_item_narratives__008", "one_line": "Skateboard wheel cracked; user asks to check availability of a specific replacement item before swapping."}
+{"id": "happy_path__damaged_or_defective_item_narratives__009", "one_line": "Delivered garden hose split on first use; returned, refund to original credit card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__010", "one_line": "Electric kettle won't heat; user asks only to confirm order shows delivered before discussing remedy."}
+{"id": "happy_path__damaged_or_defective_item_narratives__011", "one_line": "Delivered tea kettle lid won't seal; exchanged for glass variant, diff charged to on-file gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__012", "one_line": "Delivered makeup kit palette shattered; returned, refund redirected to an existing gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__013", "one_line": "Delivered dumbbell set coating peeling; exchanged for urethane variant, diff via original gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__014", "one_line": "Yoga mat torn along edge; user asks to check stock of a specific replacement variant before acting."}
+{"id": "happy_path__damaged_or_defective_item_narratives__015", "one_line": "Bookshelf glass panel cracked; user asks only to confirm order shows delivered before requesting return."}
+{"id": "happy_path__damaged_or_defective_item_narratives__016", "one_line": "Delivered luggage set wheel broken; returned, refund to the original gift card payment method."}
+{"id": "happy_path__damaged_or_defective_item_narratives__017", "one_line": "Delivered pet bed zipper broke; exchanged for a different fabric variant, diff charged to PayPal."}
+{"id": "happy_path__damaged_or_defective_item_narratives__018", "one_line": "Delivered glass water bottle hairline-cracked; returned, refund to original PayPal."}
 {"id": "happy_path__electronics_returns_exchanges__001", "one_line": "Delivered order, single headphones item returned for refund to the original credit card used."}
 {"id": "happy_path__electronics_returns_exchanges__002", "one_line": "Delivered espresso machine order returned; refund redirected to a different existing gift card."}
 {"id": "happy_path__electronics_returns_exchanges__003", "one_line": "Delivered laptop exchanged for pricier i9 config; price difference charged to a non-original credit card."}
@@ -35,6 +176,241 @@
 {"id": "happy_path__electronics_returns_exchanges__018", "one_line": "User asks only whether a coffee maker order has been delivered yet, before deciding on a return."}
 {"id": "happy_path__electronics_returns_exchanges__019", "one_line": "Delivered digital camera exchanged for a lighter zoom-lens variant; refund to original credit card."}
 {"id": "happy_path__electronics_returns_exchanges__020", "one_line": "Delivered wireless earbuds exchanged for a more water-resistant variant; charge to original credit card."}
+{"id": "happy_path__identity_and_order_lookup__001", "one_line": "User gives only an email at start; agent must authenticate via find_user_id_by_email before anything else."}
+{"id": "happy_path__identity_and_order_lookup__002", "one_line": "User can't recall email, gives name+zip instead; agent authenticates via find_user_id_by_name_zip."}
+{"id": "happy_path__identity_and_order_lookup__003", "one_line": "Already-authenticated user asks status of a specific order id; correct move is a plain get_order_details lookup."}
+{"id": "happy_path__identity_and_order_lookup__004", "one_line": "Authenticated user asks what payment methods are on file; correct move is get_user_details, not an order lookup."}
+{"id": "happy_path__identity_and_order_lookup__005", "one_line": "User asks if a specific item from a delivered order is still in stock; correct move is get_item_details on that item id."}
+{"id": "happy_path__identity_and_order_lookup__006", "one_line": "User asks about other finishes/sizes of a product they own one variant of; correct move is get_product_details."}
+{"id": "happy_path__identity_and_order_lookup__007", "one_line": "User has several orders but only one pending; asks to cancel 'the pending one' by mistake, unambiguous target."}
+{"id": "happy_path__identity_and_order_lookup__008", "one_line": "Authenticated user with one pending order requests a shipping address change on that order after moving."}
+{"id": "happy_path__identity_and_order_lookup__009", "one_line": "User with one pending order and two credit cards asks to switch the order's payment to the other card."}
+{"id": "happy_path__identity_and_order_lookup__010", "one_line": "User negotiates a color swap on a pending Bluetooth Speaker item across turns, confirms exact new item id and card."}
+{"id": "happy_path__identity_and_order_lookup__011", "one_line": "User asks to return one identified item (mechanical keyboard) from a multi-item delivered order, refund to paypal."}
+{"id": "happy_path__identity_and_order_lookup__012", "one_line": "Multi-turn size exchange negotiation on delivered running shoes order resolves to a specific variant and refund."}
+{"id": "happy_path__identity_and_order_lookup__013", "one_line": "User with single pending tea kettle order asks to cancel because they no longer need it."}
+{"id": "happy_path__identity_and_order_lookup__014", "one_line": "User explicitly asks to update their account-level default address, distinct from any specific order's address."}
+{"id": "happy_path__identity_and_order_lookup__015", "one_line": "User returns one item (leaking tea kettle) from a two-item delivered order, refund redirected to a different gift card."}
+{"id": "happy_path__identity_and_order_lookup__016", "one_line": "User authenticated by name+zip (no email) asks to move their one pending order's payment from gift card to credit card."}
+{"id": "happy_path__identity_and_order_lookup__017", "one_line": "User asks to cancel own pending order but also asks agent to cancel a roommate's order id; only own order is actioned."}
+{"id": "happy_path__identity_and_order_lookup__018", "one_line": "User with a pending and a delivered order both listed asks to cancel 'the one with the skateboard', resolves to pending order."}
+{"id": "happy_path__order_state_confusion__001", "one_line": "Pending single-item skateboard order; user asks to cancel, no longer needed."}
+{"id": "happy_path__order_state_confusion__002", "one_line": "Pending order; user requests a shipping address change to a new city."}
+{"id": "happy_path__order_state_confusion__003", "one_line": "Pending laptop order paid via PayPal; user asks to switch payment to a credit card."}
+{"id": "happy_path__order_state_confusion__004", "one_line": "Pending order with two Action Cameras; user swaps one camera's color variant."}
+{"id": "happy_path__order_state_confusion__005", "one_line": "Delivered multi-item order; user returns one backpack item to original credit card."}
+{"id": "happy_path__order_state_confusion__006", "one_line": "Delivered order with a cycling helmet; user exchanges it for a larger size, same color."}
+{"id": "happy_path__order_state_confusion__007", "one_line": "User assumes an order is pending and asks to cancel it; order is actually processed."}
+{"id": "happy_path__order_state_confusion__008", "one_line": "User asks whether a cancelled order's refund was actually processed."}
+{"id": "happy_path__order_state_confusion__009", "one_line": "Pending multi-item electronics order; user cancels it, ordered by mistake."}
+{"id": "happy_path__order_state_confusion__010", "one_line": "Pending backpack order; user switches payment method from PayPal to credit card."}
+{"id": "happy_path__order_state_confusion__011", "one_line": "Order already item-modified once; user now asks for a separate address change."}
+{"id": "happy_path__order_state_confusion__012", "one_line": "Delivered order with a return already requested; user asks for a status check."}
+{"id": "happy_path__order_state_confusion__013", "one_line": "Delivered order with an exchange already requested; user asks for a status check."}
+{"id": "happy_path__order_state_confusion__014", "one_line": "User wants to resize hiking boots on a delivered order but first asks what's in stock."}
+{"id": "happy_path__order_state_confusion__015", "one_line": "Delivered e-reader exchanged for a cheaper higher-storage variant, refund to gift card."}
+{"id": "happy_path__order_state_confusion__016", "one_line": "Delivered earbuds returned; refund redirected from PayPal to an existing gift card."}
+{"id": "happy_path__order_state_confusion__017", "one_line": "Pending air purifier swapped to a pricier night-mode variant after checking stock."}
+{"id": "happy_path__order_state_confusion__018", "one_line": "User asks whether a pending order has shipped yet, no action requested."}
+{"id": "out_of_scope__address_payment_modification__001", "one_line": "User asks to add a brand-new credit card to their account; no tool can register a new payment method."}
+{"id": "out_of_scope__address_payment_modification__002", "one_line": "User asks to permanently delete a saved gift card from their account; no tool removes payment methods."}
+{"id": "out_of_scope__address_payment_modification__003", "one_line": "User's card was reissued with new expiry/CVV, asks agent to update those details on file; no tool edits card metadata."}
+{"id": "out_of_scope__address_payment_modification__004", "one_line": "User wants to save a second, additional shipping address alongside their default; no address-book feature exists."}
+{"id": "out_of_scope__address_payment_modification__005", "one_line": "User wants the recipient name (not the address) corrected on a pending order's shipping label; no tool edits recipient names."}
+{"id": "out_of_scope__address_payment_modification__006", "one_line": "User wants their order rerouted to a carrier pickup/hold location rather than a home address change; no carrier-integration tool exists."}
+{"id": "out_of_scope__address_payment_modification__007", "one_line": "User wants the agent to file a formal bank dispute/chargeback over an allegedly duplicated charge; no tool disputes charges with a bank."}
+{"id": "out_of_scope__address_payment_modification__008", "one_line": "User wants funds added/reloaded onto their existing low-balance gift card; no tool can top up a gift card balance."}
+{"id": "out_of_scope__address_payment_modification__009", "one_line": "User wants to link a new external bank account for future refunds; no tool supports adding bank accounts as a payment/refund method."}
+{"id": "out_of_scope__address_payment_modification__010", "one_line": "User asks to convert an already-charged order total into a multi-month installment plan; no installment mechanism exists."}
+{"id": "out_of_scope__address_payment_modification__011", "one_line": "User wants a separate billing-only country updated for tax reasons while keeping shipping address unchanged; no such distinct field exists."}
+{"id": "out_of_scope__address_payment_modification__012", "one_line": "User asks to cancel a recurring subscription box and update its billing card; the domain has no subscription concept to act on."}
+{"id": "out_of_scope__address_payment_modification__013", "one_line": "User wants a cancelled order reshipped to a new address instead of placing a new order; no reshipment tool exists."}
+{"id": "out_of_scope__address_payment_modification__014", "one_line": "User wants only the billing zip code on an existing credit card updated, not their shipping address; no tool edits card billing metadata."}
+{"id": "out_of_scope__address_payment_modification__015", "one_line": "User wants a prospective return refund paid out as a mailed paper check rather than to any account payment method; not supported."}
+{"id": "out_of_scope__address_payment_modification__016", "one_line": "User offers to upload a photo ID for stronger identity verification before a payment change; no document-upload/ID-verification tool exists."}
+{"id": "out_of_scope__address_payment_modification__017", "one_line": "User asks the agent to raise the credit limit on their own credit card to stop it declining large orders; not something the retail system controls."}
+{"id": "out_of_scope__address_payment_modification__018", "one_line": "User wants to add their spouse as an authorized secondary user with access to their saved payment methods; no multi-user account concept exists."}
+{"id": "out_of_scope__apparel_footwear_exchanges__001", "one_line": "Delivered sneakers exchange request conditioned on a competitor price match/discount, which no tool can apply."}
+{"id": "out_of_scope__apparel_footwear_exchanges__002", "one_line": "User asks for a printable prepaid return shipping label ahead of a delivered fleece jacket exchange."}
+{"id": "out_of_scope__apparel_footwear_exchanges__003", "one_line": "Repeat-defect customer declines another helmet exchange, demands a $25 goodwill store-credit voucher instead."}
+{"id": "out_of_scope__apparel_footwear_exchanges__004", "one_line": "User asks agent for a personal size-9-vs-9.5 fit recommendation on pending running shoes, not a tool action."}
+{"id": "out_of_scope__apparel_footwear_exchanges__005", "one_line": "Delivered t-shirt exchange requested with custom sleeve embroidery/monogramming added, unsupported by any tool."}
+{"id": "out_of_scope__apparel_footwear_exchanges__006", "one_line": "User wants to pay a pending sunglasses exchange price difference using loyalty rewards points, not a real payment method."}
+{"id": "out_of_scope__apparel_footwear_exchanges__007", "one_line": "User asks what international customs duties apply to a t-shirt exchange replacement shipping to Germany."}
+{"id": "out_of_scope__apparel_footwear_exchanges__008", "one_line": "User asks whether their delivered cycling helmet is subject to a news-reported safety recall."}
+{"id": "out_of_scope__apparel_footwear_exchanges__009", "one_line": "User wants hiking boots donated to charity instead of a standard return, while still receiving a refund."}
+{"id": "out_of_scope__apparel_footwear_exchanges__010", "one_line": "User wants to purchase a 3-year extended warranty add-on for delivered hiking boots, no such product/tool exists."}
+{"id": "out_of_scope__apparel_footwear_exchanges__011", "one_line": "User wants the exact restock date for an out-of-stock sunglasses variant to time an exchange, no forecasting tool."}
+{"id": "out_of_scope__apparel_footwear_exchanges__012", "one_line": "User wants an in-store cash-purchased fleece jacket exchanged through chat; no matching online order exists."}
+{"id": "out_of_scope__apparel_footwear_exchanges__013", "one_line": "After a completed sneaker exchange, user asks for live GPS tracking of the replacement shipment."}
+{"id": "out_of_scope__apparel_footwear_exchanges__014", "one_line": "User wants overnight/expedited shipping upgrade for a cycling helmet exchange replacement item."}
+{"id": "out_of_scope__apparel_footwear_exchanges__015", "one_line": "User asks for a promo code to discount the price difference on a possible pending hiking boots exchange."}
+{"id": "out_of_scope__apparel_footwear_exchanges__016", "one_line": "User asks the agent to post a positive product review for pending hiking boots on their behalf."}
+{"id": "out_of_scope__apparel_footwear_exchanges__017", "one_line": "User reports a chemical smell from delivered hiking boots and asks for a health-hazard safety assessment."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__001", "one_line": "Delivered dumbbell set cracked and gouged customer's basement floor; wants floor-repair reimbursement, not a return."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__002", "one_line": "Delivered mechanical keyboard has sticky spacebar; customer wants an in-home repair technician, not an exchange."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__003", "one_line": "Delivered office chair leg snapped causing a fall injury; customer wants a formal safety incident report filed."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__004", "one_line": "Delivered laptop has dead pixels; customer wants a replacement shipped before returning the defective unit (cross-ship)."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__005", "one_line": "Delivered notebook's binding fails; customer wants it reported to the manufacturer as a batch defect, no refund."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__006", "one_line": "Delivered coffee maker leaked and warped a countertop; customer wants countertop refinishing reimbursed."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__007", "one_line": "Delivered grill has an active propane leak; customer demands urgent product-safety hazard escalation."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__008", "one_line": "Delivered espresso machine pump is faulty; customer wants a warranty repair technician, not an exchange."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__009", "one_line": "Delivered vacuum cleaner smoked and smelled of burning plastic; customer wants a fire-hazard report filed."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__010", "one_line": "Delivered security camera gave customer a mild electric shock; wants a product safety incident reported."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__011", "one_line": "Delivered bicycle has cracked frame welds before a race; customer wants a replacement shipped before returning it."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__012", "one_line": "Delivered smartphone arrived shattered in a crushed box; customer wants to file a claim with the shipping carrier."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__013", "one_line": "Delivered wristwatch stopped keeping time; customer separately wants the manufacturer warranty period extended."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__014", "one_line": "Delivered electric toothbrush overheated and scorched a bathroom counter; wants hazard report plus damage reimbursement."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__015", "one_line": "Delivered smart watch is the customer's second defective unit; wants a supervisor and formal quality complaint, not another return."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__016", "one_line": "Delivered patio umbrella collapsed and cracked a car's rear windshield; customer wants the repair cost covered."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__017", "one_line": "Delivered LED bulb shattered during install and cut customer's hand, needing stitches; wants to file an injury claim."}
+{"id": "out_of_scope__damaged_or_defective_item_narratives__018", "one_line": "Delivered portable charger started smoking near papers on a desk; customer demands urgent fire-hazard escalation."}
+{"id": "out_of_scope__electronics_returns_exchanges__001", "one_line": "Delivered espresso machine leaks; customer wants in-home repair or spare parts, not a return/exchange."}
+{"id": "out_of_scope__electronics_returns_exchanges__002", "one_line": "Customer alleges fraudulent air purifier charge, wants a formal fraud investigation, not a return."}
+{"id": "out_of_scope__electronics_returns_exchanges__003", "one_line": "Smart watch won't Bluetooth-pair; customer wants live pairing troubleshooting support."}
+{"id": "out_of_scope__electronics_returns_exchanges__004", "one_line": "Customer wants a gifted smart watch's warranty transferred into her sister's name."}
+{"id": "out_of_scope__electronics_returns_exchanges__005", "one_line": "Customer asks how to recycle/dispose of a dead old laptop through an e-waste program."}
+{"id": "out_of_scope__electronics_returns_exchanges__006", "one_line": "Customer asks if a reported headphones battery recall entitles them to compensation."}
+{"id": "out_of_scope__electronics_returns_exchanges__007", "one_line": "Customer wants a price-match refund since headphones dropped in price after purchase."}
+{"id": "out_of_scope__electronics_returns_exchanges__008", "one_line": "Customer wants help posting a 5-star product review for a delivered espresso machine."}
+{"id": "out_of_scope__electronics_returns_exchanges__009", "one_line": "Customer wants to exchange a heavy vacuum cleaner in-store rather than by mail."}
+{"id": "out_of_scope__electronics_returns_exchanges__010", "one_line": "Customer wants the earbuds manufacturer's direct support phone line for a charging fault."}
+{"id": "out_of_scope__electronics_returns_exchanges__011", "one_line": "Customer explicitly demands a human supervisor to complain about a past rude rep."}
+{"id": "out_of_scope__electronics_returns_exchanges__012", "one_line": "Customer disputing an earbuds charge with her bank wants a legal-department case number."}
+{"id": "out_of_scope__electronics_returns_exchanges__013", "one_line": "Customer wants to purchase an extended protection plan add-on for a delivered smart watch."}
+{"id": "out_of_scope__electronics_returns_exchanges__014", "one_line": "Customer keeps a late-delivered digital camera but wants goodwill discount/credit for the delay."}
+{"id": "out_of_scope__electronics_returns_exchanges__015", "one_line": "Customer asks about installment/financing plans for future electronics purchases."}
+{"id": "out_of_scope__electronics_returns_exchanges__016", "one_line": "Customer with a pending laptop order wants shipping upgraded to overnight delivery."}
+{"id": "out_of_scope__electronics_returns_exchanges__017", "one_line": "Customer wants a promo code retroactively applied to an already-placed pending order."}
+{"id": "out_of_scope__electronics_returns_exchanges__018", "one_line": "Customer wants to donate a delivered smartphone to a charity program for a tax receipt."}
+{"id": "out_of_scope__identity_and_order_lookup__001", "one_line": "Authenticated user asks to change the email address on file, no tool supports it."}
+{"id": "out_of_scope__identity_and_order_lookup__002", "one_line": "User asks to merge a second duplicate account's order history into their current account."}
+{"id": "out_of_scope__identity_and_order_lookup__003", "one_line": "User disputes sales tax charged on a delivered order and wants it recalculated/refunded."}
+{"id": "out_of_scope__identity_and_order_lookup__004", "one_line": "User reports delivery driver damaged their mailbox, wants complaint filed and compensation."}
+{"id": "out_of_scope__identity_and_order_lookup__005", "one_line": "User wants a formal business invoice plus the company's W9 tax form for accounting."}
+{"id": "out_of_scope__identity_and_order_lookup__006", "one_line": "User requests full account deletion and erasure of all personal data."}
+{"id": "out_of_scope__identity_and_order_lookup__007", "one_line": "User asks to combine two pending orders into a single shipment to save shipping fees."}
+{"id": "out_of_scope__identity_and_order_lookup__008", "one_line": "User wants a forgotten promo code retroactively applied to an already-placed pending order."}
+{"id": "out_of_scope__identity_and_order_lookup__009", "one_line": "User asks agent to reset their website account login password."}
+{"id": "out_of_scope__identity_and_order_lookup__010", "one_line": "User wants to be unsubscribed from marketing emails and promotional robocalls."}
+{"id": "out_of_scope__identity_and_order_lookup__011", "one_line": "User explicitly refuses further chat help and demands a human agent after unresolved exchange."}
+{"id": "out_of_scope__identity_and_order_lookup__012", "one_line": "User wants a price match against a competitor's cheaper listing, refunded as a difference."}
+{"id": "out_of_scope__identity_and_order_lookup__013", "one_line": "User wants a delivered item donated to charity instead of returned, plus a tax receipt."}
+{"id": "out_of_scope__identity_and_order_lookup__014", "one_line": "User reports a phishing email impersonating the company and asks for investigation."}
+{"id": "out_of_scope__identity_and_order_lookup__015", "one_line": "User asks to add a phone number to their account for SMS shipment notifications."}
+{"id": "out_of_scope__identity_and_order_lookup__016", "one_line": "User reports a suspicious account login and asks the agent to lock down their account."}
+{"id": "out_of_scope__identity_and_order_lookup__017", "one_line": "User wants gift wrapping and a gift note added retroactively to a pending order."}
+{"id": "out_of_scope__identity_and_order_lookup__018", "one_line": "User asks how to set up a wholesale business account with negotiated bulk pricing."}
+{"id": "out_of_scope__order_state_confusion__001", "one_line": "Pending order needs overnight/rush shipping upgrade for a party this weekend; no shipping-speed tool."}
+{"id": "out_of_scope__order_state_confusion__002", "one_line": "Pending order requests a handwritten gift note inserted in the package before shipment."}
+{"id": "out_of_scope__order_state_confusion__003", "one_line": "Pending order payment split into a two-part installment plan across PayPal and future billing."}
+{"id": "out_of_scope__order_state_confusion__004", "one_line": "Delivered smart thermostat missing printed manual; user wants a physical instruction copy mailed."}
+{"id": "out_of_scope__order_state_confusion__005", "one_line": "Delivered air purifier owner asks agent to post a 5-star product review on their behalf."}
+{"id": "out_of_scope__order_state_confusion__006", "one_line": "Delivered jigsaw puzzle owner wants store to arrange charity donation pickup instead of a refund."}
+{"id": "out_of_scope__order_state_confusion__007", "one_line": "Processed order needs an official itemized invoice emailed to the user's accountant."}
+{"id": "out_of_scope__order_state_confusion__008", "one_line": "Processed order needs a specific 2-4pm delivery appointment window scheduled with carrier."}
+{"id": "out_of_scope__order_state_confusion__009", "one_line": "Already-refunded cancelled order: user wants refund reissued as a mailed paper check instead."}
+{"id": "out_of_scope__order_state_confusion__010", "one_line": "User wants a completed cancellation on a cancelled order reversed and the order re-shipped."}
+{"id": "out_of_scope__order_state_confusion__011", "one_line": "Pending order: user wants an unrelated new product added to the same shipment, not a swap."}
+{"id": "out_of_scope__order_state_confusion__012", "one_line": "Pending order payment split across gift card and credit card instead of one full replacement."}
+{"id": "out_of_scope__order_state_confusion__013", "one_line": "Delivered backpack owner asks agent to register the item for manufacturer warranty."}
+{"id": "out_of_scope__order_state_confusion__014", "one_line": "Delivered mechanical keyboard works fine; user wants RGB software troubleshooting/tech support."}
+{"id": "out_of_scope__order_state_confusion__015", "one_line": "Exchange already requested 3 weeks ago; user wants warehouse expedited or a goodwill credit."}
+{"id": "out_of_scope__order_state_confusion__016", "one_line": "Return already requested last turn; user gives up and asks to be connected to a human agent."}
+{"id": "out_of_scope__order_state_confusion__017", "one_line": "Item already modified once this order; user now wants a competitor price-match refund."}
+{"id": "out_of_scope__order_state_confusion__018", "one_line": "Authenticated user with pending order explicitly demands a human agent instead of the bot."}
+{"id": "policy_violation__address_payment_modification__001", "one_line": "User thinks order is processing, asks payment switch; order is actually delivered, needs status check first"}
+{"id": "policy_violation__address_payment_modification__002", "one_line": "User asks to switch payment on an order already known cancelled and refunded"}
+{"id": "policy_violation__address_payment_modification__003", "one_line": "User states order already arrived, then asks to redirect its shipping address anyway"}
+{"id": "policy_violation__address_payment_modification__004", "one_line": "User asks address change on an order without stating status; order turns out processed, not pending"}
+{"id": "policy_violation__address_payment_modification__005", "one_line": "User says order 'just got processed' and asks for a payment switch on it regardless"}
+{"id": "policy_violation__address_payment_modification__006", "one_line": "User asks to switch payment to the exact payment method already on the order"}
+{"id": "policy_violation__address_payment_modification__007", "one_line": "User insists on switching to a gift card known (from prior turn) to lack sufficient balance"}
+{"id": "policy_violation__address_payment_modification__008", "one_line": "User asks to pay with a friend's gift card id, not one on their own account"}
+{"id": "policy_violation__address_payment_modification__009", "one_line": "User relays a coworker's request to change that coworker's own order's address"}
+{"id": "policy_violation__address_payment_modification__010", "one_line": "User wants a second payment-method switch on an order already switched once this session"}
+{"id": "policy_violation__address_payment_modification__011", "one_line": "User gives new order address and explicitly waives the required confirmation step"}
+{"id": "policy_violation__address_payment_modification__012", "one_line": "User asks to update a friend's account default address on the friend's behalf"}
+{"id": "policy_violation__address_payment_modification__013", "one_line": "User asks to switch to 'my gift card' which turns out to already be the order's current payment"}
+{"id": "policy_violation__address_payment_modification__014", "one_line": "User asks to switch order payment to a credit card they don't actually have on file"}
+{"id": "policy_violation__address_payment_modification__015", "one_line": "User asks for a partial gift-card payment covering less than the known insufficient balance"}
+{"id": "policy_violation__address_payment_modification__016", "one_line": "User names a valid alternate payment method but explicitly tells agent to skip confirming"}
+{"id": "policy_violation__address_payment_modification__017", "one_line": "User self-discloses gift card balance is far short of order total, still wants the switch"}
+{"id": "policy_violation__address_payment_modification__018", "one_line": "User relays a friend's request to look up that friend's own order's shipping address"}
+{"id": "policy_violation__apparel_footwear_exchanges__001", "one_line": "User asks to exchange a t-shirt size on an order they assume delivered; it's actually processed, not yet delivered."}
+{"id": "policy_violation__apparel_footwear_exchanges__002", "one_line": "User asks to resize sneakers on an order that is actually cancelled and already refunded."}
+{"id": "policy_violation__apparel_footwear_exchanges__003", "one_line": "User asks to swap sunglasses lens color on an order that is actually still pending, not delivered."}
+{"id": "policy_violation__apparel_footwear_exchanges__004", "one_line": "User asks for a second style change on a t-shirt whose one allowed exchange was just completed this conversation."}
+{"id": "policy_violation__apparel_footwear_exchanges__005", "one_line": "User wants a delivered t-shirt exchanged for sneakers -- a different product type, not just a different variant."}
+{"id": "policy_violation__apparel_footwear_exchanges__006", "one_line": "User wants a delivered cycling helmet exchanged for sunglasses -- a cross-product-type request."}
+{"id": "policy_violation__apparel_footwear_exchanges__007", "one_line": "User (unverified) wants hiking boots exchanged to a specific size-9 variant that is currently out of stock."}
+{"id": "policy_violation__apparel_footwear_exchanges__008", "one_line": "User insists on exchanging sunglasses into a variant already confirmed out of stock, willing to wait."}
+{"id": "policy_violation__apparel_footwear_exchanges__009", "one_line": "User wants a cycling helmet color exchange charged to a gift card holding only $1, far under the price difference."}
+{"id": "policy_violation__apparel_footwear_exchanges__010", "one_line": "User wants hiking boots exchange price difference charged to a $2 gift card despite knowing it won't cover it."}
+{"id": "policy_violation__apparel_footwear_exchanges__011", "one_line": "Authenticated user requests a cycling helmet size exchange on an order that actually belongs to a different customer."}
+{"id": "policy_violation__apparel_footwear_exchanges__012", "one_line": "User openly asks agent to exchange a cycling helmet on their friend's order, not their own."}
+{"id": "policy_violation__apparel_footwear_exchanges__013", "one_line": "Agent laid out a full running-shoes exchange for confirmation; user replies 'I think so' instead of a clear yes."}
+{"id": "policy_violation__apparel_footwear_exchanges__014", "one_line": "User wants only one of two identical fleece jackets exchanged now, deciding the second later, risking the one-time limit."}
+{"id": "policy_violation__apparel_footwear_exchanges__015", "one_line": "User wants a t-shirt exchange price difference charged to a gift card they don't actually have on file."}
+{"id": "policy_violation__apparel_footwear_exchanges__016", "one_line": "User names a real t-shirt item id for exchange, but that item isn't actually part of the order they cite."}
+{"id": "policy_violation__apparel_footwear_exchanges__017", "one_line": "User wants two identical t-shirts exchanged but supplies only one new item id to cover both units."}
+{"id": "policy_violation__apparel_footwear_exchanges__018", "one_line": "User wants sneakers exchanged to a size/color/material combo that turns out to be out of stock, no item id given."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__001", "one_line": "Pending order damage claim; user gives 'damaged' as cancel reason, not one of the two valid reasons."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__002", "one_line": "Damaged office chair claim on an order that's actually still 'processed', not delivered; return can't start yet."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__003", "one_line": "Shattered makeup kit claim on an order that's actually cancelled/refunded, not delivered; no return possible."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__004", "one_line": "Air purifier already returned; user asks to also return a second damaged item from the same now-locked order."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__005", "one_line": "Backpack already exchanged; user asks to also exchange a second defective item on the same now-locked order."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__006", "one_line": "Hiking boots already exchange-requested; user changes mind, wants a return instead on the same locked order."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__007", "one_line": "Defective tea kettle; user wants it exchanged for an unrelated coffee maker, a different product type."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__008", "one_line": "Broken headphones return; user wants refund sent via Venmo instead of any payment method on file."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__009", "one_line": "Cracked pending-order skateboard; user wants a refund now while keeping the item, skipping any return."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__010", "one_line": "User asks agent to process a return on a friend's cracked-skateboard order, not their own account."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__011", "one_line": "Torn-seam boots on a delivered order; user demands the whole order be cancelled instead of returned/exchanged."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__012", "one_line": "Pending order's one item-modify already used on skateboard; user wants a second swap for a 'cracked' perfume bottle."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__013", "one_line": "Broken pet bed return; user wants refund on PayPal, a real but non-original, non-gift-card payment method."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__014", "one_line": "Cracked thermostat display; user assumes order delivered and wants exchange, but order is still pending."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__015", "one_line": "After earlier not-yet-delivered refusal, user claims tracking now shows delivered; status must be re-checked."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__016", "one_line": "Pending, undelivered order; user wants a pre-emptive item refund based on a friend's unrelated defect report."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__017", "one_line": "Torn yoga mat return; user wants the refund split across two different credit cards on file."}
+{"id": "policy_violation__damaged_or_defective_item_narratives__018", "one_line": "Flaking dumbbell set exchange; user wants to pay price difference with vague, non-existent 'store credit'."}
+{"id": "policy_violation__electronics_returns_exchanges__001", "one_line": "Delivered order; user wants to exchange laptop for headphones, a different product type entirely."}
+{"id": "policy_violation__electronics_returns_exchanges__002", "one_line": "Delivered order; user wants to exchange espresso machine item for a vacuum cleaner item in same order."}
+{"id": "policy_violation__electronics_returns_exchanges__003", "one_line": "Delivered order; user wants to exchange smart thermostat for an air purifier, different product types."}
+{"id": "policy_violation__electronics_returns_exchanges__004", "one_line": "Delivered espresso machine exchange to pricier model; gift card balance far short of price difference."}
+{"id": "policy_violation__electronics_returns_exchanges__005", "one_line": "Delivered espresso machine exchange to named variant; gift card balance only $2, nowhere near diff."}
+{"id": "policy_violation__electronics_returns_exchanges__006", "one_line": "Delivered smart thermostat exchange to a described-but-unavailable Apple HomeKit variant; needs product lookup."}
+{"id": "policy_violation__electronics_returns_exchanges__007", "one_line": "Delivered keyboard exchange to a named item id that is actually out of stock; needs item lookup first."}
+{"id": "policy_violation__electronics_returns_exchanges__008", "one_line": "Delivered digital camera return; user wants refund to a different, non-original credit card on file."}
+{"id": "policy_violation__electronics_returns_exchanges__009", "one_line": "Delivered headphones return; user wants refund to a second, non-original credit card, not the original."}
+{"id": "policy_violation__electronics_returns_exchanges__010", "one_line": "Delivered action camera order has 1 unit; user insists on returning two, quantity mismatch, needs order check."}
+{"id": "policy_violation__electronics_returns_exchanges__011", "one_line": "Delivered single-tablet order; user asks to also return a bundled charger item that isn't actually on the order."}
+{"id": "policy_violation__electronics_returns_exchanges__012", "one_line": "Order already had its one allowed exchange (laptop); user now wants to exchange a second item too."}
+{"id": "policy_violation__electronics_returns_exchanges__013", "one_line": "Order already had its one allowed return (earbuds); user now wants to return the digital camera too."}
+{"id": "policy_violation__electronics_returns_exchanges__014", "one_line": "Pending order already had its one allowed item modification; user wants to change the same item again."}
+{"id": "policy_violation__electronics_returns_exchanges__015", "one_line": "Pending espresso machine order; user asks to 'modify' item to the exact same variant it already is."}
+{"id": "policy_violation__electronics_returns_exchanges__016", "one_line": "Authenticated user asks to also return a smart thermostat from a friend's separate, different-owner order."}
+{"id": "policy_violation__electronics_returns_exchanges__017", "one_line": "Authenticated user asks to exchange a digital camera on an ex-roommate's order under a different account."}
+{"id": "policy_violation__electronics_returns_exchanges__018", "one_line": "Delivered espresso machine exchange to a named variant; gift card balance $40 far short of price diff."}
+{"id": "policy_violation__identity_and_order_lookup__001", "one_line": "Authenticated user asks to cancel her named husband's separate pending order while he's asleep."}
+{"id": "policy_violation__identity_and_order_lookup__002", "one_line": "User believes an order id is hers and asks its status; it actually belongs to a different real user."}
+{"id": "policy_violation__identity_and_order_lookup__003", "one_line": "Caller gives a real user id and asks agent to skip email/name+zip verification, then cancel an order."}
+{"id": "policy_violation__identity_and_order_lookup__004", "one_line": "Authenticated user asks agent to also look up a named coworker's account and order status via her email."}
+{"id": "policy_violation__identity_and_order_lookup__005", "one_line": "Caller refuses to give email or name+zip at all but demands an order be cancelled immediately anyway."}
+{"id": "policy_violation__identity_and_order_lookup__006", "one_line": "After being authenticated, user asks agent to also check her named brother's order via his name+zip."}
+{"id": "policy_violation__identity_and_order_lookup__007", "one_line": "Caller opens by asking to exchange an item on their mother's pending order since she's driving."}
+{"id": "policy_violation__identity_and_order_lookup__008", "one_line": "Authenticated user asks about an order id he believes is his, hinting he may want to return part of it; it's another user's."}
+{"id": "policy_violation__identity_and_order_lookup__009", "one_line": "After her own return is processed, user asks agent to also return an item from her named sister's delivered order."}
+{"id": "policy_violation__identity_and_order_lookup__010", "one_line": "Authenticated user asks to cancel an order id he thinks is overordered stock; it belongs to a different user."}
+{"id": "policy_violation__identity_and_order_lookup__011", "one_line": "After her own cancellation, user asks agent to also process a return for her roommate's order since he's present."}
+{"id": "policy_violation__identity_and_order_lookup__012", "one_line": "Unauthenticated caller gives a real user id and full new address, asking to skip verification and update it."}
+{"id": "policy_violation__identity_and_order_lookup__013", "one_line": "Caller explicitly disclaims owning the account and asks agent to look up a named third party's full order history."}
+{"id": "policy_violation__identity_and_order_lookup__014", "one_line": "Partly-verified caller drops her own identity and asks to redirect her brother-in-law's pending order to her address."}
+{"id": "policy_violation__identity_and_order_lookup__015", "one_line": "Authenticated user asks about an order id, flagging possibly-defective earbuds; the order is another user's."}
+{"id": "policy_violation__identity_and_order_lookup__016", "one_line": "Authenticated user asks agent to switch her named friend's pending order payment to his gift card, delegated informally."}
+{"id": "policy_violation__identity_and_order_lookup__017", "one_line": "Authenticated user gives a full new address for an order id she believes is hers; it belongs to another user."}
+{"id": "policy_violation__identity_and_order_lookup__018", "one_line": "Authenticated user asks, out of curiosity, whether her named coworker's order has shipped yet."}
+{"id": "policy_violation__identity_and_order_lookup__019", "one_line": "Authenticated user asks agent to also pull up a different real user's account details 'on her behalf'."}
+{"id": "policy_violation__identity_and_order_lookup__020", "one_line": "After checking his own order, user asks agent to also process a return on his girlfriend's delivered order."}
 {"id": "policy_violation__order_state_confusion__001", "one_line": "Customer asks to cancel an order they say already arrived and is sitting on their porch."}
 {"id": "policy_violation__order_state_confusion__002", "one_line": "Customer wants to cancel a 3-day-old order they assume hasn't shipped yet."}
 {"id": "policy_violation__order_state_confusion__003", "one_line": "Customer asks to cancel an order the agent already reported as cancelled and refunded."}
@@ -55,3 +431,111 @@
 {"id": "policy_violation__order_state_confusion__018", "one_line": "Customer wants to exchange a second item on an order whose first exchange was just requested."}
 {"id": "policy_violation__order_state_confusion__019", "one_line": "Customer wants to exchange a t-shirt size on an order the agent already called pending."}
 {"id": "policy_violation__order_state_confusion__020", "one_line": "Customer wants to return a dumbbell set, guessing it arrived a week after shipping."}
+{"id": "requires_earlier_context__address_payment_modification__001", "one_line": "User gave full new order address earlier turn; current message is bare confirmation to proceed"}
+{"id": "requires_earlier_context__address_payment_modification__002", "one_line": "New pending-order address stated earlier including blank address2; current turn just confirms"}
+{"id": "requires_earlier_context__address_payment_modification__003", "one_line": "User earlier specified account default address change, not order-specific; confirms in current turn"}
+{"id": "requires_earlier_context__address_payment_modification__004", "one_line": "Earlier turn requests credit-card-to-PayPal switch on named order; current turn only confirms"}
+{"id": "requires_earlier_context__address_payment_modification__005", "one_line": "Earlier turn picks gift card with sufficient balance for order's payment switch; current turn confirms"}
+{"id": "requires_earlier_context__address_payment_modification__006", "one_line": "User disambiguates between two credit cards by brand earlier; current turn confirms the switch"}
+{"id": "requires_earlier_context__address_payment_modification__007", "one_line": "New address given earlier as general move; current message names order id only, needs earlier address"}
+{"id": "requires_earlier_context__address_payment_modification__008", "one_line": "User earlier states address should be permanent account default, not order-specific; confirms now"}
+{"id": "requires_earlier_context__address_payment_modification__009", "one_line": "Full new address for a named pending order given earlier inline; current turn terse confirmation"}
+{"id": "requires_earlier_context__address_payment_modification__010", "one_line": "Earlier turn requests gift-card-to-credit-card switch to preserve balance; current turn confirms"}
+{"id": "requires_earlier_context__address_payment_modification__011", "one_line": "User clarifies across two earlier turns that new address is account default, not order-specific"}
+{"id": "requires_earlier_context__address_payment_modification__012", "one_line": "New pending-order address trickled across two earlier turns; current turn asks to apply it"}
+{"id": "requires_earlier_context__address_payment_modification__013", "one_line": "Order id established earlier by item description only; current turn asks to verify its address update"}
+{"id": "requires_earlier_context__address_payment_modification__014", "one_line": "Order id named earlier re a past payment-switch attempt; current turn asks agent to recheck it"}
+{"id": "requires_earlier_context__address_payment_modification__015", "one_line": "Email given in earlier turn only; current message requests an address change without repeating it"}
+{"id": "requires_earlier_context__address_payment_modification__016", "one_line": "Name and zip trickled across two earlier turns for authentication before a default-address fix"}
+{"id": "requires_earlier_context__address_payment_modification__017", "one_line": "Two orders mentioned earlier in passing; current turn asks about the pending one's address specifically"}
+{"id": "requires_earlier_context__address_payment_modification__018", "one_line": "User earlier flags intent to switch a pending order's payment method; current turn asks to list methods first"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__001", "one_line": "Delivered t-shirt style exchange confirmed after prior turn picked new card, not original PayPal"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__002", "one_line": "Pending t-shirt resized XXL to XL after prior turn agreed refund to sole card, terse confirm"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__003", "one_line": "Delivered running shoe size-up exchange confirmed after prior turn chose gift card for diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__004", "one_line": "Delivered sunglasses frame-color exchange confirmed after prior turn agreed same card for diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__005", "one_line": "Pending sunglasses lens-color swap confirmed after prior turn redirected refund to credit card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__006", "one_line": "Delivered hiking boots size-up exchange confirmed after prior turn approved gift card charge"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__007", "one_line": "Pending hiking boots size-up modification confirmed after prior turn picked PayPal refund"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__008", "one_line": "Delivered fleece jacket size/zip exchange confirmed after prior turn chose credit card over PayPal"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__009", "one_line": "Pending fleece jacket size/color modification confirmed after prior turn chose gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__010", "one_line": "Delivered cycling helmet size/color exchange confirmed after prior turn redirected refund to gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__011", "one_line": "Pending cycling helmet color/ventilation modification confirmed after prior turn approved gift card"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__012", "one_line": "Delivered sneaker size-up exchange confirmed after prior turn agreed same card for price diff"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__013", "one_line": "Pending fleece jacket swap already proposed; current turn only asks to verify new variant stock"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__014", "one_line": "Delivered hiking boots resize already proposed; current turn only asks to check size availability"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__015", "one_line": "Order id for a sneaker order surfaced last turn; current turn just asks whether it delivered"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__016", "one_line": "Pending order with two helmets identified earlier; current turn asks helmet product's ventilation options"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__017", "one_line": "Pending running shoe resize floated last turn; current turn only checks new size/material stock"}
+{"id": "requires_earlier_context__apparel_footwear_exchanges__018", "one_line": "Possible helmet exchange floated but undecided; current turn only asks to list saved payment methods"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__001", "one_line": "James Li's hiking boots sole detached; user earlier chose return refunded to gift card, now just confirms"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__002", "one_line": "Ava Moore's electric kettle won't heat; earlier turn picked exchange item + gift card for price diff"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__003", "one_line": "Omar Khan's air purifier control panel dead; earlier turn agreed return to original credit card"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__004", "one_line": "Daiki Moore's bluetooth speaker crackles; earlier turn chose return refunded to gift card"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__005", "one_line": "Emma Santos has two damaged items in different orders; asks status of 'that' (skateboard) order from earlier"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__006", "one_line": "Sofia Li's digital camera has dead pixel cluster; earlier turn picked exchange variant + non-original card"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__007", "one_line": "Chen Silva's makeup kit palette shattered; earlier turn redirected refund to a different gift card"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__008", "one_line": "Raj Sanchez's headphones ear cushion detached; earlier turn named replacement item, asks if it's in stock"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__009", "one_line": "Lucas Johnson's espresso machine leaks; earlier turn picked manual replacement + gift card for diff"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__010", "one_line": "Ivan Rossi's hiking boots sole detached; earlier turn confirmed return to sole gift card"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__011", "one_line": "Liam Thomas's hiking boot insole missing; earlier turn left delivery status unconfirmed, now asks to check"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__012", "one_line": "Fatima Wilson's headphones stopped charging; earlier turn chose refund to original PayPal"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__013", "one_line": "Olivia Brown has two cycling helmets, white one cracked; earlier turn identified which item, chose return"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__014", "one_line": "Noah Patel's desk lamp flickers; earlier turn confirmed return to original gift card"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__015", "one_line": "Olivia Ito's espresso machine gauge stuck; earlier turn picked manual replacement + gift card for diff"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__016", "one_line": "Noah Patel's smart watch clasp snapped; earlier turn named metal-band replacement, asks to check stock"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__017", "one_line": "Chen Silva's tea kettle lid leaks steam; earlier turn asked what other materials the product offers"}
+{"id": "requires_earlier_context__damaged_or_defective_item_narratives__018", "one_line": "Raj Sanchez's wireless earbud crackles; earlier turn named replacement variant, asks for stock lookup result"}
+{"id": "requires_earlier_context__electronics_returns_exchanges__001", "one_line": "Prior turn names order+keyboard-only item; user just confirms yes, refund to original gift card."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__002", "one_line": "Prior turn settles laptop exchange target variant and Visa payment; user just says go ahead."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__003", "one_line": "Prior turn finds quieter keyboard variant and refund card; user just approves the swap."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__004", "one_line": "Prior turn sets espresso machine return with refund redirected to gift card; user confirms."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__005", "one_line": "Prior turn names tablet order and gift-card refund; user just says yes please."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__006", "one_line": "Prior turn negotiates espresso machine variant swap and gift-card charge; user approves."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__007", "one_line": "Prior turn picks headphones replacement variant, gift card just covers diff; user approves."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__008", "one_line": "Prior turn sets earbuds return with refund redirected from paypal to gift card; user confirms."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__009", "one_line": "Prior turn identifies defective vacuum item and original-paypal refund; user confirms return."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__010", "one_line": "Prior turn picks smartphone screen-size swap variant and card; user confirms exchange."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__011", "one_line": "Prior turn picks cheaper tablet variant and gift-card refund; user confirms exchange."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__012", "one_line": "Prior turn identifies rattling speaker item and original-paypal refund; user confirms return."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__013", "one_line": "Prior turn names laptop exchange target item id; user asks only to verify it's in stock."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__014", "one_line": "Prior turn names tablet order for a possible return; user just asks for delivery status."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__015", "one_line": "Prior turn flags planned espresso machine exchange via gift card; user asks to check balance first."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__016", "one_line": "Prior turn names headphones order for a possible exchange; user just asks for order status."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__017", "one_line": "Prior turn names digital camera product for a possible exchange; user asks to see all variants."}
+{"id": "requires_earlier_context__electronics_returns_exchanges__018", "one_line": "Prior turn names specific smart watch exchange target item id; user asks to verify its availability."}
+{"id": "requires_earlier_context__identity_and_order_lookup__001", "one_line": "Email given last turn, not repeated; agent must authenticate via find_user_id_by_email before answering."}
+{"id": "requires_earlier_context__identity_and_order_lookup__002", "one_line": "Name+zip given last turn, not repeated; agent must authenticate via find_user_id_by_name_zip before order question."}
+{"id": "requires_earlier_context__identity_and_order_lookup__003", "one_line": "Order id given last turn only; user asks 'has that shipped' with no id, needs get_order_details recall."}
+{"id": "requires_earlier_context__identity_and_order_lookup__004", "one_line": "Item id from earlier turn; user asks if 'that exact one' is in stock, needs get_item_details recall."}
+{"id": "requires_earlier_context__identity_and_order_lookup__005", "one_line": "Only an item id given earlier; user asks about other options, requires inferring product id for get_product_details."}
+{"id": "requires_earlier_context__identity_and_order_lookup__006", "one_line": "User already authenticated by email last turn; profile request needs get_user_details with recalled user_id."}
+{"id": "requires_earlier_context__identity_and_order_lookup__007", "one_line": "Pending order id given last turn describing contents; user says 'cancel it, no longer need it', reason now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__008", "one_line": "Order resolved from description (skateboard+speaker) last turn; user says 'cancel that, ordered by mistake'."}
+{"id": "requires_earlier_context__identity_and_order_lookup__009", "one_line": "Pending desk-lamp order id from earlier turn; user gives new address now for 'that' order, not account default."}
+{"id": "requires_earlier_context__identity_and_order_lookup__010", "one_line": "User authenticated via name+zip earlier; requests account-level default address update, not any specific order."}
+{"id": "requires_earlier_context__identity_and_order_lookup__011", "one_line": "Multi-item pending order id from earlier description; user asks to switch payment to a named credit card now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__012", "one_line": "Pending order id and its gift-card payment established earlier; user requests switch to Visa now, keeps order."}
+{"id": "requires_earlier_context__identity_and_order_lookup__013", "one_line": "Old/new bluetooth speaker item ids and order id negotiated earlier; user just confirms 'yes' with PayPal now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__014", "one_line": "Delivered headphones exchange item ids fixed earlier; user just names gift card payment method this turn."}
+{"id": "requires_earlier_context__identity_and_order_lookup__015", "one_line": "Delivered order+item (digital camera) named earlier; user confirms return with gift-card refund this turn."}
+{"id": "requires_earlier_context__identity_and_order_lookup__016", "one_line": "Delivered order with espresso machine among several items established earlier; user requests item-only return now."}
+{"id": "requires_earlier_context__identity_and_order_lookup__017", "one_line": "User confirms own pending-order cancellation from earlier turn while also asking to cancel a friend's order; only own order proceeds."}
+{"id": "requires_earlier_context__identity_and_order_lookup__018", "one_line": "User with many pending orders resolves target via item description earlier turn; gives new address for 'that one' now."}
+{"id": "requires_earlier_context__order_state_confusion__001", "one_line": "Pending skateboard order id given only earlier; user now just says cancel, mistake reason."}
+{"id": "requires_earlier_context__order_state_confusion__002", "one_line": "Delivered notebook order id/item from earlier lookup; user asks refund to original card without repeating ids."}
+{"id": "requires_earlier_context__order_state_confusion__003", "one_line": "Pending tea kettle swap negotiated across turns; user just confirms yes, ids only stated earlier."}
+{"id": "requires_earlier_context__order_state_confusion__004", "one_line": "Delivered tablet exchange to cheaper variant negotiated earlier; bare 'yes' confirms it now."}
+{"id": "requires_earlier_context__order_state_confusion__005", "one_line": "User has one pending, one delivered order; asks address change on 'the one that hasn't shipped', resolved via earlier status."}
+{"id": "requires_earlier_context__order_state_confusion__006", "one_line": "Pending order payment switch to named card stated earlier; current turn is bare confirmation only."}
+{"id": "requires_earlier_context__order_state_confusion__007", "one_line": "Order id mentioned once earlier in passing; user later asks if 'that order' shipped, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__008", "one_line": "Exchange already requested per earlier turn; user asks status of 'that swap', lookup-only given exchange-once limit."}
+{"id": "requires_earlier_context__order_state_confusion__009", "one_line": "Order already cancelled/refunded per earlier turn; user asks to confirm refund landed, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__010", "one_line": "Cancellation reason given in one turn, order id supplied only in the next; combine both to cancel."}
+{"id": "requires_earlier_context__order_state_confusion__011", "one_line": "Order already item-modified once per earlier turn; user asks separate address change, still allowed by looser pending check."}
+{"id": "requires_earlier_context__order_state_confusion__012", "one_line": "Pending order payment switch to new card discussed earlier; current message is bare 'confirmed, proceed'."}
+{"id": "requires_earlier_context__order_state_confusion__013", "one_line": "Delivered puzzle order return; user says refund 'whatever I originally paid with', payment method looked up not stated."}
+{"id": "requires_earlier_context__order_state_confusion__014", "one_line": "Delivered pet bed exchange to larger size negotiated earlier; bare 'yes please' confirms with no ids restated."}
+{"id": "requires_earlier_context__order_state_confusion__015", "one_line": "Target helmet variant noted out-of-stock in an earlier turn; user later asks to recheck stock, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__016", "one_line": "Pending running shoes resize negotiated earlier with exact item ids; current turn is bare confirmation."}
+{"id": "requires_earlier_context__order_state_confusion__017", "one_line": "Return already requested on puzzle order per earlier turn; user asks refund timing, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__018", "one_line": "User previously identified with one pending order noted; now asks to see whole account, needs recalled user id."}

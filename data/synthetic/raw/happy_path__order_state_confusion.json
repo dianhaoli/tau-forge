@@ -1,0 +1,558 @@
+[
+  {
+    "id": "happy_path__order_state_confusion__001",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is fatima.anderson1447@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I found your account. How can I help you today?"
+      }
+    ],
+    "user_message": "Please cancel order #W2974929, I don't need the skateboard anymore.",
+    "expected_tool_calls": [
+      {
+        "name": "cancel_pending_order",
+        "arguments": {
+          "order_id": "#W2974929",
+          "reason": "no longer needed"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order is still pending, so an item swap is technically also possible on this order, but the customer explicitly asked to cancel the whole thing, not change what's in it -- swapping items would ignore the actual request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__002",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Ethan Lopez, zip 43275."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account. What can I help with?"
+      }
+    ],
+    "user_message": "Order #W6779827 is still pending -- can you ship it to 22 Birchwood Court, Denver, CO 80203 instead of my address on file?",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_address",
+        "arguments": {
+          "order_id": "#W6779827",
+          "address1": "22 Birchwood Court",
+          "address2": "",
+          "city": "Denver",
+          "state": "CO",
+          "country": "USA",
+          "zip": "80203"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "Cancellation is also valid on a pending order, but the customer only wants the shipping address updated, not the order cancelled -- cancelling would lose an order they still want.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__003",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm lei_li_6575, my order #W5166363 hasn't shipped yet."
+      },
+      {
+        "role": "assistant",
+        "content": "I can see that order, a Laptop currently paid for with your PayPal account. What would you like to change?"
+      }
+    ],
+    "user_message": "Can you switch the payment on that order to my Visa credit card ending in 2697 instead of PayPal?",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_payment",
+        "arguments": {
+          "order_id": "#W5166363",
+          "payment_method_id": "credit_card_4466831"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order's pending status makes an item swap plausible in this context too, but the customer's request is purely about which payment method is charged, not about the item itself.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__004",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm sofia_rossi_8776. My order #W5918442 is still pending -- it has two Action Camera units in it."
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, I see item 6117189161, a silver 4K waterproof Action Camera at $481.50, along with your other items on that order."
+      }
+    ],
+    "user_message": "Please swap that silver 4K camera for the black 4K waterproof version instead, item 6700049080. Charge the price difference to the credit card I already paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W5918442",
+          "item_ids": [
+            "6117189161"
+          ],
+          "new_item_ids": [
+            "6700049080"
+          ],
+          "payment_method_id": "credit_card_5051208"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "With two similar Action Camera units on the order it's tempting to reach for the 'exchange' tool since that's the usual verb for a camera swap, but this order is still pending (not delivered), so the item change has to go through modify_pending_order_items instead.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__005",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is mei.gonzalez8775@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account. How can I help?"
+      }
+    ],
+    "user_message": "My order #W7303089 already arrived. I'd like to return the navy backpack from it -- item 2492465580 -- and get the refund back on the same credit card I paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7303089",
+          "item_ids": [
+            "2492465580"
+          ],
+          "payment_method_id": "credit_card_4387170"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An exchange is also a legal action on this delivered order, but the customer explicitly wants their money back for the backpack, not a different backpack variant, so return is the correct call.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__006",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm emma_santos_9753, order #W3113816 already arrived."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it -- that order includes a size L blue Cycling Helmet (high ventilation), item 2206116040, among other items."
+      }
+    ],
+    "user_message": "That helmet runs big on me. Can you exchange it for the same blue, high-ventilation helmet in size M instead, item 9013366374? Use my gift card for the price difference.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W3113816",
+          "item_ids": [
+            "2206116040"
+          ],
+          "new_item_ids": [
+            "9013366374"
+          ],
+          "payment_method_id": "gift_card_6023546"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A return is also valid on this delivered order, but the customer wants a different size, not a refund, so exchange is the correct tool.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__007",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is james.li4495@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've pulled up your account."
+      }
+    ],
+    "user_message": "I think order #W2611340 hasn't shipped yet -- can you cancel it for me, I ordered it by mistake?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2611340"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The customer assumes the order is still pending and wants it cancelled outright, but the order's actual status hasn't been confirmed yet in this conversation -- calling cancel_pending_order before checking would be guessing at state; the order needs to be looked up first (it turns out to already be processed, so cancellation is not actually available).",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__008",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Amelia Silva, zip should be on file, my email is amelia.silva2111@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've found your account."
+      }
+    ],
+    "user_message": "Did order #W3220387 ever get refunded? I cancelled it a while back but want to double check the money actually came back.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W3220387"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "It might look like the natural next step is to re-run the cancellation, but the customer is only asking whether a refund already happened -- the order needs to be looked up to answer that, not acted on again.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__009",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm sofia_thomas_1518."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account. What can I help with?"
+      }
+    ],
+    "user_message": "Please cancel order #W7619352, I ordered it by mistake -- meant to order it for my sister's account, not mine.",
+    "expected_tool_calls": [
+      {
+        "name": "cancel_pending_order",
+        "arguments": {
+          "order_id": "#W7619352",
+          "reason": "ordered by mistake"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The order is pending, so an address change would also be technically possible, but the customer wants the whole order cancelled, not redirected.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__010",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm yusuf_garcia_3055. My backpack order #W6885344 hasn't shipped."
+      },
+      {
+        "role": "assistant",
+        "content": "Confirmed, it's currently paid via your PayPal account."
+      }
+    ],
+    "user_message": "Can you move the payment on that order to my Visa credit card instead, ending in the number on file, credit_card_8405687?",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_payment",
+        "arguments": {
+          "order_id": "#W6885344",
+          "payment_method_id": "credit_card_8405687"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Because the order is still pending, an item change is also in scope in general, but nothing about the items was mentioned -- only the payment method -- so modify_pending_order_payment is the correct call.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__011",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm evelyn_kovacs_6742. Earlier today I had you swap the Tea Kettle on my pending order #W5694685 from the 1-liter glass one to the 1.5-liter glass one -- that went through fine and the order now shows 'pending (item modified)'."
+      },
+      {
+        "role": "assistant",
+        "content": "That's right, I can see that change on the order."
+      }
+    ],
+    "user_message": "One more thing on that same order -- can you also update the shipping address to 88 Fernwood Lane, Jacksonville, FL 32117?",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_address",
+        "arguments": {
+          "order_id": "#W5694685",
+          "address1": "88 Fernwood Lane",
+          "address2": "",
+          "city": "Jacksonville",
+          "state": "FL",
+          "country": "USA",
+          "zip": "32117"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "It's tempting to reach for another item modification since that's the action that was just done, but modify_pending_order_items can only be called once per order and was already used on this order -- calling it again would fail; address changes remain allowed on a 'pending (item modified)' order because it's still a pending-family status, so this is the correct call.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__012",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm omar_khan_2363. I had you return the Skateboard from my delivered order #W6304490 a bit ago -- refund was going to my original credit card."
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, I see that return was requested on the order."
+      }
+    ],
+    "user_message": "Can you check where things stand with that order now?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W6304490"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "It might seem natural to run the return tool again to 'make sure it went through,' but a return has already been requested on this order and a second return call would fail -- the customer is only asking for a status check, which is a lookup.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__013",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is daiki_moore_8567. I already had you exchange the Mechanical Keyboard on my delivered order #W8032761 for the clicky-switch version, paid the difference from my gift card."
+      },
+      {
+        "role": "assistant",
+        "content": "Yes, that exchange was requested on the order."
+      }
+    ],
+    "user_message": "Great -- can you just confirm the current status of that order for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W8032761"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Since the order was just discussed in exchange terms, it's tempting to call exchange_delivered_order_items again, but the order already has an exchange requested and only one exchange is allowed per order -- the customer is only asking to check status, which is a lookup.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__014",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm aarav_sanchez_9729. My order #W5455653 already arrived and it has a pair of size 7 synthetic Hiking Boots I want to size up on."
+      },
+      {
+        "role": "assistant",
+        "content": "Sure, let's find the right variant before we make any change."
+      }
+    ],
+    "user_message": "Before we exchange anything, can you tell me what hiking boot sizes and materials are actually available right now?",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "7363354090"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "It's tempting to jump straight to the exchange since the customer's end goal is clear, but they haven't picked a target size/variant yet and explicitly asked to see what's available first -- the exchange call needs a real new_item_id, which isn't known until this lookup happens.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__015",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm chen_silva_7485. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769."
+      },
+      {
+        "role": "assistant",
+        "content": "I see that item on the order."
+      }
+    ],
+    "user_message": "Can you exchange it for the 8-inch Wi-Fi version with 32GB storage instead, item 7609274509? Refund whatever the price difference is to my gift card.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W3069600",
+          "item_ids": [
+            "9494281769"
+          ],
+          "new_item_ids": [
+            "7609274509"
+          ],
+          "payment_method_id": "gift_card_7250692"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A return is also possible on this delivered order, but the customer wants a different, cheaper storage variant rather than their money back for the item entirely, so exchange is correct.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__016",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm aarav_nguyen_7344. Order #W7728728 arrived with a pair of Wireless Earbuds, item 8555936349, that I paid for with PayPal."
+      },
+      {
+        "role": "assistant",
+        "content": "I see that item on the order."
+      }
+    ],
+    "user_message": "I want to return the earbuds, but please put the refund on my gift card instead of back to PayPal.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7728728",
+          "item_ids": [
+            "8555936349"
+          ],
+          "payment_method_id": "gift_card_2742113"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The customer is asking for a refund, not a different earbuds variant, so exchange would be the wrong tool even though it's also valid in general on a delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__017",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm lucas_martin_4549. My order #W9318778 is still pending and has two Air Purifier units on it -- I want to swap the medium HEPA quiet-operation one, item 3076708684, for something with a night-mode feature."
+      },
+      {
+        "role": "assistant",
+        "content": "Let me check what's actually available for that product before we make the change. Looking it up now: the large HEPA model with night mode, item 8302289002, is in stock at $547.55, which is $11.58 more than your current item."
+      }
+    ],
+    "user_message": "That works, go ahead and swap it -- take the $11.58 difference from my gift card.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W9318778",
+          "item_ids": [
+            "3076708684"
+          ],
+          "new_item_ids": [
+            "8302289002"
+          ],
+          "payment_method_id": "gift_card_7728021"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The item change reads like a typical 'exchange,' but this order is pending, not delivered, so exchange_delivered_order_items would fail -- modify_pending_order_items is the tool that actually applies here.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__order_state_confusion__018",
+    "category": "happy_path",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm fatima_muller_6713."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account. What can I help with?"
+      }
+    ],
+    "user_message": "Has order #W9962383 shipped out yet? I haven't gotten a tracking email.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W9962383"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The customer hasn't asked to cancel anything -- they only want to know the current status of the order, so the correct move is to look it up, not to assume it's still cancellable and act on it.",
+    "ambiguity_note": ""
+  }
+]

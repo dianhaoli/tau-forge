@@ -1,0 +1,310 @@
+[
+  {
+    "id": "happy_path__address_payment_modification__001",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Omar Kim, email omar.kim8981@example.com."},
+      {"role": "assistant", "content": "Thanks Omar, I've located your account (omar_kim_3528). What can I help you with today?"}
+    ],
+    "user_message": "I recently moved. Please update my account address to 482 Riverside Ave, Jacksonville, FL 32214, USA. No apartment number.",
+    "expected_tool_calls": [
+      {"name": "modify_user_address", "arguments": {"user_id": "omar_kim_3528", "address1": "482 Riverside Ave", "address2": "", "city": "Jacksonville", "state": "FL", "country": "USA", "zip": "32214"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Omar has a pending order (#W1080318), so an agent could mistakenly redirect that order's shipment instead. But the user explicitly asked to update their account/profile address, not an order's shipping address, so modify_user_address is correct.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__002",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Aarav Brown, aarav.brown3708@example.com."},
+      {"role": "assistant", "content": "Thanks, I've verified your account (aarav_brown_3744). I can see your address on file is 556 Spruce Street, Suite 899, San Francisco, CA 94132, USA. How can I help?"},
+      {"role": "user", "content": "I'm relocating for work."}
+    ],
+    "user_message": "Please change my street to 901 Sunset Blvd, city to Oakland, and zip to 94612. Keep the suite number and everything else the same.",
+    "expected_tool_calls": [
+      {"name": "modify_user_address", "arguments": {"user_id": "aarav_brown_3744", "address1": "901 Sunset Blvd", "address2": "Suite 899", "city": "Oakland", "state": "CA", "country": "USA", "zip": "94612"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "Aarav also has a pending order (#W5065081) paid by credit card, so a payment-modification tool is available in context, but nothing here concerns payment -- only the profile address is being updated.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__003",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Rossi, sofia.rossi2645@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, I've found your account (sofia_rossi_8776). What do you need?"},
+      {"role": "user", "content": "My order #W5918442 is still pending, right? I need the shipping address changed, not my account address -- I'm having it sent to my office instead this one time."}
+    ],
+    "user_message": "Ship it to 55 Market St, Suite 400, Austin, TX 78701, USA instead.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_address", "arguments": {"order_id": "#W5918442", "address1": "55 Market St", "address2": "Suite 400", "city": "Austin", "state": "TX", "country": "USA", "zip": "78701"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "Sofia explicitly says this is a one-time office shipping change for this order, not a change to her permanent account address, so modify_user_address would incorrectly alter her default profile address instead of just this order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__004",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Omar Kim, omar.kim8981@example.com."},
+      {"role": "assistant", "content": "Thanks Omar, I've verified your account (omar_kim_3528). Your pending order #W1080318 (T-Shirt, $53.43) was paid with credit card ending in your card on file. What would you like to do?"}
+    ],
+    "user_message": "Actually, please charge that order to my gift card (gift_card_3749819) instead of the credit card.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_payment", "arguments": {"order_id": "#W1080318", "payment_method_id": "gift_card_3749819"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order is another write action available on this same pending order, but the user only wants to switch the payment method, not cancel the order, and the gift card balance ($91.00) covers the $53.43 total, so a straight payment-method swap is correct.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__005",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Mei Patel, mei.patel3193@example.com."},
+      {"role": "assistant", "content": "Thanks Mei, I've located your account (mei_patel_7272). How can I help?"}
+    ],
+    "user_message": "My pending order #W9583042 was paid through PayPal. Please switch it to my credit card credit_card_9503061 instead.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_payment", "arguments": {"order_id": "#W9583042", "payment_method_id": "credit_card_9503061"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Both tools operate on this same pending order, but the user's request is purely about which payment method is charged, not where the order ships, so the address tool doesn't apply.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__006",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Ethan Sanchez, ethan.sanchez6360@example.com."},
+      {"role": "assistant", "content": "Thanks Ethan, I've verified your account (ethan_sanchez_2952). Your pending order #W9102111 totals $4117.44, currently paid with your gift card. What can I do for you?"}
+    ],
+    "user_message": "I'd rather save that gift card balance for later -- move the payment for that order to my PayPal account (paypal_3574041) instead.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_payment", "arguments": {"order_id": "#W9102111", "payment_method_id": "paypal_3574041"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "modify_pending_order_items is another pending-order write action that could seem relevant since the order has several items, but the user is only asking to change how the order is paid for, not which items are in it.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__007",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hey, this is Harper Thomas, harper.thomas1454@example.com."},
+      {"role": "assistant", "content": "Thanks Harper, I've found your account (harper_thomas_9402). What do you need?"}
+    ],
+    "user_message": "Order #W7425646 is on the credit card ending that I used at checkout, but I'd like to switch it to my other card on file, credit_card_1199336.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_payment", "arguments": {"order_id": "#W7425646", "payment_method_id": "credit_card_1199336"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order is also a valid write action on this pending order, but the user wants to keep the order and simply move it to a different credit card already on file, not cancel it.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__008",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sophia Thomas, sophia.thomas1364@example.com."},
+      {"role": "assistant", "content": "Thanks Sophia, I've verified your account (sophia_thomas_5301). I see pending order #W4862767 for $2492.53, currently paid via PayPal. What would you like to do?"},
+      {"role": "user", "content": "I'd like to pay with a credit card instead of PayPal for that order."}
+    ],
+    "user_message": "Use the card ending associated with credit_card_7326294, please.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_payment", "arguments": {"order_id": "#W4862767", "payment_method_id": "credit_card_7326294"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Only the payment method is being changed here; the shipping address tool for the same order is a plausible-looking but unrelated action given no address change was requested.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__009",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Fatima Anderson, fatima.anderson1447@example.com."},
+      {"role": "assistant", "content": "Thanks Fatima, I've located your account (fatima_anderson_2157). What can I help with?"}
+    ],
+    "user_message": "My pending skateboard order #W2974929 needs to ship to 77 Ocean Dr, Jacksonville, FL 32099, USA instead -- no apartment/suite.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_address", "arguments": {"order_id": "#W2974929", "address1": "77 Ocean Dr", "address2": "", "city": "Jacksonville", "state": "FL", "country": "USA", "zip": "32099"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "The user is only asking to redirect this one pending order's shipment, not to update her permanent account address, so applying the change via modify_user_address would incorrectly alter her profile default address instead.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__010",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is James Martin, james.martin9857@example.com."},
+      {"role": "assistant", "content": "Thanks James, I've verified your account (james_martin_1500). I see your address on file is 153 Cedar Street, Suite 769, San Diego, CA 92112, USA. How can I help?"}
+    ],
+    "user_message": "Please update my apartment/suite to Unit 5 and my street address to 210 Bay St -- city, state, and zip stay the same.",
+    "expected_tool_calls": [
+      {"name": "modify_user_address", "arguments": {"user_id": "james_martin_1500", "address1": "210 Bay St", "address2": "Unit 5", "city": "San Diego", "state": "CA", "country": "USA", "zip": "92112"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "James has a pending order (#W3043531) paid by PayPal, making the payment-modification tool available in context, but nothing in the request concerns any order or payment -- only his account address changes.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__011",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Ivan Khan, ivan.khan6479@example.com."},
+      {"role": "assistant", "content": "Thanks Ivan, I've located your account (ivan_khan_7475). Your pending order #W5270061 totals $626.94, paid with your gift card. What would you like to do?"}
+    ],
+    "user_message": "Please switch the payment for that order over to my PayPal account paypal_7729105 instead of the gift card.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_payment", "arguments": {"order_id": "#W5270061", "payment_method_id": "paypal_7729105"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order has multiple items, so modify_pending_order_items looks superficially relevant, but the user's ask is strictly about which payment method covers the order, not its contents.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__012",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Lucas Martin, account lucas_martin_4549."},
+      {"role": "assistant", "content": "I can help, but first I need to verify your identity -- could you confirm your email, or your name and zip code?"},
+      {"role": "user", "content": "Sure, my zip is 20517."},
+      {"role": "assistant", "content": "Thanks, that matches -- I've verified your account. I see pending order #W9318778, currently shipping to 758 Lakeview Drive, Suite 382, Washington, DC 20517. What can I do for you?"}
+    ],
+    "user_message": "Just the zip code on that shipment is wrong, it should be 90210. Everything else on the address is correct.",
+    "expected_tool_calls": [
+      {"name": "modify_pending_order_address", "arguments": {"order_id": "#W9318778", "address1": "758 Lakeview Drive", "address2": "Suite 382", "city": "Washington", "state": "DC", "country": "USA", "zip": "90210"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "The user is correcting the shipping zip on one specific pending order, referenced earlier in the conversation, not changing their permanent account address -- modify_user_address would wrongly touch the profile default instead.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__013",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Yusuf Rossi, yusuf.rossi7301@example.com."},
+      {"role": "assistant", "content": "Thanks Yusuf, I've verified your account (yusuf_rossi_9620). What can I help with?"}
+    ],
+    "user_message": "Has my order #W6247578 shipped yet? I want to know if I can still change the delivery address.",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W6247578"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "An agent could jump straight to changing the address, but the user hasn't given a new address yet and is only asking whether the order is still eligible (i.e. still pending) -- the correct next step is to look up the order's current status first.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__014",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Lei Li, lei.li8350@example.com."},
+      {"role": "assistant", "content": "Thanks Lei, I've located your account (lei_li_6575). What can I help you with?"}
+    ],
+    "user_message": "I'm not sure which payment methods I have saved -- can you list them for me? I might want to switch a pending order to a different one.",
+    "expected_tool_calls": [
+      {"name": "get_user_details", "arguments": {"user_id": "lei_li_6575"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "The user hasn't picked a target payment method or order yet -- they only want their saved payment methods listed, so jumping to modify_pending_order_payment would require guessing an argument the user hasn't provided.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__015",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [],
+    "user_message": "Hi, I'd like some help with an order. My email is isabella.gonzalez1317@example.com.",
+    "expected_tool_calls": [
+      {"name": "find_user_id_by_email", "arguments": {"email": "isabella.gonzalez1317@example.com"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "find_user_id_by_name_zip",
+    "distractor_rationale": "Both tools authenticate a user, but the policy says to use email lookup by default and only fall back to name+zip if email fails or is unavailable -- the user already gave an email, so that's the correct lookup.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__016",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I need to update my shipping address but I can't remember the email on my account."},
+      {"role": "assistant", "content": "No problem -- could you give me your first name, last name, and zip code instead so I can verify your identity?"}
+    ],
+    "user_message": "Lucas Johansson, zip 94147.",
+    "expected_tool_calls": [
+      {"name": "find_user_id_by_name_zip", "arguments": {"first_name": "Lucas", "last_name": "Johansson", "zip": "94147"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "find_user_id_by_email",
+    "distractor_rationale": "The user explicitly said they don't remember their email, so the email-lookup tool has no argument to use; name+zip is the correct fallback authentication method per policy.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__017",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Isabella Lopez, isabella.lopez3271@example.com."},
+      {"role": "assistant", "content": "Thanks Isabella, I've verified your account (isabella_lopez_6490). How can I help?"}
+    ],
+    "user_message": "Before I decide anything, can you tell me what shipping address is currently on file for my pending order #W4923227?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W4923227"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The user is only asking to see the current shipping address, not requesting a change yet -- no new address has been provided, so the correct action is a read-only lookup rather than attempting a modification with unknown arguments.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__address_payment_modification__018",
+    "category": "happy_path",
+    "theme": "address_payment_modification",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Sofia Li, sofia.li7352@example.com."},
+      {"role": "assistant", "content": "Thanks Sofia, I've verified your account (sofia_li_9219). What can I help with?"}
+    ],
+    "user_message": "Can you remind me what my default address on file currently is, before I decide whether it needs updating?",
+    "expected_tool_calls": [
+      {"name": "get_user_details", "arguments": {"user_id": "sofia_li_9219"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "The user hasn't provided any new address fields yet -- they only want to see the current one, so a read-only lookup is correct rather than attempting a modification without the required new-address arguments.",
+    "ambiguity_note": ""
+  }
+]

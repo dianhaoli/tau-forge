@@ -1,0 +1,18 @@
+{"id": "out_of_scope__address_payment_modification__001", "one_line": "User asks to add a brand-new credit card to their account; no tool can register a new payment method."}
+{"id": "out_of_scope__address_payment_modification__002", "one_line": "User asks to permanently delete a saved gift card from their account; no tool removes payment methods."}
+{"id": "out_of_scope__address_payment_modification__003", "one_line": "User's card was reissued with new expiry/CVV, asks agent to update those details on file; no tool edits card metadata."}
+{"id": "out_of_scope__address_payment_modification__004", "one_line": "User wants to save a second, additional shipping address alongside their default; no address-book feature exists."}
+{"id": "out_of_scope__address_payment_modification__005", "one_line": "User wants the recipient name (not the address) corrected on a pending order's shipping label; no tool edits recipient names."}
+{"id": "out_of_scope__address_payment_modification__006", "one_line": "User wants their order rerouted to a carrier pickup/hold location rather than a home address change; no carrier-integration tool exists."}
+{"id": "out_of_scope__address_payment_modification__007", "one_line": "User wants the agent to file a formal bank dispute/chargeback over an allegedly duplicated charge; no tool disputes charges with a bank."}
+{"id": "out_of_scope__address_payment_modification__008", "one_line": "User wants funds added/reloaded onto their existing low-balance gift card; no tool can top up a gift card balance."}
+{"id": "out_of_scope__address_payment_modification__009", "one_line": "User wants to link a new external bank account for future refunds; no tool supports adding bank accounts as a payment/refund method."}
+{"id": "out_of_scope__address_payment_modification__010", "one_line": "User asks to convert an already-charged order total into a multi-month installment plan; no installment mechanism exists."}
+{"id": "out_of_scope__address_payment_modification__011", "one_line": "User wants a separate billing-only country updated for tax reasons while keeping shipping address unchanged; no such distinct field exists."}
+{"id": "out_of_scope__address_payment_modification__012", "one_line": "User asks to cancel a recurring subscription box and update its billing card; the domain has no subscription concept to act on."}
+{"id": "out_of_scope__address_payment_modification__013", "one_line": "User wants a cancelled order reshipped to a new address instead of placing a new order; no reshipment tool exists."}
+{"id": "out_of_scope__address_payment_modification__014", "one_line": "User wants only the billing zip code on an existing credit card updated, not their shipping address; no tool edits card billing metadata."}
+{"id": "out_of_scope__address_payment_modification__015", "one_line": "User wants a prospective return refund paid out as a mailed paper check rather than to any account payment method; not supported."}
+{"id": "out_of_scope__address_payment_modification__016", "one_line": "User offers to upload a photo ID for stronger identity verification before a payment change; no document-upload/ID-verification tool exists."}
+{"id": "out_of_scope__address_payment_modification__017", "one_line": "User asks the agent to raise the credit limit on their own credit card to stop it declining large orders; not something the retail system controls."}
+{"id": "out_of_scope__address_payment_modification__018", "one_line": "User wants to add their spouse as an authorized secondary user with access to their saved payment methods; no multi-user account concept exists."}

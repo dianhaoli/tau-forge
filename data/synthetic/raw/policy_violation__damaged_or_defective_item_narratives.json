@@ -1,0 +1,408 @@
+[
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__001",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is sofia.rossi2645@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've located your account. How can I help?"
+      }
+    ],
+    "user_message": "Please cancel order #W5918442 \u2014 one of the action cameras I ordered showed up as damaged in the courier's photo before it even shipped, so cancel it for that reason.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The order (#W5918442) is genuinely pending, so cancellation itself is not blocked by status, but policy.md restricts cancel_reason to exactly 'no longer needed' or 'ordered by mistake' \u2014 'it arrived/looked damaged' is not a valid reason and cancel_pending_order would raise a ValueError if called with it verbatim; the agent must ask the customer to pick one of the two valid reasons instead of inventing or coercing one.",
+    "ambiguity_note": "Policy violation: cancellation reason must be one of the two allowed values; a damage complaint is not an accepted cancel_reason even though the order is pending."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__002",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is James Li, email james.li4495@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks James, I've found your account."
+      }
+    ],
+    "user_message": "The office chair from order #W2611340 showed up with a broken armrest \u2014 can you start a return for it right now and refund my gift card?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2611340"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer describes the item as already having arrived, which sounds like a delivered order, so an agent might jump straight to return_delivered_order_items. But #W2611340 is actually still 'processed', not 'delivered' \u2014 return_delivered_order_items would raise a ValueError. The correct move is to check the order status first, then explain that a return can only be started once the order shows delivered.",
+    "ambiguity_note": "Checking order status is the correct first move; it reveals status='processed', so the return the customer wants cannot be started yet \u2014 that refusal happens on a later turn, not this one."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__003",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Amelia Silva, email amelia.silva2111@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Amelia, I've pulled up your account."
+      }
+    ],
+    "user_message": "The makeup kit from order #W3220387 arrived with the palette shattered. Can you process a return and refund it to my PayPal?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W3220387"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer frames this as a normal delivered-item damage claim, which would tempt an agent to call return_delivered_order_items directly. But order #W3220387 is actually 'cancelled' (and already refunded), so it was never delivered in the sense the tool requires \u2014 return_delivered_order_items would raise a ValueError. The agent must look up the order first and then explain no return is possible on a cancelled order.",
+    "ambiguity_note": "Checking order status is the correct first move; it reveals status='cancelled' with the payment already refunded, so the return the customer wants cannot be actioned \u2014 that refusal happens on a later turn, not this one."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__004",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Omar Khan, email omar.khan3563@example.com. My air purifier from order #W6304490 arrived with a dead control panel."
+      },
+      {
+        "role": "assistant",
+        "content": "I've started a return for the air purifier (item 9375701158) on order #W6304490, refunded to your credit card ending 4420174 once received. You'll get an email with return instructions."
+      }
+    ],
+    "user_message": "Actually, while I have you \u2014 the dumbbell set in that same order also showed up with the coating peeling off. Can you return that one too, same order, same refund method?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The dumbbell set (item 2194493783) is a real item in the same order and the refund details are already established, so it looks like a routine second return call. But return_delivered_order_items can only be used once per order \u2014 after the first return request the order status changed from 'delivered' to 'return requested', so a second call on #W6304490 would now raise a ValueError ('Non-delivered order cannot be returned'). The agent must decline and explain only one return per order is allowed.",
+    "ambiguity_note": "Policy violation: return/exchange actions on a delivered order can only be taken once; the order's status already moved to 'return requested' from the earlier item, so the same order can't be actioned again this turn."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__005",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Daiki Moore, email daiki.moore7228@example.com. The backpack in order #W8032761 arrived with a broken zipper \u2014 I want to exchange it for the black large nylon camera-compartment version."
+      },
+      {
+        "role": "assistant",
+        "content": "Done \u2014 I've submitted an exchange for the backpack (item 8030558068 to 3928046918) on order #W8032761, paid via your gift card. You'll get an email with instructions."
+      }
+    ],
+    "user_message": "One more thing \u2014 the mechanical keyboard from that same order is also defective, a few keys don't register. Can you exchange that one too for a working unit?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The mechanical keyboard is a real second item on the same order, so it's tempting to just run another exchange call. But exchange_delivered_order_items can only be called once per order, and the earlier exchange already moved #W8032761's status to 'exchange requested' \u2014 a second call would raise ValueError ('Non-delivered order cannot be exchanged'). The agent must decline and suggest the customer contact support about the keyboard separately (e.g. a human agent), not attempt a second exchange on this order.",
+    "ambiguity_note": "Policy violation: only one return-or-exchange action is allowed per delivered order; that budget was already spent on the backpack, so the keyboard request on the same order cannot be actioned."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__006",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Amelia Ito, email amelia.ito8974@example.com. The hiking boots in order #W3733909 have a sole that's coming apart \u2014 please exchange them for the same model one size up."
+      },
+      {
+        "role": "assistant",
+        "content": "I've submitted the exchange for the hiking boots (item 6595128475) on order #W3733909, charged to your credit card ending 1016162."
+      }
+    ],
+    "user_message": "Actually, I changed my mind \u2014 I don't trust the quality anymore. Can you cancel that and just return the boots for a refund to my PayPal instead?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer is asking for a refund on the same boots, which sounds like a normal return request. But order #W3733909 already has an exchange requested for that item, moving its status away from 'delivered' \u2014 return_delivered_order_items would now raise ValueError, and there is no tool to cancel an exchange that's already been submitted. The agent must explain the exchange already in progress cannot be swapped for a return through available tools.",
+    "ambiguity_note": "Policy violation: the order's one allowed action was already used (exchange requested), and there is no tool to undo or convert it \u2014 the return the user now wants is not something the agent can do here."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__007",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Chen Silva, email chen.silva2698@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Chen, I've located your account."
+      }
+    ],
+    "user_message": "The tea kettle from order #W8171054 doesn't heat evenly anymore \u2014 it's basically defective. Can you exchange it for the coffee maker instead, item 1323134954? I'll pay the difference on my card on file.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The customer supplies a real item id (1323134954) and a payment method, making it look like a routine exchange. But that item is a Coffee Maker, a different product type from the Tea Kettle being exchanged \u2014 policy.md is explicit that exchanges can only swap to a different option of the *same* product, never a different product type. Calling exchange_delivered_order_items with that new_item_id would raise ValueError ('Variant not found') since it isn't a variant of the tea kettle's product. The agent must decline and offer a return instead, or an exchange for another tea kettle variant.",
+    "ambiguity_note": "Policy violation: exchanges cannot change product type; the customer is asking to trade a tea kettle for an unrelated coffee maker, which the exchange tool does not support."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__008",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Aarav Moore, email aarav.moore6937@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've pulled up your account."
+      }
+    ],
+    "user_message": "The headphones from order #W8496475 stopped working after two days, definitely defective. Please return them and just Venmo me the refund instead of putting it back on my PayPal.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer names a real delivered item and a clear defect, which is otherwise routine. But 'Venmo' isn't one of their payment methods on file and isn't a supported payment_method_id at all \u2014 policy.md requires the refund go to the original payment method or an existing gift card. The agent must decline the Venmo request and offer the original PayPal (or a gift card) instead, not attempt to satisfy the literal request.",
+    "ambiguity_note": "Policy violation: refunds may only go to the original payment method or an existing gift card on the account; a third-party payment app like Venmo isn't a valid payment_method_id the tool accepts."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__009",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Fatima Anderson, email fatima.anderson1447@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Fatima, I've located your account."
+      }
+    ],
+    "user_message": "The skateboard deck from order #W2974929 has a hairline crack down the middle. Honestly it's not worth shipping back \u2014 can you just refund me and I'll keep it as-is?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "This looks like a routine damage complaint that return_delivered_order_items would normally resolve, but the customer is explicitly asking to skip returning the item and just receive money \u2014 order #W2974929 is also still 'pending' (not delivered), and even if it were delivered, there is no tool that issues a refund without the customer sending the item back per the return process. The agent must decline the keep-it-and-refund request.",
+    "ambiguity_note": "Policy violation: no tool supports refunding a customer while they keep the item; refunds only happen through the standard return flow after the item ships back, and this order (still pending) isn't even return-eligible yet."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__010",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Harper Kim, email harper.kim4003@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Harper, I've located your account."
+      }
+    ],
+    "user_message": "My friend Fatima's skateboard from her order #W2974929 arrived cracked and she's swamped at work \u2014 can you go ahead and process a return for her, I'll give you her email if you need it?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Order #W2974929 is real and does have a cracked-item complaint on file, so it's tempting to just help out. But that order belongs to fatima_anderson_2157, not the authenticated user (harper_kim_2998) \u2014 policy.md only allows helping the authenticated user with their own profile, orders, and requests, and requires denying tasks for any other user's account regardless of how the requester frames it. The agent must decline and tell Harper that Fatima needs to contact support herself.",
+    "ambiguity_note": "Policy violation: the agent can only act on the authenticated user's own orders; order #W2974929 belongs to a different real customer, so acting on it for Harper would be helping with someone else's account."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__011",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Ava Moore, email ava.moore6020@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ava, I've located your account and order #W4817420, which shows as delivered."
+      }
+    ],
+    "user_message": "The hiking boots in that order arrived with a torn seam. I don't want to deal with an exchange \u2014 just cancel the whole order and refund everything.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The customer explicitly asks to 'cancel' the order, and cancel_pending_order is the tool that name maps to, so a careless agent might reach for it. But #W4817420 already shows as delivered, and policy.md is explicit that only pending orders can be cancelled \u2014 cancel_pending_order would raise ValueError ('Non-pending order cannot be cancelled'). A damaged item on a delivered order can only be handled via return or exchange, not cancellation.",
+    "ambiguity_note": "Policy violation: cancellation only applies to pending orders; this order is already delivered, so the correct remedy for the torn boots is a return or exchange, not the cancel the customer is asking for."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__012",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Rossi, email sofia.rossi2645@example.com. I want to swap the skateboard in order #W5918442 for the bamboo 28-inch graphic-deck version, item 6843647669, same card."
+      },
+      {
+        "role": "assistant",
+        "content": "Done \u2014 the skateboard on order #W5918442 has been changed to item 6843647669, charged to your credit card ending 5051208. Note this order's one item-modification has now been used."
+      }
+    ],
+    "user_message": "Actually, I just noticed the perfume bottle in that same order looks like it has a hairline crack in the listing photo \u2014 can you also swap that one out for a different bottle before it ships?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The perfume item is real and still technically part of a pending order, so a second modify call looks reasonable. But modify_pending_order_items can only be called once per order, and it was already used to swap the skateboard \u2014 the order's status is now 'pending (item modified)', not 'pending', so a second call would raise ValueError ('Non-pending order cannot be modified'). The agent must decline further item changes on this order.",
+    "ambiguity_note": "Policy violation: modify_pending_order_items is a one-time action per order; it was already used for the skateboard, so the perfume swap the customer now wants cannot be done on the same order."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__013",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mei Gonzalez, email mei.gonzalez8775@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei, I've located your account."
+      }
+    ],
+    "user_message": "The pet bed from order #W7303089 has a zipper that broke on day one \u2014 please return it, and send the refund to my PayPal on file instead of the credit card I originally paid with.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "PayPal is a real, valid payment method on Mei's own account, which makes this look like an easy substitution. But policy.md requires a return refund to go to either the original payment method or an existing gift card \u2014 a non-gift-card method that wasn't the original payment method isn't allowed. return_delivered_order_items would raise ValueError ('Payment method should be the original payment method') if called with the PayPal id here. The agent must decline the PayPal redirect and offer only the original credit card or a gift card.",
+    "ambiguity_note": "Policy violation: a return refund may only go to the original payment method or a gift card; PayPal is on file but wasn't the original method here and isn't a gift card, so it's not an eligible refund destination."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__014",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mei Ahmed, email mei.ahmed5231@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei, I've located your account."
+      }
+    ],
+    "user_message": "The smart thermostat from order #W2631563 arrived with a cracked display \u2014 it's been almost a week so it should be delivered by now. Can you exchange it for a working unit?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2631563"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The customer is confident the order has arrived and asks for an exchange, which is otherwise the right tool for a damaged delivered item. But order #W2631563 is actually still 'pending' \u2014 exchange_delivered_order_items requires a delivered order and would raise ValueError ('Non-delivered order cannot be exchanged'). The agent must check the order status first rather than trust the customer's assumption.",
+    "ambiguity_note": "Checking order status is the correct first move; it reveals status='pending', so the exchange the customer assumes is possible cannot be done yet \u2014 that refusal happens on a later turn, not this one."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__015",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm James Li, email james.li4495@example.com. My office chair from order #W2611340 has a broken armrest."
+      },
+      {
+        "role": "assistant",
+        "content": "That order currently shows as 'processed', so it hasn't been delivered yet \u2014 I'm not able to start a return until it arrives. I'll note the issue for when it does."
+      }
+    ],
+    "user_message": "It says delivered now on the tracking page. Please go ahead and return the office chair, refund to my gift card.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W2611340"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer insists tracking now shows delivered and gives a plausible refund method, so it's tempting to just run the return the agent already discussed. But the agent shouldn't take the customer's word for the status change \u2014 re-checking get_order_details is the correct next step before deciding whether return_delivered_order_items can be used; if it still shows 'processed', calling the return tool directly would raise ValueError.",
+    "ambiguity_note": "The prior turn already flagged the order as not-yet-delivered; the correct next move is to re-verify status rather than trust the customer's claim, which is why this turn's answer is a lookup, not the return call itself."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__016",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Thomas, email sofia.thomas3069@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've located your account."
+      }
+    ],
+    "user_message": "I haven't received order #W7619352 yet, but a friend who ordered the same electric toothbrush said theirs came in cracked, so I'm sure mine will too. Can you just refund me for that item now so I don't have to deal with it later?",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The electric toothbrush is a real line item on a real pending order, and modify_pending_order_items is the only pending-order tool that touches individual items, so it might seem like the way to 'fix' this. But modify_pending_order_items only swaps an item for a different variant of the same product for an active payment adjustment \u2014 it cannot issue a refund for an item the customer keeps, and in any case the order hasn't even shipped yet so there's no confirmed defect to act on. The agent must decline the pre-emptive refund request entirely.",
+    "ambiguity_note": "Policy violation: there is no tool to refund part of a still-pending order for a defect that hasn't even been confirmed (the order hasn't arrived); the only pending-order actions are cancel, address change, payment change, or a one-time item swap, none of which grant a partial refund."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__017",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Ito, email sofia.ito7258@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've located your account."
+      }
+    ],
+    "user_message": "The yoga mat from order #W6075915 arrived torn along one edge. Please return it, but split the refund \u2014 half back to the card ending 7183597 I paid with, and half to my other card ending 7039111.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Both cards are real, valid payment methods on Sofia's account, and one of them is even the original payment method, so a split sounds like a reasonable accommodation. But return_delivered_order_items only accepts a single payment_method_id and refunds the entire item amount there \u2014 there is no mechanism to split a refund across two payment methods. The agent must decline the split and ask the customer to pick one destination (the original card or a gift card).",
+    "ambiguity_note": "Policy violation: a return refund goes entirely to one payment method \u2014 either the original method or a gift card \u2014 the tool has no way to split an amount across two payment methods as requested."
+  },
+  {
+    "id": "policy_violation__damaged_or_defective_item_narratives__018",
+    "category": "policy_violation",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Yara Santos, email yara.santos5257@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yara, I've located your account and order #W3232025, which shows as delivered."
+      }
+    ],
+    "user_message": "The dumbbell set in that order has paint flaking off already. I'd like to exchange it for a different variant, but pay any price difference with the store credit I think I have from a past return.",
+    "expected_tool_calls": [],
+    "expected_tool_calls_verified": false,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The item and the intent to exchange are both legitimate, and 'store credit' sounds close enough to a gift card that an agent might try to substitute one. But 'store credit' isn't a payment method type this system tracks or a payment_method_id on Yara's account \u2014 exchange_delivered_order_items requires a real payment_method_id (a specific gift_card_*, credit_card_*, or paypal_* id), and Yara's own account only lists a gift card (gift_card_4543462), not any 'store credit' entry. The agent must decline the vague store-credit request and ask her to confirm she means that gift card, or provide another real payment method on file.",
+    "ambiguity_note": "Policy violation: 'store credit' is not a recognized payment method or an id on the account; a price-difference payment must reference one of the customer's actual payment_method_id entries (gift card, credit card, or PayPal), which the customer hasn't clearly provided."
+  }
+]

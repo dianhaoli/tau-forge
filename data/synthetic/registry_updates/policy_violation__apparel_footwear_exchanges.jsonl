@@ -1,0 +1,18 @@
+{"id": "policy_violation__apparel_footwear_exchanges__001", "one_line": "User asks to exchange a t-shirt size on an order they assume delivered; it's actually processed, not yet delivered."}
+{"id": "policy_violation__apparel_footwear_exchanges__002", "one_line": "User asks to resize sneakers on an order that is actually cancelled and already refunded."}
+{"id": "policy_violation__apparel_footwear_exchanges__003", "one_line": "User asks to swap sunglasses lens color on an order that is actually still pending, not delivered."}
+{"id": "policy_violation__apparel_footwear_exchanges__004", "one_line": "User asks for a second style change on a t-shirt whose one allowed exchange was just completed this conversation."}
+{"id": "policy_violation__apparel_footwear_exchanges__005", "one_line": "User wants a delivered t-shirt exchanged for sneakers -- a different product type, not just a different variant."}
+{"id": "policy_violation__apparel_footwear_exchanges__006", "one_line": "User wants a delivered cycling helmet exchanged for sunglasses -- a cross-product-type request."}
+{"id": "policy_violation__apparel_footwear_exchanges__007", "one_line": "User (unverified) wants hiking boots exchanged to a specific size-9 variant that is currently out of stock."}
+{"id": "policy_violation__apparel_footwear_exchanges__008", "one_line": "User insists on exchanging sunglasses into a variant already confirmed out of stock, willing to wait."}
+{"id": "policy_violation__apparel_footwear_exchanges__009", "one_line": "User wants a cycling helmet color exchange charged to a gift card holding only $1, far under the price difference."}
+{"id": "policy_violation__apparel_footwear_exchanges__010", "one_line": "User wants hiking boots exchange price difference charged to a $2 gift card despite knowing it won't cover it."}
+{"id": "policy_violation__apparel_footwear_exchanges__011", "one_line": "Authenticated user requests a cycling helmet size exchange on an order that actually belongs to a different customer."}
+{"id": "policy_violation__apparel_footwear_exchanges__012", "one_line": "User openly asks agent to exchange a cycling helmet on their friend's order, not their own."}
+{"id": "policy_violation__apparel_footwear_exchanges__013", "one_line": "Agent laid out a full running-shoes exchange for confirmation; user replies 'I think so' instead of a clear yes."}
+{"id": "policy_violation__apparel_footwear_exchanges__014", "one_line": "User wants only one of two identical fleece jackets exchanged now, deciding the second later, risking the one-time limit."}
+{"id": "policy_violation__apparel_footwear_exchanges__015", "one_line": "User wants a t-shirt exchange price difference charged to a gift card they don't actually have on file."}
+{"id": "policy_violation__apparel_footwear_exchanges__016", "one_line": "User names a real t-shirt item id for exchange, but that item isn't actually part of the order they cite."}
+{"id": "policy_violation__apparel_footwear_exchanges__017", "one_line": "User wants two identical t-shirts exchanged but supplies only one new item id to cover both units."}
+{"id": "policy_violation__apparel_footwear_exchanges__018", "one_line": "User wants sneakers exchanged to a size/color/material combo that turns out to be out of stock, no item id given."}

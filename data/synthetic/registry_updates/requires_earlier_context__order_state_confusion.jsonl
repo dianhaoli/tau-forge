@@ -1,0 +1,18 @@
+{"id": "requires_earlier_context__order_state_confusion__001", "one_line": "Pending skateboard order id given only earlier; user now just says cancel, mistake reason."}
+{"id": "requires_earlier_context__order_state_confusion__002", "one_line": "Delivered notebook order id/item from earlier lookup; user asks refund to original card without repeating ids."}
+{"id": "requires_earlier_context__order_state_confusion__003", "one_line": "Pending tea kettle swap negotiated across turns; user just confirms yes, ids only stated earlier."}
+{"id": "requires_earlier_context__order_state_confusion__004", "one_line": "Delivered tablet exchange to cheaper variant negotiated earlier; bare 'yes' confirms it now."}
+{"id": "requires_earlier_context__order_state_confusion__005", "one_line": "User has one pending, one delivered order; asks address change on 'the one that hasn't shipped', resolved via earlier status."}
+{"id": "requires_earlier_context__order_state_confusion__006", "one_line": "Pending order payment switch to named card stated earlier; current turn is bare confirmation only."}
+{"id": "requires_earlier_context__order_state_confusion__007", "one_line": "Order id mentioned once earlier in passing; user later asks if 'that order' shipped, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__008", "one_line": "Exchange already requested per earlier turn; user asks status of 'that swap', lookup-only given exchange-once limit."}
+{"id": "requires_earlier_context__order_state_confusion__009", "one_line": "Order already cancelled/refunded per earlier turn; user asks to confirm refund landed, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__010", "one_line": "Cancellation reason given in one turn, order id supplied only in the next; combine both to cancel."}
+{"id": "requires_earlier_context__order_state_confusion__011", "one_line": "Order already item-modified once per earlier turn; user asks separate address change, still allowed by looser pending check."}
+{"id": "requires_earlier_context__order_state_confusion__012", "one_line": "Pending order payment switch to new card discussed earlier; current message is bare 'confirmed, proceed'."}
+{"id": "requires_earlier_context__order_state_confusion__013", "one_line": "Delivered puzzle order return; user says refund 'whatever I originally paid with', payment method looked up not stated."}
+{"id": "requires_earlier_context__order_state_confusion__014", "one_line": "Delivered pet bed exchange to larger size negotiated earlier; bare 'yes please' confirms with no ids restated."}
+{"id": "requires_earlier_context__order_state_confusion__015", "one_line": "Target helmet variant noted out-of-stock in an earlier turn; user later asks to recheck stock, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__016", "one_line": "Pending running shoes resize negotiated earlier with exact item ids; current turn is bare confirmation."}
+{"id": "requires_earlier_context__order_state_confusion__017", "one_line": "Return already requested on puzzle order per earlier turn; user asks refund timing, lookup only."}
+{"id": "requires_earlier_context__order_state_confusion__018", "one_line": "User previously identified with one pending order noted; now asks to see whole account, needs recalled user id."}

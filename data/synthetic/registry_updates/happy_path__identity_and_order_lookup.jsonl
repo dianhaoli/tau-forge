@@ -1,0 +1,18 @@
+{"id": "happy_path__identity_and_order_lookup__001", "one_line": "User gives only an email at start; agent must authenticate via find_user_id_by_email before anything else."}
+{"id": "happy_path__identity_and_order_lookup__002", "one_line": "User can't recall email, gives name+zip instead; agent authenticates via find_user_id_by_name_zip."}
+{"id": "happy_path__identity_and_order_lookup__003", "one_line": "Already-authenticated user asks status of a specific order id; correct move is a plain get_order_details lookup."}
+{"id": "happy_path__identity_and_order_lookup__004", "one_line": "Authenticated user asks what payment methods are on file; correct move is get_user_details, not an order lookup."}
+{"id": "happy_path__identity_and_order_lookup__005", "one_line": "User asks if a specific item from a delivered order is still in stock; correct move is get_item_details on that item id."}
+{"id": "happy_path__identity_and_order_lookup__006", "one_line": "User asks about other finishes/sizes of a product they own one variant of; correct move is get_product_details."}
+{"id": "happy_path__identity_and_order_lookup__007", "one_line": "User has several orders but only one pending; asks to cancel 'the pending one' by mistake, unambiguous target."}
+{"id": "happy_path__identity_and_order_lookup__008", "one_line": "Authenticated user with one pending order requests a shipping address change on that order after moving."}
+{"id": "happy_path__identity_and_order_lookup__009", "one_line": "User with one pending order and two credit cards asks to switch the order's payment to the other card."}
+{"id": "happy_path__identity_and_order_lookup__010", "one_line": "User negotiates a color swap on a pending Bluetooth Speaker item across turns, confirms exact new item id and card."}
+{"id": "happy_path__identity_and_order_lookup__011", "one_line": "User asks to return one identified item (mechanical keyboard) from a multi-item delivered order, refund to paypal."}
+{"id": "happy_path__identity_and_order_lookup__012", "one_line": "Multi-turn size exchange negotiation on delivered running shoes order resolves to a specific variant and refund."}
+{"id": "happy_path__identity_and_order_lookup__013", "one_line": "User with single pending tea kettle order asks to cancel because they no longer need it."}
+{"id": "happy_path__identity_and_order_lookup__014", "one_line": "User explicitly asks to update their account-level default address, distinct from any specific order's address."}
+{"id": "happy_path__identity_and_order_lookup__015", "one_line": "User returns one item (leaking tea kettle) from a two-item delivered order, refund redirected to a different gift card."}
+{"id": "happy_path__identity_and_order_lookup__016", "one_line": "User authenticated by name+zip (no email) asks to move their one pending order's payment from gift card to credit card."}
+{"id": "happy_path__identity_and_order_lookup__017", "one_line": "User asks to cancel own pending order but also asks agent to cancel a roommate's order id; only own order is actioned."}
+{"id": "happy_path__identity_and_order_lookup__018", "one_line": "User with a pending and a delivered order both listed asks to cancel 'the one with the skateboard', resolves to pending order."}

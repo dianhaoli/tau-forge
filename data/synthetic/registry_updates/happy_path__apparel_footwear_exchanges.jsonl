@@ -1,0 +1,18 @@
+{"id": "happy_path__apparel_footwear_exchanges__001", "one_line": "Delivered t-shirt exchanged from red XXL crew to red L v-neck, diff charged to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__002", "one_line": "Delivered running shoes exchanged size 9 to size 10, diff refunded to original gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__003", "one_line": "Delivered sunglasses exchanged brown/brown frame to black/green frame, diff on original card."}
+{"id": "happy_path__apparel_footwear_exchanges__004", "one_line": "Delivered hiking boots exchanged size 7 to size 8 synthetic, diff paid via gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__005", "one_line": "One of two identical delivered fleece jackets exchanged half-zip to full-zip, diff on non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__006", "one_line": "Delivered cycling helmet exchanged blue to black same size/ventilation, refund to gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__007", "one_line": "Delivered sneakers exchanged size 11 black to size 10 gray, refund to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__008", "one_line": "Pending t-shirt order item resized XXL to XL, refund to sole card on file."}
+{"id": "happy_path__apparel_footwear_exchanges__009", "one_line": "Pending running shoes order resized 8 to 9, color changed, refund to sole PayPal on file."}
+{"id": "happy_path__apparel_footwear_exchanges__010", "one_line": "Pending sunglasses order lens color changed brown to green, refund to non-original card."}
+{"id": "happy_path__apparel_footwear_exchanges__011", "one_line": "Pending hiking boots order changed synthetic to leather waterproof, same size, refund via gift card."}
+{"id": "happy_path__apparel_footwear_exchanges__012", "one_line": "Pending cycling helmet order ventilation upgraded low to medium, gift card covers charge."}
+{"id": "happy_path__apparel_footwear_exchanges__013", "one_line": "User asks delivery status of a fleece-jacket-containing order before deciding on an exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__014", "one_line": "User asks whether a specific medium blue high-ventilation helmet variant is in stock."}
+{"id": "happy_path__apparel_footwear_exchanges__015", "one_line": "User asks what colors/sizes a fleece jacket product comes in before choosing an exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__016", "one_line": "User without email authenticated via name+zip before requesting an apparel exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__017", "one_line": "Verified user asks to see full order list to find one eligible for exchange."}
+{"id": "happy_path__apparel_footwear_exchanges__018", "one_line": "User asks shipping status of a pending sunglasses order before requesting a lens color swap."}
