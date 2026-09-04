@@ -43,7 +43,7 @@ Concretely:
 | 2 | Synthetic scenario generation (methodology + full sweep) | **Done (30/30 cells, 541 scenarios)** |
 | 3 | Validation pipeline (rule / model / human / difficulty) | **Stages 1, 2, 4 done (541/541 scenarios each); stage 3 (human review) sample generated + delivered, verdicts pending — see below** |
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
-| 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
+| 5 | Decontamination vs. real 114 τ²-bench tasks | **Done — 0/8 flagged pairs confirmed as true positives on spot-check, see below** |
 | 6 | Harness smoke test on real 74 train tasks (scoring code only, no model) | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
 | 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not started — needs a GPU box, none available in this environment. AWS EC2 setup fully prepped in `docs/phase7_aws_setup.md` / `infra/`: full-parameter GRPO (not LoRA — this is RLVR), `g6e.12xlarge` (4x L40S, ZeRO-2) sizing, timing model, and a methodology risk writeup (difficulty calibration gap, overfitting/reward-hacking mitigations, train/eval mismatch) with a recommended zero-shot-pass + smoke-test-first sequence; training itself still awaits go-ahead |
 | 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Not started |
@@ -647,3 +647,117 @@ actual training script are separate, still-gated next steps.
 
 STOP for review, per the Phase 6 spec: harness validated against real trusted
 data before resuming Phase 2/3 or attempting any GPU training.
+
+## Decontamination check (`tau_forge/decontam/check.py`) — Phase 5
+
+**What this checks, precisely.** The 541 synthetic scenarios and the 114 real
+τ²-bench retail tasks draw from the same shared `db.json` (1000 orders, 500
+users, 50 products), so a synthetic scenario reusing a real order/product id
+is normal shared-inventory overlap, not evidence of copying. What this phase
+checks instead is *narrative*-level duplication -- does a synthetic scenario
+tell essentially the same story as a real task -- via two independent
+signals, computed only for this isolated comparison and never fed into
+`tau_forge.gen.prompt_template` or any other generation-facing code:
+
+- **Narrative text similarity**: TF-IDF (word unigrams + bigrams) cosine
+  similarity between a synthetic scenario's dialogue (`prior_turns` +
+  `user_message`) and a real task's `reason_for_call` -- the free-text
+  narrative substance of `user_scenario`, not its whole templated object
+  (which is mostly constant boilerplate headers and persona/instruction
+  voice notes, not story content). No embedding model/API was available in
+  this session; TF-IDF cosine over word n-grams was chosen over a
+  character-level measure like `difflib.SequenceMatcher` because it's a
+  better fit for "same story, different words" duplication across two
+  structurally different text registers (synthetic dialogue vs. real
+  third-person narration), and needs nothing heavier than `numpy`, already
+  present transitively via `tau2` -- no new dependency was added.
+- **Tool-call shape**: Jaccard overlap between the tools a synthetic
+  scenario's `expected_tool_calls` uses and the tools a real task's gold
+  assistant actions use, plus (only when the same tool appears in both)
+  Jaccard overlap of argument *keys* -- deliberately never argument
+  *values*, since values are exactly where shared-inventory ids would leak
+  in and produce a spurious signal. Reported alongside each flagged pair as
+  corroborating (or undermining) context, not as a second independent
+  trigger for flagging.
+
+**Threshold.** There is no meaningful *absolute* cosine cutoff across two
+registers this different -- even a genuinely similar narrative (same kind of
+request, different specifics) tends to score low in absolute terms simply
+because the phrasing conventions differ; the real 114 tasks' `reason_for_call`
+text is third-person case-file narration, the synthetic scenarios are
+first/second-person dialogue. So the threshold is derived from this run's own
+similarity distribution rather than picked as a fixed number: for each of the
+541 synthetic scenarios, take its best (max) similarity against any of the
+114 real tasks, then flag scenarios whose best match is a statistical outlier
+at `mean + 3*std` (a standard 3-sigma rule) of that per-scenario-max
+distribution.
+
+**Results** (`data/decontam/decontam_report.json`, committed):
+- Split-level sanity re-check (per the held-out policy, still all 114):
+  **train 74 / test 40 / base 114, train/test disjoint, train ∪ test == base
+  -- confirmed unchanged** for the pinned tau2-bench commit.
+- Distribution of per-scenario best-match similarity across all 541 x 114 =
+  61,674 pairs: mean **0.0882**, std **0.0362** → threshold **0.1969**.
+- **8 / 541 scenarios flagged** (1.5%), similarity 0.2003-0.2577, all sharing
+  a real task's tool and general theme (t-shirt exchange, laptop upgrade,
+  garden-hose return) but not its specifics:
+
+  | Synthetic scenario | Real task | Similarity | Tool shape |
+  |---|---|---|---|
+  | `happy_path__apparel_footwear_exchanges__015` | 85 | 0.2577 | 0.0 |
+  | `policy_violation__apparel_footwear_exchanges__004` | 80 | 0.2537 | n/a (no call) |
+  | `requires_earlier_context__apparel_footwear_exchanges__001` | 80 | 0.2351 | 1.0 |
+  | `happy_path__apparel_footwear_exchanges__001` | 80 | 0.2274 | 1.0 |
+  | `happy_path__damaged_or_defective_item_narratives__009` | 28 | 0.2226 | 0.6 |
+  | `happy_path__electronics_returns_exchanges__003` | 93 | 0.2153 | 1.0 |
+  | `requires_earlier_context__damaged_or_defective_item_narratives__003` | 56 | 0.2010 | 0.0 |
+  | `requires_earlier_context__damaged_or_defective_item_narratives__014` | 44 | 0.2003 | 0.0 |
+
+**Spot-check verdict: 0/8 confirmed true positives -- all 8 are false
+positives.** Manually read every flagged pair's full text against the
+excerpts in the report. Representative examples:
+  - `happy_path__apparel_footwear_exchanges__001`/`__requires_earlier_context...__001`
+    both flag against real task 80 (exchange a red XXL crew-neck cotton
+    t-shirt) purely because both are t-shirt color/size/style exchanges on a
+    delivered order, with a tool-shape score of 1.0 to match -- but different
+    order (`#W6552785` vs. `#W7209932`), different starting/target
+    color-size-style combination, and different payment method (PayPal /
+    store credit vs. gift card in the real task). Same taxonomy cell theme
+    (`apparel_footwear_exchanges`), different story.
+  - `happy_path__damaged_or_defective_item_narratives__009` flags against
+    real task 28 because both mention a defective garden hose -- but the
+    synthetic scenario is a single-item return, while task 28 is a five-item
+    return (skateboard, garden hose, backpack, keyboard, bed) plus a
+    same-item order cancellation and a running refund total, a materially
+    different (and much larger) request.
+  - `policy_violation__apparel_footwear_exchanges__004` has no
+    `expected_tool_calls` at all (`tool_shape_score: null`) -- it's flagged
+    on text alone, and reads as a generic "swap the style" follow-up request
+    that happens to lexically overlap real task 80's t-shirt exchange
+    narrative without describing the same event.
+
+  This is consistent with how the synthetic data was generated: each
+  taxonomy cell (`tau_forge/gen/taxonomy.py`) targets a small, fixed set of
+  domain-grounded themes (e.g. `apparel_footwear_exchanges`,
+  `damaged_or_defective_item_narratives`), and the real 114 tasks were
+  authored against the same domain and the same 50-product catalog -- so
+  some thematic resonance within a theme is expected and is exactly what
+  this check is designed to tell apart from actual narrative copying. It
+  found none.
+
+No scenario was auto-deleted or auto-regenerated -- per the phase spec, that
+call belongs to the repo owner after reviewing the report; none is
+recommended here given the spot-check above.
+
+**Tests** (`tests/test_decontam.py`, `uv run pytest`): 12 tests covering
+tokenization, TF-IDF cosine on identical/disjoint documents, narrative
+rendering, tool-shape scoring (matching tools, disjoint tools, non-assistant
+actions excluded, argument-key-only comparison), the split sanity check
+against real pinned data, and the end-to-end flagging logic against small
+fixture data (a deliberate near-duplicate pair flagged, an unrelated pair
+not). The full 541x114 comparison is exercised by
+`uv run python -m tau_forge.decontam.check`, not by the test suite.
+
+STOP for review, per the Phase 5 spec and the project's STOP-checkpoint
+policy: **do not start Phase 7 (real GRPO training) off the back of this
+without an explicit go-ahead**, even though decontamination came back clean.
