@@ -1,0 +1,559 @@
+[
+  {
+    "id": "happy_path__identity_and_order_lookup__001",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [],
+    "user_message": "Hi there, I need some help with an order. My email is aarav.anderson9752@example.com.",
+    "expected_tool_calls": [
+      {
+        "name": "find_user_id_by_email",
+        "arguments": {
+          "email": "aarav.anderson9752@example.com"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "The agent only has an email address so far, not a user id -- get_user_details requires a user_id argument that doesn't exist yet, so identity must be resolved with find_user_id_by_email first before any profile or order data can be fetched.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__002",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "Sure, I can help. Could I get the email on your account to pull it up?"
+      },
+      {
+        "role": "user",
+        "content": "Honestly I don't remember which email I used for this account."
+      }
+    ],
+    "user_message": "It's under Isabella Sanchez, zip code 85093, if that helps.",
+    "expected_tool_calls": [
+      {
+        "name": "find_user_id_by_name_zip",
+        "arguments": {
+          "first_name": "Isabella",
+          "last_name": "Sanchez",
+          "zip": "85093"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "find_user_id_by_email",
+    "distractor_rationale": "The user just said she can't recall her email, so there's no email value to call find_user_id_by_email with -- policy says name+zip lookup is only for when email isn't available, which is exactly the case here.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__003",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Raj Sanchez, raj.sanchez2046@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Raj, I've verified your account (raj_sanchez_2970). What can I help with?"
+      }
+    ],
+    "user_message": "Can you check the status of order #W4566809 for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W4566809"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "The user asked specifically about one order's status, not a full account summary -- get_user_details would return the whole profile and order id list but not the fulfillment/status detail the user actually wants, and it's a heavier call than the question calls for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__004",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Li, sofia.li7352@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've located your account (sofia_li_9219). How can I help today?"
+      }
+    ],
+    "user_message": "Before I ask you to do anything, can you just tell me what payment methods you have on file for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_user_details",
+        "arguments": {
+          "user_id": "sofia_li_9219"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "Payment methods live on the user's profile, not on any single order -- get_order_details needs a specific order_id the user hasn't given and wouldn't even return the account-level list of saved payment methods the user is asking about.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__005",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Evelyn Wilson, evelyn.wilson8748@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Evelyn, I've verified your account (evelyn_wilson_8460). What can I do for you?"
+      },
+      {
+        "role": "user",
+        "content": "I really loved the wristwatch from my delivered order #W8042635, item id 2407258246."
+      }
+    ],
+    "user_message": "Is that exact wristwatch still available? I might want to get one as a gift.",
+    "expected_tool_calls": [
+      {
+        "name": "get_item_details",
+        "arguments": {
+          "item_id": "2407258246"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "The user isn't asking about her existing order's status -- she's asking whether that specific watch variant is still in stock for a future purchase, which is availability info on the item itself, not something get_order_details on #W8042635 would answer.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__006",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Yusuf Hernandez, yusuf.hernandez6086@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yusuf, I've verified your account (yusuf_hernandez_6467). How can I help?"
+      },
+      {
+        "role": "user",
+        "content": "I got a bookshelf in order #W7133840, product id 8600330539."
+      }
+    ],
+    "user_message": "Does that bookshelf come in any other finishes or sizes I could look at?",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "8600330539"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_item_details",
+    "distractor_rationale": "The user wants to browse the full range of variants for the bookshelf product, not the details of the single item id he already has -- get_item_details would only return the one variant he already owns, not the other finish/size options he's asking about.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__007",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Aarav Anderson, aarav.anderson9752@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've verified your account (aarav_anderson_8794). I can see you have several orders on file, including one that's still pending (#W9300146, a Desk Lamp). What would you like to do?"
+      }
+    ],
+    "user_message": "Yeah, please cancel that pending one, I ordered it by mistake.",
+    "expected_tool_calls": [
+      {
+        "name": "cancel_pending_order",
+        "arguments": {
+          "order_id": "#W9300146",
+          "reason": "ordered by mistake"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Both tools act on the same pending order, but the user asked to cancel the whole order outright, not swap the desk lamp for a different variant -- modify_pending_order_items would leave the order in place with different items, which isn't what was confirmed.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__008",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Amelia Kim, amelia.kim6460@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Amelia, I've verified your account (amelia_kim_4338). Looks like you have one pending order, #W7634667. What can I help with?"
+      }
+    ],
+    "user_message": "I just moved -- can you update the shipping address on that order to 482 Birchwood Lane, Charlotte, NC 28230, USA? No apartment number.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_address",
+        "arguments": {
+          "order_id": "#W7634667",
+          "address1": "482 Birchwood Lane",
+          "address2": "",
+          "city": "Charlotte",
+          "state": "NC",
+          "country": "USA",
+          "zip": "28230"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "The user wants this one pending order's shipping address updated, not her permanent default account address -- modify_user_address would change the profile default going forward but wouldn't touch the order she's actually referring to.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__009",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sophia Patel, sophia.patel9841@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sophia, I've verified your account (sophia_patel_6833). You have one pending order, #W7905419, currently paid with credit_card_6017489. What would you like to do?"
+      }
+    ],
+    "user_message": "Please switch that order to my other card on file, credit_card_6419343.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_payment",
+        "arguments": {
+          "order_id": "#W7905419",
+          "payment_method_id": "credit_card_6419343"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The user wants the order's payment method swapped, not the items in it changed -- modify_pending_order_items requires item_ids/new_item_ids the user never gave and would leave the original card charged, which isn't the request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__010",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Sofia Hernandez, sofia.hernandez7150@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've verified your account (sofia_hernandez_8513). Your pending order #W1090976 includes a blue Bluetooth Speaker (10 hour battery, water resistant), item id 4716977452, among other items. What would you like to change?"
+      },
+      {
+        "role": "user",
+        "content": "Actually I'd rather have that speaker in red instead of blue, same battery life and water resistance."
+      }
+    ],
+    "user_message": "Yes, go ahead -- item 7751905257 is the red one, and charge the price difference to credit_card_3753643.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_items",
+        "arguments": {
+          "order_id": "#W1090976",
+          "item_ids": [
+            "4716977452"
+          ],
+          "new_item_ids": [
+            "7751905257"
+          ],
+          "payment_method_id": "credit_card_3753643"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Order #W1090976 is still pending, not delivered -- exchange_delivered_order_items only applies once an order has been delivered, so swapping a variant on a pending order must go through modify_pending_order_items instead.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__011",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Isabella Sanchez, isabella.sanchez6218@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Isabella, I've verified your account (isabella_sanchez_2068). I see a delivered order, #W1713682, with a Smart Watch, Hiking Boots, a Bluetooth Speaker, a Mechanical Keyboard, and a Makeup Kit. What would you like to do?"
+      }
+    ],
+    "user_message": "The mechanical keyboard in that order isn't working right, I'd like to return it and get my money back on the paypal I paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W1713682",
+          "item_ids": [
+            "4648814700"
+          ],
+          "payment_method_id": "paypal_8516781"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user explicitly asked for a refund ('get my money back'), not a replacement keyboard -- exchange_delivered_order_items would require picking a new variant to swap to, which contradicts the return she confirmed.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__012",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mei Martin, mei.martin4637@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei, I've verified your account (mei_martin_4260). Your delivered order #W5564375 has running shoes (size 10, white, leather, item id 1775591963) among other items. What would you like to do?"
+      },
+      {
+        "role": "user",
+        "content": "Those run a bit big. Is there a size 9 in the same white leather?"
+      },
+      {
+        "role": "assistant",
+        "content": "The closest available size 9 in that product is a white mesh pair with a rubber sole, item id 9635758562, priced at $148.95 versus your original $154.75 -- so you'd actually get a $5.80 refund. Want me to go ahead and exchange, paid via your paypal account on file?"
+      }
+    ],
+    "user_message": "Yes, that works, go ahead.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W5564375",
+          "item_ids": [
+            "1775591963"
+          ],
+          "new_item_ids": [
+            "9635758562"
+          ],
+          "payment_method_id": "paypal_2299608"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Order #W5564375 is delivered, not pending, so modify_pending_order_items isn't callable on it -- a variant swap on an already-delivered order has to go through exchange_delivered_order_items.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__013",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Ivan Santos, ivan.santos5925@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ivan, I've verified your account (ivan_santos_7021). You have one pending order, #W5801125, a Tea Kettle. What would you like to do?"
+      }
+    ],
+    "user_message": "I don't need it anymore, please cancel it.",
+    "expected_tool_calls": [
+      {
+        "name": "cancel_pending_order",
+        "arguments": {
+          "order_id": "#W5801125",
+          "reason": "no longer needed"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The user wants the whole order called off, not a different tea kettle sent instead -- modify_pending_order_items would keep the order alive with swapped items, which isn't what 'I don't need it anymore, cancel it' asked for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__014",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Ava Nguyen, ava.nguyen3664@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ava, I've verified your account (ava_nguyen_2175). What can I help with?"
+      }
+    ],
+    "user_message": "I moved recently -- can you update my default address on file to 77 Sunset Blvd, Unit 4, Austin, TX 78786, USA? This isn't about any specific order, just my account address going forward.",
+    "expected_tool_calls": [
+      {
+        "name": "modify_user_address",
+        "arguments": {
+          "user_id": "ava_nguyen_2175",
+          "address1": "77 Sunset Blvd",
+          "address2": "Unit 4",
+          "city": "Austin",
+          "state": "TX",
+          "country": "USA",
+          "zip": "78786"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The user was explicit this is her account-level default address, not a specific order's shipping address -- modify_pending_order_address requires an order_id she didn't give and wouldn't update her profile default the way she asked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__015",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Chen Silva, chen.silva2698@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Chen, I've verified your account (chen_silva_7485). Your delivered order #W8171054 has a Tea Kettle (item 9747045638) and a pair of Running Shoes. What would you like to do?"
+      }
+    ],
+    "user_message": "The tea kettle leaks, I'd like to return just that one. Please put the refund on my gift card, gift_card_7250692, instead of the credit card I paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8171054",
+          "item_ids": [
+            "9747045638"
+          ],
+          "payment_method_id": "gift_card_7250692"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user wants the kettle refunded to a gift card, not swapped for a replacement kettle -- exchange_delivered_order_items would require choosing a new item variant, which wasn't asked for or confirmed.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__016",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Anya Garcia, my zip is 19036 and I honestly can't remember my email -- last name Garcia."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Anya, I've verified your account (anya_garcia_3271) by name and zip. You have one pending order, #W6436609, currently paid with your gift card, gift_card_4374071. What can I help with?"
+      }
+    ],
+    "user_message": "Can you move that order's payment to my credit card instead, credit_card_8955149?",
+    "expected_tool_calls": [
+      {
+        "name": "modify_pending_order_payment",
+        "arguments": {
+          "order_id": "#W6436609",
+          "payment_method_id": "credit_card_8955149"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "The user asked to change which payment method is on the order, not where it ships -- modify_pending_order_address takes shipping-address fields she never provided and wouldn't touch the payment method at all.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__017",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mia Moore, mia.moore8091@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mia, I've verified your account (mia_moore_8366). You have one pending order, #W3130288. What would you like to do?"
+      }
+    ],
+    "user_message": "Please cancel my pending order, I ordered by mistake. Also, my roommate said her order #W5442520 needs cancelling too -- could you just take care of that one for her while we're at it?",
+    "expected_tool_calls": [
+      {
+        "name": "cancel_pending_order",
+        "arguments": {
+          "order_id": "#W3130288",
+          "reason": "ordered by mistake"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "Even just looking up the roommate's order #W5442520 would mean pulling another person's order data into this conversation -- policy limits the agent to one user per conversation, so neither viewing nor cancelling it is appropriate; only Mia's own order #W3130288 can be acted on here.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__identity_and_order_lookup__018",
+    "category": "happy_path",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Isabella Sanchez, isabella.sanchez6218@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Isabella, I've verified your account (isabella_sanchez_2068). I can see two active orders: a pending one, #W4386313, with a Skateboard and a Bluetooth Speaker, and a delivered one, #W1713682, with a Smart Watch and a few other items. What would you like to do?"
+      }
+    ],
+    "user_message": "Please cancel my order with the skateboard in it, I ordered it by mistake.",
+    "expected_tool_calls": [
+      {
+        "name": "cancel_pending_order",
+        "arguments": {
+          "order_id": "#W4386313",
+          "reason": "ordered by mistake"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The skateboard is in the pending order, #W4386313, not the delivered one -- return_delivered_order_items only works on delivered orders, so the skateboard order (still pending) has to be handled through cancel_pending_order instead.",
+    "ambiguity_note": ""
+  }
+]
