@@ -3555,6 +3555,7 @@ dependencies = [
 train = [
     { name = "accelerate" },
     { name = "bitsandbytes" },
+    { name = "datasets" },
     { name = "deepspeed" },
     { name = "torch" },
     { name = "transformers" },
@@ -3571,6 +3572,7 @@ dev = [
 requires-dist = [
     { name = "accelerate", marker = "extra == 'train'", specifier = ">=1.0" },
     { name = "bitsandbytes", marker = "extra == 'train'", specifier = ">=0.44" },
+    { name = "datasets", marker = "extra == 'train'", specifier = ">=3.0" },
     { name = "deepspeed", marker = "extra == 'train'", specifier = ">=0.15" },
     { name = "tau2", editable = "third_party/tau2-bench" },
     { name = "torch", marker = "extra == 'train'", specifier = ">=2.4" },

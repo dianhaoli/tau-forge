@@ -156,15 +156,22 @@ Getting the instance right doesn't by itself mean the training run works well.
 Three risks are specific to this project's data/setup, not to the infra, and are
 worth deciding on *before* spending GPU-hours on the full run:
 
-1. **GRPO's signal needs within-group reward variance — untested here.** GRPO
-   normalizes advantage by each group's own mean/std across its `G` sampled
-   completions. If a scenario is trivially easy (base model gets it right every
-   time) or too hard/ambiguous (consistently wrong for reasons unrelated to
-   sampling), every sample in the group gets the same reward and that prompt
-   contributes ~zero gradient. **Phase 3 stage 4 (difficulty calibration) was never
-   done** — nobody has measured how hard the 541 scenarios are for
-   `Qwen3-4B-Instruct-2507` zero-shot. Running the full training job before knowing
-   this risks a lot of compute going into degenerate, zero-signal groups.
+1. **GRPO's signal needs within-group reward variance.** GRPO normalizes
+   advantage by each group's own mean/std across its `G` sampled completions. If a
+   scenario is trivially easy (base model gets it right every time) or too
+   hard/ambiguous (consistently wrong for reasons unrelated to sampling), every
+   sample in the group gets the same reward and that prompt contributes ~zero
+   gradient. **Phase 3 stage 4 (difficulty calibration) has since landed**
+   (`tau_forge/validate/difficulty.py`, `data/synthetic/difficulty/*.json`) — but
+   it's a *structural* heuristic (category, action-kind, distractor closeness,
+   stage-2 model-checker flags), not an empirical measurement of this specific
+   model's zero-shot behavior. It's a good prior for which scenarios are likely
+   risky, not a substitute for actually checking: a scenario the heuristic calls
+   "easy" can still turn out zero-variance for a *different* reason (the model
+   is confidently, consistently wrong on it, not confidently right). `python -m
+   tau_forge.train.zero_shot_baseline` (written alongside this doc, see below) is
+   the empirical check — run it and cross-reference against the heuristic scores
+   before trusting either alone.
 2. **Full-parameter capacity + a small, static, repeatedly-seen prompt set is real
    overfitting/reward-hacking exposure.** 541 unique prompts seen across multiple
    epochs, full-parameter updates (much more capacity to memorize or exploit than
@@ -240,6 +247,112 @@ re-adding only if you deliberately switch back.
 - [ ] Confirm the held-out data policy before any live run: only Phase 2 synthetic
       data, never the 114 real τ²-bench retail tasks, touches model weights.
 
+## Launch runbook (AWS CLI)
+
+Concrete, copy-pasteable steps. Console equivalents exist for every step (EC2 →
+Launch Instance) if you'd rather click through, but the CLI is what the checklist
+above means by "reproducible and diffable." Run these from your own machine (or
+CloudShell) — this session has no AWS credentials and cannot run them for you.
+Replace `us-east-1` throughout if you're in a different region; `g6e` availability
+varies by region, so check first (step 0).
+
+**0. Confirm `aws` is configured and `g6e` is available/quota'd in your region**
+```
+aws sts get-caller-identity
+aws ec2 describe-instance-type-offerings --location-type region \
+    --filters Name=instance-type,Values=g6e.12xlarge --region us-east-1
+```
+If that returns nothing, `g6e` isn't offered in that region — pick another (check
+the docs' fallback options) or a nearby region. Then check your quota — new/
+lightly-used accounts often start at **0** for GPU instances:
+```
+aws service-quotas get-service-quota --service-code ec2 \
+    --quota-code L-DB2E81BA --region us-east-1  # "Running On-Demand G and VT instances" (vCPUs)
+```
+`g6e.12xlarge` needs 48 vCPUs of quota. If the value is below that, request an
+increase (`request-service-quota-increase` or via Service Quotas console) — this
+is the single most common thing that silently blocks a first GPU launch, and
+approval can take from minutes to a business day, so do this check first.
+
+**1. Set a billing alarm** (console: Billing → Budgets → Create budget — a CLI
+path exists too but the console is faster for a one-off alarm) before doing
+anything else below.
+
+**2. Create a key pair** (skip if reusing one you already trust for this):
+```
+aws ec2 create-key-pair --key-name tau-forge-phase7 \
+    --query 'KeyMaterial' --output text > ~/.ssh/tau-forge-phase7.pem
+chmod 400 ~/.ssh/tau-forge-phase7.pem
+```
+
+**3. Create a security group, SSH-only from your own IP:**
+```
+VPC_ID=$(aws ec2 describe-vpcs --filters Name=is-default,Values=true \
+    --query 'Vpcs[0].VpcId' --output text)
+SG_ID=$(aws ec2 create-security-group --group-name tau-forge-phase7 \
+    --description "Phase 7 GPU box, SSH only" --vpc-id "$VPC_ID" \
+    --query 'GroupId' --output text)
+MY_IP=$(curl -s https://checkip.amazonaws.com)
+aws ec2 authorize-security-group-ingress --group-id "$SG_ID" \
+    --protocol tcp --port 22 --cidr "${MY_IP}/32"
+```
+No other inbound rules — confirms the checklist's "no public HTTP/Jupyter
+exposure" item by construction.
+
+**4. Find the current Deep Learning AMI (Ubuntu, GPU PyTorch) for your region:**
+```
+AMI_ID=$(aws ec2 describe-images --owners amazon \
+    --filters "Name=name,Values=Deep Learning AMI GPU PyTorch*Ubuntu*" \
+              "Name=state,Values=available" \
+    --query 'sort_by(Images, &CreationDate)[-1].ImageId' --output text \
+    --region us-east-1)
+echo "$AMI_ID"
+```
+Sanity-check the returned name/date look right before using it — AMI naming
+occasionally changes; if this comes back empty, search "Deep Learning AMI GPU
+PyTorch" in the EC2 console's AMI catalog instead and copy the ID.
+
+**5. Launch the instance:**
+```
+aws ec2 run-instances \
+    --image-id "$AMI_ID" \
+    --instance-type g6e.12xlarge \
+    --key-name tau-forge-phase7 \
+    --security-group-ids "$SG_ID" \
+    --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":300,"VolumeType":"gp3"}}]' \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=tau-forge-phase7}]' \
+    --region us-east-1
+```
+Note the returned `InstanceId`. Get its public IP once it's running:
+```
+aws ec2 describe-instances --instance-ids <InstanceId> \
+    --query 'Reservations[0].Instances[0].PublicIpAddress' --output text
+```
+
+**6. SSH in and run the bootstrap script:**
+```
+ssh -i ~/.ssh/tau-forge-phase7.pem ubuntu@<PublicIpAddress>
+# on the box:
+curl -O https://raw.githubusercontent.com/dianhaoli/tau-forge/main/infra/ec2_bootstrap.sh
+chmod +x ec2_bootstrap.sh
+./ec2_bootstrap.sh
+```
+(Deep Learning AMIs use the `ubuntu` login user; double-check the AMI's own
+listing if that doesn't connect.) The bootstrap script prints the exact
+zero-shot-baseline / smoke-test / full-run commands at the end, matching "Next
+steps" below.
+
+**7. When done for the session:**
+```
+aws ec2 stop-instances --instance-ids <InstanceId>   # keeps the EBS volume, resume later
+# or, once truly finished with this box:
+aws ec2 terminate-instances --instance-ids <InstanceId>
+```
+`stop` (not `terminate`) is the right default between working sessions — it
+keeps the 300 GB volume (and anything on it: cloned repo, downloaded model
+weights, checkpoints) so you're not re-downloading the model each time, at the
+cost of EBS storage while stopped (much cheaper than the running GPU-hour rate).
+
 ## Next steps (not done by this doc)
 
 1. Review this sizing/instance choice — confirm `g6e.12xlarge` (or an alternative
@@ -250,14 +363,61 @@ re-adding only if you deliberately switch back.
    installed.
 4. Zero-shot base-model pass over all 541 scenarios (difficulty signal +
    baseline) — cheap, inference-only, do this before writing a line of training
-   code.
+   code:
+   ```
+   uv run python3 -m tau_forge.train.zero_shot_baseline
+   ```
 5. The 50-100 step GRPO smoke test (Phase 6 spec) — validates the loop end-to-end
    and produces a real seconds/rollout number to replace the Timing estimate
-   above.
-6. Only then does Phase 7's full run itself (the full-parameter GRPO training
-   script with a ZeRO-2 `accelerate`/`deepspeed` config, wiring it to
-   `tau_forge.reward`/`tau_forge.harness`/`tau_forge.envs`) start — still gated on
-   its own explicit go-ahead per the phase-status table.
+   above:
+   ```
+   uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+       -m tau_forge.train.grpo_train --smoke-test
+   ```
+6. Only after both of those look sane, the full run (still full-parameter GRPO,
+   same ZeRO-2 `accelerate`/`deepspeed` config, wiring
+   `tau_forge.reward`/`tau_forge.envs` via `tau_forge.train.reward_adapter`):
+   ```
+   uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+       -m tau_forge.train.grpo_train
+   ```
+   This last step is still gated on its own explicit go-ahead per the
+   phase-status table — steps 4-5 are cheap diagnostics, not the full job.
+
+## What's implemented vs. what still needs the GPU box
+
+`tau_forge/train/` now has the actual training code, written and unit-tested
+against the real 541 scenarios (`tests/test_train_pipeline.py`, runs without a
+GPU) but never executed end-to-end (no GPU/torch/trl available in the
+environment this was written in):
+
+- `dataset.py` — builds the GRPO training set from `data/synthetic/raw/*.json`,
+  reusing tau2's own real agent system prompt (`tau2.agent.llm_agent`) and real
+  tool schemas (`RetailEnv.all_openai_schemas()`), graded against the plain
+  shipped `db.json` (matching `tau_forge.validate.rule_checker`'s own
+  re-execution methodology, not a derived per-scenario snapshot).
+- `completion_parsing.py` — parses a policy completion's `<tool_call>` block
+  (Qwen's native tool-calling format) into an `Action`. Deliberately treats a
+  *malformed* tool-call attempt differently from *no* attempt (a caught bug,
+  not a design given from the start — see its module docstring) so a garbled
+  call can't be mistaken for correctly-chosen silence on an
+  `ambiguous`/`policy_violation` scenario.
+- `reward_adapter.py` — adapts `tau_forge.reward.reward()` into TRL's
+  `reward_funcs(prompts, completions, **kwargs) -> list[float]` contract.
+- `grpo_train.py` — the actual `GRPOTrainer` entrypoint, `--smoke-test` flag
+  included, `beta` (KL coefficient) deliberately overridden from TRL's default
+  of `0.0` per the methodology risks above.
+- `zero_shot_baseline.py` — step 4's diagnostic script.
+- `infra/ds_zero2.json` / `infra/accelerate_zero2.yaml` — the ZeRO-2 configs
+  for the 4-GPU launch.
+
+**What's unverified**: everything past "does the data/reward plumbing work" —
+the actual `GRPOTrainer`/`accelerate`/`deepspeed` wiring, vLLM integration (off
+by default, see `--use-vllm`'s help text), and whether the chosen
+`per_device_train_batch_size`/`num_generations` combination fits in the ~26
+GB/GPU budget without adjustment. The smoke test (step 5) is what actually
+answers that — treat the first run of it as a debugging session, not a
+guaranteed clean pass, and report back what breaks.
 
 ## Why finish this setup
 
