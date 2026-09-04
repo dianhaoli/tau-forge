@@ -16,7 +16,7 @@ continuity across sessions).
 | 0 | Repo setup + data substrate extraction | Done |
 | 1 | Environment wrapper / mock tool executor | Done |
 | 2 | Synthetic scenario generation (methodology + first cells) | **Pilot done (3/30 cells) — paused for reordering, see below** |
-| 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
+| 3 | Validation pipeline (rule / model / human / difficulty) | **Rule checker (stage 1) done, see below; model/human/difficulty stages not started** |
 | 4 | Reward function + adversarial tests | **Done — 6/6 adversarial cases pass, see below** |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
 | 6 | Harness smoke test on real 74 train tasks | Not started |
@@ -229,3 +229,64 @@ STOP for review, per the Phase 4 spec: reward function built and adversarially
 tested before any training or further synthetic-data generation. Next per the
 reordering above is Phase 6's data prep (converting the real 74 train tasks to
 static snapshots) and smoke test, not the remaining 27 Phase 2 cells.
+
+## Rule checker (`tau_forge/validate/rule_checker.py`) — Phase 3, stage 1
+
+Ran an informal resemblance check between the pilot's 57 scenarios and the real
+114 τ²-bench retail tasks (still isolated -- `tasks.json` was read for
+comparison only, never fed into a generation prompt) and it surfaced a real,
+structural finding, not just a contamination scare:
+
+- **Tool-call count per scenario:** real tasks average 4.8 tool calls (median
+  5, up to 13); the pilot averaged 0.49 (median 0). Real tasks make the agent
+  do the *entire* chain -- authenticate, look up the order, look up the
+  product, then act. The pilot's scenarios start mid-conversation with
+  identity/order context already resolved in `prior_turns`, so they only ever
+  exercise the *last* decision.
+- **Tool-use distribution:** across 550 real reference-trajectory tool calls,
+  **64.9% are lookup/identity calls** (`get_order_details` alone is 30.5% of
+  every call made) and only 35.1% are the mutating/generic "final" action. The
+  pilot's `expected_tool_calls` were almost entirely the mutating/generic end
+  -- essentially zero lookup calls as the actual answer to a scenario.
+- **One scenario, `happy_path__electronics_returns_exchanges__010`, chained two
+  calls** (`get_product_details` then `exchange_delivered_order_items`) into
+  one `expected_tool_calls`. That's not just untidy -- policy.md is explicit
+  that the agent may make **at most one tool call per turn** ("You should at
+  most make one tool call at a time..."), so a chained answer describes two
+  agent turns as if they were one, misrepresenting what a policy-compliant
+  agent would ever emit in a single turn. It's also not gradable by the Phase
+  4 reward function, which only scores a single `Action`. Fixed by trimming
+  the gold answer to just the `get_product_details` lookup (the correct action
+  *this* turn) and updating the distractor rationale to explain why the
+  exchange itself belongs to a later turn.
+
+Built `tau_forge/validate/rule_checker.py` (Phase 3's stage-1 rule checker) to
+catch this class of issue mechanically going forward: it re-executes every
+scenario's `expected_tool_calls` against a fresh copy of the real `db.json`
+and flags (a) more than one call in `expected_tool_calls` -- now a hard
+failure, not just a style note, (b) category-shape violations (`ambiguous`
+non-empty, `policy_violation`'s single call not a READ, `out_of_scope` not
+exactly one `transfer_to_human_agents`), (c) unknown tools, schema-invalid or
+hallucinated arguments, and execution failures, and (d) an
+`expected_tool_calls_verified` flag inconsistent with whether there's
+actually anything to verify. Run via `uv run python3 -m
+tau_forge.validate.rule_checker`. Current result: **57/57 pilot scenarios
+pass** (was 56/57 before the fix above).
+
+**Fixed `tau_forge/gen/prompt_template.py`** so the remaining 27 cells don't
+reproduce either finding:
+- `expected_tool_calls` is now hard-capped at one entry in every category, with
+  the policy.md quote inline as the reason, and explicit guidance that
+  multi-step *exploration* against `RetailEnv` during authoring is fine and
+  encouraged, but only one call goes in the output.
+- Added a "match the real benchmark's tool-use distribution" section stating
+  the 64.9%/35.1% split above and instructing each cell to make **at least a
+  third of its scenarios' correct answer a lookup call itself** (representing
+  an earlier stage of the conversation, before identity/order/product details
+  are resolved), skewed even higher for the `identity_and_order_lookup` theme
+  -- rather than always assuming that stage already happened in `prior_turns`.
+
+This doesn't close the deeper live-multi-turn generalization gap discussed
+separately (still tracked as this project's headline Phase 8 question), but it
+does make the static-snapshot dataset's *aggregate* tool-usage shape resemble
+the real benchmark's, which it measurably did not before this fix.

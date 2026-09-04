@@ -312,24 +312,11 @@
         "arguments": {
           "product_id": "3377618313"
         }
-      },
-      {
-        "name": "exchange_delivered_order_items",
-        "arguments": {
-          "order_id": "#W4817420",
-          "item_ids": [
-            "6700049080"
-          ],
-          "new_item_ids": [
-            "6117189161"
-          ],
-          "payment_method_id": "gift_card_8168843"
-        }
       }
     ],
     "expected_tool_calls_verified": true,
     "distractor_tool": "modify_pending_order_items",
-    "distractor_rationale": "modify_pending_order_items has the same 'swap variant + pay difference' shape and might look right for an unshipped-sounding request, but order #W4817420 is already delivered -- only exchange_delivered_order_items applies, and the matching silver/4K/waterproof variant still has to be looked up via get_product_details since only its options (not its item id) were given.",
+    "distractor_rationale": "modify_pending_order_items has the same 'swap variant + pay difference' shape and might look right for an unshipped-sounding request, but order #W4817420 is already delivered -- only exchange_delivered_order_items applies (on a later turn, once the matching silver/4K/waterproof variant id is known). Per policy.md's one-tool-call-per-turn rule, the agent can't both look up the variant and execute the exchange in the same turn -- this turn's correct action is exactly the get_product_details lookup, since only the variant's options (not its item id) were given; the exchange call itself belongs to a subsequent turn, outside this snapshot.",
     "ambiguity_note": null
   },
   {

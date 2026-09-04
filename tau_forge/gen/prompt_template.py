@@ -86,10 +86,20 @@ print(result.ok, result.value, result.error)
 # If it failed, your proposed action or arguments were wrong -- fix and retry,
 # don't paper over it or hand-wave the JSON anyway.
 
-# Build a multi-step expected_tool_calls the same way: keep ONE RetailEnv alive
-# for that one scenario, execute step 1 for real, inspect the resulting state,
-# then decide step 2 against what actually resulted -- not what you assumed
-# would result.
+# You MAY chain several real executions here to explore what a multi-step
+# interaction would actually look like end to end (e.g. look up the order,
+# then look up the product, then try the mutation) -- that's a legitimate way
+# to build confidence in a scenario. But `expected_tool_calls` in your OUTPUT
+# must never contain more than one call. policy.md is explicit: "You should
+# at most make one tool call at a time, and if you take a tool call, you
+# should not respond to the user at the same time." A chained
+# [lookup, mutation] answer describes two agent turns, not one, and isn't
+# something a policy-compliant agent would ever emit in a single turn -- it's
+# also not gradable by the Phase 4 reward function, which only scores one
+# Action. If your exploration takes several real calls, that just tells you
+# which ONE of them is correct for THIS scenario's turn; write that one down,
+# and if the scenario is naturally later-stage (the lookup already happened),
+# say so in `prior_turns` as text instead of trying to cram both steps in.
 ```
 
 For a scenario with an empty expected_tool_calls (ambiguous / policy_violation /
@@ -101,7 +111,41 @@ looked up in `env.db` -- never invent one.
 Every id appearing anywhere in your output must be real. Fabricated ids make a
 scenario unusable: Phase 3's automated rule checker re-executes every
 expected_tool_calls against this exact same database and discards anything that
-doesn't check out.
+doesn't check out -- including a hard check that `expected_tool_calls` never has
+more than one entry.
+
+## Match the real benchmark's tool-use distribution, not just its tool list
+
+Across the real 114 τ²-bench retail tasks' reference trajectories (550 tool
+calls total), **64.9% are lookup/identity calls** (`get_order_details` alone is
+30.5% of every call made; `find_user_id_by_name_zip`/`find_user_id_by_email`,
+`get_user_details`, `get_product_details`, `get_item_details` account for most
+of the rest) and only **35.1% are the mutating/generic "final" action**
+(`return_delivered_order_items`, `modify_pending_order_items`,
+`exchange_delivered_order_items`, `cancel_pending_order`,
+`modify_pending_order_address`, `calculate`, `modify_user_address`,
+`transfer_to_human_agents`, `modify_pending_order_payment`, roughly in that
+order of frequency). A first pilot batch of this generation pipeline skewed
+almost entirely toward the mutating/generic end (near-zero lookup calls as the
+*answer* to a scenario) because every scenario assumed identity/order lookup
+was already resolved in `prior_turns`. That's a real, measured gap from the
+real distribution above, not a hypothetical one -- correct for it here:
+
+**At least a third of your scenarios in this cell should have a lookup tool
+itself as the correct `expected_tool_calls` answer** -- i.e. the scenario
+snapshot represents an EARLIER point in the interaction, before identity or
+order/product details have been established, and the correct single next
+action is `find_user_id_by_name_zip`, `find_user_id_by_email`,
+`get_user_details`, `get_order_details`, `get_product_details`,
+`get_item_details`, `list_all_product_types`, or `calculate` -- not the
+downstream mutation. (If this cell's theme is `identity_and_order_lookup`,
+skew even higher than a third -- that theme exists specifically to cover this
+stage.) For your other scenarios, where the correct answer legitimately is the
+mutating/generic action, write `prior_turns` so it's clear the necessary
+lookup already happened earlier in the conversation (stated as fixed
+assistant/user text, e.g. "I found your order -- it's currently delivered and
+contains an Action Camera (4K, black) and a Water Bottle."), not silently
+assumed.
 
 ## Tools available (full source, verbatim -- the exact interface the agent sees)
 
@@ -184,24 +228,30 @@ Each element:
 }}
 ```
 
-Rules for `expected_tool_calls` by category:
+`expected_tool_calls` must NEVER contain more than one entry, in any category
+-- see "Match the real benchmark's tool-use distribution" above for why. Rules
+by category:
 - **ambiguous**: must be `[]`; `ambiguity_note` must explain exactly what's
   underspecified and why guessing would be wrong.
-- **policy_violation**: must be `[]`, UNLESS the correct first move is a READ
-  tool needed to establish the state that makes the refusal correct (e.g.
-  checking order status to discover it's not pending) -- if so, include just
-  that READ call and explain the refusal in a prior_turns/user_message-adjacent
-  way that makes the intended final behavior clear.
+- **policy_violation**: must be `[]`, UNLESS the correct move THIS turn is a
+  single READ call needed to establish the state that makes the refusal
+  correct (e.g. checking order status to discover it's not pending) -- if so,
+  include just that one READ call and explain the refusal in a
+  prior_turns/user_message-adjacent way that makes the intended eventual
+  behavior clear.
 - **out_of_scope**: must be exactly one call to `transfer_to_human_agents` with
   a real, specific `summary` argument.
-- **happy_path / requires_earlier_context**: one or more real, verified calls.
+- **happy_path / requires_earlier_context**: exactly one real, verified call --
+  either a lookup call (if this scenario represents an earlier stage of the
+  interaction) or the mutating/generic action (if `prior_turns` already
+  establishes that the necessary lookups happened). See the tool-use
+  distribution section above for the target mix.
 
-Set `expected_tool_calls_verified: true` only if you actually executed every
-call in the list via `env.execute(...)` (or a chained sequence of them) and
-confirmed the result matched your intent -- false if you couldn't (e.g. a
-`[]`-expected-tool-calls scenario has nothing to execute, so mark `false` for
-those and rely on real ids instead; be honest here, this field is read as a
-trust signal downstream, not a formality).
+Set `expected_tool_calls_verified: true` only if you actually executed that
+call via `env.execute(...)` and confirmed the result matched your intent --
+false if you couldn't (e.g. a `[]`-expected-tool-calls scenario has nothing to
+execute, so mark `false` for those and rely on real ids instead; be honest
+here, this field is read as a trust signal downstream, not a formality).
 
 Also write a second file -- one-line semantic summaries for the dedup registry
 (short enough for another generator to recognize "this is basically the same
