@@ -1,0 +1,638 @@
+[
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__001",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's James Li. My hiking boots from order #W4435622 have a sole that's completely come apart from the upper after less than a week of wear."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry to hear that. I can see order #W4435622 (delivered) with the Hiking Boots, item 4694984344. Since they're defective, would you like a return or an exchange, and which payment method should receive the refund if you return them?"
+      },
+      {
+        "role": "user",
+        "content": "Let's do a return, and please refund it to the gift card on file."
+      }
+    ],
+    "user_message": "Great, go ahead and process that.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W4435622",
+          "item_ids": [
+            "4694984344"
+          ],
+          "payment_method_id": "gift_card_1725971"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user explicitly chose a return with a refund, stated two turns earlier, not a replacement -- exchanging the item would ignore that earlier decision even though both tools apply to this delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__002",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "One of the items from order #W4817420, the Electric Kettle, won't heat water anymore."
+      },
+      {
+        "role": "assistant",
+        "content": "I see it, item 9624127908, the 1.5L plastic silver kettle. Would you like to return it or exchange for a different kettle?"
+      },
+      {
+        "role": "user",
+        "content": "I'd like to exchange it for the 1L glass silver one instead, item 1240311797, and refund any price difference to my gift card."
+      }
+    ],
+    "user_message": "Sounds good, please go ahead with that swap.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W4817420",
+          "item_ids": [
+            "9624127908"
+          ],
+          "new_item_ids": [
+            "1240311797"
+          ],
+          "payment_method_id": "gift_card_8168843"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user asked for a replacement kettle, not a refund -- the specific replacement item id and payment method were only given in the prior turn, so a plain return would both ignore the request and drop the chosen item.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__003",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "My order #W6304490 arrived, but the Air Purifier's control panel is completely unresponsive, doesn't turn on at all."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry about that. I found order #W6304490 (delivered) with the Air Purifier, item 9375701158. I can return it and refund the original credit card on file -- would that work?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, that works."
+      }
+    ],
+    "user_message": "Please go ahead and process it now.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6304490",
+          "item_ids": [
+            "9375701158"
+          ],
+          "payment_method_id": "credit_card_4420174"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user only agreed to a return refunded to their original card, established two turns back -- an exchange would substitute a replacement item the user never asked for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__004",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Bluetooth Speaker in order #W7766102 crackles badly whenever the volume goes above 50%. I think it's defective."
+      },
+      {
+        "role": "assistant",
+        "content": "That's the item 5855700373 in your delivered order #W7766102. Would you like a return or exchange? For a return, I can refund your gift card on file."
+      },
+      {
+        "role": "user",
+        "content": "A return is fine, refund to the gift card."
+      }
+    ],
+    "user_message": "Okay, please process that for me.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7766102",
+          "item_ids": [
+            "5855700373"
+          ],
+          "payment_method_id": "gift_card_2977513"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user picked a return refunded to their gift card in the prior turn -- exchange would issue a replacement item instead of the refund actually requested.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__005",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I've got two problems: the Skateboard in order #W1539823 has a wobbly back wheel, and separately the Mechanical Keyboard from another delivered order has a key that sticks."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it, thanks for flagging both. Which one would you like to tackle first?"
+      },
+      {
+        "role": "user",
+        "content": "Let's start with the skateboard one."
+      }
+    ],
+    "user_message": "Can you check the current status of that order before we go further?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W1539823"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Which of the two damaged-item orders 'that order' refers to is only recoverable from the prior turn (the skateboard, not the keyboard order) -- and no return details (item list, payment method) have been confirmed yet, so jumping to a return would be premature and would guess at the wrong order without the earlier context.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__006",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "My digital camera from order #W4689314 has a burnt-out pixel cluster in the middle of every photo, it's clearly a sensor defect."
+      },
+      {
+        "role": "assistant",
+        "content": "That's item 5996159312 in your delivered order. I found an available 24MP/3x/CF-card variant, item 4326528037, that could replace it. Would you like to exchange for that one, and which payment method should cover the price difference?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, exchange it for that one, and use my other credit card, not the one I originally paid with, for the difference."
+      }
+    ],
+    "user_message": "Go ahead and make that swap.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W4689314",
+          "item_ids": [
+            "5996159312"
+          ],
+          "new_item_ids": [
+            "4326528037"
+          ],
+          "payment_method_id": "credit_card_3951670"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user chose an exchange to a specific replacement variant and a specific non-original card, both stated only in the prior turn -- returning the item would drop the chosen replacement entirely.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__007",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Makeup Kit palette from order #W3069600 arrived shattered, several pans are cracked."
+      },
+      {
+        "role": "assistant",
+        "content": "I see it, item 5012998807 in your delivered order #W3069600. I can return it -- would you like the refund on your original credit card or your gift card on file?"
+      },
+      {
+        "role": "user",
+        "content": "Put it on the gift card instead, I'd rather save the card for later."
+      }
+    ],
+    "user_message": "Yes, let's do that.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W3069600",
+          "item_ids": [
+            "5012998807"
+          ],
+          "payment_method_id": "gift_card_7250692"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user asked for a refund to a specific non-original gift card named in the prior turn, not a replacement item -- exchange would substitute a new makeup kit rather than issue the requested refund.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__008",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Headphones from order #W7736708, the on-ear wireless red pair, have an ear cushion that detached completely -- item 3104857380."
+      },
+      {
+        "role": "assistant",
+        "content": "Sorry about that. If you'd rather exchange than return, I can check other options -- for instance the over-ear wireless black model, item 7493556126, if you're interested."
+      },
+      {
+        "role": "user",
+        "content": "That one sounds good if it's actually in stock."
+      }
+    ],
+    "user_message": "Were you able to check on that one?",
+    "expected_tool_calls": [
+      {
+        "name": "get_item_details",
+        "arguments": {
+          "item_id": "7493556126"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The replacement item id was only mentioned in the prior turn and the user has not confirmed they want to proceed -- exchanging now would risk requesting a variant that turns out to be unavailable instead of first confirming stock as asked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__009",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Espresso Machine in order #W7016806 leaks water from the base every time I use it."
+      },
+      {
+        "role": "assistant",
+        "content": "That's item 6200867091, the 19-bar 1L capsule model, in your delivered order. There's an available 19-bar 1L manual version, item 9884666842, if you'd like to switch types. Which payment method should take the price difference?"
+      },
+      {
+        "role": "user",
+        "content": "Let's do that, and refund any difference to my gift card."
+      }
+    ],
+    "user_message": "Please go ahead with the exchange.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7016806",
+          "item_ids": [
+            "6200867091"
+          ],
+          "new_item_ids": [
+            "9884666842"
+          ],
+          "payment_method_id": "gift_card_1870765"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user chose the manual replacement variant and gift-card refund of the difference two turns back -- a return would refund the whole item instead of exchanging it for the chosen model.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__010",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "My hiking boots from order #W7008160 have the sole completely detached from the upper on the left boot."
+      },
+      {
+        "role": "assistant",
+        "content": "I found it, item 3613716226 in your delivered order #W7008160. I can process a return refunded to your gift card on file -- shall I proceed?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, please."
+      }
+    ],
+    "user_message": "Go ahead and submit that.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7008160",
+          "item_ids": [
+            "3613716226"
+          ],
+          "payment_method_id": "gift_card_9293123"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user confirmed a return to their gift card in the prior turn -- exchanging would send a replacement pair of boots the user never asked for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__011",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The insole is missing entirely from one of the hiking boots in order #W8488728, I think it fell out during shipping."
+      },
+      {
+        "role": "assistant",
+        "content": "I can look into a return or exchange once I confirm the order has actually been delivered -- do you know if it's shown as delivered yet?"
+      },
+      {
+        "role": "user",
+        "content": "I think so, but I'm not totally sure."
+      }
+    ],
+    "user_message": "Can you check for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W8488728"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order's delivery status was left unconfirmed in the prior turn, and the user hasn't chosen a payment method for a refund -- attempting a return before verifying delivered status could simply fail, and skips the check the user just agreed to.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__012",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Headphones from order #W7990410 stopped charging entirely after two days, item 5635439102."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry to hear that. I can return that item -- would you like the refund to your original PayPal, or a gift card?"
+      },
+      {
+        "role": "user",
+        "content": "Original PayPal is fine."
+      }
+    ],
+    "user_message": "Great, please process the return.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7990410",
+          "item_ids": [
+            "5635439102"
+          ],
+          "payment_method_id": "paypal_7685859"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user chose a refund to their original PayPal, not a replacement -- exchange would send a new pair of headphones instead of the refund actually requested.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__013",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I have two Cycling Helmets in order #W8033354 -- the white one arrived with a cracked shell, but the blue one is fine."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it, that's item 6697922351, the white one. Would you like to return or exchange it? For a return I'd refund your credit card on file."
+      },
+      {
+        "role": "user",
+        "content": "A return is fine."
+      }
+    ],
+    "user_message": "Please go ahead and process that one, not the blue helmet.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8033354",
+          "item_ids": [
+            "6697922351"
+          ],
+          "payment_method_id": "credit_card_3081930"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Which of the two cycling helmets is damaged (the white one, item 6697922351) was only established in the prior turn -- exchanging would substitute a new helmet when the user asked only for a refund on the cracked one.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__014",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Desk Lamp in order #W9784474 flickers on and off constantly, item 8384507844."
+      },
+      {
+        "role": "assistant",
+        "content": "That's a delivered order. I can process a return refunded to the gift card you originally paid with -- want me to go ahead?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, that's fine."
+      }
+    ],
+    "user_message": "Okay, please submit it.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W9784474",
+          "item_ids": [
+            "8384507844"
+          ],
+          "payment_method_id": "gift_card_7733255"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user confirmed a straight refund to the original gift card, not a replacement lamp -- exchange would ignore that confirmed choice from the prior turn.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__015",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The pressure gauge on the Espresso Machine from order #W5866402 doesn't register anything, it's stuck at zero."
+      },
+      {
+        "role": "assistant",
+        "content": "That's item 6242772310, the 19-bar 1L automatic model, in your delivered order. There's an available 19-bar 1L manual version, item 9884666842, if you'd like to switch. Which payment method should cover any price difference?"
+      },
+      {
+        "role": "user",
+        "content": "Let's exchange for that, and use my gift card for the difference."
+      }
+    ],
+    "user_message": "Please go ahead with that swap.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W5866402",
+          "item_ids": [
+            "6242772310"
+          ],
+          "new_item_ids": [
+            "9884666842"
+          ],
+          "payment_method_id": "gift_card_7794233"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The chosen replacement variant and gift-card payment for the difference were both given only in the prior turn -- a return would refund the whole machine instead of swapping to the manual model the user picked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__016",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Separately, the clasp on the Smart Watch from that same order, item 9811090008, snapped off yesterday."
+      },
+      {
+        "role": "assistant",
+        "content": "Sorry to hear that too. If you want a metal band this time instead of leather, I can check the black metal LCD variant, item 1706622510, for you."
+      },
+      {
+        "role": "user",
+        "content": "Yeah, check if that one's actually available before I decide."
+      }
+    ],
+    "user_message": "Did you get a chance to look that up?",
+    "expected_tool_calls": [
+      {
+        "name": "get_item_details",
+        "arguments": {
+          "item_id": "1706622510"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The candidate replacement item id came only from the prior turn and the user explicitly asked to check availability before deciding -- exchanging now would commit to a variant that may turn out to be out of stock.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__017",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The Tea Kettle from order #W8171054 doesn't seal properly at the lid and leaks steam everywhere, item 9747045638."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry about that. Would you like to exchange it for a different material, like stainless steel or ceramic?"
+      },
+      {
+        "role": "user",
+        "content": "Maybe -- what other materials does that kettle come in?"
+      }
+    ],
+    "user_message": "Can you pull that up for me?",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "9832717871"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user hasn't picked a replacement variant yet, only asked what materials exist for 'that kettle' referenced from the prior turn -- exchanging now would require guessing an item id the user never chose.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__damaged_or_defective_item_narratives__018",
+    "category": "requires_earlier_context",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "The left earbud on the Wireless Earbuds from order #W1067251 has constant crackling static, item 6452271382."
+      },
+      {
+        "role": "assistant",
+        "content": "Sorry about that. Since you mentioned wanting the black 6-hour IPX7 version, item 5565631513, instead -- want me to check if that's in stock before we exchange?"
+      },
+      {
+        "role": "user",
+        "content": "Yes, check that one first."
+      }
+    ],
+    "user_message": "Any luck on that lookup?",
+    "expected_tool_calls": [
+      {
+        "name": "get_item_details",
+        "arguments": {
+          "item_id": "5565631513"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The replacement item id the user wants is only stated in the prior turn, and the user explicitly asked for a stock check before exchanging -- proceeding straight to the exchange would skip the confirmation step and risk an unavailable variant.",
+    "ambiguity_note": ""
+  }
+]

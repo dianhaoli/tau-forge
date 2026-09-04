@@ -1,0 +1,308 @@
+[
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__001",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Daiki Moore, daiki.moore7228@example.com. I have order #W8032761 with a backpack and a mechanical keyboard on it, both delivered. I only want to send back the keyboard, not the backpack."},
+      {"role": "assistant", "content": "Thanks, I've got you verified and pulled up order #W8032761. Just to confirm: I'd return the 80% linear RGB mechanical keyboard (item 8484921793), with the refund going back to the gift card you originally paid with. Shall I go ahead?"}
+    ],
+    "user_message": "Yes, that's right, please go ahead.",
+    "expected_tool_calls": [
+      {"name": "return_delivered_order_items", "arguments": {"order_id": "#W8032761", "item_ids": ["8484921793"], "payment_method_id": "gift_card_2977513"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Both tools apply to delivered orders and read similarly plausible for an item the customer no longer wants, but the customer explicitly asked to send the keyboard back for a refund, not swap it for a different variant -- exchange would require new_item_ids the user never gave.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__002",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I want to trade in the laptop on order #W1840144 for the i9, 512GB, black configuration instead, and put the price difference on my Visa."},
+      {"role": "assistant", "content": "Got it -- that would exchange your current 15-inch i7/32GB/1TB space grey laptop (item 6017636844) for the 15-inch i9/32GB/512GB black variant (item 2913673670), a $409.52 charge to your Visa ending 3356 since that's more than the original PayPal payment. Should I proceed?"}
+    ],
+    "user_message": "Yes, please go ahead and make the switch.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W1840144", "item_ids": ["6017636844"], "new_item_ids": ["2913673670"], "payment_method_id": "credit_card_3240550"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A return is also valid for a delivered laptop, but the customer already settled on trading up to a specific configuration rather than getting a refund -- calling return would drop the new_item_ids and the whole point of the request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__003",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The clicky keyboard I got on order #W3113816 is way too loud for my office. Is there a quieter switch type in the same 80% white-backlight layout?"},
+      {"role": "assistant", "content": "Yes -- there's a tactile 80% keyboard with the same white backlight, item 9991484137, priced at $240.97 versus the $254.84 you paid, so you'd get a $13.87 refund to your gift card on file. Want me to make that swap?"}
+    ],
+    "user_message": "Sounds good, let's do that.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W3113816", "item_ids": ["4843487907"], "new_item_ids": ["9991484137"], "payment_method_id": "gift_card_6023546"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The item-swap phrasing can read like a pending-order modification, but order #W3113816 is delivered, not pending -- the only valid item-swap tool here is exchange_delivered_order_items.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__004",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Olivia Ito, olivia.ito5204@example.com. On order #W5866402 I want to return the espresso machine -- it's just too much machine for my kitchen. Please refund it to my gift card instead of the PayPal I paid with."},
+      {"role": "assistant", "content": "No problem. That's the 19-bar, 1L automatic espresso machine (item 6242772310) on order #W5866402. I'll request the return and send the refund to your gift card on file rather than PayPal -- confirm and I'll submit it?"}
+    ],
+    "user_message": "Confirmed, thanks.",
+    "expected_tool_calls": [
+      {"name": "return_delivered_order_items", "arguments": {"order_id": "#W5866402", "item_ids": ["6242772310"], "payment_method_id": "gift_card_7794233"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Exchange is a tempting neighbor since it's also a delivered-order electronics action, but the customer wants their money back on a different payment method, not a replacement item -- there's no new_item_ids to supply.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__005",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Harper Li, harper.li3262@example.com. I want to return the tablet from order #W9495141, refunded to the gift card I used to pay."},
+      {"role": "assistant", "content": "Sure -- that's the 7-inch, 32GB, gold tablet (item 6501071631), the only item on order #W9495141, refunded to gift card gift_card_8862145. Shall I submit the return?"}
+    ],
+    "user_message": "Yes please.",
+    "expected_tool_calls": [
+      {"name": "return_delivered_order_items", "arguments": {"order_id": "#W9495141", "item_ids": ["6501071631"], "payment_method_id": "gift_card_8862145"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An exchange is also legal for this delivered tablet, but the customer asked only for a refund back to the gift card, with no replacement item mentioned -- exchange would need new_item_ids that were never provided.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__006",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The 15-bar manual espresso machine on order #W7553778 leaks a bit. Can I swap it for the 9-bar, 2-liter automatic instead? Use my gift card for the difference."},
+      {"role": "assistant", "content": "That works -- item 3714494375 (15 bar, 1L, manual, $2709.83) for item 3709608322 (9 bar, 2L, automatic, $2744.70), a $34.87 charge to your gift card, which has enough balance. Confirm and I'll process it?"}
+    ],
+    "user_message": "Yes, go for it.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W7553778", "item_ids": ["3714494375"], "new_item_ids": ["3709608322"], "payment_method_id": "gift_card_9138722"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Return is a nearby delivered-order tool, but the customer wants a specific replacement machine, not a plain refund -- return_delivered_order_items has no way to express the new variant they picked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__007",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "The in-ear red headphones from order #W5463717 are uncomfortable. I'd rather have the on-ear red pair instead, charged to my gift card."},
+      {"role": "assistant", "content": "Understood. That's swapping item 9838673490 (in-ear, wireless, red, $344.55) for item 3104857380 (on-ear, wireless, red, $377.97) -- a $33.42 charge, which your gift card balance of $38 can just cover. Want me to proceed?"}
+    ],
+    "user_message": "Yep, that works, go ahead.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W5463717", "item_ids": ["9838673490"], "new_item_ids": ["3104857380"], "payment_method_id": "gift_card_8006222"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Return would also be accepted by the tool schema for this delivered headphones order, but the customer wants a different style headphone, not their money back -- omitting the new item entirely would misrepresent their request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__008",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Aarav Nguyen, aarav.nguyen1293@example.com. The wireless earbuds on order #W7728728 keep cutting out, so I'd like to return them. Please put the refund on my gift card, not the PayPal I originally paid with."},
+      {"role": "assistant", "content": "Sure -- that's the blue, 8-hour, IPX4 wireless earbuds (item 8555936349) on order #W7728728, refunded to gift card gift_card_2742113 instead of PayPal. Confirm you'd like me to submit that?"}
+    ],
+    "user_message": "Confirmed.",
+    "expected_tool_calls": [
+      {"name": "return_delivered_order_items", "arguments": {"order_id": "#W7728728", "item_ids": ["8555936349"], "payment_method_id": "gift_card_2742113"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Exchange also targets delivered electronics items, but the customer only asked for a refund to a different payment method -- there's no replacement earbuds variant to fill new_item_ids with.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__009",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hey, Omar Johnson here, omar.johnson6791@example.com. The canister vacuum on order #W2809253 stopped picking up pet hair after a week. I just want to send it back, refunded the way I paid."},
+      {"role": "assistant", "content": "Got it -- that's the bagless, pet-hair-removal canister vacuum (item 7958300294) on order #W2809253, refunded to the PayPal you originally paid with. Should I go ahead and submit the return?"}
+    ],
+    "user_message": "Yes, please.",
+    "expected_tool_calls": [
+      {"name": "return_delivered_order_items", "arguments": {"order_id": "#W2809253", "item_ids": ["7958300294"], "payment_method_id": "paypal_6053880"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A replacement vacuum swap is a plausible alternative for a malfunctioning unit, but the customer explicitly said they just want it sent back for a refund rather than a different vacuum -- exchange would require a new item they never chose.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__010",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Aarav Garcia, aarav.garcia8277@example.com. The gold 5.8-inch phone on order #W3038897 is smaller than I want -- can I switch it for the black 6.5-inch, same storage and RAM, charged to my card?"},
+      {"role": "assistant", "content": "Yes -- that swaps item 9929635042 (gold, 128GB, 4GB RAM, 5.8-inch, $1261.14) for item 5339029584 (black, 128GB, 4GB RAM, 6.5-inch, $1128.99), a $132.15 refund to your credit card since the new one is cheaper. Confirm and I'll process it?"}
+    ],
+    "user_message": "Confirmed, go ahead.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W3038897", "item_ids": ["9929635042"], "new_item_ids": ["5339029584"], "payment_method_id": "credit_card_6821943"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Return could also apply to this delivered smartphone, but the customer wants a different screen-size variant of the same phone, not a plain refund -- return has no field for the replacement item they picked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__011",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I have a tablet on order #W3069600, the 8-inch, 64GB, silver one. Turns out I don't need the extra screen real estate -- can I go down to the 10-inch, 64GB, silver instead? I know that sounds backwards, but it's actually cheaper. Put the refund on my gift card."},
+      {"role": "assistant", "content": "Correct, that variant runs cheaper -- item 8551474201 ($938.92) to item 2106335193 ($903.95), a $34.97 refund to your gift card on file. Want me to go ahead?"}
+    ],
+    "user_message": "Yes, that's the one, please proceed.",
+    "expected_tool_calls": [
+      {"name": "exchange_delivered_order_items", "arguments": {"order_id": "#W3069600", "item_ids": ["8551474201"], "new_item_ids": ["2106335193"], "payment_method_id": "gift_card_7250692"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Returning the tablet outright is a nearby valid action for a delivered order, but the customer wants a different-size tablet in exchange, not simply a refund with no replacement.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__012",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Evelyn Brown, evelyn.brown5837@example.com. The Bluetooth speaker on order #W7647404 has a rattling driver. I'd like to send it back, refunded the way I paid."},
+      {"role": "assistant", "content": "Understood -- that's the black, 10-hour, water-resistant Bluetooth speaker (item 5855700373) on order #W7647404, refunded to your original PayPal payment. Should I go ahead and request the return?"}
+    ],
+    "user_message": "Yes, do it.",
+    "expected_tool_calls": [
+      {"name": "return_delivered_order_items", "arguments": {"order_id": "#W7647404", "item_ids": ["5855700373"], "payment_method_id": "paypal_7053405"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A replacement speaker unit could plausibly fix a defective driver, but the customer only asked for a refund by their original payment method, with no substitute item named -- exchange would need a new item id they never gave.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__013",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I'm looking at trading in the laptop on order #W1840144 for the i9, 512GB, black configuration -- item 2913673670, I think you mentioned."},
+      {"role": "assistant", "content": "That's right, item 2913673670 is the 15-inch, i9, 32GB RAM, 512GB SSD, black laptop, priced at $2701.89."}
+    ],
+    "user_message": "Before I commit to anything, can you double check that one's actually still in stock right now?",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "2913673670"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The exchange itself is the obvious eventual action given the earlier discussion, but the customer explicitly wants an availability check first and hasn't confirmed the trade -- jumping straight to the write action would skip the confirmation the policy requires.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__014",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Harper Li, harper.li3262@example.com, I'm thinking about returning the tablet on order #W9495141 but I'm not 100% sure it actually arrived yet."},
+      {"role": "assistant", "content": "You're verified, Harper. Let me pull that order up and check its current status for you."}
+    ],
+    "user_message": "Yeah, what does it say?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W9495141"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A return is the customer's eventual goal, but she hasn't confirmed the order is even delivered yet or given final go-ahead -- the correct next move is checking status, not filing a return that might fail or get ahead of confirmation.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__015",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, this is Aarav Wilson, aarav.wilson8531@example.com. I'm considering exchanging the espresso machine on order #W7553778 for a pricier model, but I'd want to cover the difference with my gift card."},
+      {"role": "assistant", "content": "Sure, you're verified. Before we pick a new machine, want me to check how much is left on your gift card?"}
+    ],
+    "user_message": "Yes, please check that first.",
+    "expected_tool_calls": [
+      {"name": "get_user_details", "arguments": {"user_id": "aarav_wilson_9535"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The exchange is where this is headed, but no target item or confirmed price difference exists yet -- the customer asked only to check the gift card balance first, so the right move is a profile lookup, not a write action with unresolved arguments.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__016",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, Raj Davis, raj.davis3587@example.com. I bought some headphones a while back on order #W5463717 and I want to know if they've shown up yet before I decide whether to exchange them."},
+      {"role": "assistant", "content": "You're verified, Raj. Let me take a look at that order for you."}
+    ],
+    "user_message": "Great, what's the current status?",
+    "expected_tool_calls": [
+      {"name": "get_order_details", "arguments": {"order_id": "#W5463717"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Exchange is what the customer is weighing, but he hasn't picked a replacement variant or even confirmed the order arrived -- the correct move is checking delivery status first, not filing a swap.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__017",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Sofia Li, sofia.li7352@example.com. I have a 24MP digital camera from order #W4689314 and I'm wondering if it comes in other zoom or storage options in case I want to exchange mine."},
+      {"role": "assistant", "content": "You're verified, Sofia. Let me pull up the full lineup for that camera."}
+    ],
+    "user_message": "Thanks, go ahead and show me what's available.",
+    "expected_tool_calls": [
+      {"name": "get_product_details", "arguments": {"product_id": "8940227892"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "An exchange is what she might do next, but she hasn't picked a specific new item yet -- she only asked to see the available options, which is a product lookup, not a write action with a target item id.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "requires_earlier_context__electronics_returns_exchanges__018",
+    "category": "requires_earlier_context",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, I'm Sofia Moore, sofia.moore4274@example.com. I have a black silicone LCD smart watch from order #W3338814 and I'm thinking about exchanging it for the gold leather LCD one, item 9408160950 I believe."},
+      {"role": "assistant", "content": "You're verified, Sofia. Let me check whether that gold leather LCD variant is actually available before we go further."}
+    ],
+    "user_message": "Yes, please check that one specifically.",
+    "expected_tool_calls": [
+      {"name": "get_item_details", "arguments": {"item_id": "9408160950"}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The exchange is the eventual action, but the customer hasn't confirmed the swap or the payment method yet, only asked to verify the specific variant's availability -- a write call at this point would be premature.",
+    "ambiguity_note": ""
+  }
+]
