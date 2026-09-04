@@ -1,0 +1,522 @@
+[
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__001",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is omar.khan3563@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Omar, I've located your account. How can I help?"
+      }
+    ],
+    "user_message": "The dumbbell set from order #W6304490 arrived with a cracked hex plate, and when it slipped it gouged a chunk out of my basement's laminate flooring. I'm not asking for a return right now -- I need the store to cover the cost of repairing my floor. Can you file that claim for me?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W6304490 (delivered) says a cracked dumbbell plate gouged their basement flooring and is requesting reimbursement for floor repair costs -- a property-damage compensation claim, not a return/exchange request; no tool handles third-party damage claims, needs human review."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The dumbbell set is delivered and undamaged-item-wise returnable, so an agent might default to return_delivered_order_items. But the customer isn't asking to send the item back for a refund -- they're asking for compensation for damage the item caused to their property, which is outside anything return_delivered_order_items (or any other tool) can do.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__002",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Daiki Moore, zip 85078."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Daiki, I've verified your account with that name and zip."
+      }
+    ],
+    "user_message": "The mechanical keyboard from order #W8032761 has a spacebar that sticks and needs to be opened up and re-lubed. I don't want to exchange it for a new one, I'd rather have a technician repair this exact unit since I like this specific set of switches. Can you schedule a repair visit?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W8032761 (delivered) wants an in-home repair technician sent to fix a sticking spacebar on their mechanical keyboard rather than returning or exchanging it; no repair-dispatch tool exists in the toolkit."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The keyboard is delivered and defective, so an agent might reach for exchange_delivered_order_items to swap it for a working unit. But the customer explicitly does not want a different unit -- they want their exact keyboard repaired in place, which no tool in the toolkit can arrange.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__003",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Emma Santos, my email is emma.santos7683@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, I've found your account."
+      }
+    ],
+    "user_message": "I need to report an injury. The office chair from order #W3113816 -- one of its legs snapped clean off while I was sitting down and I fell and hurt my back. I need to file an incident report with your safety or claims team, not just get a refund on the chair.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W3113816 (delivered) reports the office chair's leg snapped and caused a fall injury, requesting a formal safety/injury incident report be filed; no tool handles injury claims, requires immediate human escalation."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The chair is delivered and clearly defective, so return_delivered_order_items looks like the obvious next step. But the customer is asking for an injury incident report to be filed with a safety/claims team, which is a distinct request no tool addresses -- a product refund doesn't resolve or even touch the injury claim.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__004",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, it's Harper Brown, email harper.brown3965@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Harper, I've located your account."
+      },
+      {
+        "role": "user",
+        "content": "The laptop I got in order #W1840144 has a dead pixel cluster right in the middle of the screen."
+      },
+      {
+        "role": "assistant",
+        "content": "Sorry to hear that -- since the order shows delivered, I can process a return or an exchange for it once you're ready. Just let me know which you'd like."
+      }
+    ],
+    "user_message": "Neither, actually -- I need this laptop for work starting tomorrow. Can you ship me a brand new replacement unit right now, before I send the defective one back? I'll mail the broken one back once the new one arrives.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on delivered laptop order #W1840144 (dead pixel cluster) is requesting an advance replacement be shipped before returning the defective unit -- a cross-ship arrangement no tool supports, since exchange_delivered_order_items only processes the swap after both item lists are finalized in one call, not a ship-first-return-later flow."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Exchanging the laptop for a working unit sounds like the natural fix, so an agent might reach for exchange_delivered_order_items. But the customer specifically wants the new unit shipped before returning the old one -- a cross-ship/advance-replacement arrangement the tool doesn't support; it only records an exchange after the customer has already agreed to send the original item(s) back.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__005",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is evelyn.gonzalez2110@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Evelyn, I've located your account."
+      }
+    ],
+    "user_message": "The notebook from order #W8341134 has pages falling out of the binding, and I saw two other reviews online mentioning the exact same defect on this product. I don't want a refund -- I want this reported to the manufacturer as a possible batch quality issue so they can look into it.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W8341134 (delivered notebook) is not requesting a refund/exchange, but wants the defect reported to the manufacturer as a possible batch-wide quality/recall issue; no tool files manufacturer quality reports."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The notebook is delivered and defective, so return_delivered_order_items is the obvious in-scope action. But the customer explicitly declines a refund and instead wants the defect escalated to the manufacturer as a potential batch quality issue -- something no tool in the toolkit can do.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__006",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Aarav Sanchez, zip 77015."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've verified your account."
+      }
+    ],
+    "user_message": "The coffee maker from order #W5455653 leaked scalding water overnight and it warped and stained my kitchen countertop. I want the company to pay for having the countertop refinished -- can you get that started?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W5455653 (delivered coffee maker) reports a leak that damaged their kitchen countertop and is asking the company to pay for countertop refinishing -- a property-damage reimbursement request no tool in the toolkit can process."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A leaking, delivered coffee maker looks like a straightforward return case, tempting an agent toward return_delivered_order_items. But the customer's actual ask is reimbursement for damage to their countertop, not a refund on the appliance itself -- that's outside anything the toolkit can do.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__007",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mason Ahmed, email mason.ahmed2802@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mason, I've located your account."
+      }
+    ],
+    "user_message": "This is urgent -- the grill from order #W2101159 has a gas leak at one of the hose fittings and I can smell propane near it. I need this escalated to someone who handles product safety hazards right away, not just a standard return.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W2101159 (delivered grill) reports an active propane gas leak, a product safety hazard requiring immediate human escalation -- outside anything a standard return or exchange tool call can address."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A grill with a fitting problem is delivered and eligible for a standard return, so an agent might jump to return_delivered_order_items. But the customer is reporting an active gas leak safety hazard needing urgent human attention, not a routine merchandise return -- no tool models safety-incident escalation.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__008",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is aarav.davis2239@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've found your account."
+      }
+    ],
+    "user_message": "The espresso machine from order #W6552785 has an internal pump fault -- it's under the manufacturer's 2-year warranty. I'd like to have a certified repair technician come fix the pump rather than return the whole machine. Can you set that up?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W6552785 (delivered espresso machine) wants a manufacturer-warranty repair technician dispatched to fix an internal pump fault instead of returning the machine; no repair-scheduling tool exists in the toolkit."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A faulty espresso machine on a delivered order might tempt an agent to offer exchange_delivered_order_items for a working unit. But the customer specifically wants their existing machine repaired under warranty by a technician, not swapped for a different unit -- something no tool in the toolkit provides.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__009",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, it's Omar Johnson, my email is omar.johnson6791@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Omar, I've located your account."
+      }
+    ],
+    "user_message": "The vacuum cleaner from order #W2809253 started smoking and smelled like burning plastic when I turned it on. I unplugged it immediately. I need this reported as a safety hazard, not just processed as a normal return -- is there someone who handles that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W2809253 (delivered vacuum cleaner) reports the unit smoking and smelling of burning plastic, a fire-hazard safety incident requiring human escalation rather than a routine return."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The vacuum is delivered and clearly defective, making return_delivered_order_items look correct on the surface. But the customer is flagging a fire/smoke safety hazard and explicitly asking for hazard reporting, not a routine merchandise return -- no tool handles safety-incident escalation.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__010",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sofia Lee, zip 91401."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've verified your account."
+      }
+    ],
+    "user_message": "I need to report something serious. The indoor security camera from order #W7762997 gave me a small electric shock when I touched the metal mounting bracket while resetting it. My hand still feels tingly. I want this reported to whoever handles product safety incidents.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W7762997 (delivered indoor security camera) reports receiving an electric shock from the unit's mounting bracket and wants it reported as a product safety incident -- an injury/hazard report no tool can file."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The camera is delivered and defective, so an agent might default to return_delivered_order_items as the fix. But the customer's actual request is to have the electric-shock incident reported to a safety team, a distinct concern a merchandise return does not address.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__011",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is amelia.ito8974@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Amelia, I've located your account."
+      }
+    ],
+    "user_message": "The bicycle from order #W3733909 has cracked welds on the frame near the seat post -- it's not safe to ride. I have a race this weekend and can't wait for a return-then-reorder cycle. Can you ship me a replacement bike today and let me send the cracked one back afterward?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W3733909 (delivered bicycle) reports cracked frame welds and is requesting an urgent advance replacement shipped before returning the defective bike, ahead of a race deadline -- a cross-ship arrangement no tool supports."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A cracked bicycle frame on a delivered order is a textbook exchange_delivered_order_items case at first glance. But the customer wants the replacement shipped immediately, before sending the cracked bike back -- exchange_delivered_order_items only finalizes a swap where both item lists are known and the original is understood to be returned, not a ship-first cross-ship flow.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__012",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Aarav Garcia, email aarav.garcia8277@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've found your account."
+      }
+    ],
+    "user_message": "The smartphone from order #W3038897 arrived with the screen already shattered inside a crushed box -- it looks like it was damaged in transit by the carrier. I want to file a damage claim with the shipping carrier directly, not just return the phone to you. Can you help me start that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W3038897 (delivered smartphone) reports the item arrived crushed/shattered in shipping and wants to file a damage claim directly with the shipping carrier -- outside the toolkit, which has no carrier-claim capability."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A smartphone that arrived shattered is a delivered, damaged item, so return_delivered_order_items seems like the obvious response. But the customer is specifically asking to file a claim with the shipping carrier for in-transit damage, not to return the phone for a store refund -- that's a distinct process no tool provides.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__013",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Aarav Wilson, zip 28214."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've verified your account."
+      }
+    ],
+    "user_message": "The wristwatch from order #W7553778 stopped keeping time after only two weeks. I'm going to get it exchanged, but separately I also want the manufacturer's warranty extended to cover the time I lost dealing with this defect. Can you register that warranty extension for me?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W7553778 (delivered wristwatch) is requesting the manufacturer's warranty be extended to compensate for time lost to the defect -- a warranty-registration action no tool in the toolkit performs."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The customer does mention wanting an exchange, which is genuinely in-scope, but the actual request in this turn is the warranty-extension registration, not the exchange itself -- exchange_delivered_order_items can't register or extend a manufacturer warranty, so calling it here would answer a request the customer hasn't made yet.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__014",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is fatima.wilson5721@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Fatima, I've located your account."
+      }
+    ],
+    "user_message": "One of the electric toothbrushes from order #W5272531 overheated while charging overnight and left a scorch mark on my bathroom counter -- it could have started a fire. I want this treated as a safety hazard and I want the counter damage covered, not just a swap for a working toothbrush.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W5272531 (delivered electric toothbrush) reports the charging unit overheated and scorched their countertop, a fire-hazard incident with a property-damage claim attached -- neither is addressable by any return/exchange tool."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A toothbrush that overheated is delivered and defective, making exchange_delivered_order_items look like the natural fix. But the customer is reporting a fire-hazard safety incident and property damage to their countertop, explicitly saying a working replacement isn't the point -- no tool covers hazard reporting or damage reimbursement.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__015",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sofia Moore, email sofia.moore4274@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, I've found your account."
+      },
+      {
+        "role": "user",
+        "content": "The smart watch from order #W3338814 won't hold a charge -- this is the second one you've sent me that's had the exact same problem."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry to hear that -- I can start a return or an exchange for the current one whenever you're ready."
+      }
+    ],
+    "user_message": "I don't want a third one of these, honestly. Given this is happening twice with the same model, I want to speak to a supervisor about a formal quality complaint, not just process another return.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W3338814 (delivered smart watch, second defective unit of same model) is requesting a supervisor and a formal quality complaint about a recurring defect rather than another return/exchange; no tool escalates to a supervisor or logs formal complaints."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Since the customer has a delivered, defective smart watch, return_delivered_order_items is the obvious next tool. But the customer explicitly declines another routine return and instead asks to speak with a supervisor about a recurring quality issue -- an escalation no tool in the toolkit performs.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__016",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Liam Anderson, zip 43107."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Liam, I've verified your account."
+      }
+    ],
+    "user_message": "The patio umbrella from order #W2119065 collapsed in a gust of wind and the pole cracked my car's rear windshield. I need the company to cover the windshield repair -- can you file that claim?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W2119065 (delivered patio umbrella) reports the umbrella collapsed and cracked their car's rear windshield, requesting the company cover the repair cost -- a property-damage claim no tool can file."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The umbrella is delivered and clearly failed, so return_delivered_order_items looks like the right call. But the customer is asking for reimbursement for damage to their car's windshield, not a refund on the umbrella itself -- that's outside what any tool in the toolkit can do.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__017",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is aarav.santos8320@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've located your account."
+      }
+    ],
+    "user_message": "The LED light bulb from order #W8528674 shattered while I was screwing it into the fixture and a glass shard cut my hand -- I ended up needing a couple of stitches. I want to know how to file an injury claim with your company, not just get a refund on the bulb.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W8528674 (delivered LED light bulb) reports the bulb shattered during installation and caused a hand injury requiring stitches, and is asking how to file an injury claim -- no tool handles personal-injury claims, requires human escalation."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A shattered, delivered light bulb is exactly the kind of defect return_delivered_order_items is built for. But the customer is asking how to file a personal injury claim for the cut they sustained, not for a bulb refund -- that request falls entirely outside the toolkit.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__damaged_or_defective_item_narratives__018",
+    "category": "out_of_scope",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Olivia Ahmed, email olivia.ahmed5620@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Olivia, I've found your account."
+      }
+    ],
+    "user_message": "This can't wait -- the portable charger from order #W1579621 started smoking on my desk right next to a stack of papers while it was charging. I need this escalated as an urgent fire hazard right now, not queued as a normal return.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer on order #W1579621 (delivered portable charger) reports the unit smoking near flammable material, an urgent fire-hazard safety incident requiring immediate human escalation rather than a standard return."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "A smoking, delivered portable charger looks like an obvious return_delivered_order_items case. But the customer is explicitly demanding urgent fire-hazard escalation, not a routine merchandise return -- no tool handles safety-incident escalation or its urgency.",
+    "ambiguity_note": ""
+  }
+]

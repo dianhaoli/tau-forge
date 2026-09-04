@@ -1,0 +1,18 @@
+{"id": "out_of_scope__identity_and_order_lookup__001", "one_line": "Authenticated user asks to change the email address on file, no tool supports it."}
+{"id": "out_of_scope__identity_and_order_lookup__002", "one_line": "User asks to merge a second duplicate account's order history into their current account."}
+{"id": "out_of_scope__identity_and_order_lookup__003", "one_line": "User disputes sales tax charged on a delivered order and wants it recalculated/refunded."}
+{"id": "out_of_scope__identity_and_order_lookup__004", "one_line": "User reports delivery driver damaged their mailbox, wants complaint filed and compensation."}
+{"id": "out_of_scope__identity_and_order_lookup__005", "one_line": "User wants a formal business invoice plus the company's W9 tax form for accounting."}
+{"id": "out_of_scope__identity_and_order_lookup__006", "one_line": "User requests full account deletion and erasure of all personal data."}
+{"id": "out_of_scope__identity_and_order_lookup__007", "one_line": "User asks to combine two pending orders into a single shipment to save shipping fees."}
+{"id": "out_of_scope__identity_and_order_lookup__008", "one_line": "User wants a forgotten promo code retroactively applied to an already-placed pending order."}
+{"id": "out_of_scope__identity_and_order_lookup__009", "one_line": "User asks agent to reset their website account login password."}
+{"id": "out_of_scope__identity_and_order_lookup__010", "one_line": "User wants to be unsubscribed from marketing emails and promotional robocalls."}
+{"id": "out_of_scope__identity_and_order_lookup__011", "one_line": "User explicitly refuses further chat help and demands a human agent after unresolved exchange."}
+{"id": "out_of_scope__identity_and_order_lookup__012", "one_line": "User wants a price match against a competitor's cheaper listing, refunded as a difference."}
+{"id": "out_of_scope__identity_and_order_lookup__013", "one_line": "User wants a delivered item donated to charity instead of returned, plus a tax receipt."}
+{"id": "out_of_scope__identity_and_order_lookup__014", "one_line": "User reports a phishing email impersonating the company and asks for investigation."}
+{"id": "out_of_scope__identity_and_order_lookup__015", "one_line": "User asks to add a phone number to their account for SMS shipment notifications."}
+{"id": "out_of_scope__identity_and_order_lookup__016", "one_line": "User reports a suspicious account login and asks the agent to lock down their account."}
+{"id": "out_of_scope__identity_and_order_lookup__017", "one_line": "User wants gift wrapping and a gift note added retroactively to a pending order."}
+{"id": "out_of_scope__identity_and_order_lookup__018", "one_line": "User asks how to set up a wholesale business account with negotiated bulk pricing."}

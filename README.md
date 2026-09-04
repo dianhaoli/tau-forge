@@ -15,8 +15,8 @@ continuity across sessions).
 |---|---|---|
 | 0 | Repo setup + data substrate extraction | Done |
 | 1 | Environment wrapper / mock tool executor | Done |
-| 2 | Synthetic scenario generation (methodology + first cells) | **Pilot done (3/30 cells) — awaiting review** |
-| 3 | Validation pipeline (rule / model / human / difficulty) | Not started |
+| 2 | Synthetic scenario generation (methodology + full sweep) | **Done (30/30 cells, 541 scenarios) — awaiting review before Phase 3 stages 2-4** |
+| 3 | Validation pipeline (rule / model / human / difficulty) | **Stage 1 (rule checker) done; stages 2-4 (model checker / human review / difficulty calibration) not started** |
 | 4 | Reward function + adversarial tests | Not started |
 | 5 | Decontamination vs. real 114 τ²-bench tasks | Not started |
 | 6 | Harness smoke test on real 74 train tasks | Not started |
@@ -122,12 +122,63 @@ registry) — reused for all 30 cells, not copy-pasted per cell.
 
 Piloted 3 cells (one subagent each, run in parallel) before committing to the full
 sweep: `happy_path`×electronics (20 scenarios), `ambiguous`×apparel (17),
-`policy_violation`×order_state_confusion (20) — 57 total, in
-`data/synthetic/raw/*.json`. Each subagent authored gold answers interactively
-against the Phase 1 `RetailEnv` (executing real calls, not just asserting
-correctness) and ran its own post-hoc verification pass against the written JSON.
-Per-cell one-line summaries are merged into `data/synthetic/registry.jsonl` for
-the next wave's dedup context.
+`policy_violation`×order_state_confusion (20) — 57 total. Each subagent authored
+gold answers interactively against the Phase 1 `RetailEnv` (executing real calls,
+not just asserting correctness) and ran its own post-hoc verification pass
+against the written JSON. Per-cell one-line summaries are merged into
+`data/synthetic/registry.jsonl` for the next wave's dedup context.
+
+## Synthetic generation -- Phase 2 full sweep (all 30 cells)
+
+Completed the remaining 27 cells in 5 waves (5-6 subagents in parallel per wave,
+sequential across waves so each wave's `seen_so_far` dedup context reflects every
+prior wave): wave 1 = the 5 remaining `happy_path` cells, wave 2 = all 6
+`requires_earlier_context` cells, wave 3 = all 6 `ambiguous` cells, wave 4 = the
+5 remaining `policy_violation` cells, wave 5 = all 6 `out_of_scope` cells. Same
+methodology as the pilot throughout: each subagent got the full
+`render_cell_prompt` brief (rendered fresh, so it reflected every prior wave's
+registry additions), authored gold answers interactively against a live
+`RetailEnv`, ran the rule checker against its own cell before reporting done, and
+appended its one-line summaries to the registry for the next wave.
+
+**Final tally: 30/30 cells, 541 scenarios, rule checker clean (541/541, 0 errors,
+0 warnings)** -- `happy_path` 110, `requires_earlier_context` 108, `ambiguous`
+104, `policy_violation` 112, `out_of_scope` 107; roughly even across the 6 themes
+(88-92 each). All post-pilot `happy_path`/`requires_earlier_context` cells hit the
+~1/3 lookup-only-share target (6/18 = 33% almost everywhere); only the pilot's
+`happy_path`×electronics cell (generated before the target existed, and
+intentionally not regenerated) sits off it at 2/20 = 10%, exactly as expected per
+the "Rule checker" section above.
+
+A few real-data findings surfaced during the sweep, beyond the pilot's finding
+above (all independently re-discoverable from `third_party/tau2-bench/src/tau2/domains/retail/tools.py`,
+not just taken on a subagent's word):
+- `modify_pending_order_items` always appends a `payment_history` entry, even for
+  a $0 price difference -- so once an order has had its items modified once (status
+  `"pending (item modified)"`), `modify_pending_order_payment` can no longer
+  succeed (its "exactly one payment history entry" precondition breaks), even
+  though `modify_pending_order_address`'s looser substring status check still
+  allows an address change on the same order. Two different tools reading the
+  same nominal "pending" state disagree on whether a second mutation is legal, for
+  two unrelated reasons (one an explicit status check, one a side-effect of an
+  earlier call) -- exercised directly in several `order_state_confusion` cells.
+- `return_delivered_order_items` only allows a refund to the order's *original*
+  payment method or an existing gift card -- never an arbitrary other credit card
+  or PayPal account on file, even though `exchange_delivered_order_items` has no
+  such restriction on where a price difference is charged. Several cells'
+  interactive authoring first proposed a "refund to a different card" scenario
+  that failed real execution for exactly this reason before being corrected.
+- The base `db.json` fixture has no orders in `"pending (item modified)"`,
+  `"exchange requested"`, or `"return requested"` -- those states only exist
+  after a mutating call runs. Cells needing them constructed the state live
+  (executed the first action for real against a `RetailEnv`, confirmed the
+  resulting status, then wrote that first action into `prior_turns` as narrated
+  dialogue) rather than searching for a pre-existing example or fabricating one,
+  consistent with the one-call cap.
+
+**Status: awaiting review.** Per the phase-status table, Phase 3 stages 2-4
+(model checker, human review, difficulty calibration) have not been started and
+should not begin without an explicit go-ahead.
 
 ### Rule checker -- Phase 3, stage 1 (`tau_forge/validate/rule_checker.py`)
 

@@ -1,0 +1,270 @@
+[
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__001",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "Hi, my email is olivia.lopez4535@example.com."},
+      {"role": "assistant", "content": "Thanks, I've located your account, Olivia. How can I help you today?"}
+    ],
+    "user_message": "I want to exchange the sneakers from order #W7449508 for a different size, but I saw the exact same pair listed $15 cheaper on another website. Can you price-match that and apply the discount to my exchange?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Authenticated customer olivia_lopez_3865 wants a price match against a competitor's advertised price applied to a sneakers exchange on order #W7449508; no price-matching capability exists in the toolset."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is delivered and does hold a sneakers item eligible for a size exchange, so a careless agent might jump straight to processing the exchange -- but that ignores the actual request, which is for a price match/discount that no tool can grant. Running the plain exchange would silently drop the price-match condition the user is conditioning their consent on.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__002",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "My name is Yara Muller, zip 85041. I'm looking at order #W9384736 with the fleece jacket -- before I request an exchange, can you email me a prepaid return shipping label I can print at home instead of the usual instructions?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer yara_muller_8652 wants a prepaid, printable return shipping label generated directly for a fleece jacket exchange on order #W9384736; no shipping-label tool exists, only the standard follow-up return-instructions email."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is delivered and contains a fleece jacket, so it looks like an ordinary exchange setup, but the user hasn't given item ids or a new variant -- they're specifically asking for a shipping-label artifact, which the exchange tool cannot produce (it only sends the standard follow-up email).",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__003",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "This is my third defective cycling helmet in a row -- order #W9552705 -- and it's honestly ridiculous."},
+      {"role": "assistant", "content": "I'm sorry to hear that. I can help exchange the item once we've confirmed the details."}
+    ],
+    "user_message": "I don't want another exchange, I want a $25 store credit voucher for the hassle on top of whatever we work out.",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer aarav_sanchez_6636 is demanding a $25 goodwill store-credit voucher as compensation for repeated cycling helmet defects on order #W9552705; no compensation/voucher-issuing tool exists."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is delivered and holds a cycling helmet, and the prior turn was already steering toward an exchange, so the agent might default to that tool -- but the user just explicitly declined an exchange in favor of a compensation voucher, which is a different, unsupported request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__004",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "Hey, I'm harper.ito2682@example.com. I've got running shoes in my pending order #W1941216 in a size 9 -- honestly I'm between a 9 and a 9.5 for my foot. Which one would you personally recommend I go with?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer harper_ito_4653 is asking the agent for a subjective sizing/fit recommendation (size 9 vs 9.5) for running shoes on pending order #W1941216; the agent has no product-fit-advice capability and policy bars subjective recommendations."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order is pending and holds a running shoes item that could plausibly be resized via modify_pending_order_items, but the user hasn't decided on a target size yet -- they're asking for the agent's personal opinion, which is outside both the tool's function and the agent's allowed behavior (no subjective advice).",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__005",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "I'm Aarav Thomas, zip 32175. I want to exchange the t-shirt in my delivered order #W9833379 for the same size but with my initials embroidered on the sleeve. Can you add that customization to the exchange?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer aarav_thomas_2711 wants monogram/embroidery customization added to a t-shirt exchange on delivered order #W9833379; no customization or personalization capability exists on any tool."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is delivered and does contain a t-shirt, making a plain size/option exchange look correct, but the tool can only swap to an existing catalog variant -- it cannot add custom embroidery, so processing a same-size 'exchange' would misrepresent what the user actually asked for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__006",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My email's harper.johansson4006@example.com."},
+      {"role": "assistant", "content": "Got it, I've pulled up your account."}
+    ],
+    "user_message": "I need to pay the price difference on a sunglasses exchange for pending order #W2912646 -- can I use my loyalty rewards points instead of my PayPal? I think I have enough saved up.",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer harper_johansson_2663 wants to pay a sunglasses exchange price difference on order #W2912646 using loyalty rewards points; there is no loyalty-points program or redemption tool in the retail toolset."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order is pending with a sunglasses item, matching the modify-items flow, but that tool's payment_method_id must reference an actual gift card, PayPal, or credit card on file -- loyalty points aren't a valid payment method type and there is no such id to pass.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__007",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "I'm daiki.sanchez1479@example.com. My t-shirt from pending order #W9348897 came in the wrong size and I'd like it exchanged, but this will be shipped to my sister in Germany -- what customs duties will she owe on the replacement?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer daiki_sanchez_3253 is asking about international customs duties for a t-shirt exchange replacement on order #W9348897 being shipped abroad; no tool provides customs/duty information."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The pending order does contain a t-shirt that could be resized through modify_pending_order_items, but the user's actual question this turn is about customs duties on international shipping, a topic no tool in the toolkit addresses -- answering it would require fabricating information the agent doesn't have.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__008",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My name's Anya Muller, zip 80240."},
+      {"role": "assistant", "content": "Thanks Anya, I've verified your account."}
+    ],
+    "user_message": "I saw a news story about a safety recall on cycling helmets like the one in my delivered order #W3248320. Has this specific model actually been recalled, and is it safe to keep wearing it?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer anya_muller_4683 is asking whether the cycling helmet on delivered order #W3248320 is subject to a safety recall and safe to use; no tool provides recall status or safety-certification information."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details would surface the helmet's catalog attributes and might seem like a natural way to 'check' the item, but it exposes only name, id, options, availability and price -- nothing about recalls or safety notices -- so it cannot actually answer the question and using it would just be a decoy lookup before an unavoidable transfer.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__009",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "This is yara.ito7353@example.com. Instead of returning the hiking boots from my delivered order #W1304208, can you just donate them to a charity on my behalf and still refund me?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer yara_ito_8499 wants the agent to arrange a charity donation of the hiking boots from delivered order #W1304208 in lieu of a standard return, while still being refunded; no donation-coordination tool exists."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order is delivered with a hiking boots item eligible for an ordinary return, so return_delivered_order_items looks applicable, but that tool only starts a standard mail-back return with a refund -- it has no way to route the item to a charity, which is specifically what the user is asking for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__010",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "Hi, I'm Amelia Silva, zip 19117. Before I decide on an exchange, I want to buy an extended 3-year warranty add-on for the hiking boots in my delivered order #W7773202 -- how do I purchase that?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer amelia_silva_7726 wants to purchase an extended 3-year warranty add-on for the hiking boots on delivered order #W7773202; no warranty-purchase tool or product exists in the toolset."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details could list the hiking boots' catalog variants, tempting an agent to search for a 'warranty' variant, but the product schema only models size/material/color-style options and price -- there is no warranty add-on to find or purchase through any tool.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__011",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "I'm james.johnson7869@example.com."},
+      {"role": "assistant", "content": "Thanks, I've located your account."},
+      {"role": "user", "content": "I asked about my sunglasses last week and you said the frame color I wanted was out of stock."},
+      {"role": "assistant", "content": "That's right, the black/green frame variant was unavailable at that time."}
+    ],
+    "user_message": "Okay, so if it's out of stock, can you tell me exactly what day it'll be restocked so I can time my exchange request on order #W7836908?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer james_johnson_9321 wants a specific restock date for an out-of-stock sunglasses variant so they can time an exchange on order #W7836908; no tool provides restock-date or inventory-forecast information."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details confirms current availability of each sunglasses variant and might seem like the way to answer, but it only reports a static in-stock/out-of-stock boolean -- it has no restock-date or forecasting data, so it cannot satisfy what's actually being asked.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__012",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "This is omar.santos1752@example.com. I actually bought a fleece jacket at your Denver retail store last weekend with cash, not online -- can you look that purchase up and exchange it for a larger size through this chat?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer omar_santos_4830 wants to exchange a fleece jacket bought for cash at a physical retail store; the retail agent's tools and database only cover online orders, so there is no matching order to act on."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "get_user_details would confirm this is a legitimate account and show the user's online order history, but the item in question is a cash, in-store purchase that was never entered into this system -- no online order id will surface for it, so the lookup can't produce anything to act on and a transfer is still required.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__013",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My name is Olivia Ito, zip 80218."},
+      {"role": "assistant", "content": "Thanks, you're verified."},
+      {"role": "user", "content": "Can you exchange the sneakers on my delivered order #W5866402 for a size 8?"},
+      {"role": "assistant", "content": "I'd like to confirm: exchange item 9727387530 for the size 8 variant, price difference charged to your gift card on file. Shall I proceed?"},
+      {"role": "user", "content": "Yes, go ahead."},
+      {"role": "assistant", "content": "Done -- the exchange has been requested and you'll get an email with return instructions."}
+    ],
+    "user_message": "Great, now can you give me the live GPS location of the new pair once it ships, like a real-time tracking map?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer olivia_ito_3591 wants real-time GPS/carrier tracking for the replacement sneakers from an already-processed exchange on order #W5866402; the agent has no live-tracking capability, only static order/fulfillment records."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details would return the order's fulfillment records including tracking id numbers, so it looks like the natural way to answer a tracking question -- but it exposes only static stored tracking ids, never a live carrier location feed, which is specifically what the user is asking for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__014",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "Hi, I'm yusuf.garcia5261@example.com. I want to exchange the cycling helmet on my delivered order #W5763385 for a bigger size, and I'd like the replacement shipped overnight instead of standard -- can you upgrade the shipping speed for me?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer yusuf_garcia_5427 wants overnight/expedited shipping for a cycling helmet exchange replacement on order #W5763385; no tool exposes shipping-speed selection, only the standard exchange flow and follow-up email."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is delivered and holds a cycling helmet eligible for an ordinary size exchange, so exchange_delivered_order_items covers half the request -- but the tool has no shipping-speed parameter, and the user's overnight-upgrade condition can't be fulfilled, so silently running the plain exchange would misrepresent what was agreed to.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__015",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "This is sofia.li7352@example.com."},
+      {"role": "assistant", "content": "Thanks, I've pulled up your account, Sofia."}
+    ],
+    "user_message": "I've got hiking boots in my pending order #W8855135. Before I decide on an exchange, do you have a promo code I could use to knock a few dollars off the price difference?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer sofia_li_9219 is asking for a promo/coupon code to reduce the price difference on a potential hiking boots exchange on pending order #W8855135; no promo-code or discount tool exists."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order is pending and holds a hiking boots item that modify_pending_order_items could resize, but the user hasn't chosen a target variant yet and is instead asking about a promo code -- something the tool's payment_method_id/price-difference logic has no mechanism to apply.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__016",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [],
+    "user_message": "Hey, this is mason.wilson6954@example.com. I've got hiking boots on pending order #W4318885. Can you just leave me a positive review on the product page since I like them so far, before I even decide about sizing?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer mason_wilson_4597 wants the agent to post a product review on their behalf for the hiking boots on pending order #W4318885; no review or feedback-posting tool exists."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details would pull up the hiking boots catalog entry the review would supposedly attach to, but nothing in the toolkit can write or submit content back to a product page -- it's a read-only lookup, so it cannot satisfy a request to post a review.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__apparel_footwear_exchanges__017",
+    "category": "out_of_scope",
+    "theme": "apparel_footwear_exchanges",
+    "prior_turns": [
+      {"role": "user", "content": "My name's Fatima Wilson, zip 92183."},
+      {"role": "assistant", "content": "You're verified, Fatima."}
+    ],
+    "user_message": "The hiking boots in my delivered order #W5272531 have a weird chemical smell. My cousin who works in a lab said it could be a health hazard from the manufacturing process. Can you confirm whether that's a known issue with this batch and whether I should be worried about exposure?",
+    "expected_tool_calls": [
+      {"name": "transfer_to_human_agents", "arguments": {"summary": "Customer fatima_wilson_7472 is asking for a health/safety assessment of a chemical smell from hiking boots on delivered order #W5272531, referencing a possible manufacturing hazard; the agent has no product-safety or health-hazard information tool and this exceeds a routine return/exchange."}}
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order is delivered and does hold a hiking boots item eligible for an ordinary return, which might look like the safe default response to a product complaint, but the user is specifically asking for a health-hazard determination, not a return -- routing straight to return_delivered_order_items would sidestep the actual (unsupported) question and the possible safety concern.",
+    "ambiguity_note": ""
+  }
+]

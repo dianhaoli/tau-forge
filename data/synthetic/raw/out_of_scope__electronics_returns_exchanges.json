@@ -1,0 +1,518 @@
+[
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__001",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Ivan Hernandez, ivan.hernandez1120@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ivan, I've located your account. How can I help you today?"
+      }
+    ],
+    "user_message": "The espresso machine from order #W5838674 keeps leaking from the base. I don't want to send it back and wait for a replacement -- can you have a repair technician come out and fix it, or send me replacement parts?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Ivan Hernandez (ivan_hernandez_6923) wants in-home repair service or replacement parts for a leaking Espresso Machine (item 7441167885) on delivered order #W5838674 instead of a return or exchange; dispatching repairs or shipping spare parts is outside the toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The item is defective on a delivered order, which superficially matches return_delivered_order_items, but the customer explicitly declined a return/refund and is asking for repair service or spare parts, neither of which any tool provides.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__002",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mei Moore, mei.moore6624@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei, I've found your account. How can I help you today?"
+      }
+    ],
+    "user_message": "I just noticed order #W9694847 for an air purifier that I never placed -- a $543.68 charge on my credit card. I think this is fraud and I need it formally disputed and investigated, not just returned.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Mei Moore (mei_moore_8248) reports order #W9694847 (Air Purifier, item 5669664287, $543.68) as an unauthorized/fraudulent charge and wants a formal fraud dispute opened and investigated, not a standard return; fraud investigation is outside the toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "Order #W9694847 is delivered and technically return-eligible, but the customer isn't asking to send the item back for refund -- she's alleging fraud and wants an investigation, which return_delivered_order_items cannot address.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__003",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hey, it's Ethan Sanchez, ethan.sanchez6360@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ethan, you're verified. What's going on?"
+      }
+    ],
+    "user_message": "The smart watch from order #W9250394 won't pair with my phone over Bluetooth no matter what I try. Can you walk me through the pairing troubleshooting steps?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Ethan Sanchez (ethan_sanchez_2952) needs Bluetooth pairing troubleshooting for the Smart Watch (item 2681513500) on delivered order #W9250394; device troubleshooting/technical support isn't covered by any retail tool."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_item_details",
+    "distractor_rationale": "Looking up the item might seem like a helpful first step, but get_item_details only returns price/availability/options -- it contains no troubleshooting or technical-support information to actually resolve the pairing issue.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__004",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Yara Hernandez, yara.hernandez7166@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Yara, I've got your account pulled up."
+      },
+      {
+        "role": "user",
+        "content": "I gave the smart watch from order #W2156941 to my sister as a gift."
+      }
+    ],
+    "user_message": "Can you transfer the warranty on that watch into her name so she can get support on it directly?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Yara Hernandez (yara_hernandez_3670) wants the manufacturer's warranty on the Smart Watch (item 4920090458, delivered order #W2156941) transferred to her sister as the new owner; warranty-transfer requests aren't supported by any retail tool."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The scenario involves a delivered watch, so exchange_delivered_order_items looks relevant, but the customer wants no item swapped -- only a warranty ownership transfer, which the tool has no mechanism for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__005",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Emma Rossi, emma.rossi7853@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, you're verified. How can I help?"
+      }
+    ],
+    "user_message": "My old laptop from order #W4213437 finally died for good -- the one you shipped me last year. What's the proper way to recycle or dispose of it responsibly? Do you have an e-waste program?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Emma Rossi (emma_rossi_6933) is asking about e-waste recycling/disposal options for a defunct Laptop (item 1657832319) originally on order #W4213437; recycling-program information isn't provided by any retail tool."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order is delivered and the laptop is broken, which resembles a return case, but the customer isn't asking for a refund or replacement -- only how to dispose of the dead unit responsibly, which return_delivered_order_items doesn't address.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__006",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Lucas Martin, lucas.martin5733@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Lucas, you're verified. What can I do for you?"
+      }
+    ],
+    "user_message": "I saw a news article about a battery recall for the headphones I bought -- order #W3929227. Is there a compensation program I qualify for, or do I need to register the recall separately?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Lucas Martin (lucas_martin_4549) is asking whether a reported battery-recall compensation program applies to the Headphones (item 4202497723) on delivered order #W3929227; product-recall/compensation-program handling is outside the retail toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "A recall inquiry superficially resembles wanting a replacement unit via exchange, but the customer is asking about a manufacturer recall/compensation program, which exchange_delivered_order_items has no concept of.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__007",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Juan Kim, juan.kim2574@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Juan, I've located your account."
+      }
+    ],
+    "user_message": "The headphones I bought on order #W5730905 for $342.81 are now listed $60 cheaper on your site. Can you refund me the difference as a price match?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Juan Kim (juan_kim_6026) wants a $60 price-match adjustment refunded on the Headphones (item 4202497723, order #W5730905) since the price dropped after purchase; price-match adjustments aren't a capability any retail tool provides."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "calculate",
+    "distractor_rationale": "calculate could compute the $60 price gap, but doing that math doesn't create any way to actually credit the difference -- no tool issues price-match refunds outside of a formal return or exchange.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__008",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Ethan Johnson, ethan.johnson2557@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ethan, you're verified. How can I help?"
+      }
+    ],
+    "user_message": "I love the espresso machine from order #W5321777 and want to leave a 5-star review on your website. Can you post one for me or point me to where I do that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Ethan Johnson (ethan_johnson_7053) wants help posting a product review for the Espresso Machine (item 7441167885) on order #W5321777; review submission or site navigation isn't a retail tool capability."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details would return the espresso machine's catalog info, but the request is about submitting a customer review, which no tool has any function for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__009",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Ava Moore, ava.moore2450@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Ava, you're verified. What's up?"
+      }
+    ],
+    "user_message": "The vacuum cleaner from order #W6257064 is too heavy for me. I'd rather swap it for a lighter model at my local store than ship it back -- can you set that up?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Ava Moore (ava_moore_4814) wants to exchange the Vacuum Cleaner (item 2872451762) on delivered order #W6257064 for a lighter model via in-store pickup instead of mail; arranging an in-store exchange isn't something any retail tool can do."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "This looks like a standard exchange, but exchange_delivered_order_items only handles a mail-based swap process -- it has no way to arrange an in-store handoff, which is specifically what the customer is requesting.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__010",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Aarav Anderson, aarav.anderson9752@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, you're verified."
+      }
+    ],
+    "user_message": "One earbud from order #W3470184 stopped charging. Can you give me the manufacturer's direct support line so I can troubleshoot with them?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Aarav Anderson (aarav_anderson_8794) is requesting the manufacturer's direct support contact for a charging issue with the Wireless Earbuds (item 2757705742) on order #W3470184; providing external manufacturer contact info isn't a retail tool function."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_item_details",
+    "distractor_rationale": "get_item_details returns price/options/availability for the earbuds, not manufacturer contact or support-line information, so it can't satisfy this request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__011",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Omar Muller, omar.muller2208@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Omar, you're verified. How can I help today?"
+      },
+      {
+        "role": "user",
+        "content": "Last week a rep was really rude to me about my smartphone order #W9941744."
+      }
+    ],
+    "user_message": "I want to speak to a supervisor and file a formal complaint about that interaction -- can you transfer me to a human agent?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Omar Muller (omar_muller_8833) explicitly requests a human supervisor to file a formal complaint about a prior rude support interaction regarding order #W9941744; handling service complaints and supervisor escalation is outside the retail toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details would only surface the smartphone order's status/items, which is irrelevant to a service-quality complaint the customer explicitly wants escalated to a human supervisor.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__012",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Fatima Wilson, fatima.wilson5906@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Fatima, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "I've disputed the charge for the wireless earbuds on order #W4556683 with my bank and I'm considering small claims court. I need a case reference number from your legal department, not a return.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Fatima Wilson (fatima_wilson_6873) is pursuing a bank dispute/possible small-claims action over order #W4556683 (Wireless Earbuds, item 8555936349) and wants a legal-department case reference, not a standard return; legal escalation is outside the retail toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order is delivered and return-eligible, but the customer explicitly said she doesn't want a return -- she's asking for a legal case reference for a dispute already underway, which no tool can provide.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__013",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Noah Patel, noah.patel9232@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Noah, you're verified. How can I help?"
+      }
+    ],
+    "user_message": "I want to buy an extended protection plan for the smart watch on order #W9784474 in case the screen cracks later. How do I add that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Noah Patel (noah_patel_1311) wants to purchase an extended protection/warranty plan for the Smart Watch (item 9811090008) on order #W9784474; selling protection plans isn't a capability any retail tool offers."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "Since the watch is on a delivered order, exchange_delivered_order_items might seem applicable, but the request isn't to swap the watch for a different item -- it's to buy an add-on protection plan, which the tool has no way to sell.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__014",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mohamed Santos, mohamed.santos7676@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mohamed, you're verified."
+      },
+      {
+        "role": "user",
+        "content": "My digital camera order #W8976713 arrived a full week late and I missed a trip I bought it for."
+      }
+    ],
+    "user_message": "I'm keeping the camera, but I want some kind of goodwill discount or credit for the delay -- not a return.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Mohamed Santos (mohamed_santos_2427) is keeping the delivered Digital Camera (item 3892645120, order #W8976713) but wants goodwill compensation/credit for a late delivery rather than a return or exchange; issuing goodwill credits isn't a retail tool capability."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order is delivered and eligible for a standard return, but the customer explicitly says he wants to keep the camera and is asking for compensation for the delay instead, which return_delivered_order_items cannot provide.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__015",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Aarav Moore, aarav.moore6937@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "I'm happy with the bluetooth speaker from order #W2842410, but I want to know if you offer installment or financing plans for future big electronics purchases.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Aarav Moore (aarav_moore_6923) is asking whether installment/financing plans are available for future electronics purchases; financing-plan information isn't something any retail tool provides."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment only swaps a pending order's payment method between existing methods on file -- it can't set up or explain an installment/financing plan for future purchases, and there's no pending order here anyway.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__016",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Sofia Davis, sofia.davis8164@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Sofia, you're verified. How can I help?"
+      }
+    ],
+    "user_message": "My laptop order #W2541482 is still pending -- can you upgrade the shipping to overnight so it gets here faster?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Sofia Davis (sofia_davis_2103) wants shipping on her pending Laptop order #W2541482 upgraded to overnight delivery; shipping-speed changes aren't controllable through any retail tool."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "modify_pending_order_address touches shipping-related fields on a pending order, but it only changes the destination address, not shipping speed/method, which is what the customer is actually asking for.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__017",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mia Jackson, mia.jackson5798@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mia, you're verified."
+      }
+    ],
+    "user_message": "I forgot to apply a promo code to my pending espresso machine order #W7807323 before checking out. Can you retroactively apply SAVE15 to it now?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Mia Jackson (mia_jackson_2250) wants promo code SAVE15 retroactively applied to her pending Espresso Machine order #W7807323 after checkout; applying discount codes isn't a capability any retail tool supports."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment can change which payment method is charged, but it has no facility for applying a promotional discount code to reduce the order total.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__electronics_returns_exchanges__018",
+    "category": "out_of_scope",
+    "theme": "electronics_returns_exchanges",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mei Kovacs, mei.kovacs8232@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei, you're verified. What can I help with?"
+      }
+    ],
+    "user_message": "Instead of returning the smartphone from order #W8065207, I'd like to donate it to your company's charity program and get a tax-deduction receipt. How do I set that up?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Customer Mei Kovacs (mei_kovacs_8020) wants to donate the Smartphone (item 1631373418) from delivered order #W8065207 to a charity program and receive a tax-deduction receipt instead of returning it; charitable-donation processing isn't a retail tool capability."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The smartphone order is delivered and return-eligible, but the customer explicitly wants to donate it for a tax receipt rather than return it for a refund, which return_delivered_order_items has no mechanism to do.",
+    "ambiguity_note": ""
+  }
+]

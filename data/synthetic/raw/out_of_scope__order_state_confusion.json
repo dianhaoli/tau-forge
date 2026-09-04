@@ -1,0 +1,386 @@
+[
+  {
+    "id": "out_of_scope__order_state_confusion__001",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "Hi, my order #W5918442 is still pending -- I need the perfume and skateboard for a birthday party this Saturday. Can you rush the shipping or upgrade it to overnight delivery?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Authenticated user with pending order #W5918442 wants shipping speed upgraded to overnight/rush delivery; no tool exists to change carrier speed or expedite fulfillment."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Order #W5918442 is pending, so address-modification is a live, in-scope action in this context, and a model might reach for it since it's the only pending-order tool touching logistics -- but the user isn't asking to change where the order ships, only how fast, and no tool controls shipping speed or carrier service level.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__002",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "Thanks, I've confirmed your identity. I can see pending order #W2974929 for a plastic skateboard. How can I help with it today?"
+      }
+    ],
+    "user_message": "Great -- can you add a handwritten gift note inside the box saying 'Happy Graduation, Mia!' before it ships? It's a present.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Authenticated user with pending order #W2974929 requests a handwritten gift note be inserted in the package before shipment; no tool supports packing-slip or gift-note customization."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order is pending and item-modification is the go-to write tool for pending-order requests, but that tool only swaps an existing item for a different variant of the same product -- it has no field for gift messages or packaging instructions.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__003",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "My card got declined for the full amount on pending order #W2631563. Can you split the $338.88 total so half is charged to my PayPal now and the rest is billed to me in two weeks?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Authenticated user on pending order #W2631563 wants the balance split into a two-part installment payment plan; no tool supports partial or deferred payment arrangements."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "The order is pending and modify_pending_order_payment is the only payment-related pending-order tool, so it's a natural first reach -- but it only reassigns the entire existing payment to one single different method in full, it cannot split a charge across methods or schedule a future partial payment.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__004",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "I got my delivered order #W4817420 with the Smart Thermostat, but the printed setup manual was missing from the box. Can you mail me a physical copy of the instructions?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on delivered order #W4817420 requests a physical printed instruction manual be mailed for the smart thermostat item; no tool sends documentation or physical inserts."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The order is delivered and contains the thermostat, so exchange_delivered_order_items is available and item-related -- but the user isn't unhappy with the item itself or wanting a different variant, only a missing paper insert, which no tool can send.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__005",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "Loved the Air Purifier from my delivered order #W6304490! Can you post a 5-star review for it on your website under my account?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on delivered order #W6304490 asks the agent to post a product review on their behalf; no tool exists to create or submit product reviews."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details would surface the Air Purifier's product record, which feels adjacent since the request references a specific delivered product -- but reading product data does not post a review, and no tool writes reviews at all.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__006",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "I don't need the Jigsaw Puzzle from delivered order #W9077205 anymore -- instead of refunding me, can you arrange for your store to pick it up and donate it to a charity?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on delivered order #W9077205 requests the store arrange a charity donation pickup for an unwanted item instead of a refund; no tool supports donation logistics."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The item is on a delivered order and eligible for a standard return, making return_delivered_order_items the obvious tool -- but the user explicitly declines a refund and asks for donation pickup coordination instead, which no tool in the kit can arrange.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__007",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "Hi, I'm authenticated as james_li_5688. For order #W2611340, I need an official itemized invoice emailed to my accountant for expense reporting -- can you send that over?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on processed order #W2611340 requests an official invoice document be emailed to a third party for expense/tax purposes; no tool generates or emails documents."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details returns the order's line items and totals, which looks like it could satisfy an 'invoice' request -- but it only returns data to the agent in-conversation, it cannot generate a document or email anything to the user's accountant.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__008",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "My order #W9549057 with the T-Shirt and Makeup Kit shows as processed now. Can you schedule my delivery for a specific 2-4pm window on Thursday? I won't be home otherwise.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on processed order #W9549057 asks to book a specific delivery appointment window; no tool schedules delivery times or interacts with the carrier."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "Address-modification is the closest thing to a delivery-logistics tool in the kit, so a model could reach for it -- but the order is processed, not pending, so the tool would reject it outright, and even on a pending order it only changes the destination, never a delivery time window.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__009",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I can confirm order #W3220387 was cancelled and the $608.91 refund was issued back to your PayPal account."
+      }
+    ],
+    "user_message": "Actually, I closed that PayPal account since then. Can you instead mail me a physical refund check to my address for that amount?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on cancelled order #W3220387, already refunded to PayPal, requests the refund be reissued as a mailed paper check; no tool supports alternate refund disbursement methods."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "The conversation is about cancelling/refunding an order, so cancel_pending_order is topically close -- but order #W3220387 is already cancelled (not pending), the refund already ran, and no tool can redirect a completed refund to a mailed check regardless of order status.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__010",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "I made a mistake cancelling order #W4111294 last week -- I actually still want the laptop and espresso machine. Can you undo the cancellation and get it shipped again?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User asks to reverse a completed cancellation on order #W4111294 (already cancelled and refunded) and have it re-shipped; no tool can reinstate a cancelled order."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "Reinstating an order feels like a 'modify' operation, and modify_pending_order_items is the item-level write tool in the kit -- but it only operates on orders whose status is pending, and #W4111294 is cancelled, with no tool anywhere able to revive a cancelled order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__011",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "For my pending order #W7619352, can you also add a pair of wireless headphones to the same shipment? I don't want to place a whole separate order.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on pending order #W7619352 wants an entirely new product added to the existing shipment; no tool can add new line items to an order."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The order is pending and the request is item-related, so modify_pending_order_items looks relevant -- but that tool only swaps an existing ordered item for a different variant of the same product; it cannot introduce a brand-new product line the customer never ordered.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__012",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "My pending order #W6779827 is charged in full to my gift card. Can you split it so $2000 stays on the gift card and the remaining $2079.45 goes on my credit card instead?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on pending order #W6779827 wants the existing payment split across two payment methods; no tool supports partial or split payments."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment is the only pending-order payment tool and the request is explicitly about payment, making it tempting -- but it only reassigns the entire order total to one single replacement method, it has no way to divide the charge between two methods.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__013",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "I want to register the Backpack from my delivered order #W7303089 for its manufacturer warranty. Can you activate that for me?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on delivered order #W7303089 asks the agent to register a manufacturer warranty for a delivered item; no tool handles warranty registration."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details would confirm the backpack is on this delivered order, which seems like a reasonable first step -- but confirming the order contents does not register anything with a manufacturer, and no tool in the kit performs warranty activation.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__014",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [],
+    "user_message": "The Mechanical Keyboard from delivered order #W8032761 works fine physically, but I can't get the RGB lighting software to sync with it. Can you walk me through the software setup or connect me to tech support for it?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on delivered order #W8032761 explicitly requests technical/software support for a functioning item, not a return or exchange; no tool provides technical troubleshooting."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The keyboard is on a delivered order and eligible for exchange, so exchange_delivered_order_items is available in context -- but the user says the hardware itself is fine and only wants software troubleshooting help, which isn't remedied by swapping the item and isn't something any tool does.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__015",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Can you exchange the Dumbbell Set on my delivered order #W9077205 for the fixed 5-25 lbs set instead of adjustable, refund the difference to my gift card?"
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- I've requested the exchange on order #W9077205 for the Dumbbell Set, and any price difference will be refunded to your gift card. You'll get an email with return instructions."
+      }
+    ],
+    "user_message": "It's been three weeks since that exchange was requested and I still haven't gotten the replacement or even a tracking update. Can you have a supervisor push the warehouse to expedite it, or issue me a $50 goodwill credit for the delay?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on order #W9077205, whose dumbbell-set exchange was already requested three weeks ago per prior turns, wants the fulfillment expedited or a goodwill credit issued for the delay; no tool can expedite warehouse processing or issue discretionary credits."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The scenario centers on an exchange for this exact order, so exchange_delivered_order_items looks like the natural tool -- but it can only be called once per order and was already used per the prior turns, and even if it weren't, no tool can rush fulfillment or grant a goodwill credit.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__016",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "I'd like to return the Pet Bed from my delivered order #W7303089, refund to my original credit card please."
+      },
+      {
+        "role": "assistant",
+        "content": "Confirmed -- I've requested the return on order #W7303089 for the Pet Bed, refunding to your original credit card. Watch your email for return instructions."
+      }
+    ],
+    "user_message": "This is honestly the third issue I've had with this account and I'd rather just talk to an actual person about it than keep going back and forth with a bot.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on order #W7303089, whose pet-bed return was already requested per prior turns, explicitly asks to be connected to a human agent instead of continuing with the bot."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The order and item were just discussed for a return, so return_delivered_order_items is contextually fresh -- but the return was already requested in the prior turn (the tool can only be called once per order) and the user is now explicitly asking for a human, not another return action.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__017",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Can you change the Espresso Machine on my pending order #W6779827 from the 19 bar manual to a 9 bar automatic, refund the difference to my gift card on file?"
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- I've updated order #W6779827 so the Espresso Machine is now the 9 bar automatic variant, and refunded the price difference to your gift card. The order is now 'pending (item modified)'."
+      }
+    ],
+    "user_message": "Thanks -- one more thing though: I just saw the 9 bar automatic listed $150 cheaper on a competitor's site. Can you price-match that and refund me the difference?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User on order #W6779827, item-modified once already per prior turns to the 9-bar automatic espresso machine, asks for a competitor price match and additional refund; no tool supports price matching."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "The item was just modified via modify_pending_order_items, making it the obvious tool to reach for again -- but that tool can only be called once per order and was already used, and regardless, it changes item variants, it has no mechanism to compare or match a competitor's price.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__018",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "You're verified, and I can see pending order #W2631563 with the Smart Thermostat and Garden Hose. What would you like to do?"
+      }
+    ],
+    "user_message": "Honestly this is the third time this month I've had to explain my situation to a chatbot and get nowhere. I want to speak to a real human agent right now, not keep doing this.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Authenticated user with pending order #W2631563 explicitly and directly demands to speak with a human agent rather than continue with the bot."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details is the safe, low-risk lookup a model might default to in order to 'do something useful' before responding -- but the user has made an explicit, unambiguous request for a human agent, which policy requires honoring via transfer rather than any further lookup.",
+    "ambiguity_note": ""
+  }
+]

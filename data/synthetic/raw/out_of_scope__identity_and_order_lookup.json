@@ -1,0 +1,514 @@
+[
+  {
+    "id": "out_of_scope__identity_and_order_lookup__001",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, my email is mohamed.khan5338@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks, I've located your account, Mohamed. How can I help you today?"
+      }
+    ],
+    "user_message": "Actually, I want to change the email address on my account to a new one, mohamed.k.new@example.com, since I'm losing access to the old inbox.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Authenticated user mohamed_khan_3010 wants the email address on file changed to a new address; no tool exists to update account email (only default address is modifiable), needs human agent."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address only changes the mailing address fields on the user profile; it has no email parameter, so it cannot satisfy an email-change request even though it's the only 'edit my profile' tool available.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__002",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Liam Thomas, my email is liam.thomas7599@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Liam, I've found your account. What can I help with?"
+      }
+    ],
+    "user_message": "I accidentally created a second account a while back under sofia.li7352@example.com by mistake -- can you merge that account's order history into this one?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Authenticated user liam_thomas_1090 wants a duplicate account (email sofia.li7352@example.com) merged into his current account; no merge/account-consolidation capability exists in the toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "find_user_id_by_email",
+    "distractor_rationale": "find_user_id_by_email could locate the second account, but merging orders between two user records isn't something any tool supports, and looking it up wouldn't accomplish the merge or the underlying request.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__003",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Fatima Wilson, order #W7990410."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Fatima, I've pulled up order #W7990410 -- it shows delivered, with an Electric Kettle, Headphones, and a Bookshelf."
+      }
+    ],
+    "user_message": "I think I was overcharged sales tax on that order compared to my state's rate. Can you recalculate it and refund the difference?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Delivered order #W7990410 for user fatima_wilson_6873: customer disputes the sales tax amount charged and wants it recalculated/refunded; the system has no tax breakdown or tax-adjustment capability."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details would just re-show the order total and items again; the order record has no tax line-item field, so it cannot resolve or even display a tax dispute, and there's no refund-adjustment tool for taxes specifically.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__004",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Sofia Ito, my order is #W6075915."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it, Sofia -- order #W6075915 shows delivered, with a Fleece Jacket, Yoga Mat, and Skateboard."
+      }
+    ],
+    "user_message": "The delivery driver who dropped that off backed into my mailbox and drove off. I want to file a complaint about the driver and get compensation for the mailbox damage.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Delivered order #W6075915 for user sofia_ito_7804: customer reports property damage caused by the delivery driver and wants a formal complaint filed and compensation, which is outside any return/exchange/order tool."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "return_delivered_order_items only processes returns of purchased items for refund; it has no way to log a driver-conduct complaint or compensate for damage to the customer's mailbox, which isn't an item on the order at all.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__005",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, this is Mei Li, order #W2936099."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mei, order #W2936099 is showing delivered."
+      }
+    ],
+    "user_message": "I need this purchase written up as a formal business invoice with your company's W9 tax form attached for my accountant. Can you generate that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "Delivered order #W2936099 for user mei_li_2872: customer needs a formal business invoice plus the company's W9 tax form for accounting purposes; no such document-generation tool exists."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_order_details",
+    "distractor_rationale": "get_order_details returns the order's item/price/status data, not a formatted business invoice or the company's tax identification paperwork, so it can't fulfill an accounting-document request.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__006",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Daiki Jackson, order #W8306539."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Daiki, I see order #W8306539 is pending."
+      }
+    ],
+    "user_message": "Separate from that order, I want my entire account and all my personal data permanently deleted from your systems.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User daiki_jackson_4362 requests full account deletion and erasure of all personal data; no account-deletion or data-erasure tool exists in the retail toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "cancel_pending_order",
+    "distractor_rationale": "cancel_pending_order only cancels a single pending order and refunds its payment; it does not delete the user's account or any personal data, which is what the customer is actually asking for.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__007",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Juan Lopez, juan.lopez7539@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Juan, I've found your account -- you have a couple of pending orders on file."
+      }
+    ],
+    "user_message": "I have two pending orders, #W3386832 and #W4466964. Can you combine them into a single shipment so I only pay one shipping fee?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User juan_lopez_5820 wants pending orders #W3386832 and #W4466964 merged into a single shipment to consolidate shipping charges; no tool can combine separate orders or adjust shipping fees."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_address",
+    "distractor_rationale": "modify_pending_order_address can only overwrite one order's shipping address to match another's; it can't actually merge two separate order records into one shipment or change what shipping is charged.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__008",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Olivia Garcia here, order #W3279695."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Olivia, order #W3279695 is currently pending."
+      }
+    ],
+    "user_message": "I forgot to apply the promo code SAVE20 at checkout. Can you retroactively apply it to that order and adjust my gift card charge?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User olivia_garcia_4691 wants a promo code (SAVE20) retroactively applied to pending order #W3279695 and the charge adjusted; the toolset has no discount/coupon-application capability at all."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_payment",
+    "distractor_rationale": "modify_pending_order_payment can only switch which payment method covers the order's existing total; it has no way to apply a discount code or reduce the order total, so it can't grant the requested savings.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__009",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Amelia Nguyen, order #W7898533."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Amelia, order #W7898533 shows delivered -- a Smart Watch."
+      }
+    ],
+    "user_message": "Unrelated to that -- I can't remember my website login password. Can you reset it for me right now?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User amelia_nguyen_7748 asks the agent to reset her website account login password; password/credential management is entirely outside the retail toolset, which has no login-related tools."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address is the only account-modifying tool available, but it changes the mailing address, not login credentials -- there is no field or mechanism for resetting a password.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__010",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Aarav Lee, aarav.lee6460@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I've found your account. What can I help with?"
+      }
+    ],
+    "user_message": "I keep getting marketing emails and promotional robocalls from you. Please unsubscribe me from all of that.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User aarav_lee_1982 wants to be unsubscribed from marketing emails and promotional phone calls; there is no communication-preferences or opt-out tool in the retail toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address only edits the shipping/default address fields on the profile; the user record has no marketing-preference or contact-channel settings for this tool (or any other) to change.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__011",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Mason Lopez, order #W8185761."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mason, order #W8185761 shows delivered -- two Laptops, two Water Bottles, and a Coffee Maker."
+      },
+      {
+        "role": "user",
+        "content": "I tried getting one of the laptops exchanged for a different config last week and it still hasn't gone through right."
+      },
+      {
+        "role": "assistant",
+        "content": "I'm sorry about that -- I don't see any exchange currently on file for this order, so I could start a new one now if you'd like."
+      }
+    ],
+    "user_message": "No, I've been going back and forth on this for too long. I don't want to try again through chat -- please just get me an actual person to sort this out.",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User mason_lopez_5208 explicitly asks to be connected to a human agent after repeated frustration with an unresolved laptop exchange on order #W8185761; per policy, an explicit request for a human agent should be honored via transfer."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "exchange_delivered_order_items could still technically process a new exchange on the order, but the customer explicitly declined to continue through the automated flow and asked for a human, which policy says to honor directly.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__012",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Noah Patel, order #W9784474."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Noah, order #W9784474 shows delivered, including a Smart Watch."
+      }
+    ],
+    "user_message": "I just saw the same smart watch listed $30 cheaper on another retailer's site. Can you price-match it and refund me the difference?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User noah_patel_1311 wants a price match against a competitor's listing for the Smart Watch on delivered order #W9784474, with a partial refund of the difference; no price-matching capability exists in the toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_product_details",
+    "distractor_rationale": "get_product_details would only show this store's own current price and variants for the watch; it has no way to compare against a competitor's listing or issue a partial price-match refund.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__013",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Evelyn Lopez, order #W1355800."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Evelyn, order #W1355800 shows delivered -- a Cycling Helmet."
+      }
+    ],
+    "user_message": "I don't actually want a refund for the helmet -- I'd rather donate it to a local charity through you and get a tax-deductible donation receipt for it. Can you set that up?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User evelyn_lopez_5487 wants the delivered Cycling Helmet on order #W1355800 routed to a charity donation program with a tax receipt instead of a standard return/refund; no donation-coordination tool exists."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "return_delivered_order_items only starts a standard return-for-refund flow back to a payment method or gift card; it cannot route the item to a charity or generate a tax-deductible donation receipt, which is specifically what was requested.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__014",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Juan Martin, order #W5815923."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Juan, I see order #W5815923 is pending."
+      }
+    ],
+    "user_message": "Separately, I got an email claiming to be from you asking me to 're-verify my payment info' by clicking a link -- it looks like a phishing scam using your name. Can someone investigate this?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User juan_martin_4740 reports a suspected phishing email impersonating the company and asks for it to be investigated; fraud/security investigation is outside the retail toolset entirely."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "get_user_details",
+    "distractor_rationale": "get_user_details only returns the customer's own profile and orders; it has no visibility into external phishing emails or any fraud-investigation function, so it can't act on or resolve a security report.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__015",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, it's Mia Silva, order #W6319233."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mia, order #W6319233 shows delivered."
+      }
+    ],
+    "user_message": "Can you add my cell number to my account so I get text alerts for future shipments?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User mia_silva_4504 wants a phone number added to her profile to enable SMS shipment notifications; the user schema has no phone field and no tool sets or stores one."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address writes only address1/address2/city/state/country/zip fields; there is no phone number field on the user record for it (or any tool) to populate, so it cannot enable SMS alerts.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__016",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Emma Kovacs, order #W3618959."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, order #W3618959 shows pending."
+      }
+    ],
+    "user_message": "I just got a login alert for my account from a country I've never been to. I think someone else has access -- can you lock my account down right now?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User emma_kovacs_5477 reports a suspicious login from an unrecognized location and wants her account locked/secured; account security lockdown is outside the retail toolset, which has no authentication or access-control tools."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_user_address",
+    "distractor_rationale": "modify_user_address can only change the shipping address on file; it does nothing to sessions, logins, or account access, so it cannot lock down or secure a potentially compromised account.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__017",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Emma Brown, order #W6460787."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Emma, order #W6460787 is currently pending."
+      }
+    ],
+    "user_message": "I forgot to add gift wrapping and a gift note to that order when I placed it. Can you add those now before it ships?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User emma_brown_8847 wants gift wrapping and a gift note added retroactively to pending order #W6460787; no gift-wrap or gift-note field or tool exists anywhere in the order schema or toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "modify_pending_order_items",
+    "distractor_rationale": "modify_pending_order_items can only swap an existing item for a different variant of the same product; gift wrap and gift notes aren't product variants or order fields at all, so there's nothing this tool can set.",
+    "ambiguity_note": null
+  },
+  {
+    "id": "out_of_scope__identity_and_order_lookup__018",
+    "category": "out_of_scope",
+    "theme": "identity_and_order_lookup",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, Evelyn Davis, order #W6798117."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Evelyn, order #W6798117 shows delivered."
+      }
+    ],
+    "user_message": "Separately -- I run a small shop and want to set up a wholesale account with negotiated bulk pricing for future large orders. Who do I talk to about that?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User evelyn_davis_7541 asks about setting up a wholesale/bulk-pricing business account for future large orders; wholesale account setup and pricing negotiation are outside the retail agent's consumer-support toolset."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "list_all_product_types",
+    "distractor_rationale": "list_all_product_types just enumerates the store's 50 product types at standard retail pricing; it has no mechanism to set up a business account or negotiate bulk pricing terms.",
+    "ambiguity_note": null
+  }
+]

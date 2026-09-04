@@ -1,0 +1,17 @@
+{"id": "out_of_scope__apparel_footwear_exchanges__001", "one_line": "Delivered sneakers exchange request conditioned on a competitor price match/discount, which no tool can apply."}
+{"id": "out_of_scope__apparel_footwear_exchanges__002", "one_line": "User asks for a printable prepaid return shipping label ahead of a delivered fleece jacket exchange."}
+{"id": "out_of_scope__apparel_footwear_exchanges__003", "one_line": "Repeat-defect customer declines another helmet exchange, demands a $25 goodwill store-credit voucher instead."}
+{"id": "out_of_scope__apparel_footwear_exchanges__004", "one_line": "User asks agent for a personal size-9-vs-9.5 fit recommendation on pending running shoes, not a tool action."}
+{"id": "out_of_scope__apparel_footwear_exchanges__005", "one_line": "Delivered t-shirt exchange requested with custom sleeve embroidery/monogramming added, unsupported by any tool."}
+{"id": "out_of_scope__apparel_footwear_exchanges__006", "one_line": "User wants to pay a pending sunglasses exchange price difference using loyalty rewards points, not a real payment method."}
+{"id": "out_of_scope__apparel_footwear_exchanges__007", "one_line": "User asks what international customs duties apply to a t-shirt exchange replacement shipping to Germany."}
+{"id": "out_of_scope__apparel_footwear_exchanges__008", "one_line": "User asks whether their delivered cycling helmet is subject to a news-reported safety recall."}
+{"id": "out_of_scope__apparel_footwear_exchanges__009", "one_line": "User wants hiking boots donated to charity instead of a standard return, while still receiving a refund."}
+{"id": "out_of_scope__apparel_footwear_exchanges__010", "one_line": "User wants to purchase a 3-year extended warranty add-on for delivered hiking boots, no such product/tool exists."}
+{"id": "out_of_scope__apparel_footwear_exchanges__011", "one_line": "User wants the exact restock date for an out-of-stock sunglasses variant to time an exchange, no forecasting tool."}
+{"id": "out_of_scope__apparel_footwear_exchanges__012", "one_line": "User wants an in-store cash-purchased fleece jacket exchanged through chat; no matching online order exists."}
+{"id": "out_of_scope__apparel_footwear_exchanges__013", "one_line": "After a completed sneaker exchange, user asks for live GPS tracking of the replacement shipment."}
+{"id": "out_of_scope__apparel_footwear_exchanges__014", "one_line": "User wants overnight/expedited shipping upgrade for a cycling helmet exchange replacement item."}
+{"id": "out_of_scope__apparel_footwear_exchanges__015", "one_line": "User asks for a promo code to discount the price difference on a possible pending hiking boots exchange."}
+{"id": "out_of_scope__apparel_footwear_exchanges__016", "one_line": "User asks the agent to post a positive product review for pending hiking boots on their behalf."}
+{"id": "out_of_scope__apparel_footwear_exchanges__017", "one_line": "User reports a chemical smell from delivered hiking boots and asks for a health-hazard safety assessment."}

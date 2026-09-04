@@ -1,0 +1,18 @@
+{"id": "out_of_scope__order_state_confusion__001", "one_line": "Pending order needs overnight/rush shipping upgrade for a party this weekend; no shipping-speed tool."}
+{"id": "out_of_scope__order_state_confusion__002", "one_line": "Pending order requests a handwritten gift note inserted in the package before shipment."}
+{"id": "out_of_scope__order_state_confusion__003", "one_line": "Pending order payment split into a two-part installment plan across PayPal and future billing."}
+{"id": "out_of_scope__order_state_confusion__004", "one_line": "Delivered smart thermostat missing printed manual; user wants a physical instruction copy mailed."}
+{"id": "out_of_scope__order_state_confusion__005", "one_line": "Delivered air purifier owner asks agent to post a 5-star product review on their behalf."}
+{"id": "out_of_scope__order_state_confusion__006", "one_line": "Delivered jigsaw puzzle owner wants store to arrange charity donation pickup instead of a refund."}
+{"id": "out_of_scope__order_state_confusion__007", "one_line": "Processed order needs an official itemized invoice emailed to the user's accountant."}
+{"id": "out_of_scope__order_state_confusion__008", "one_line": "Processed order needs a specific 2-4pm delivery appointment window scheduled with carrier."}
+{"id": "out_of_scope__order_state_confusion__009", "one_line": "Already-refunded cancelled order: user wants refund reissued as a mailed paper check instead."}
+{"id": "out_of_scope__order_state_confusion__010", "one_line": "User wants a completed cancellation on a cancelled order reversed and the order re-shipped."}
+{"id": "out_of_scope__order_state_confusion__011", "one_line": "Pending order: user wants an unrelated new product added to the same shipment, not a swap."}
+{"id": "out_of_scope__order_state_confusion__012", "one_line": "Pending order payment split across gift card and credit card instead of one full replacement."}
+{"id": "out_of_scope__order_state_confusion__013", "one_line": "Delivered backpack owner asks agent to register the item for manufacturer warranty."}
+{"id": "out_of_scope__order_state_confusion__014", "one_line": "Delivered mechanical keyboard works fine; user wants RGB software troubleshooting/tech support."}
+{"id": "out_of_scope__order_state_confusion__015", "one_line": "Exchange already requested 3 weeks ago; user wants warehouse expedited or a goodwill credit."}
+{"id": "out_of_scope__order_state_confusion__016", "one_line": "Return already requested last turn; user gives up and asks to be connected to a human agent."}
+{"id": "out_of_scope__order_state_confusion__017", "one_line": "Item already modified once this order; user now wants a competitor price-match refund."}
+{"id": "out_of_scope__order_state_confusion__018", "one_line": "Authenticated user with pending order explicitly demands a human agent instead of the bot."}
