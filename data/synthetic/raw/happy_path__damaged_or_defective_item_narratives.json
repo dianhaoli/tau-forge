@@ -1,0 +1,506 @@
+[
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__001",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I've located your account, Ava. I can see order #W6257064, delivered, containing a canister vacuum cleaner among other items. How can I help?"
+      }
+    ],
+    "user_message": "The vacuum's motor is grinding loudly and it barely has suction -- it's clearly defective. I want to return it for a refund to my PayPal.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6257064",
+          "item_ids": [
+            "2872451762"
+          ],
+          "payment_method_id": "paypal_7478252"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user explicitly asked for a refund of a defective unit, not a replacement, so exchange_delivered_order_items (which swaps for a new item rather than refunding) is the wrong tool even though it also applies to delivered orders.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__002",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Mason Ahmed, order #W2101159."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Mason, I've pulled up #W2101159 -- delivered, with a charcoal grill among your items. What's going on?"
+      }
+    ],
+    "user_message": "The charcoal grill arrived with a dent in the lid and it won't close properly. I'd like to exchange it for the gas portable grill with a side burner instead, item 9724317332 -- charge any difference to the gift card on the order.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W2101159",
+          "item_ids": [
+            "7082455361"
+          ],
+          "new_item_ids": [
+            "9724317332"
+          ],
+          "payment_method_id": "gift_card_2233321"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user asked for a replacement grill of a different configuration, not a refund, so a plain return would leave them without a working grill -- exchange is the correct action even though return is also valid on a delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__003",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I have your account open, Mia -- order #W8346517 is delivered and includes a leather office chair. What can I do for you?"
+      }
+    ],
+    "user_message": "The office chair showed up with a big scratch across the backrest. Please just return it and refund to my gift card ending in 8883122, not the credit card I originally paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8346517",
+          "item_ids": [
+            "4168944673"
+          ],
+          "payment_method_id": "gift_card_8883122"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user wants their money back on a different payment method, not a replacement chair, so exchange_delivered_order_items -- which requires picking a new variant rather than issuing a refund -- doesn't fit the request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__004",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [],
+    "user_message": "Hi, this is Harper Brown, order #W1840144. My desk lamp keeps flickering and I think it might be defective, but before I decide what to do can you first check whether that order actually shows as delivered yet? I lost track of the shipping emails.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W1840144"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user hasn't decided to return or exchange anything yet and hasn't confirmed the item list -- jumping straight to return_delivered_order_items would be premature when the only thing actually requested this turn is a status check.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__005",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Daiki Kovacs, order #W2259015."
+      },
+      {
+        "role": "assistant",
+        "content": "Got it, Daiki -- #W2259015 is delivered, and I see a 14-inch digital wall clock on it."
+      }
+    ],
+    "user_message": "The clock face arrived cracked right across the display. Can you exchange it for the 10-inch black digital one instead, item 8610532516? Charge the price difference to my PayPal.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W2259015",
+          "item_ids": [
+            "9850781806"
+          ],
+          "new_item_ids": [
+            "8610532516"
+          ],
+          "payment_method_id": "paypal_9103096"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The customer wants a working replacement clock in a different size, not a refund, so a straight return doesn't satisfy the request even though it's also a valid action on a delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__006",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [],
+    "user_message": "Hi, I'm Raj Ito, order #W8448267. The perfume bottle arrived cracked and about half of it leaked out in the box. I'd like to return it for a refund to the credit card I paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W8448267",
+          "item_ids": [
+            "1725100896"
+          ],
+          "payment_method_id": "credit_card_6480285"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user asked for a refund of a leaking, unusable bottle rather than a replacement bottle of a different scent/size, so exchange is not what was requested.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__007",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "Thanks, I have your account pulled up. I see the backpack order in your history."
+      }
+    ],
+    "user_message": "The zipper on my backpack ripped out of the seam after a week -- clearly defective. Before I decide between a return or a swap, can you check if the black, large, nylon backpack with a laptop compartment is currently in stock? That's the product id 2524789262.",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "2524789262"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user hasn't picked a specific replacement item or confirmed an exchange yet -- they only asked to check stock, so calling exchange_delivered_order_items now would guess at item ids that were never provided or confirmed.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__008",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Aarav Garcia, order #W3038897."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, I see #W3038897 delivered with a plastic skateboard on it."
+      }
+    ],
+    "user_message": "The wheels on my skateboard are cracked and one won't even spin right -- defective for sure. Before I ask you to swap it, can you check whether the bamboo, 31-inch, custom-design skateboard, item 6313971174, is available?",
+    "expected_tool_calls": [
+      {
+        "name": "get_item_details",
+        "arguments": {
+          "item_id": "6313971174"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user only asked to check availability of a possible replacement and explicitly said they'll ask for the swap afterward -- calling exchange_delivered_order_items now would act before the user has confirmed they want that specific item.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__009",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I've confirmed your identity, Olivia -- I can see order #W5671546, delivered, with a garden hose on it."
+      }
+    ],
+    "user_message": "The garden hose split down the middle the first time I turned the water on -- totally defective. Please return it and refund my credit card.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W5671546",
+          "item_ids": [
+            "3230708338"
+          ],
+          "payment_method_id": "credit_card_2583849"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user wants their money back for a hose that failed immediately, not a different length/color hose, so exchange_delivered_order_items doesn't match the request even though it's also available on delivered orders.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__010",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [],
+    "user_message": "Hi, this is Daiki Patel. My electric kettle from order #W3135192 won't heat up at all, seems defective out of the box. Before we talk return or exchange, can you just pull up the order and confirm it actually shows delivered? I want to make sure I'm not misremembering.",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W3135192"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user asked only for a status check this turn and hasn't confirmed a return, so return_delivered_order_items would be acting before the customer has actually requested or confirmed that action.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__011",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Aarav Anderson, order #W9311069."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Aarav, #W9311069 is delivered and includes a stainless steel tea kettle among other items."
+      }
+    ],
+    "user_message": "The tea kettle's lid doesn't seal right and it whistles constantly even half-full -- defective. Can you exchange it for the glass one instead, item 3909406921? Use the gift card on file for any price difference.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W9311069",
+          "item_ids": [
+            "4238115171"
+          ],
+          "new_item_ids": [
+            "3909406921"
+          ],
+          "payment_method_id": "gift_card_7245904"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a working replacement kettle, not their money back, so a plain return would not satisfy the request even though returning is also valid on this delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__012",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I have your account open, Mei -- I can see order #W7368828, delivered, including a makeup kit."
+      }
+    ],
+    "user_message": "The makeup kit's palette arrived shattered, powder everywhere in the box. Please return it and put the refund on my gift card instead of the PayPal I originally paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7368828",
+          "item_ids": [
+            "4624254797"
+          ],
+          "payment_method_id": "gift_card_1755127"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user asked for a refund for a shattered, unusable kit rather than a fresh replacement kit, so exchange_delivered_order_items is the wrong tool for what they requested.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__013",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Amelia Wilson, order #W9077205."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Amelia, I see #W9077205 delivered with an adjustable dumbbell set on it."
+      }
+    ],
+    "user_message": "The coating on these dumbbells is already peeling off after light use -- feels defective. Can you exchange them for the urethane 5-25 lbs adjustable set instead, item 3275928196? Use my gift card for the difference.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W9077205",
+          "item_ids": [
+            "3877338112"
+          ],
+          "new_item_ids": [
+            "3275928196"
+          ],
+          "payment_method_id": "gift_card_7108145"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a different dumbbell set as a working replacement, not a refund, so a plain return doesn't match the request even though the order is eligible for either action.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__014",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I have your account pulled up -- I see the yoga mat on your delivered order."
+      }
+    ],
+    "user_message": "My yoga mat arrived with a tear along one edge, clearly defective. Before I decide what to swap it for, can you check whether the natural rubber, pink, 6mm mat is in stock? Product id 4635925001.",
+    "expected_tool_calls": [
+      {
+        "name": "get_product_details",
+        "arguments": {
+          "product_id": "4635925001"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user only asked to check stock on a possible replacement and hasn't confirmed which item to exchange into yet, so jumping to exchange_delivered_order_items would be acting on an unconfirmed request.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__015",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Lucas Johnson, order #W7016806."
+      }
+    ],
+    "user_message": "One of the glass panels on my bookshelf arrived with a crack running through it -- defective. Before we sort out a return, can you confirm the order actually shows as delivered on your end?",
+    "expected_tool_calls": [
+      {
+        "name": "get_order_details",
+        "arguments": {
+          "order_id": "#W7016806"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user hasn't yet confirmed they want to return the item or which item ids to return -- they only asked for a status check, so calling return_delivered_order_items now would be premature.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__016",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I've verified your identity, Evelyn -- order #W4017490 is delivered and includes a 2-piece softshell luggage set."
+      }
+    ],
+    "user_message": "One of the suitcases arrived with a broken wheel, won't roll straight at all. Please return it and refund to the gift card I paid with.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W4017490",
+          "item_ids": [
+            "7160999700"
+          ],
+          "payment_method_id": "gift_card_4710495"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user wants a refund for the broken suitcase, not a replacement piece, so exchange_delivered_order_items doesn't fit even though it's also a valid action on this delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__017",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "This is Omar Lopez, order #W7273336."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Omar, #W7273336 is delivered and includes a fleece pet bed."
+      }
+    ],
+    "user_message": "The zipper on the pet bed cover broke off the first time I tried to unzip it for washing -- defective. Can you exchange it for the medium polyester grey one instead, item 2405281423? Charge my PayPal for the difference.",
+    "expected_tool_calls": [
+      {
+        "name": "exchange_delivered_order_items",
+        "arguments": {
+          "order_id": "#W7273336",
+          "item_ids": [
+            "6857426243"
+          ],
+          "new_item_ids": [
+            "2405281423"
+          ],
+          "payment_method_id": "paypal_1530316"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The user wants a working replacement bed cover, not a refund, so a plain return would not fulfill the request even though it's also valid on this delivered order.",
+    "ambiguity_note": ""
+  },
+  {
+    "id": "happy_path__damaged_or_defective_item_narratives__018",
+    "category": "happy_path",
+    "theme": "damaged_or_defective_item_narratives",
+    "prior_turns": [
+      {
+        "role": "assistant",
+        "content": "I have your account pulled up, Mei -- I can see order #W6390527, delivered, with a glass water bottle on it."
+      }
+    ],
+    "user_message": "The glass water bottle arrived with a hairline crack near the base -- I'm worried it'll shatter if I use it. Please return it and refund my PayPal.",
+    "expected_tool_calls": [
+      {
+        "name": "return_delivered_order_items",
+        "arguments": {
+          "order_id": "#W6390527",
+          "item_ids": [
+            "8538875209"
+          ],
+          "payment_method_id": "paypal_7644869"
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "exchange_delivered_order_items",
+    "distractor_rationale": "The user wants a refund for a cracked bottle rather than a different bottle variant, so exchange_delivered_order_items doesn't match the request even though it's also applicable to delivered orders.",
+    "ambiguity_note": ""
+  }
+]

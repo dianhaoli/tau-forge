@@ -91,3 +91,39 @@
 {"id": "happy_path__apparel_footwear_exchanges__016", "one_line": "User without email authenticated via name+zip before requesting an apparel exchange."}
 {"id": "happy_path__apparel_footwear_exchanges__017", "one_line": "Verified user asks to see full order list to find one eligible for exchange."}
 {"id": "happy_path__apparel_footwear_exchanges__018", "one_line": "User asks shipping status of a pending sunglasses order before requesting a lens color swap."}
+{"id": "happy_path__order_state_confusion__001", "one_line": "Pending single-item skateboard order; user asks to cancel, no longer needed."}
+{"id": "happy_path__order_state_confusion__002", "one_line": "Pending order; user requests a shipping address change to a new city."}
+{"id": "happy_path__order_state_confusion__003", "one_line": "Pending laptop order paid via PayPal; user asks to switch payment to a credit card."}
+{"id": "happy_path__order_state_confusion__004", "one_line": "Pending order with two Action Cameras; user swaps one camera's color variant."}
+{"id": "happy_path__order_state_confusion__005", "one_line": "Delivered multi-item order; user returns one backpack item to original credit card."}
+{"id": "happy_path__order_state_confusion__006", "one_line": "Delivered order with a cycling helmet; user exchanges it for a larger size, same color."}
+{"id": "happy_path__order_state_confusion__007", "one_line": "User assumes an order is pending and asks to cancel it; order is actually processed."}
+{"id": "happy_path__order_state_confusion__008", "one_line": "User asks whether a cancelled order's refund was actually processed."}
+{"id": "happy_path__order_state_confusion__009", "one_line": "Pending multi-item electronics order; user cancels it, ordered by mistake."}
+{"id": "happy_path__order_state_confusion__010", "one_line": "Pending backpack order; user switches payment method from PayPal to credit card."}
+{"id": "happy_path__order_state_confusion__011", "one_line": "Order already item-modified once; user now asks for a separate address change."}
+{"id": "happy_path__order_state_confusion__012", "one_line": "Delivered order with a return already requested; user asks for a status check."}
+{"id": "happy_path__order_state_confusion__013", "one_line": "Delivered order with an exchange already requested; user asks for a status check."}
+{"id": "happy_path__order_state_confusion__014", "one_line": "User wants to resize hiking boots on a delivered order but first asks what's in stock."}
+{"id": "happy_path__order_state_confusion__015", "one_line": "Delivered e-reader exchanged for a cheaper higher-storage variant, refund to gift card."}
+{"id": "happy_path__order_state_confusion__016", "one_line": "Delivered earbuds returned; refund redirected from PayPal to an existing gift card."}
+{"id": "happy_path__order_state_confusion__017", "one_line": "Pending air purifier swapped to a pricier night-mode variant after checking stock."}
+{"id": "happy_path__order_state_confusion__018", "one_line": "User asks whether a pending order has shipped yet, no action requested."}
+{"id": "happy_path__damaged_or_defective_item_narratives__001", "one_line": "Delivered vacuum cleaner motor grinds/no suction; single-item order returned, refund to original PayPal."}
+{"id": "happy_path__damaged_or_defective_item_narratives__002", "one_line": "Delivered charcoal grill lid dented; exchanged for gas portable variant, diff charged to on-file gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__003", "one_line": "Delivered leather office chair scratched; returned, refund redirected to a second existing gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__004", "one_line": "Desk lamp flickers; user asks only to confirm order shows delivered before deciding next step."}
+{"id": "happy_path__damaged_or_defective_item_narratives__005", "one_line": "Delivered wall clock face cracked; exchanged for smaller digital variant, diff charged to PayPal."}
+{"id": "happy_path__damaged_or_defective_item_narratives__006", "one_line": "Single-item delivered perfume bottle cracked/leaked; returned, refund to original credit card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__007", "one_line": "Backpack zipper ripped out; user asks to check stock of a specific replacement variant before acting."}
+{"id": "happy_path__damaged_or_defective_item_narratives__008", "one_line": "Skateboard wheel cracked; user asks to check availability of a specific replacement item before swapping."}
+{"id": "happy_path__damaged_or_defective_item_narratives__009", "one_line": "Delivered garden hose split on first use; returned, refund to original credit card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__010", "one_line": "Electric kettle won't heat; user asks only to confirm order shows delivered before discussing remedy."}
+{"id": "happy_path__damaged_or_defective_item_narratives__011", "one_line": "Delivered tea kettle lid won't seal; exchanged for glass variant, diff charged to on-file gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__012", "one_line": "Delivered makeup kit palette shattered; returned, refund redirected to an existing gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__013", "one_line": "Delivered dumbbell set coating peeling; exchanged for urethane variant, diff via original gift card."}
+{"id": "happy_path__damaged_or_defective_item_narratives__014", "one_line": "Yoga mat torn along edge; user asks to check stock of a specific replacement variant before acting."}
+{"id": "happy_path__damaged_or_defective_item_narratives__015", "one_line": "Bookshelf glass panel cracked; user asks only to confirm order shows delivered before requesting return."}
+{"id": "happy_path__damaged_or_defective_item_narratives__016", "one_line": "Delivered luggage set wheel broken; returned, refund to the original gift card payment method."}
+{"id": "happy_path__damaged_or_defective_item_narratives__017", "one_line": "Delivered pet bed zipper broke; exchanged for a different fabric variant, diff charged to PayPal."}
+{"id": "happy_path__damaged_or_defective_item_narratives__018", "one_line": "Delivered glass water bottle hairline-cracked; returned, refund to original PayPal."}
