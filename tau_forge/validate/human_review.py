@@ -104,7 +104,7 @@ def build_sample(
     for category, theme in all_cells():
         cell = f"{category}__{theme}"
         scenarios = _load_cell_scenarios(cell, raw_dir)
-        rng = random.Random((seed, cell))  # per-cell deterministic sub-seed, stable regardless of dict order
+        rng = random.Random(f"{seed}:{cell}")  # per-cell deterministic sub-seed, stable regardless of dict order
         sample[cell] = sample_cell(cell, scenarios, flagged_by_cell.get(cell, set()), rng, base_n)
     return sample
 
