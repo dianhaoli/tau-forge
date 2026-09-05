@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--samples-per-scenario", type=int, default=4, help="Repeats per scenario, for a rough within-scenario variance read -- not a full GRPO group, just enough to see if a scenario is deterministic.")
     p.add_argument("--max-new-tokens", type=int, default=512)
     p.add_argument("--temperature", type=float, default=1.0)
-    p.add_argument("--batch-size", type=int, default=16)
+    p.add_argument("--batch-size", type=int, default=8)
     p.add_argument("--output", default=str(DEFAULT_OUTPUT))
     return p.parse_args()
 
@@ -94,6 +94,9 @@ def main() -> None:
             expected_args = json.loads(row["expected_tool_arguments_json"])
             score = score_completion(completion, row["expected_tool_name"], expected_args)
             per_scenario_scores[row["id"]].append(score)
+
+        del inputs, out
+        torch.cuda.empty_cache()
 
         print(f"[zero_shot_baseline] {min(start + args.batch_size, len(all_prompts))}/{len(all_prompts)} generations done")
 
