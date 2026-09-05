@@ -36,7 +36,13 @@ TOOL_CALL_FORMAT_INSTRUCTION = (
     'form:\n<tool_call>\n{"name": "<tool_name>", "arguments": {...}}\n</tool_call>\n'
     "If the correct action is not calling a tool right now -- e.g. the request "
     "is ambiguous, out of policy, or a plain reply is what's needed -- send a "
-    "message with no <tool_call> block instead."
+    "message with no <tool_call> block instead.\n\n"
+    "If the user's request cannot be satisfied by any tool available to you "
+    "-- there is simply no capability that does what they're asking, even "
+    "though the request itself is clear -- that is not a case for a plain "
+    "reply. Call transfer_to_human_agents with a summary of the issue. Do "
+    "not try to solve it with an unrelated tool, and do not just apologize "
+    "or ask clarifying questions in place of escalating."
 )
 
 
