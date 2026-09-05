@@ -16,8 +16,8 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__002",
-    "difficulty_score": 0.67,
-    "difficulty_label": "hard",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
     "components": {
       "category": "happy_path",
       "category_score": 0.2,
@@ -25,8 +25,8 @@
       "action_score": 0.8,
       "distractor_kind": "same_family_as_answer",
       "distractor_score": 1.0,
-      "model_check_severity": "major",
-      "model_check_bump": 0.15
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
@@ -46,7 +46,7 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__004",
-    "difficulty_score": 0.34,
+    "difficulty_score": 0.27,
     "difficulty_label": "easy",
     "components": {
       "category": "happy_path",
@@ -55,14 +55,14 @@
       "action_score": 0.3,
       "distractor_kind": "different_family_but_mutating",
       "distractor_score": 0.5,
-      "model_check_severity": "minor",
-      "model_check_bump": 0.07
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__005",
-    "difficulty_score": 0.67,
-    "difficulty_label": "hard",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
     "components": {
       "category": "happy_path",
       "category_score": 0.2,
@@ -70,14 +70,14 @@
       "action_score": 0.8,
       "distractor_kind": "same_family_as_answer",
       "distractor_score": 1.0,
-      "model_check_severity": "major",
-      "model_check_bump": 0.15
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__006",
-    "difficulty_score": 0.67,
-    "difficulty_label": "hard",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
     "components": {
       "category": "happy_path",
       "category_score": 0.2,
@@ -85,8 +85,8 @@
       "action_score": 0.8,
       "distractor_kind": "same_family_as_answer",
       "distractor_score": 1.0,
-      "model_check_severity": "major",
-      "model_check_bump": 0.15
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__008",
-    "difficulty_score": 0.34,
+    "difficulty_score": 0.27,
     "difficulty_label": "easy",
     "components": {
       "category": "happy_path",
@@ -115,8 +115,8 @@
       "action_score": 0.3,
       "distractor_kind": "different_family_but_mutating",
       "distractor_score": 0.5,
-      "model_check_severity": "minor",
-      "model_check_bump": 0.07
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
@@ -136,7 +136,7 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__010",
-    "difficulty_score": 0.34,
+    "difficulty_score": 0.27,
     "difficulty_label": "easy",
     "components": {
       "category": "happy_path",
@@ -145,14 +145,14 @@
       "action_score": 0.3,
       "distractor_kind": "different_family_but_mutating",
       "distractor_score": 0.5,
-      "model_check_severity": "minor",
-      "model_check_bump": 0.07
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__011",
-    "difficulty_score": 0.67,
-    "difficulty_label": "hard",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
     "components": {
       "category": "happy_path",
       "category_score": 0.2,
@@ -160,8 +160,8 @@
       "action_score": 0.8,
       "distractor_kind": "same_family_as_answer",
       "distractor_score": 1.0,
-      "model_check_severity": "major",
-      "model_check_bump": 0.15
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
@@ -181,8 +181,8 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__013",
-    "difficulty_score": 0.67,
-    "difficulty_label": "hard",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
     "components": {
       "category": "happy_path",
       "category_score": 0.2,
@@ -190,8 +190,8 @@
       "action_score": 0.8,
       "distractor_kind": "same_family_as_answer",
       "distractor_score": 1.0,
-      "model_check_severity": "major",
-      "model_check_bump": 0.15
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
@@ -211,7 +211,7 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__015",
-    "difficulty_score": 0.34,
+    "difficulty_score": 0.27,
     "difficulty_label": "easy",
     "components": {
       "category": "happy_path",
@@ -220,8 +220,8 @@
       "action_score": 0.3,
       "distractor_kind": "different_family_but_mutating",
       "distractor_score": 0.5,
-      "model_check_severity": "minor",
-      "model_check_bump": 0.07
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {
@@ -241,8 +241,8 @@
   },
   {
     "id": "happy_path__damaged_or_defective_item_narratives__017",
-    "difficulty_score": 0.67,
-    "difficulty_label": "hard",
+    "difficulty_score": 0.52,
+    "difficulty_label": "medium",
     "components": {
       "category": "happy_path",
       "category_score": 0.2,
@@ -250,8 +250,8 @@
       "action_score": 0.8,
       "distractor_kind": "same_family_as_answer",
       "distractor_score": 1.0,
-      "model_check_severity": "major",
-      "model_check_bump": 0.15
+      "model_check_severity": "none",
+      "model_check_bump": 0.0
     }
   },
   {

@@ -69,7 +69,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm lei_li_6575, my order #W5166363 hasn't shipped yet."
+        "content": "Hi, this is Lei Li, my email is lei.li8350@example.com. My order #W5166363 hasn't shipped yet."
       },
       {
         "role": "assistant",
@@ -98,7 +98,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm sofia_rossi_8776. My order #W5918442 is still pending -- it has two Action Camera units in it."
+        "content": "Hi, this is Sofia Rossi, my email is sofia.rossi2645@example.com. My order #W5918442 is still pending -- it has two Action Camera units in it."
       },
       {
         "role": "assistant",
@@ -165,7 +165,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm emma_santos_9753, order #W3113816 already arrived."
+        "content": "Hi, this is Emma Santos, my email is emma.santos7683@example.com. Order #W3113816 already arrived."
       },
       {
         "role": "assistant",
@@ -256,7 +256,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm sofia_thomas_1518."
+        "content": "Hi, this is Sofia Thomas, my email is sofia.thomas3069@example.com."
       },
       {
         "role": "assistant",
@@ -285,7 +285,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm yusuf_garcia_3055. My backpack order #W6885344 hasn't shipped."
+        "content": "Hi, this is Yusuf Garcia, my email is yusuf.garcia2909@example.com. My backpack order #W6885344 hasn't shipped."
       },
       {
         "role": "assistant",
@@ -314,7 +314,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm evelyn_kovacs_6742. Earlier today I had you swap the Tea Kettle on my pending order #W5694685 from the 1-liter glass one to the 1.5-liter glass one -- that went through fine and the order now shows 'pending (item modified)'."
+        "content": "Hi, this is Evelyn Kovacs, my email is evelyn.kovacs5369@example.com. Earlier today I had you swap the Tea Kettle on my pending order #W5694685 from the 1-liter glass one to the 1.5-liter glass one -- that went through fine and the order now shows 'pending (item modified)'."
       },
       {
         "role": "assistant",
@@ -348,7 +348,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm omar_khan_2363. I had you return the Skateboard from my delivered order #W6304490 a bit ago -- refund was going to my original credit card."
+        "content": "Hi, this is Omar Khan, my email is omar.khan3563@example.com. I had you return the Skateboard from my delivered order #W6304490 a bit ago -- refund was going to my original credit card."
       },
       {
         "role": "assistant",
@@ -376,7 +376,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, this is daiki_moore_8567. I already had you exchange the Mechanical Keyboard on my delivered order #W8032761 for the clicky-switch version, paid the difference from my gift card."
+        "content": "Hi, this is Daiki Moore, my email is daiki.moore7228@example.com. I already had you exchange the Mechanical Keyboard on my delivered order #W8032761 for the clicky-switch version, paid the difference from my gift card."
       },
       {
         "role": "assistant",
@@ -404,7 +404,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm aarav_sanchez_9729. My order #W5455653 already arrived and it has a pair of size 7 synthetic Hiking Boots I want to size up on."
+        "content": "Hi, this is Aarav Sanchez, my email is aarav.sanchez1292@example.com. My order #W5455653 already arrived and it has a pair of size 7 synthetic Hiking Boots I want to size up on."
       },
       {
         "role": "assistant",
@@ -432,7 +432,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm chen_silva_7485. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769."
+        "content": "Hi, this is Chen Silva, my email is chen.silva2698@example.com. Order #W3069600 arrived and it has an 8-inch Wi-Fi E-Reader with 8GB storage, item 9494281769."
       },
       {
         "role": "assistant",
@@ -467,7 +467,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm aarav_nguyen_7344. Order #W7728728 arrived with a pair of Wireless Earbuds, item 8555936349, that I paid for with PayPal."
+        "content": "Hi, this is Aarav Nguyen, my email is aarav.nguyen1293@example.com. Order #W7728728 arrived with a pair of Wireless Earbuds, item 8555936349, that I paid for with PayPal."
       },
       {
         "role": "assistant",
@@ -499,7 +499,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm lucas_martin_4549. My order #W9318778 is still pending and has two Air Purifier units on it -- I want to swap the medium HEPA quiet-operation one, item 3076708684, for something with a night-mode feature."
+        "content": "Hi, this is Lucas Martin, my email is lucas.martin5733@example.com. My order #W9318778 is still pending and has two Air Purifier units on it -- I want to swap the medium HEPA quiet-operation one, item 3076708684, for something with a night-mode feature."
       },
       {
         "role": "assistant",
@@ -534,7 +534,7 @@
     "prior_turns": [
       {
         "role": "user",
-        "content": "Hi, I'm fatima_muller_6713."
+        "content": "Hi, this is Fatima Muller, my email is fatima.muller6448@example.com."
       },
       {
         "role": "assistant",

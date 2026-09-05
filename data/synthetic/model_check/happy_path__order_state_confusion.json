@@ -11,17 +11,13 @@
   },
   {
     "scenario_id": "happy_path__order_state_confusion__003",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__004",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__005",
@@ -30,10 +26,8 @@
   },
   {
     "scenario_id": "happy_path__order_state_confusion__006",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__007",
@@ -47,72 +41,52 @@
   },
   {
     "scenario_id": "happy_path__order_state_confusion__009",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__010",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__011",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__012",
-    "issues": [
-      "User authenticates only by stating a raw user_id with no email or zip given, and the assistant proceeds without a second verification factor -- lower stakes here since the expected tool call is a read-only lookup, but it still models skipping the required identity check"
-    ],
-    "severity": "minor"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__013",
-    "issues": [
-      "User authenticates only by stating a raw user_id with no email or zip given, and the assistant proceeds without a second verification factor -- lower stakes here since the expected tool call is a read-only lookup, but it still models skipping the required identity check"
-    ],
-    "severity": "minor"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__014",
-    "issues": [
-      "User authenticates only by stating a raw user_id with no email or zip given, and the assistant proceeds without a second verification factor -- lower stakes here since the expected tool call is a read-only lookup, but it still models skipping the required identity check"
-    ],
-    "severity": "minor"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__015",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__016",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__017",
-    "issues": [
-      "User authenticates only by stating a raw user_id (e.g. 'I'm lei_li_6575') with no email or zip given, and the assistant immediately proceeds to a write action (payment/address/item modification, cancellation, exchange, or return) without ever verifying identity via a second factor, contradicting the policy's explicit requirement to verify even when the user already provides the user id"
-    ],
-    "severity": "major"
+    "issues": [],
+    "severity": "none"
   },
   {
     "scenario_id": "happy_path__order_state_confusion__018",
-    "issues": [
-      "User authenticates only by stating a raw user_id with no email or zip given, and the assistant proceeds without a second verification factor -- lower stakes here since the expected tool call is a read-only lookup, but it still models skipping the required identity check"
-    ],
-    "severity": "minor"
+    "issues": [],
+    "severity": "none"
   }
 ]
