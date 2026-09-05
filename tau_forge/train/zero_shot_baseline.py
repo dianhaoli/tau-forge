@@ -52,7 +52,9 @@ def main() -> None:
     from tau_forge.train.dataset import DEFAULT_DATA_GLOB, build_examples, to_hf_rows
     from tau_forge.train.reward_adapter import score_completion
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    tokenizer = AutoTokenizer.from_pretrained(args.model, padding_side="left")
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
     apply_chat_template = functools.partial(
         tokenizer.apply_chat_template, tokenize=False, add_generation_prompt=True
     )
