@@ -36,9 +36,12 @@ from __future__ import annotations
 import argparse
 import functools
 import json
+import os
 import time
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+from typing import Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = REPO_ROOT / "data" / "trained" / "zero_shot_baseline.json"
@@ -91,6 +94,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--use-vllm", action="store_true", help="Generate with vLLM instead of plain HF .generate() -- much faster, same dependency already installed.")
     p.add_argument("--max-model-len", type=int, default=8192, help="vLLM only. Caps the KV cache to this many tokens instead of the model's full native context (Qwen3's is 262144, which needs far more KV cache memory than a single GPU has). Must exceed the longest prompt (the retail system prompt + policy text + tool schemas can run several thousand tokens) plus --max-new-tokens, or vLLM rejects that request outright.")
     p.add_argument("--save-completions", action="store_true", help="Include raw completion text per sample in the output JSON, not just scores. Off by default since it makes the output much larger.")
+    p.add_argument(
+        "--score-workers",
+        type=int,
+        default=0,
+        help="Processes to score completions across. 0 (default) picks one per available "
+        "core, capped at 16. Use 1 to score in-process. Scoring is pure CPU and, on a "
+        "right-tool completion, deep-copies the 2.8MB retail db -- at n=16 over the whole "
+        "corpus that is thousands of seconds of silence after vLLM has already printed its "
+        "shutdown banner. Each worker holds its own db, so ~100MB of RSS per worker.",
+    )
     p.add_argument("--output", default=str(DEFAULT_OUTPUT))
     return p.parse_args(argv)
 
@@ -195,13 +208,66 @@ def _generate_vllm(args: argparse.Namespace, prompts: list[str], samples_per_pro
     return completions
 
 
+# One `RetailEnv` per worker process. Shaping only ever asks it schema
+# questions, so a single instance is reusable for the whole chunk -- and
+# building one per completion would cost more than the shaping itself.
+_worker_shaping_env = None
+
+
+def _score_scenario(
+    payload: tuple[Optional[str], str, list[str], bool, bool]
+) -> tuple[list[float], list[float]]:
+    """Score every sample of one scenario. Runs in a pool worker, so it takes
+    plain picklable data and imports its own dependencies.
+
+    A scenario is the right unit of work to hand a worker: its samples share a
+    gold action, so `reward_adapter`'s gold cache hits for all but the first,
+    and each worker pays the one-off `db.json` parse once rather than per call.
+    """
+    global _worker_shaping_env
+    expected_name, expected_args_json, completions, with_shaping, penalize_multi_call = payload
+
+    from tau_forge.envs.retail import RetailEnv
+    from tau_forge.train.reward_adapter import score_completion
+    from tau_forge.train.shaping import shaping_score
+
+    expected_args = json.loads(expected_args_json)
+    if with_shaping and _worker_shaping_env is None:
+        _worker_shaping_env = RetailEnv()
+
+    scores: list[float] = []
+    shaped: list[float] = []
+    for completion in completions:
+        score = score_completion(completion, expected_name, expected_args)
+        scores.append(score)
+        if with_shaping:
+            shaped.append(
+                score
+                + shaping_score(
+                    completion,
+                    expected_name,
+                    expected_args,
+                    _worker_shaping_env,
+                    penalize_multi_call,
+                )
+            )
+    return scores, shaped
+
+
+def resolve_score_workers(requested: int) -> int:
+    """`--score-workers 0` means one per core, capped. The cap is there because
+    past ~16 the per-worker db parse and the parent's result handling start
+    costing more than the extra parallelism buys."""
+    if requested > 0:
+        return requested
+    return max(1, min(16, os.cpu_count() or 1))
+
+
 def main() -> None:
     args = parse_args()
 
     from tau_forge.envs.retail import RetailEnv
     from tau_forge.train.dataset import DEFAULT_DATA_GLOB, build_examples, to_hf_rows
-    from tau_forge.train.reward_adapter import score_completion
-    from tau_forge.train.shaping import shaping_score
     from transformers import AutoTokenizer
 
     tokenizer = AutoTokenizer.from_pretrained(args.model, padding_side="left")
@@ -270,45 +336,81 @@ def main() -> None:
             args,
         )
 
-    shaping_env = None
-    if args.with_shaping:
-        shaping_env = RetailEnv()
-
     per_scenario_scores: dict[str, list[float]] = {row["id"]: [] for row in rows}
     per_scenario_shaped: dict[str, list[float]] = {row["id"]: [] for row in rows}
     per_scenario_completions: dict[str, list[dict]] = {row["id"]: [] for row in rows}
-    # Scoring is CPU-bound and single-threaded, and on a right-tool completion
-    # `reward()` deep-copies the 2.8MB db twice inside `execute_against`. At
-    # ~245ms each that is minutes of silence after vLLM has already torn its
-    # engine down and printed its shutdown banner -- which reads exactly like a
-    # hung process. Report progress so it doesn't.
-    total = len(all_meta)
-    report_every = max(1, total // 20)
-    scoring_started = time.perf_counter()
 
-    for index, (row, completion) in enumerate(zip(all_meta, completions), start=1):
-        if index % report_every == 0 or index == total:
-            elapsed = time.perf_counter() - scoring_started
-            rate = index / elapsed if elapsed else 0.0
-            remaining = (total - index) / rate if rate else 0.0
-            print(
-                f"[zero_shot_baseline] scoring {index}/{total} "
-                f"({index / total:.0%}), ~{remaining / 60:.1f} min left",
-                flush=True,
-            )
-        expected_args = json.loads(row["expected_tool_arguments_json"])
-        score = score_completion(completion, row["expected_tool_name"], expected_args)
-        per_scenario_scores[row["id"]].append(score)
-        shaped = score
-        if shaping_env is not None:
-            shaped = score + shaping_score(
-                completion, row["expected_tool_name"], expected_args, shaping_env
-            )
-            per_scenario_shaped[row["id"]].append(shaped)
-        if args.save_completions:
-            per_scenario_completions[row["id"]].append(
-                {"score": score, "shaped_score": shaped, "completion": completion}
-            )
+    # Scoring is pure CPU, and on a right-tool completion `reward()` deep-copies
+    # the 2.8MB db inside `execute_against`. At n=16 over the full corpus that
+    # runs into thousands of seconds -- all of it after vLLM has torn its engine
+    # down and printed its shutdown banner, so it reads exactly like a hung
+    # process. Split it across processes and report progress as chunks land.
+    n = args.samples_per_scenario
+    per_row_completions = [completions[i * n : (i + 1) * n] for i in range(len(rows))]
+    payloads = [
+        (
+            row["expected_tool_name"],
+            row["expected_tool_arguments_json"],
+            row_completions,
+            args.with_shaping,
+            True,
+        )
+        for row, row_completions in zip(rows, per_row_completions)
+    ]
+
+    workers = resolve_score_workers(args.score_workers)
+    total = len(all_meta)
+    report_every = max(1, len(rows) // 20)
+    scoring_started = time.perf_counter()
+    print(
+        f"[zero_shot_baseline] scoring {total} completions across {workers} "
+        f"worker{'' if workers == 1 else 's'}",
+        flush=True,
+    )
+
+    def _progress(done_rows: int) -> None:
+        if done_rows % report_every and done_rows != len(rows):
+            return
+        elapsed = time.perf_counter() - scoring_started
+        rate = done_rows / elapsed if elapsed else 0.0
+        remaining = (len(rows) - done_rows) / rate if rate else 0.0
+        print(
+            f"[zero_shot_baseline] scoring {done_rows}/{len(rows)} scenarios "
+            f"({done_rows / len(rows):.0%}), ~{remaining / 60:.1f} min left",
+            flush=True,
+        )
+
+    if workers == 1:
+        results = (_score_scenario(payload) for payload in payloads)
+    else:
+        # One scenario per dispatch. Scenarios cost wildly different amounts
+        # -- a wrong-tool group exits before executing anything, a right-tool
+        # group runs 16 db diffs -- and the expensive ones cluster, so batching
+        # them would leave workers idle while one chews through a slow chunk.
+        # The IPC per dispatch is microseconds against that.
+        pool = ProcessPoolExecutor(max_workers=workers)
+        results = pool.map(_score_scenario, payloads, chunksize=1)
+
+    try:
+        for done, (row, row_completions, (scores, shaped_scores)) in enumerate(
+            zip(rows, per_row_completions, results), start=1
+        ):
+            per_scenario_scores[row["id"]] = scores
+            if args.with_shaping:
+                per_scenario_shaped[row["id"]] = shaped_scores
+            if args.save_completions:
+                per_scenario_completions[row["id"]] = [
+                    {
+                        "score": score,
+                        "shaped_score": shaped_scores[i] if args.with_shaping else score,
+                        "completion": completion,
+                    }
+                    for i, (score, completion) in enumerate(zip(scores, row_completions))
+                ]
+            _progress(done)
+    finally:
+        if workers != 1:
+            pool.shutdown()
 
     # Difficulty read: for each scenario, is the reward across samples
     # ~constant (near-zero variance -> ~zero GRPO training signal for it)?

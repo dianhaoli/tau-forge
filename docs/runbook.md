@@ -137,6 +137,13 @@ variance this run exists to measure.
 fractions. `--save-completions` makes the output large but is what lets you read
 the actual failures afterward.
 
+Generation is the GPU part and finishes in minutes. Scoring is the CPU part and
+runs *after* vLLM tears its engine down and prints its shutdown banner, which is
+why a run that is working can look hung. It now prints progress, and
+`--score-workers` splits it across processes -- unset, it takes one per core,
+capped at 16. Pass `--score-workers 1` to score in-process if you need a
+deterministic single-threaded run to profile.
+
 Then diagnose it:
 
 ```bash

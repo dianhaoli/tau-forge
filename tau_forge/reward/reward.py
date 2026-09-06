@@ -25,7 +25,7 @@ from typing import Any, Optional
 from tau2.domains.retail.data_model import RetailDB
 from tau2.environment.toolkit import ToolType
 
-from tau_forge.envs.retail import RetailEnv, execute_against
+from tau_forge.envs.retail import RetailEnv, ToolResult, execute_against
 
 # ---------------------------------------------------------------------------
 # Domain knowledge tables. These encode facts about the *retail* tool schemas
@@ -237,9 +237,28 @@ def state_match_score(
     return 0.7 + 0.3 * (sum(scores) / len(scores)), detail
 
 
-def reward(rollout: Action, expected: Action, db_state: RetailDB) -> RewardBreakdown:
+def reward(
+    rollout: Action,
+    expected: Action,
+    db_state: RetailDB,
+    gold_outcome: Optional[tuple[ToolResult, RetailDB]] = None,
+) -> RewardBreakdown:
     """Grade `rollout` against `expected` starting from `db_state`. Never
-    mutates `db_state`."""
+    mutates `db_state`.
+
+    `gold_outcome`, when given, is a previously computed
+    `execute_against(db_state, expected.tool_name, expected.tool_input)` for
+    this exact `(db_state, expected)` pair, reused instead of recomputed. Gold
+    is identical across every sample in a GRPO group -- 16 completions of one
+    prompt re-derive the same gold end state 16 times -- and that execution
+    deep-copies the 2.8MB retail db, which is roughly half the cost of a
+    right-tool scoring call. Passing a `gold_outcome` computed from a
+    *different* db or expected action silently mis-grades, so callers that
+    cache it must key on both (see `tau_forge.train.reward_adapter`).
+
+    The `RetailDB` inside `gold_outcome` is only read and compared here, never
+    written, so one cached copy is safe to share across calls.
+    """
     if expected.tool_name is None:
         if rollout.tool_name is None:
             return RewardBreakdown(1.0, "correct_no_call")
@@ -279,7 +298,9 @@ def reward(rollout: Action, expected: Action, db_state: RetailDB) -> RewardBreak
         )
 
     predicted_result, predicted_db = execute_against(db_state, rollout.tool_name, rollout.tool_input)
-    gold_result, gold_db = execute_against(db_state, expected.tool_name, expected.tool_input)
+    if gold_outcome is None:
+        gold_outcome = execute_against(db_state, expected.tool_name, expected.tool_input)
+    gold_result, gold_db = gold_outcome
 
     if not gold_result.ok:
         # The gold trajectory itself calls this tool expecting it to raise

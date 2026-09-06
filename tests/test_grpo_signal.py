@@ -473,3 +473,146 @@ def test_baseline_split_flag_defaults_to_the_whole_corpus():
 
     assert baseline_args([]).split == "all"
     assert baseline_args(["--split", "val"]).split == "val"
+
+
+# ---------------------------------------------------------------------------
+# Scoring throughput. These exist because the audit's scoring phase is silent,
+# runs after vLLM has printed its shutdown banner, and at n=16 over the corpus
+# takes long enough to look like a hung process. Both speedups below are only
+# safe because they change *when* work happens, never what it computes -- so
+# each test pins the results, not the timing.
+# ---------------------------------------------------------------------------
+
+_CALL = '<tool_call>{{"name": "{name}", "arguments": {args}}}</tool_call>'
+
+
+def _completions_for(order_id: str) -> list[str]:
+    """A spread that hits every branch of `reward()` that matters here: exact
+    outcome match, right tool with a graded field wrong, right tool on the
+    wrong record, a different tool, and no call at all."""
+    import json as _json
+
+    return [
+        _CALL.format(
+            name="cancel_pending_order",
+            args=_json.dumps({"order_id": order_id, "reason": "ordered by mistake"}),
+        ),
+        _CALL.format(
+            name="cancel_pending_order",
+            args=_json.dumps({"order_id": order_id, "reason": "no longer needed"}),
+        ),
+        _CALL.format(
+            name="cancel_pending_order",
+            args=_json.dumps({"order_id": "#W2974929", "reason": "ordered by mistake"}),
+        ),
+        _CALL.format(name="get_order_details", args=_json.dumps({"order_id": order_id})),
+        "Sure, let me take a look at that for you.",
+    ]
+
+
+def test_precomputed_gold_outcome_grades_identically():
+    """`reward(..., gold_outcome=...)` is a pure caching hook. If it ever
+    disagrees with recomputing gold, every cached score in a run is wrong."""
+    import json
+
+    from tau2.domains.retail.data_model import RetailDB
+    from tau2.domains.retail.utils import RETAIL_DB_PATH
+
+    from tau_forge.envs.retail import execute_against
+    from tau_forge.reward.reward import Action, reward
+    from tau_forge.train.completion_parsing import parse_completion
+
+    db = RetailDB.load(RETAIL_DB_PATH)
+    gold = Action(
+        tool_name="cancel_pending_order",
+        tool_input={"order_id": "#W5918442", "reason": "ordered by mistake"},
+    )
+    precomputed = execute_against(db, gold.tool_name, gold.tool_input)
+    before = db.model_dump(mode="json")
+
+    for text in _completions_for("#W5918442"):
+        name, args = parse_completion(text)
+        rollout = Action(tool_name=name, tool_input=args)
+        fresh = reward(rollout, gold, db)
+        cached = reward(rollout, gold, db, gold_outcome=precomputed)
+        assert (fresh.score, fresh.reason) == (cached.score, cached.reason), text
+
+    assert db.model_dump(mode="json") == before, "reward() mutated db_state"
+
+
+def test_gold_cache_is_transparent_and_bounded():
+    """A warm cache must score a group exactly like a cold one -- the cached
+    `RetailDB` is shared between calls, so a single mutation downstream would
+    corrupt every later score in the run. The bound matters because each entry
+    pins a whole db copy."""
+    from tau_forge.train import reward_adapter
+
+    expected = "cancel_pending_order"
+    args = {"order_id": "#W5918442", "reason": "ordered by mistake"}
+    texts = _completions_for("#W5918442") * 3
+
+    reward_adapter._gold_cache.clear()
+    cold = []
+    for text in texts:
+        reward_adapter._gold_cache.clear()
+        cold.append(reward_adapter.score_completion(text, expected, args))
+
+    reward_adapter._gold_cache.clear()
+    warm = [reward_adapter.score_completion(text, expected, args) for text in texts]
+    assert cold == warm
+
+    for order_id in ("#W5918442", "#W2974929", "#W2631563", "#W5918442"):
+        for text in _completions_for(order_id):
+            reward_adapter.score_completion(
+                text, expected, {"order_id": order_id, "reason": "ordered by mistake"}
+            )
+    assert len(reward_adapter._gold_cache) <= reward_adapter._GOLD_CACHE_SIZE
+
+
+def test_gold_is_not_executed_for_a_wrong_tool_completion():
+    """Gold execution is the expensive half of a scoring call and `reward()`
+    never reaches it when the tool name is wrong. Populating the cache anyway
+    would slow down the single most common completion on a cold-start policy."""
+    from tau_forge.train import reward_adapter
+
+    reward_adapter._gold_cache.clear()
+    reward_adapter.score_completion(
+        _CALL.format(name="get_order_details", args='{"order_id": "#W5918442"}'),
+        "cancel_pending_order",
+        {"order_id": "#W5918442", "reason": "ordered by mistake"},
+    )
+    reward_adapter.score_completion("no call at all", "cancel_pending_order", {})
+    assert not reward_adapter._gold_cache
+
+
+def test_pooled_scoring_matches_in_process_scoring():
+    """`--score-workers` splits scoring by scenario across processes. Worker
+    state (the shared db, the gold cache, the shaping env) is per-process, so
+    this pins that none of it leaks into the numbers."""
+    import json
+    from concurrent.futures import ProcessPoolExecutor
+
+    from tau_forge.train.zero_shot_baseline import _score_scenario
+
+    payloads = [
+        (
+            "cancel_pending_order",
+            json.dumps({"order_id": order_id, "reason": "ordered by mistake"}),
+            _completions_for(order_id),
+            True,
+            True,
+        )
+        for order_id in ("#W5918442", "#W2974929", "#W2631563")
+    ]
+
+    serial = [_score_scenario(payload) for payload in payloads]
+    with ProcessPoolExecutor(max_workers=2) as pool:
+        pooled = list(pool.map(_score_scenario, payloads, chunksize=1))
+    assert serial == pooled
+
+
+def test_score_worker_count_resolves_to_something_runnable():
+    from tau_forge.train.zero_shot_baseline import resolve_score_workers
+
+    assert resolve_score_workers(3) == 3
+    assert 1 <= resolve_score_workers(0) <= 16
