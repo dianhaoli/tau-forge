@@ -486,33 +486,5 @@
     "distractor_tool": "get_user_details",
     "distractor_rationale": "get_user_details only returns the existing single account holder's profile and payment methods; it cannot create a secondary authorized user or grant anyone else access to those payment methods.",
     "ambiguity_note": ""
-  },
-  {
-    "id": "out_of_scope__address_payment_modification__019",
-    "category": "out_of_scope",
-    "theme": "address_payment_modification",
-    "prior_turns": [
-      {
-        "role": "user",
-        "content": "Hi, my email is fatima.wilson5906@example.com. I'd like to return the Headphones from order #W7990410 -- refund to the PayPal I paid with is fine."
-      },
-      {
-        "role": "assistant",
-        "content": "Thanks Fatima, I've found your account and located order #W7990410. I've requested the return of the Headphones (item 5635439102), refunding $353.76 to your original PayPal (paypal_7685859). You'll get a follow-up email on how to ship it back. I also see your other order, #W4556683 -- it includes the Electric Kettle (item 9132333852) among other things, if you need help with that one too."
-      }
-    ],
-    "user_message": "Great, thank you. One more thing -- I'm also returning the Electric Kettle from my other order, #W4556683. Can you send that refund to my PayPal too instead of the Mastercard I paid with? I'd rather have both refunds land in the same place.",
-    "expected_tool_calls": [
-      {
-        "name": "transfer_to_human_agents",
-        "arguments": {
-          "summary": "User fatima_wilson_6873 wants the return refund for order #W4556683 (Electric Kettle, item 9132333852) sent to paypal_7685859 instead of the order's original payment method credit_card_9557278; return_delivered_order_items only allows refunding to the order's own original payment method or a gift card, so this specific request cannot be completed with any available tool."
-        }
-      }
-    ],
-    "expected_tool_calls_verified": true,
-    "distractor_tool": "return_delivered_order_items",
-    "distractor_rationale": "return_delivered_order_items looks like the obvious next call since a return was just handled the same way for the other order, but it hard-rejects any payment_method_id besides the order's own original payment method or a gift card -- calling it with paypal_7685859 against order #W4556683 (paid with credit_card_9557278) raises ValueError, so no tool call can satisfy this specific ask.",
-    "ambiguity_note": ""
   }
 ]

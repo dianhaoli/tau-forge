@@ -514,33 +514,5 @@
     "distractor_tool": "return_delivered_order_items",
     "distractor_rationale": "The smartphone order is delivered and return-eligible, but the customer explicitly wants to donate it for a tax receipt rather than return it for a refund, which return_delivered_order_items has no mechanism to do.",
     "ambiguity_note": ""
-  },
-  {
-    "id": "out_of_scope__electronics_returns_exchanges__019",
-    "category": "out_of_scope",
-    "theme": "electronics_returns_exchanges",
-    "prior_turns": [
-      {
-        "role": "user",
-        "content": "Hi, my email is chen.silva2698@example.com. I want to return the Tablet from order #W3069600, refund to the Mastercard I paid with."
-      },
-      {
-        "role": "assistant",
-        "content": "Thanks Chen, I've located your account and order #W3069600. I've requested the return of the Tablet (item 8551474201), refunding $938.92 to your original credit_card_1565124. You'll get an email with return instructions. That order also has the E-Reader (item 9494281769) on it, in case you need anything with that as well."
-      }
-    ],
-    "user_message": "Thanks. Can you also send that same refund -- or actually, refund the E-Reader from that order too -- straight to my Venmo instead? I don't use that Mastercard much anymore.",
-    "expected_tool_calls": [
-      {
-        "name": "transfer_to_human_agents",
-        "arguments": {
-          "summary": "User chen_silva_7485 wants a return refund for order #W3069600 sent to Venmo, which is not a payment method on the account and not something any tool can add or refund to -- only the order's original payment method (credit_card_1565124) or an existing gift card can receive a refund."
-        }
-      }
-    ],
-    "expected_tool_calls_verified": true,
-    "distractor_tool": "return_delivered_order_items",
-    "distractor_rationale": "A return call for the E-Reader looks like the natural next step since one was just processed for the Tablet, but 'Venmo' is not a payment_method_id on this user's account at all -- there's no tool to register a new payment method or refund to an external, unlisted destination, so return_delivered_order_items has no valid payment_method_id argument to use here.",
-    "ambiguity_note": ""
   }
 ]

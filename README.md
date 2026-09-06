@@ -191,28 +191,42 @@ appended its one-line summaries to the registry for the next wave.
 intentionally not regenerated) sits off it at 2/20 = 10%, exactly as expected per
 the "Rule checker" section above.
 
-**Post-hoc addition (3 scenarios, 541 → 544):** Phase 7 zero-shot baselining on
-an L40S box surfaced that `out_of_scope` scenarios are all single-step,
-zero-lookup escalations (identity already resolved in `prior_turns`, the very
-next call is `transfer_to_human_agents`) -- a narrower pattern than 3 of the 4
-real tau2-bench retail tasks that actually need this tool (tasks 10/12/26),
-where the agent does a full normal lookup/action workflow first and escalates
-only the one specific sub-request no tool can satisfy (task 50 is the only
-real task matching our pure single-step pattern). To reduce the risk that
-GRPO teaches an "escalate immediately when it smells hard" shortcut that would
-actively hurt on that more common real-task shape, 3 scenarios were
-hand-authored in this richer style -- prior_turns narrate an already-resolved,
-tool-executed partial request (e.g. a return already processed to its
-original payment method), and `expected_tool_calls` covers only the next,
-genuinely-unsatisfiable ask (e.g. redirecting that refund to a *different*
-payment method than the order's own, which `return_delivered_order_items`
-hard-rejects) -- added to `out_of_scope__address_payment_modification`,
-`out_of_scope__order_state_confusion`, and
-`out_of_scope__electronics_returns_exchanges`. Grounded in real `db.json`
-users/orders/payment methods (verified by re-execution, same as every other
-scenario) but **not** yet re-run through stage 2 (model checker), stage 3
-(human review), stage 4 (difficulty calibration), or decontamination --
-only stage 1 (rule checker: 544/544 clean) covers them so far.
+**Tried and deferred: multi-turn out_of_scope scenarios (README stays at
+541).** Phase 7 zero-shot baselining on an L40S box surfaced that
+`out_of_scope` scenarios are all single-step, zero-lookup escalations
+(identity already resolved in `prior_turns`, the very next call is
+`transfer_to_human_agents`) -- a narrower pattern than 3 of the 4 real
+tau2-bench retail tasks that actually need this tool (tasks 10/12/26), where
+the agent does a full normal lookup/action workflow first and escalates only
+the one specific sub-request no tool can satisfy (task 50 is the only real
+task matching our pure single-step pattern). To test whether GRPO training on
+the narrower pattern risks teaching an "escalate immediately when it smells
+hard" shortcut that would misgeneralize to that more common real-task shape,
+3 scenarios were hand-authored in this richer style -- prior_turns narrate an
+already-resolved, tool-executed partial request, and `expected_tool_calls`
+covers only the next, genuinely-unsatisfiable ask (e.g. redirecting a refund
+to a *different* payment method than the order's own, which
+`return_delivered_order_items` hard-rejects). Grounded in real `db.json`
+data and rule-checker clean, same discipline as every other scenario.
+
+Zero-shot baselined twice at n=16 (temperature 1.0): both times, 0/48 across
+all three, 100% zero-variance -- confirmed cold start, not just low
+probability. The first pass conflated this with an authoring bug (a missing
+item id forced hallucination on every wrong-tool attempt); after fixing that,
+the result held, and the actual failure sharpened into something more
+specific than "doesn't know to escalate": the model copies the
+`payment_method_id` from the already-resolved action in `prior_turns` onto
+the new request, checking "is this a real payment method on this account" as
+its precondition instead of "is this *this order's own* original payment
+method" -- a precondition-scoping error. Since zero variance means zero GRPO
+signal regardless, and 3 examples is too few to include safely even if a
+future higher-sample rerun (or one giving the model room to reason before the
+tool call, untested here) surfaced occasional successes, these were pulled
+from the active training set rather than left in `data/synthetic/raw/`. Kept
+at `data/synthetic/deferred/out_of_scope_multiturn_coldstart.json` (outside
+`DEFAULT_DATA_GLOB`, so not loaded by `tau_forge.train.dataset`) as candidate
+material for a future SFT warm-start pass or a larger (10+) batch of the same
+shape -- see `data/synthetic/deferred/README.md`.
 
 **A related gap this dataset does not close, surfaced by an independent
 resemblance check against the real 114 τ²-bench retail tasks** (tasks.json
