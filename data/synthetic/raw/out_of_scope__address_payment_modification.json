@@ -498,7 +498,7 @@
       },
       {
         "role": "assistant",
-        "content": "Thanks Fatima, I've found your account and located order #W7990410. I've requested the return of the Headphones (item 5635439102), refunding $353.76 to your original PayPal (paypal_7685859). You'll get a follow-up email on how to ship it back."
+        "content": "Thanks Fatima, I've found your account and located order #W7990410. I've requested the return of the Headphones (item 5635439102), refunding $353.76 to your original PayPal (paypal_7685859). You'll get a follow-up email on how to ship it back. I also see your other order, #W4556683 -- it includes the Electric Kettle (item 9132333852) among other things, if you need help with that one too."
       }
     ],
     "user_message": "Great, thank you. One more thing -- I'm also returning the Electric Kettle from my other order, #W4556683. Can you send that refund to my PayPal too instead of the Mastercard I paid with? I'd rather have both refunds land in the same place.",

@@ -526,7 +526,7 @@
       },
       {
         "role": "assistant",
-        "content": "Thanks Chen, I've located your account and order #W3069600. I've requested the return of the Tablet (item 8551474201), refunding $938.92 to your original credit_card_1565124. You'll get an email with return instructions."
+        "content": "Thanks Chen, I've located your account and order #W3069600. I've requested the return of the Tablet (item 8551474201), refunding $938.92 to your original credit_card_1565124. You'll get an email with return instructions. That order also has the E-Reader (item 9494281769) on it, in case you need anything with that as well."
       }
     ],
     "user_message": "Thanks. Can you also send that same refund -- or actually, refund the E-Reader from that order too -- straight to my Venmo instead? I don't use that Mastercard much anymore.",

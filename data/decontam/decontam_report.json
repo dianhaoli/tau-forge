@@ -10,11 +10,11 @@
   "n_real_tasks": 114,
   "n_synthetic_scenarios": 544,
   "method": "tfidf_unigram_bigram_cosine",
-  "threshold": 0.1974,
+  "threshold": 0.1978,
   "threshold_derivation": {
     "rule": "mean + 3*std of each synthetic scenario's best (max) similarity to any real task",
-    "mean": 0.0882,
-    "std": 0.0364
+    "mean": 0.0883,
+    "std": 0.0365
   },
   "n_flagged": 8,
   "flagged_pairs": [
@@ -61,7 +61,7 @@
     {
       "synthetic_id": "happy_path__electronics_returns_exchanges__003",
       "real_task_id": "93",
-      "text_similarity": 0.2154,
+      "text_similarity": 0.2153,
       "tool_shape_score": 1.0,
       "synthetic_excerpt": "I want to upgrade the laptop from order #W1840144 to the i9 configuration -- 15-inch, 32GB RAM, 512GB SSD, black -- if it's in stock.\nThat configuration is available for $2701.89. Your current laptop (15-inch, i7, 32GB RAM, 1TB SSD, space grey) was $2292.37, so the exchange would add a charge of $4\u2026",
       "real_excerpt": "You received a laptop and you want to exchange it to i7 processor, 8GB, 1TB SSD. If the agent asks for which laptop, it is 15-inch, 32GB."

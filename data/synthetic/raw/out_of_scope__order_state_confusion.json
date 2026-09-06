@@ -402,7 +402,7 @@
       },
       {
         "role": "assistant",
-        "content": "Done -- I've requested the return of the Yoga Mat (item 2733768059) and Garden Hose (item 5206946487) from order #W6397299, refunding $189.46 to your original credit_card_3261838. You'll receive an email with return shipping instructions."
+        "content": "Done -- I've requested the return of the Yoga Mat (item 2733768059) and Garden Hose (item 5206946487) from order #W6397299, refunding $189.46 to your original credit_card_3261838. You'll receive an email with return shipping instructions. I also see your other order, #W8488728 -- it has the Hiking Boots (item 5676696062) on it, if there's anything you need there."
       }
     ],
     "user_message": "Perfect. I also want to return the Hiking Boots from my other order, #W8488728 -- but instead of my PayPal, can you put that refund toward my Visa card balance instead?",
