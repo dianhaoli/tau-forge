@@ -80,6 +80,37 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
+def check_context_budget(prompts: list[str], tokenizer, args: argparse.Namespace) -> int:
+    """Confirm the longest prompt plus its completion fits the KV-cache budget.
+
+    This is a *memory* check, and it is the only length knob on this script.
+    It does not shorten anything: `--max-model-len` is the ceiling vLLM sizes
+    its KV cache to, and a request exceeding it is rejected outright rather
+    than trimmed. Catching that here costs a tokenizer pass; catching it after
+    vLLM has loaded the weights costs the model load.
+
+    Do not confuse this with `grpo_train --max-prompt-length`, which really
+    does silently delete the front of the prompt. See docs/phase7_aws_setup.md,
+    "Three length knobs".
+    """
+    lengths = sorted(len(tokenizer(prompt)["input_ids"]) for prompt in prompts)
+    needed = lengths[-1] + args.max_new_tokens
+    print(
+        f"[zero_shot_baseline] prompt tokens: min={lengths[0]} "
+        f"median={lengths[len(lengths) // 2]} max={lengths[-1]}; "
+        f"longest prompt + --max-new-tokens = {needed}"
+    )
+    if args.use_vllm and needed > args.max_model_len:
+        raise ValueError(
+            f"--max-model-len {args.max_model_len} is below the {needed} tokens the longest "
+            f"prompt plus --max-new-tokens {args.max_new_tokens} needs; vLLM would reject those "
+            f"requests. Raise --max-model-len to at least {needed}, or lower --max-new-tokens. "
+            "Do NOT try to solve this by shortening the prompt -- it is the retail policy and the "
+            "16 tool schemas, and the reward function grades as if the model saw all of them."
+        )
+    return lengths[-1]
+
+
 def _load_scenario_ids(path: str) -> set[str]:
     ids = {line.strip() for line in Path(path).read_text().splitlines() if line.strip() and not line.startswith("#")}
     if not ids:
@@ -182,6 +213,8 @@ def main() -> None:
 
     print(f"[zero_shot_baseline] {len(rows)} scenarios, {args.samples_per_scenario} samples each "
           f"= {len(rows) * args.samples_per_scenario} total generations.")
+
+    check_context_budget([row["prompt"] for row in rows], tokenizer, args)
 
     # Prompt-major ordering in both backends: all samples of scenario 0, then
     # scenario 1, ... -- so `all_meta` lines up with `completions` either way.

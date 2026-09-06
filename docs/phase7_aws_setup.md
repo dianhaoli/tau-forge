@@ -150,6 +150,54 @@ The smoke test below (50-100 steps) replaces this estimate with a real measured
 seconds/rollout number — plug that into the same formula for a trustworthy
 full-run estimate instead of the first-principles range.
 
+## Three length knobs, only one of which is a memory knob
+
+These get conflated, and conflating them is how the `--max-prompt-length 2048`
+default survived. They are not interchangeable.
+
+| knob | where | what it does | is it a memory control? |
+|---|---|---|---|
+| `--max-prompt-length` | TRL `GRPOConfig` | Keeps the **last** N tokens of the prompt and discards the rest, silently | **No.** Use it only to reject over-long prompts you intended to reject |
+| `--max-model-len` | vLLM | Sizes the KV cache; a request exceeding it is **rejected**, never trimmed | **Yes** |
+| `--max-completion-length` / `--max-new-tokens` | both | Caps generated tokens | Yes, and cheaply |
+
+The rendered retail prompt is a fixed ~5-7k tokens and is not compressible
+without changing the task: it is tau2's system prompt, the full retail policy,
+and 16 tool schemas. Cutting it to fit a GPU does not make the run cheaper, it
+makes the run meaningless -- the policy model loses the tool definitions while
+the reward function keeps grading as if it had them, so every completion scores
+in the flat 0.0 floor for a reason that has nothing to do with the policy.
+
+**If a single GPU is the constraint, these are the knobs that actually help**,
+in order of how much they buy per unit of damage:
+
+1. `--max-new-tokens` / `--max-completion-length`. A single `<tool_call>` block
+   needs well under 512 tokens; 256 is usually plenty and halves the generated
+   KV.
+2. Concurrency. vLLM's `--max-num-seqs` and `gpu_memory_utilization`; TRL's
+   `--per-device-train-batch-size` with `--gradient-accumulation-steps` raised
+   to compensate, which keeps the effective batch identical.
+3. Scenario count per pass. `--scenario-ids-file` runs a subset; the stratified
+   sampler in `scripts/sample_audit_ids.py` keeps all 30 cells represented.
+4. For training specifically: ZeRO-3 with CPU optimizer offload, or LoRA.
+
+On KV-cache sizing, the formula is
+`2 (K and V) x n_layers x n_kv_heads x head_dim x 2 bytes` per token. For
+Qwen3-4B's published config (36 layers, 8 KV heads, head_dim 128 -- verify
+against the checkpoint rather than trusting this line) that is ~147 KB per
+token, so an 8192-token budget is ~1.2 GB per concurrent sequence on top of
+~8 GB of bf16 weights. Sixteen concurrent sequences, one full GRPO group, is
+therefore ~27 GB for inference alone.
+
+**Full-parameter GRPO on a 4B model does not fit one GPU**, which is the reason
+the recommendation above is a 4x L40S box. Weights, gradients, fp32 Adam moments
+and the fp32 master copy come to roughly 64 GB before a single activation. A
+single-GPU pass is an inference budget (the zero-shot audit, the Phase 8 eval
+against a served checkpoint), not a training budget. If a single-GPU *training*
+smoke test is wanted before the quota lands, it needs LoRA or ZeRO-3 with
+offload, and its result is a validation of the plumbing, not a preview of the
+full run's learning curve.
+
 ## Methodology risks — and why full-parameter GRPO needs more than just the box
 
 Getting the instance right doesn't by itself mean the training run works well.
