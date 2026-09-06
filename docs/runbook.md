@@ -165,6 +165,29 @@ because the derived report is kilobytes and is the part worth keeping:
 git add data/reports && git commit -m "Audit report" && git push
 ```
 
+Two follow-ups the report will point you at:
+
+```bash
+# Why a dead band is dead. 0.2 is the schema-invalid tier -- the model reached
+# the right tool and the call was rejected before execution. Prints which
+# arguments are missing, wrong-typed or hallucinated.
+uv run python scripts/inspect_stuck.py data/trained/audit_n16.json --score 0.2
+
+# What a candidate mixture would actually produce, measured against this audit
+# rather than assumed from category labels.
+uv run python scripts/data_scorecard.py data/trained/audit_n16.json \
+    --simulate-mix real --simulate-exclude-solved
+```
+
+`--simulate-mix` is the one to run before committing to a mixture. The
+recommended mix the scorecard prints maximises *gradient*, which is not the
+same as maximising benchmark transfer: `out_of_scope` scenarios all have
+`transfer_to_human_agents` as their gold action, so they score high on yield
+and headroom precisely because the base model rarely escalates -- and 110 of
+the 114 real retail tasks are failed by escalating. The simulator reports the
+"gold is silence or escalate" share so that tradeoff is visible before a run
+rather than after it.
+
 The individual scripts still run standalone if you want one section:
 
 ```bash
