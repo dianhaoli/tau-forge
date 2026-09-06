@@ -889,6 +889,36 @@ current synthetic taxonomy was designed a priori, not from observed failures on
 the actual benchmark. `--num-trials 4` rather than 1: the user simulator is
 itself stochastic, so a single trial cannot resolve a training delta.
 
+### Diagnosing which data is worth training on (`scripts/data_scorecard.py`)
+
+`REAL_TASK_ALIGNED_MIX` is a prior about relevance, not a measurement of whether
+a cell teaches the policy anything. `tau_forge/train/scorecard.py` supplies the
+other half: feed it a `zero_shot_baseline` output and it scores all 30
+`category__theme` cells on
+
+* **yield** -- fraction of scenarios whose group reward varied, so the fraction
+  that can move weights at all;
+* **headroom** -- `1 - mean_score`, how much reward is still winnable;
+* **signal** -- `yield x headroom`, the ranking metric.
+
+A cell can be wrong on every sample and still be worth nothing: zero variance
+means zero gradient regardless of headroom. Equally, a cell at mean 0.95 buys
+regression insurance rather than improvement even where it varies. Ranking by
+the product is what separates the two.
+
+`--emit-mix` prints a `--category-mix` string ready to paste into
+`grpo_train`, computed as measured signal times the benchmark relevance prior,
+with a floor so no category is zeroed outright. Both factors print separately so
+a surprising recommendation is traceable to whichever drove it. `--relevance
+uniform` drops the prior and ranks on measurement alone; the difference between
+the two mixtures is exactly the size of the bet the prior is making.
+
+The prior is derived from task *shape*. The stronger version needs the Phase 8
+baseline eval: classify which decisions the base policy actually gets wrong on
+the real benchmark and weight the cells that rehearse those. That replaces an
+argument with evidence, and it is the main reason to run the baseline before
+committing GPU-hours to a mixture.
+
 ### Recommended order for the GPU box
 
 1. **Baseline eval.** `run_tau2 --label baseline --task-split-name test --num-trials 4`.

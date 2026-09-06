@@ -281,3 +281,140 @@ def test_every_parser_can_format_its_help():
         with pytest.raises(SystemExit) as exit_info:
             parse(["--help"])
         assert exit_info.value.code == 0
+
+
+# --------------------------------------------------------------------------
+# scorecard: measured per-cell diagnosis
+# --------------------------------------------------------------------------
+
+
+def _audit(**cells):
+    """Build a per_scenario_scores table: cells maps 'category__theme' to a
+    list of per-scenario score lists."""
+    out = {}
+    for cell, groups in cells.items():
+        for i, scores in enumerate(groups):
+            out[f"{cell}__{i}"] = scores
+    return out
+
+
+def test_classify_separates_the_four_group_shapes():
+    from tau_forge.train.scorecard import classify
+
+    assert classify([0.0, 0.3, 1.0]) == "usable"
+    assert classify([0.0, 0.0, 0.0]) == "cold_start"
+    assert classify([1.0, 1.0, 1.0]) == "already_solved"
+    assert classify([0.3, 0.3, 0.3]) == "stuck_partial"
+
+
+def test_signal_ranks_a_varying_hard_cell_above_a_varying_easy_one():
+    """The whole point of headroom: two cells can both vary, and the one with
+    reward left on the table is where compute converts into improvement."""
+    from tau_forge.train.scorecard import score_cells
+
+    scores = _audit(
+        happy_path__hard=[[0.0, 0.3], [0.0, 0.6]],
+        happy_path__easy=[[0.95, 1.0], [0.9, 1.0]],
+    )
+    by_cell = {c.cell: c for c in score_cells(scores)}
+    hard, easy = by_cell["happy_path__hard"], by_cell["happy_path__easy"]
+    assert hard.yield_ == easy.yield_ == 1.0
+    assert hard.headroom > easy.headroom
+    assert hard.signal > easy.signal
+
+
+def test_a_fully_flat_cell_has_zero_signal_however_wrong_it_is():
+    from tau_forge.train.scorecard import score_cells
+
+    (cell,) = score_cells(_audit(out_of_scope__dead=[[0.0] * 4, [0.0] * 4]))
+    assert cell.headroom == 1.0
+    assert cell.yield_ == 0.0
+    assert cell.signal == 0.0, "no gradient means no value, no matter how much headroom"
+    assert cell.n_cold == 2
+
+
+def test_recommend_mix_downweights_a_measured_dead_category():
+    from tau_forge.train.scorecard import recommend_mix, score_cells
+
+    cells = score_cells(
+        _audit(
+            happy_path__a=[[0.0, 0.6], [0.2, 0.9]],
+            requires_earlier_context__a=[[0.0, 0.5], [0.1, 0.8]],
+            out_of_scope__a=[[0.0] * 4, [0.0] * 4],
+        )
+    )
+    mix = recommend_mix(cells)
+    assert mix["out_of_scope"] < mix["happy_path"]
+    assert mix["out_of_scope"] > 0.0, "a floor keeps guardrail behavior represented"
+    assert sum(mix.values()) == pytest.approx(1.0, abs=1e-3)
+
+
+def test_relevance_prior_can_override_raw_measured_signal():
+    """out_of_scope is hard for the base model, so measured signal alone would
+    over-invest in a shape only 3.5% of real tasks have."""
+    from tau_forge.train.scorecard import UNIFORM_RELEVANCE, recommend_mix, score_cells
+
+    cells = score_cells(
+        _audit(
+            out_of_scope__a=[[0.0, 0.9], [0.0, 0.8]],
+            happy_path__a=[[0.8, 0.9], [0.85, 0.95]],
+        )
+    )
+    benchmark = recommend_mix(cells)
+    uniform = recommend_mix(cells, relevance=UNIFORM_RELEVANCE)
+    assert uniform["out_of_scope"] > benchmark["out_of_scope"]
+
+
+def test_recommend_mix_falls_back_to_relevance_when_nothing_varies():
+    from tau_forge.train.scorecard import recommend_mix, score_cells
+
+    cells = score_cells(_audit(happy_path__a=[[0.0] * 3], ambiguous__a=[[0.0] * 3]))
+    mix = recommend_mix(cells)
+    assert sum(mix.values()) == pytest.approx(1.0, abs=1e-3)
+    assert mix["happy_path"] > mix["ambiguous"]
+
+
+def test_load_scores_prefers_shaped_when_present(tmp_path):
+    from tau_forge.train.scorecard import load_scores
+
+    path = tmp_path / "a.json"
+    path.write_text(
+        json.dumps(
+            {
+                "per_scenario_scores": {"x__y__1": [0.0, 0.0]},
+                "per_scenario_shaped_scores": {"x__y__1": [0.0, 0.1]},
+            }
+        )
+    )
+    scores, basis = load_scores(path)
+    assert scores["x__y__1"] == [0.0, 0.1] and "shaping" in basis
+    raw, basis_raw = load_scores(path, prefer_shaped=False)
+    assert raw["x__y__1"] == [0.0, 0.0] and "alone" in basis_raw
+
+
+def test_emitted_mix_is_accepted_by_grpo_train():
+    """The scorecard's output has to be pasteable straight into the trainer."""
+    from tau_forge.train.grpo_train import resolve_mix
+    from tau_forge.train.scorecard import recommend_mix, score_cells
+
+    cells = score_cells(_audit(happy_path__a=[[0.0, 0.6]], ambiguous__a=[[1.0, 1.0]]))
+    mix = recommend_mix(cells)
+    spec = ",".join(f"{c}={v}" for c, v in sorted(mix.items()))
+    assert resolve_mix(spec) == pytest.approx(mix)
+
+
+def test_recommended_mix_applies_cleanly_to_the_real_corpus():
+    from tau_forge.train.scorecard import recommend_mix, score_cells
+
+    cells = score_cells(
+        _audit(
+            **{
+                f"{category}__{theme}": [[0.0, 0.5], [0.2, 0.8]]
+                for category in curriculum.REAL_TASK_ALIGNED_MIX
+                for theme in ("identity_and_order_lookup",)
+            }
+        )
+    )
+    mix = recommend_mix(cells)
+    mixed = curriculum.apply_mixture(build_examples(), mix, seed=0)
+    assert mixed and curriculum.summarize(mixed)["n_cells"] == 30
