@@ -382,5 +382,41 @@
     "distractor_tool": "get_order_details",
     "distractor_rationale": "get_order_details is the safe, low-risk lookup a model might default to in order to 'do something useful' before responding -- but the user has made an explicit, unambiguous request for a human agent, which policy requires honoring via transfer rather than any further lookup.",
     "ambiguity_note": ""
+  },
+  {
+    "id": "out_of_scope__order_state_confusion__019",
+    "category": "out_of_scope",
+    "theme": "order_state_confusion",
+    "prior_turns": [
+      {
+        "role": "user",
+        "content": "Hi, I'm Liam Thomas, zip 78746 -- wait, let me check that. Actually my email is liam.thomas9081@example.com."
+      },
+      {
+        "role": "assistant",
+        "content": "Thanks Liam, I've located your account. How can I help today?"
+      },
+      {
+        "role": "user",
+        "content": "I'd like to return the Yoga Mat and Garden Hose from order #W6397299, refunded to the Visa card I originally paid with."
+      },
+      {
+        "role": "assistant",
+        "content": "Done -- I've requested the return of the Yoga Mat (item 2733768059) and Garden Hose (item 5206946487) from order #W6397299, refunding $189.46 to your original credit_card_3261838. You'll receive an email with return shipping instructions."
+      }
+    ],
+    "user_message": "Perfect. I also want to return the Hiking Boots from my other order, #W8488728 -- but instead of my PayPal, can you put that refund toward my Visa card balance instead?",
+    "expected_tool_calls": [
+      {
+        "name": "transfer_to_human_agents",
+        "arguments": {
+          "summary": "User liam_thomas_7882 wants the return refund for order #W8488728 (Hiking Boots, item 5676696062) applied to credit_card_3261838 instead of the order's original payment method paypal_3650980; return_delivered_order_items only allows refunding to the order's own original payment method or a gift card, so no available tool can redirect this refund to a different order's payment method."
+        }
+      }
+    ],
+    "expected_tool_calls_verified": true,
+    "distractor_tool": "return_delivered_order_items",
+    "distractor_rationale": "The prior turn just resolved a near-identical return-with-refund request for the other order, making it tempting to repeat the same call -- but here the requested payment_method_id (credit_card_3261838) isn't order #W8488728's original payment method (paypal_3650980) and isn't a gift card, so return_delivered_order_items rejects it outright.",
+    "ambiguity_note": ""
   }
 ]

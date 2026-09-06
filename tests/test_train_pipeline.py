@@ -21,14 +21,17 @@ def _fake_apply_chat_template(messages, tools=None, tokenize=False, add_generati
 
 
 def test_load_scenarios_matches_rule_checker_tally():
-    # README: "Final tally: 30/30 cells, 541 scenarios".
-    assert len(load_scenarios(DEFAULT_DATA_GLOB)) == 541
+    # 541 original (README: "Final tally: 30/30 cells, 541 scenarios") + 3
+    # hand-authored out_of_scope scenarios adding a "partial work already
+    # done in prior_turns, escalate only the specific unsolvable remainder"
+    # pattern grounded in real tau2-bench tasks 10/12/26.
+    assert len(load_scenarios(DEFAULT_DATA_GLOB)) == 544
 
 
 def test_build_examples_no_duplicate_ids():
     examples = build_examples()
-    assert len(examples) == 541
-    assert len({e.id for e in examples}) == 541
+    assert len(examples) == 544
+    assert len({e.id for e in examples}) == 544
 
 
 def test_build_examples_expected_tool_matches_scenario_shape():

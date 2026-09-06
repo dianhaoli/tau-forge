@@ -191,6 +191,29 @@ appended its one-line summaries to the registry for the next wave.
 intentionally not regenerated) sits off it at 2/20 = 10%, exactly as expected per
 the "Rule checker" section above.
 
+**Post-hoc addition (3 scenarios, 541 → 544):** Phase 7 zero-shot baselining on
+an L40S box surfaced that `out_of_scope` scenarios are all single-step,
+zero-lookup escalations (identity already resolved in `prior_turns`, the very
+next call is `transfer_to_human_agents`) -- a narrower pattern than 3 of the 4
+real tau2-bench retail tasks that actually need this tool (tasks 10/12/26),
+where the agent does a full normal lookup/action workflow first and escalates
+only the one specific sub-request no tool can satisfy (task 50 is the only
+real task matching our pure single-step pattern). To reduce the risk that
+GRPO teaches an "escalate immediately when it smells hard" shortcut that would
+actively hurt on that more common real-task shape, 3 scenarios were
+hand-authored in this richer style -- prior_turns narrate an already-resolved,
+tool-executed partial request (e.g. a return already processed to its
+original payment method), and `expected_tool_calls` covers only the next,
+genuinely-unsatisfiable ask (e.g. redirecting that refund to a *different*
+payment method than the order's own, which `return_delivered_order_items`
+hard-rejects) -- added to `out_of_scope__address_payment_modification`,
+`out_of_scope__order_state_confusion`, and
+`out_of_scope__electronics_returns_exchanges`. Grounded in real `db.json`
+users/orders/payment methods (verified by re-execution, same as every other
+scenario) but **not** yet re-run through stage 2 (model checker), stage 3
+(human review), stage 4 (difficulty calibration), or decontamination --
+only stage 1 (rule checker: 544/544 clean) covers them so far.
+
 **A related gap this dataset does not close, surfaced by an independent
 resemblance check against the real 114 τ²-bench retail tasks** (tasks.json
 read for aggregate comparison only, never fed into a generation prompt): real
