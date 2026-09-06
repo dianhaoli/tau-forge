@@ -147,6 +147,27 @@ deterministic single-threaded run to profile.
 Then diagnose it:
 
 ```bash
+bash scripts/diagnose.sh data/trained/audit_n16.json
+```
+
+That runs every diagnostic and writes the lot to `data/reports/diagnosis.txt`
+rather than only to the terminal, which matters because the report is a few
+hundred lines and tmux scrollback is easy to lose. It also drops two
+machine-readable side files next to it: `recommended_mix.txt`, ready to paste
+into `--category-mix`, and `dead_scenario_ids.txt`, ready for
+`--exclude-zero-variance-from`.
+
+Read it with `less data/reports/diagnosis.txt` (scrolls independently of tmux),
+or commit it -- unlike the audit JSONs, `data/reports/` is not gitignored,
+because the derived report is kilobytes and is the part worth keeping:
+
+```bash
+git add data/reports && git commit -m "Audit report" && git push
+```
+
+The individual scripts still run standalone if you want one section:
+
+```bash
 uv run python scripts/data_scorecard.py data/trained/audit_n16.json
 uv run python scripts/bucket_analysis.py data/trained/audit_n16.json
 ```
