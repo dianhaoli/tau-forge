@@ -283,6 +283,11 @@ def main() -> None:
         "zero_variance_scenario_count": len(zero_variance_scenarios),
         "zero_variance_scenario_fraction": len(zero_variance_scenarios) / len(rows) if rows else 0.0,
         "per_scenario_scores": per_scenario_scores,
+        # Lets scripts/bucket_analysis.py separate scenarios that *can* score
+        # between 0 and 1 from ones that are structurally binary (gold is
+        # silence), which no sampling or shaping change can ever make
+        # middle-difficulty.
+        "per_scenario_expected_tool_name": {row["id"]: row["expected_tool_name"] for row in rows},
     }
     if args.with_shaping:
         shaped_dead = _zero_variance(per_scenario_shaped)
