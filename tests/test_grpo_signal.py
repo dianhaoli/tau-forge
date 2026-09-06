@@ -268,3 +268,16 @@ def test_resolve_mix_accepts_named_and_inline_specs():
     assert resolve_mix(None) is None
     assert resolve_mix("real") == curriculum.REAL_TASK_ALIGNED_MIX
     assert resolve_mix("happy_path=0.5,ambiguous=0.5") == {"happy_path": 0.5, "ambiguous": 0.5}
+
+
+def test_every_parser_can_format_its_help():
+    """argparse %-formats help strings, so a literal '%' in help text raises
+    only when --help is actually rendered -- which no other test does. Caught
+    a real ValueError from '~72%' and '53%' in two help strings."""
+    from tau_forge.eval.run_tau2 import parse_args as eval_parse_args
+    from tau_forge.train.grpo_train import parse_args as train_parse_args
+
+    for parse in (train_parse_args, eval_parse_args):
+        with pytest.raises(SystemExit) as exit_info:
+            parse(["--help"])
+        assert exit_info.value.code == 0

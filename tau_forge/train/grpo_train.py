@@ -125,7 +125,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "(Dr. GRPO). DEFAULT OFF, deliberately. Dividing by std rescales every group to unit "
         "variance, so a group whose sixteen samples nearly agree gets its remaining noise "
         "amplified to the same magnitude as a group with real signal -- exactly backwards on a "
-        "corpus measured at ~72% near-degenerate groups. With this off, a low-variance group "
+        "corpus measured at ~72%% near-degenerate groups. With this off, a low-variance group "
         "contributes in proportion to how much its rewards actually differ.",
     )
     p.add_argument(
@@ -156,7 +156,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Rebalance the training corpus, e.g. 'happy_path=0.36,requires_earlier_context=0.36,"
         "policy_violation=0.15,ambiguous=0.08,out_of_scope=0.05'. Pass 'real' for "
         "curriculum.REAL_TASK_ALIGNED_MIX, 'uniform' for the corpus as generated. Default (None) "
-        "leaves the corpus untouched -- which means 53% of the training signal rewards NOT acting; "
+        "leaves the corpus untouched -- which means 53%% of the training signal rewards NOT acting; "
         "see tau_forge/train/curriculum.py for why that is a poor match to the benchmark.",
     )
     p.add_argument(
