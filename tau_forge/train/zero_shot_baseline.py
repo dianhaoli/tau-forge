@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import functools
 import json
+import time
 from collections import Counter
 from pathlib import Path
 
@@ -276,7 +277,25 @@ def main() -> None:
     per_scenario_scores: dict[str, list[float]] = {row["id"]: [] for row in rows}
     per_scenario_shaped: dict[str, list[float]] = {row["id"]: [] for row in rows}
     per_scenario_completions: dict[str, list[dict]] = {row["id"]: [] for row in rows}
-    for row, completion in zip(all_meta, completions):
+    # Scoring is CPU-bound and single-threaded, and on a right-tool completion
+    # `reward()` deep-copies the 2.8MB db twice inside `execute_against`. At
+    # ~245ms each that is minutes of silence after vLLM has already torn its
+    # engine down and printed its shutdown banner -- which reads exactly like a
+    # hung process. Report progress so it doesn't.
+    total = len(all_meta)
+    report_every = max(1, total // 20)
+    scoring_started = time.perf_counter()
+
+    for index, (row, completion) in enumerate(zip(all_meta, completions), start=1):
+        if index % report_every == 0 or index == total:
+            elapsed = time.perf_counter() - scoring_started
+            rate = index / elapsed if elapsed else 0.0
+            remaining = (total - index) / rate if rate else 0.0
+            print(
+                f"[zero_shot_baseline] scoring {index}/{total} "
+                f"({index / total:.0%}), ~{remaining / 60:.1f} min left",
+                flush=True,
+            )
         expected_args = json.loads(row["expected_tool_arguments_json"])
         score = score_completion(completion, row["expected_tool_name"], expected_args)
         per_scenario_scores[row["id"]].append(score)

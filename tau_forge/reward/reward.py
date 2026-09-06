@@ -253,7 +253,19 @@ def reward(rollout: Action, expected: Action, db_state: RetailDB) -> RewardBreak
             0.0, "wrong_tool", {"rollout_tool": rollout.tool_name, "expected_tool": expected.tool_name}
         )
 
-    probe = RetailEnv(db=db_state.model_copy(deep=True))
+    # Schema-only probe. Everything asked of it below -- has_tool,
+    # validate_arguments, extra_arguments, tool_mutates_state -- is answered
+    # from the toolkit's registry and the pydantic model derived from the tool
+    # signature; none of it reads a row of the DB, and nothing is ever executed
+    # against this env (the real executions go through `execute_against`, which
+    # deep-copies for itself). So it takes `db_state` directly.
+    #
+    # This used to deep-copy `db_state`, which measured at ~116ms of the ~349ms
+    # a right-tool scoring call cost -- a third of the time in every reward
+    # evaluation, spent producing a 2.8MB copy that was only ever asked
+    # questions about tool schemas. `reward()`'s no-mutation contract is
+    # unaffected: a probe that never executes cannot mutate.
+    probe = RetailEnv(db=db_state)
     if not probe.has_tool(rollout.tool_name):
         return RewardBreakdown(0.0, "unknown_tool", {"tool": rollout.tool_name})
 
