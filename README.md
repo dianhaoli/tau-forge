@@ -46,7 +46,7 @@ Concretely:
 | 5 | Decontamination vs. real 114 τ²-bench tasks | **Done — 0/8 flagged pairs confirmed as true positives on spot-check, see below** |
 | 6 | Harness smoke test on real 74 train tasks (scoring code only, no model) | **Passed — gold policy 1.0000/1.0000 (mean/min), see below** |
 | 7 | Real GRPO training run (synthetic data only — see held-out policy above) | Not yet run — needs a GPU box, none available in this environment. AWS EC2 setup fully prepped (`docs/phase7_aws_setup.md` / `infra/`: full-parameter GRPO not LoRA, `g6e.12xlarge` 4x L40S ZeRO-2, timing model, methodology risks) **and the actual training code is written** (`tau_forge/train/`: dataset/prompt building off tau2's own real system prompt + tool schemas, `<tool_call>` completion parsing with a caught reward-hacking bug fixed, a `reward()`-backed TRL `GRPOTrainer` reward adapter, the `grpo_train.py`/`zero_shot_baseline.py` entrypoints) — unit-tested against all 541 real scenarios without a GPU (`tests/test_train_pipeline.py`), but never executed end-to-end since no GPU/torch/trl was available while writing it; the smoke test is what actually validates it. Still awaits go-ahead for the full run |
-| 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Not started |
+| 8 | Evaluation (τ²-bench retail, airline zero-shot, BFCL v3) | Harness written (`tau_forge/eval/`: prompt-parity-checked `run_tau2` entrypoint, fixed-comparison run config) — **no run executed, no baseline number exists yet**. See "Phase 8 evaluation harness" below |
 
 Each phase after the current one is gated on a STOP checkpoint for review — see the
 originating task spec. Do not advance a phase past its STOP without explicit
@@ -726,6 +726,189 @@ actual training script are separate, still-gated next steps.
 
 STOP for review, per the Phase 6 spec: harness validated against real trusted
 data before resuming Phase 2/3 or attempting any GPU training.
+
+## Phase 7 signal audit — what was actually limiting the run
+
+Written while diagnosing why a stratified n=16 zero-shot audit came back ~72.5%
+zero-variance. Four findings, in descending order of how much each one costs the
+Phase 8 number. The first two are bugs; the second two are design choices that
+were quietly working against the goal.
+
+### 1. Every training prompt was being truncated (fixed)
+
+`grpo_train.py` shipped `--max-prompt-length 2048`. Measured against the real
+rendered prompts:
+
+| | tokens (approx) |
+|---|---|
+| tau2 system prompt + retail policy | 1,950–2,600 |
+| 16 retail tool schemas | 3,080–4,100 |
+| **full rendered prompt, median** | **5,100–6,800** |
+| scenarios exceeding 2,048 tokens | **541 / 541** |
+
+TRL truncates a prompt by keeping its **last** `max_prompt_length` tokens, so
+this does not raise -- it silently deletes the system prompt, the retail policy
+and every tool definition from all 541 examples, then grades the resulting
+completions with a reward function that still assumes they were there. The
+default is now `None` (no truncation), and `check_prompt_lengths()` tokenizes
+the real prompts at startup and refuses to run if a supplied value would
+truncate (`--allow-prompt-truncation` overrides deliberately). Covered by
+`tests/test_grpo_signal.py::test_preflight_refuses_a_truncating_max_prompt_length`.
+
+### 2. The training prompt and the eval prompt were different (fixed)
+
+`dataset.TOOL_CALL_FORMAT_INSTRUCTION` is appended to tau2's `AGENT_INSTRUCTION`
+for training. tau2's own `LLMAgent.system_prompt` does not append it, so `tau2
+run` at Phase 8 would send a system prompt the trained weights had never seen --
+and, specifically, would drop the escalation paragraph that roughly doubled the
+`out_of_scope` mean score and took that category's zero-variance rate from ~85%
+to ~49%. `tau_forge/eval/prompt_parity.py` patches tau2's module-level
+constant so the two prompts are byte-identical, and `tau_forge/eval/run_tau2.py`
+asserts it before launching. The patch must be applied to the **baseline** run
+too -- otherwise the reported delta mixes a prompt change into a weights change.
+The alternative regime (train with `include_format_instruction=False`, evaluate
+`--stock-prompt`) is equally valid; the tests enforce that one of the two is
+consistently in force, not that a particular one is chosen.
+
+Writing the parity check immediately caught a second-order bug it created:
+`_system_message` appended the suffix unconditionally, so building a dataset
+inside a patched process produced prompts carrying it twice. The append is now
+idempotent.
+
+### 3. The reward function's flat 0.0 floor is what makes cold starts dead
+
+`reward()` returns exactly `0.0` for `wrong_tool`, `unknown_tool`,
+`missing_call`, `unexpected_call` and a malformed `<tool_call>` alike. A
+cold-start scenario is therefore not "the model can't do it" -- it is "the model
+is wrong in sixteen materially different ways and the reward says all sixteen
+are identical." GRPO's advantage is `(r - mean) / std`; a group of sixteen
+distinct failures scoring the same number produces no gradient at all. **Raising
+the sampling temperature or the group size cannot fix that** -- the degeneracy
+is in the reward surface, not the sampler, which is why the temperature sweep
+was not the right first move.
+
+`tau_forge/train/shaping.py` adds a second TRL reward function supplying bounded
+partial credit *inside* that floor: a parseable call (0.02), naming a real tool
+(+0.03), schema-valid args (+0.03), the same read/write class as gold (+0.02),
+and naming the same order/user record as gold (+0.05). Capped at 0.15, strictly
+below `reward()`'s 0.2 tier, so no wrong tool can ever outscore a right one --
+asserted in tests, which also confirm the four-way ordering
+`malformed < fake tool < wrong class < right record` that `reward()` collapses
+to a single 0.0. It stays silent where `reward()` already grades: gold-is-silence
+scenarios, empty completions, and right-tool calls. A `-0.05` penalty applies to
+a turn emitting more than one `<tool_call>` block (a retail-policy violation, and
+only the first is ever parsed). Re-run the audit with
+`zero_shot_baseline --with-shaping` to get both zero-variance fractions in one
+pass; the difference between them is how many dead groups this revives.
+
+### 4. Over half the corpus trains the model *not* to do retail work
+
+Counted directly off `data/synthetic/raw/`:
+
+| category | n | gold action |
+|---|---|---|
+| `ambiguous` | 104 | no tool call (all) |
+| `policy_violation` | 112 | no tool call (78 of 112) |
+| `out_of_scope` | 107 | `transfer_to_human_agents` |
+| `happy_path` | 110 | a real retail action |
+| `requires_earlier_context` | 108 | a real retail action |
+
+That is 182 scenarios (33.6%) graded on withholding a call and another 107
+(19.8%) on escalating out of the domain: **289 of 541, 53.4% of the training
+signal, spent on not acting.** The benchmark is the opposite shape -- this
+project's own finding is that 4 of 114 real retail tasks (3.5%) ever need
+`transfer_to_human_agents`, Phase 6 found 2 of 74 train tasks (2.7%) whose
+correct behavior is purely conversational, and real tasks average 4.8 sequential
+tool calls. On an all-or-nothing multi-turn benchmark, a policy nudged toward
+asking a clarifying question where it should have authenticated and mutated
+fails the whole task.
+
+`tau_forge/train/curriculum.py` adds `REAL_TASK_ALIGNED_MIX`, a target
+distribution shaped like the benchmark rather than like the generation taxonomy.
+Measured effect:
+
+| | n | no-call share | non-acting share |
+|---|---|---|---|
+| corpus as generated | 541 | 33.6% | **53.4%** |
+| `--category-mix real` | 300 | 18.7% | **23.7%** |
+
+It keeps a real minority of guardrail scenarios on purpose -- refusing an
+out-of-policy mutation is worth genuine points too, and zeroing them would trade
+one lopsided policy for its mirror image. Downsampling is round-robin across
+themes, so all 30 `category__theme` cells survive. Note the cost: 541 → 300
+prompts, because the mixture is capped by how many acting scenarios exist. **The
+better version of this fix is generating more `happy_path` /
+`requires_earlier_context` scenarios rather than discarding the rest** -- Phase
+2's generator can produce them, and that is the single highest-value data task
+left.
+
+The same module supplies `--exclude-zero-variance-from` (drop scenarios measured
+constant-at-0.0 in a `zero_shot_baseline` output; constant-at-1.0 are kept by
+default as cheap regression insurance) and a stratified `--val-fraction` split
+for checkpoint selection. The validation set is **synthetic**, deliberately:
+selecting a checkpoint by a real task's score steers weights by that task as
+surely as training on it would, which the held-out data policy forbids.
+
+### Other GRPO settings changed, and why
+
+| setting | was | now | reason |
+|---|---|---|---|
+| `--scale-rewards` | on (TRL default) | **off** | Dividing the advantage by the group's reward std rescales every group to unit variance -- so a group whose sixteen samples nearly agree gets its remaining noise amplified to the same magnitude as a group with real signal. Backwards on a corpus measured ~72% near-degenerate. |
+| `--loss-type` | `grpo` | `dr_grpo` | Removes the length normalization that otherwise pays the policy to pad a one-tool-call answer. |
+| `--gradient-accumulation-steps` | 1 | 4 | At `--num-generations 16` and an effective batch of 32 across 4 GPUs, accumulation of 1 means each optimizer step sees **two** unique prompts. Group size buys a good advantage estimate within a prompt; only accumulation buys diversity across the update. |
+| `--top-p` / `--top-k` | not exposed | exposed | The plain-HF baseline backend inherited Qwen3's shipped `generation_config` (`top_p=0.8`, `top_k=20`), which narrows exactly the distribution the variance audit exists to measure -- and does not match what the trainer samples with. Both are now explicit on both backends. |
+| checkpoint selection | last step | best `eval_reward` | The overfitting mitigation `docs/phase7_aws_setup.md` asks for, and what makes a lower `--beta` safe to try. |
+| `--beta` | 0.04 | 0.04 (unchanged) | Left as-is deliberately, but the flag help now records the tradeoff: KL to the reference is a ceiling on how far the policy can move, so it also caps the Phase 8 gain. With held-out checkpoint selection in place, 0.0–0.01 is the setting to try for maximum measured improvement. |
+
+`--dry-run` runs the whole dataset/mixture/prompt-length preflight without
+importing torch. Run it before every launch.
+
+## Phase 8 evaluation harness (`tau_forge/eval/`) — the number to beat
+
+`python -m tau_forge.eval.run_tau2 --label baseline` runs the real τ²-bench
+retail benchmark against a locally-served checkpoint, with prompt parity
+asserted and every non-weight variable (user-simulator model and temperature,
+seed, trials, max steps) pinned as a flag and recorded in the results directory
+name. Serve the policy with vLLM first:
+
+```
+vllm serve <model-or-checkpoint> --served-model-name tau-forge-policy \
+    --enable-auto-tool-choice --tool-call-parser hermes \
+    --max-model-len 16384 --port 8000
+```
+
+`--tool-call-parser hermes` is the parser for Qwen's
+`<tool_call>{...}</tool_call>` convention -- the same one
+`completion_parsing.py` grades during training. Without it vLLM returns the
+call as plain assistant text, tau2 sees an agent that never calls a tool, and
+every task fails for a reason unrelated to the policy.
+
+**Run the baseline before any training.** It is both the referent for
+"improvement" and the only source of real failure trajectories -- and the
+current synthetic taxonomy was designed a priori, not from observed failures on
+the actual benchmark. `--num-trials 4` rather than 1: the user simulator is
+itself stochastic, so a single trial cannot resolve a training delta.
+
+### Recommended order for the GPU box
+
+1. **Baseline eval.** `run_tau2 --label baseline --task-split-name test --num-trials 4`.
+   Nothing downstream is interpretable without it, and its failure trajectories
+   are the only evidence-based input to what the corpus should contain.
+2. **Variance audit at training settings.** `zero_shot_baseline --use-vllm
+   --samples-per-scenario 16 --with-shaping --save-completions`, over all 541,
+   with `--temperature/--top-p/--top-k` matching what `grpo_train` will use.
+   One pass now reports both the raw and the shaped zero-variance fraction.
+3. **`grpo_train --dry-run`** with the chosen `--category-mix` and
+   `--exclude-zero-variance-from` pointing at step 2's output. Read the printed
+   mixture and prompt-token distribution before spending a GPU-hour.
+4. **50–100 step smoke test** (`--smoke-test`), then the full run.
+5. **Eval every saved checkpoint** with the same `run_tau2` flags as step 1,
+   changing only `--label`.
+
+Temperature sweeps and a larger `--num-generations` are further down this list
+than they look. Neither can rescue a scenario whose failures all score exactly
+0.0 -- finding 3 is that intervention, and a genuine cold start needs prompting
+or an SFT warm-start, not more samples.
 
 ## Decontamination check (`tau_forge/decontam/check.py`) — Phase 5
 

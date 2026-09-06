@@ -63,13 +63,26 @@ def load_scenarios(data_glob: str = DEFAULT_DATA_GLOB) -> list[dict[str, Any]]:
     return scenarios
 
 
-def _system_message(policy_text: str) -> dict[str, str]:
+def _system_message(policy_text: str, include_format_instruction: bool = True) -> dict[str, str]:
+    """The exact system message a training prompt carries.
+
+    `tau_forge.eval.prompt_parity` patches tau2's module-level
+    `AGENT_INSTRUCTION` with the same suffix so the Phase 8 eval prompt matches
+    this one byte for byte -- which means this function can be called in a
+    process where the suffix is *already* on `AGENT_INSTRUCTION`. Appending
+    unconditionally there would silently build training prompts carrying it
+    twice, so the append is idempotent. `include_format_instruction=False`
+    builds the stock-tau2 prompt instead, for the alternative parity regime
+    (train against the unmodified prompt, evaluate with --stock-prompt)."""
     from tau2.agent.llm_agent import AGENT_INSTRUCTION, SYSTEM_PROMPT
 
-    content = SYSTEM_PROMPT.format(
-        agent_instruction=AGENT_INSTRUCTION + TOOL_CALL_FORMAT_INSTRUCTION,
-        domain_policy=policy_text,
-    )
+    instruction = AGENT_INSTRUCTION
+    if include_format_instruction and not instruction.endswith(TOOL_CALL_FORMAT_INSTRUCTION):
+        instruction = instruction + TOOL_CALL_FORMAT_INSTRUCTION
+    elif not include_format_instruction and instruction.endswith(TOOL_CALL_FORMAT_INSTRUCTION):
+        instruction = instruction[: -len(TOOL_CALL_FORMAT_INSTRUCTION)]
+
+    content = SYSTEM_PROMPT.format(agent_instruction=instruction, domain_policy=policy_text)
     return {"role": "system", "content": content}
 
 
@@ -104,9 +117,14 @@ def scenario_to_example(scenario: dict[str, Any], system_message: dict[str, str]
 
 
 def build_examples(
-    data_glob: str = DEFAULT_DATA_GLOB, policy_text: Optional[str] = None
+    data_glob: str = DEFAULT_DATA_GLOB,
+    policy_text: Optional[str] = None,
+    include_format_instruction: bool = True,
 ) -> list[TrainingExample]:
-    system_message = _system_message(policy_text if policy_text is not None else _default_policy_text())
+    system_message = _system_message(
+        policy_text if policy_text is not None else _default_policy_text(),
+        include_format_instruction=include_format_instruction,
+    )
     return [scenario_to_example(s, system_message) for s in load_scenarios(data_glob)]
 
 

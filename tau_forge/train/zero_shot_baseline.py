@@ -52,6 +52,26 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--samples-per-scenario", type=int, default=4, help="Repeats per scenario, for a rough within-scenario variance read -- not a full GRPO group, just enough to see if a scenario is deterministic.")
     p.add_argument("--max-new-tokens", type=int, default=512)
     p.add_argument("--temperature", type=float, default=1.0)
+    p.add_argument(
+        "--top-p",
+        type=float,
+        default=1.0,
+        help="Nucleus sampling cutoff. MUST match what the trainer will use (grpo_train's "
+        "--top-p, default 1.0), or this run measures the variance of a different sampler than "
+        "the one GRPO will actually draw its groups with. Note the plain-HF backend otherwise "
+        "inherits Qwen's shipped generation_config (top_p=0.8, top_k=20), which suppresses "
+        "exactly the variance being measured -- so this is passed explicitly on both backends.",
+    )
+    p.add_argument("--top-k", type=int, default=0, help="0 / -1 = disabled. See --top-p.")
+    p.add_argument(
+        "--with-shaping",
+        action="store_true",
+        help="Also score each completion with tau_forge.train.shaping's auxiliary term and report "
+        "the variance picture under reward()+shaping -- i.e. what GRPO will actually see when "
+        "grpo_train runs with --shaping (its default). Run the audit both ways: the difference "
+        "between the two zero-variance fractions is exactly how many dead groups the shaping "
+        "term revives.",
+    )
     p.add_argument("--batch-size", type=int, default=8, help="Ignored when --use-vllm is set (vLLM batches internally).")
     p.add_argument("--use-vllm", action="store_true", help="Generate with vLLM instead of plain HF .generate() -- much faster, same dependency already installed.")
     p.add_argument("--max-model-len", type=int, default=8192, help="vLLM only. Caps the KV cache to this many tokens instead of the model's full native context (Qwen3's is 262144, which needs far more KV cache memory than a single GPU has). Must exceed the longest prompt (the retail system prompt + policy text + tool schemas can run several thousand tokens) plus --max-new-tokens, or vLLM rejects that request outright.")
@@ -80,6 +100,11 @@ def _generate_hf(model, tokenizer, prompts: list[str], args: argparse.Namespace)
                 max_new_tokens=args.max_new_tokens,
                 do_sample=True,
                 temperature=args.temperature,
+                # Explicit, not inherited: Qwen3 ships generation_config
+                # top_p=0.8/top_k=20, which would quietly narrow the very
+                # distribution this run exists to measure.
+                top_p=args.top_p,
+                top_k=args.top_k if args.top_k else 0,
                 pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
             )
         completions.extend(
@@ -91,7 +116,14 @@ def _generate_hf(model, tokenizer, prompts: list[str], args: argparse.Namespace)
     return completions
 
 
-def _generate_vllm(args: argparse.Namespace, prompts: list[str]) -> list[str]:
+def _generate_vllm(args: argparse.Namespace, prompts: list[str], samples_per_prompt: int) -> list[str]:
+    """Returns `len(prompts) * samples_per_prompt` completions, prompt-major
+    (all samples for prompt 0, then prompt 1, ...).
+
+    Uses vLLM's own `n=` rather than repeating each prompt in the request list:
+    same sampling, but the ~6k-token prompt is prefilled once per scenario
+    instead of once per sample. At n=16 over 541 scenarios that is the
+    difference between 541 and 8656 prefills of an identical prompt."""
     from vllm import LLM, SamplingParams
 
     llm = LLM(
@@ -100,9 +132,21 @@ def _generate_vllm(args: argparse.Namespace, prompts: list[str]) -> list[str]:
         gpu_memory_utilization=0.85,
         max_model_len=args.max_model_len,
     )
-    sampling_params = SamplingParams(temperature=args.temperature, max_tokens=args.max_new_tokens)
+    sampling_params = SamplingParams(
+        n=samples_per_prompt,
+        temperature=args.temperature,
+        top_p=args.top_p,
+        top_k=args.top_k if args.top_k else -1,
+        max_tokens=args.max_new_tokens,
+    )
     outputs = llm.generate(prompts, sampling_params)
-    return [o.outputs[0].text for o in outputs]
+    completions: list[str] = []
+    for o in outputs:
+        texts = [c.text for c in o.outputs]
+        if len(texts) != samples_per_prompt:  # vLLM can return fewer on a stop edge case
+            texts = (texts + [""] * samples_per_prompt)[:samples_per_prompt]
+        completions.extend(texts)
+    return completions
 
 
 def main() -> None:
@@ -111,6 +155,7 @@ def main() -> None:
     from tau_forge.envs.retail import RetailEnv
     from tau_forge.train.dataset import DEFAULT_DATA_GLOB, build_examples, to_hf_rows
     from tau_forge.train.reward_adapter import score_completion
+    from tau_forge.train.shaping import shaping_score
     from transformers import AutoTokenizer
 
     tokenizer = AutoTokenizer.from_pretrained(args.model, padding_side="left")
@@ -138,11 +183,12 @@ def main() -> None:
     print(f"[zero_shot_baseline] {len(rows)} scenarios, {args.samples_per_scenario} samples each "
           f"= {len(rows) * args.samples_per_scenario} total generations.")
 
-    all_prompts = [row["prompt"] for row in rows for _ in range(args.samples_per_scenario)]
+    # Prompt-major ordering in both backends: all samples of scenario 0, then
+    # scenario 1, ... -- so `all_meta` lines up with `completions` either way.
     all_meta = [row for row in rows for _ in range(args.samples_per_scenario)]
 
     if args.use_vllm:
-        completions = _generate_vllm(args, all_prompts)
+        completions = _generate_vllm(args, [row["prompt"] for row in rows], args.samples_per_scenario)
     else:
         import torch
         from transformers import AutoModelForCausalLM
@@ -151,23 +197,45 @@ def main() -> None:
             args.model, torch_dtype=torch.bfloat16, device_map="auto"
         )
         model.eval()
-        completions = _generate_hf(model, tokenizer, all_prompts, args)
+        completions = _generate_hf(
+            model,
+            tokenizer,
+            [row["prompt"] for row in rows for _ in range(args.samples_per_scenario)],
+            args,
+        )
+
+    shaping_env = None
+    if args.with_shaping:
+        shaping_env = RetailEnv()
 
     per_scenario_scores: dict[str, list[float]] = {row["id"]: [] for row in rows}
+    per_scenario_shaped: dict[str, list[float]] = {row["id"]: [] for row in rows}
     per_scenario_completions: dict[str, list[dict]] = {row["id"]: [] for row in rows}
     for row, completion in zip(all_meta, completions):
         expected_args = json.loads(row["expected_tool_arguments_json"])
         score = score_completion(completion, row["expected_tool_name"], expected_args)
         per_scenario_scores[row["id"]].append(score)
+        shaped = score
+        if shaping_env is not None:
+            shaped = score + shaping_score(
+                completion, row["expected_tool_name"], expected_args, shaping_env
+            )
+            per_scenario_shaped[row["id"]].append(shaped)
         if args.save_completions:
-            per_scenario_completions[row["id"]].append({"score": score, "completion": completion})
+            per_scenario_completions[row["id"]].append(
+                {"score": score, "shaped_score": shaped, "completion": completion}
+            )
 
     # Difficulty read: for each scenario, is the reward across samples
     # ~constant (near-zero variance -> ~zero GRPO training signal for it)?
-    zero_variance_scenarios = []
-    for scenario_id, scores in per_scenario_scores.items():
-        if len(set(round(s, 3) for s in scores)) == 1:
-            zero_variance_scenarios.append((scenario_id, scores[0]))
+    def _zero_variance(table: dict[str, list[float]]) -> list[tuple[str, float]]:
+        return [
+            (scenario_id, scores[0])
+            for scenario_id, scores in table.items()
+            if scores and len(set(round(s, 3) for s in scores)) == 1
+        ]
+
+    zero_variance_scenarios = _zero_variance(per_scenario_scores)
 
     all_scores = [s for scores in per_scenario_scores.values() for s in scores]
     histogram = Counter(round(s, 1) for s in all_scores)
@@ -183,6 +251,16 @@ def main() -> None:
         "zero_variance_scenario_fraction": len(zero_variance_scenarios) / len(rows) if rows else 0.0,
         "per_scenario_scores": per_scenario_scores,
     }
+    if args.with_shaping:
+        shaped_dead = _zero_variance(per_scenario_shaped)
+        shaped_all = [s for scores in per_scenario_shaped.values() for s in scores]
+        summary["shaping"] = {
+            "mean_shaped_score": sum(shaped_all) / len(shaped_all) if shaped_all else 0.0,
+            "zero_variance_scenario_count": len(shaped_dead),
+            "zero_variance_scenario_fraction": len(shaped_dead) / len(rows) if rows else 0.0,
+            "scenarios_revived_by_shaping": len(zero_variance_scenarios) - len(shaped_dead),
+        }
+        summary["per_scenario_shaped_scores"] = per_scenario_shaped
     if args.save_completions:
         summary["per_scenario_completions"] = per_scenario_completions
 
@@ -199,6 +277,14 @@ def main() -> None:
         f"training signal at this group size. A high fraction here is the cue to revisit "
         f"scenario difficulty/curriculum before the full run, per docs/phase7_aws_setup.md."
     )
+    if args.with_shaping:
+        sh = summary["shaping"]
+        print(
+            f"[zero_shot_baseline] with shaping: mean {sh['mean_shaped_score']:.3f}, "
+            f"{sh['zero_variance_scenario_count']}/{len(rows)} "
+            f"({sh['zero_variance_scenario_fraction']:.1%}) still zero-variance -- "
+            f"{sh['scenarios_revived_by_shaping']} scenarios gained a usable gradient."
+        )
     print(f"[zero_shot_baseline] Full detail written to {output_path}")
 
 

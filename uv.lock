@@ -3577,7 +3577,7 @@ requires-dist = [
     { name = "tau2", editable = "third_party/tau2-bench" },
     { name = "torch", marker = "extra == 'train'", specifier = ">=2.4" },
     { name = "transformers", marker = "extra == 'train'", specifier = ">=4.46" },
-    { name = "trl", marker = "extra == 'train'", specifier = ">=0.12" },
+    { name = "trl", marker = "extra == 'train'", specifier = ">=0.16" },
     { name = "vllm", marker = "extra == 'train'", specifier = ">=0.6" },
 ]
 provides-extras = ["train"]
