@@ -26,13 +26,31 @@ connection kills a foreground process and takes the run with it. Detach with
 
 ---
 
-## Step 2 -- bootstrap
+## Step 2 -- get the repo
+
+**Fresh box, nothing there yet.** The bootstrap script does the clone for you --
+you do not clone first:
 
 ```bash
 curl -O https://raw.githubusercontent.com/dianhaoli/tau-forge/main/infra/ec2_bootstrap.sh
 chmod +x ec2_bootstrap.sh
 ./ec2_bootstrap.sh claude/grpo-reward-variance-47cbgo   # or main, once merged
 ```
+
+**Box that already has `~/tau-forge`** from an earlier session -- the common case
+once you have run anything on it before. Do not re-clone; fetch the branch:
+
+```bash
+cd ~/tau-forge
+git fetch origin claude/grpo-reward-variance-47cbgo
+git checkout claude/grpo-reward-variance-47cbgo
+git submodule update --init --recursive
+```
+
+`git pull` alone is not enough: it updates the branch you are on, and the work
+this runbook depends on is on a different one. No dependency changes are needed
+for the audit -- the only `pyproject.toml` change is a floor bump on `trl`,
+which lives in the `train` extra and only matters at Step 6.
 
 The branch argument matters: the fixes this runbook depends on (prompt
 truncation, prompt parity, shaping, curriculum, the scorecard) live on that
@@ -82,11 +100,26 @@ start with `--num-trials 1` if you want to see the shape of the bill first.
 
 ---
 
+## A note on `uv run` before Step 4
+
+Every GPU command below is `uv run --extra train ...`, not plain `uv run`.
+
+`uv run` syncs the environment to match the lockfile before executing, and an
+extra you are not asking for is not part of that match -- so a plain `uv run`
+in a project where you previously ran `uv sync --extra train` can *uninstall*
+torch, vLLM and transformers on its way to running your command. You would then
+watch it re-download several gigabytes on the next `--extra train` invocation.
+
+Commands that touch only tau2 (`data_scorecard.py`, `bucket_analysis.py`,
+`run_tau2`, `pytest`) need no extra and are written without one.
+
+---
+
 ## Step 4 -- variance audit (single GPU, ~1-2 h)
 
 ```bash
 cd ~/tau-forge
-uv run python -m tau_forge.train.zero_shot_baseline --use-vllm \
+uv run --extra train python -m tau_forge.train.zero_shot_baseline --use-vllm \
     --samples-per-scenario 16 \
     --temperature 1.0 --top-p 1.0 --top-k 0 \
     --max-new-tokens 256 --max-model-len 8192 \
@@ -127,7 +160,7 @@ policy having memorized those exact prompts. For that comparison use the
 held-out slice:
 
 ```bash
-uv run python -m tau_forge.train.zero_shot_baseline --use-vllm \
+uv run --extra train python -m tau_forge.train.zero_shot_baseline --use-vllm \
     --split val --val-fraction 0.1 --category-mix real --curriculum-seed 0 \
     --samples-per-scenario 16 \
     --temperature 1.0 --top-p 1.0 --top-k 0 \
@@ -158,7 +191,7 @@ whole. Step 5 is the number that answers the actual question.
 Two processes. In one tmux pane, serve the policy:
 
 ```bash
-uv run vllm serve Qwen/Qwen3-4B-Instruct-2507 \
+uv run --extra train vllm serve Qwen/Qwen3-4B-Instruct-2507 \
     --served-model-name tau-forge-policy \
     --enable-auto-tool-choice --tool-call-parser hermes \
     --max-model-len 16384 --port 8000
@@ -193,7 +226,7 @@ Preflight first. It imports no torch and touches no GPU:
 
 ```bash
 MIX=$(uv run python scripts/data_scorecard.py data/trained/audit_n16.json --emit-mix)
-uv run python -m tau_forge.train.grpo_train --dry-run \
+uv run --extra train python -m tau_forge.train.grpo_train --dry-run \
     --category-mix "$MIX" \
     --exclude-zero-variance-from data/trained/audit_n16.json
 ```
@@ -202,12 +235,12 @@ Read the printed mixture and prompt-token distribution before spending a
 GPU-hour. Then the smoke test, then the full run:
 
 ```bash
-uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+uv run --extra train accelerate launch --config_file infra/accelerate_zero2.yaml \
     -m tau_forge.train.grpo_train --smoke-test \
     --category-mix "$MIX" \
     --exclude-zero-variance-from data/trained/audit_n16.json
 
-uv run accelerate launch --config_file infra/accelerate_zero2.yaml \
+uv run --extra train accelerate launch --config_file infra/accelerate_zero2.yaml \
     -m tau_forge.train.grpo_train \
     --category-mix "$MIX" \
     --exclude-zero-variance-from data/trained/audit_n16.json
@@ -225,7 +258,7 @@ Restart the vLLM server pointed at the checkpoint, then re-run Step 5 changing
 only the label:
 
 ```bash
-uv run vllm serve data/trained/phase7_run/final \
+uv run --extra train vllm serve data/trained/phase7_run/final \
     --served-model-name tau-forge-policy \
     --enable-auto-tool-choice --tool-call-parser hermes \
     --max-model-len 16384 --port 8000
