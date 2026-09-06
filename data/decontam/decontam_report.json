@@ -8,20 +8,20 @@
     "ok": true
   },
   "n_real_tasks": 114,
-  "n_synthetic_scenarios": 541,
+  "n_synthetic_scenarios": 544,
   "method": "tfidf_unigram_bigram_cosine",
-  "threshold": 0.1969,
+  "threshold": 0.1974,
   "threshold_derivation": {
     "rule": "mean + 3*std of each synthetic scenario's best (max) similarity to any real task",
     "mean": 0.0882,
-    "std": 0.0362
+    "std": 0.0364
   },
   "n_flagged": 8,
   "flagged_pairs": [
     {
       "synthetic_id": "happy_path__apparel_footwear_exchanges__015",
       "real_task_id": "85",
-      "text_similarity": 0.2577,
+      "text_similarity": 0.258,
       "tool_shape_score": 0.0,
       "synthetic_excerpt": "Hi, I'm Harper Brown, harper.brown3965@example.com.\nThanks Harper, I've found your account.\nBefore I decide what to exchange my fleece jacket for, can you tell me what colors and sizes the fleece jacket comes in overall, and which ones are actually available?",
       "real_excerpt": "You want to exchange your Fleece Jacket for a large red Fleece Jacket with a half zipper"
@@ -29,7 +29,7 @@
     {
       "synthetic_id": "policy_violation__apparel_footwear_exchanges__004",
       "real_task_id": "80",
-      "text_similarity": 0.2537,
+      "text_similarity": 0.2541,
       "tool_shape_score": null,
       "synthetic_excerpt": "Hi, I'm Evelyn Brown, evelyn.brown5837@example.com.\nThanks Evelyn, you're verified.\nPlease exchange the blue medium crew-neck t-shirt on order #W7647404 for a black XL crew-neck.\nTo confirm: exchange item 9612497925 (blue, M, crew neck) for a black XL crew-neck, difference refunded to your PayPal o\u2026",
       "real_excerpt": "For #W7209932, exchange T-Shirt {'color': 'blue', 'size': 'S', 'material': 'polyester', 'style': 'v-neck'} to {'color': 'red', 'size': 'XXL', 'material': 'cotton', 'style': 'crew neck'}; Use the gift card."
@@ -37,7 +37,7 @@
     {
       "synthetic_id": "requires_earlier_context__apparel_footwear_exchanges__001",
       "real_task_id": "80",
-      "text_similarity": 0.2351,
+      "text_similarity": 0.2355,
       "tool_shape_score": 1.0,
       "synthetic_excerpt": "I'd like to exchange the red XXL crew neck t-shirt on order #W6552785. I actually want the v-neck style instead, same red, but size L this time.\nI found that item on order #W6552785 -- the red, XXL, crew neck cotton t-shirt at $46.85. I can exchange it for the red, L, v-neck cotton t-shirt at $46.6\u2026",
       "real_excerpt": "For #W7209932, exchange T-Shirt {'color': 'blue', 'size': 'S', 'material': 'polyester', 'style': 'v-neck'} to {'color': 'red', 'size': 'XXL', 'material': 'cotton', 'style': 'crew neck'}; Use the gift card."
@@ -45,7 +45,7 @@
     {
       "synthetic_id": "happy_path__apparel_footwear_exchanges__001",
       "real_task_id": "80",
-      "text_similarity": 0.2274,
+      "text_similarity": 0.2277,
       "tool_shape_score": 1.0,
       "synthetic_excerpt": "Hi, I'm Aarav Davis, my email is aarav.davis2239@example.com.\nThanks Aarav, I've located your account. How can I help?\nMy delivered order #W6552785 has a red XXL t-shirt in it, but it's too big.\nI see that item -- a red XXL cotton crew neck t-shirt at $46.85. Since it's a delivered order I can exch\u2026",
       "real_excerpt": "For #W7209932, exchange T-Shirt {'color': 'blue', 'size': 'S', 'material': 'polyester', 'style': 'v-neck'} to {'color': 'red', 'size': 'XXL', 'material': 'cotton', 'style': 'crew neck'}; Use the gift card."
@@ -53,7 +53,7 @@
     {
       "synthetic_id": "happy_path__damaged_or_defective_item_narratives__009",
       "real_task_id": "28",
-      "text_similarity": 0.2226,
+      "text_similarity": 0.2174,
       "tool_shape_score": 0.6,
       "synthetic_excerpt": "I've confirmed your identity, Olivia -- I can see order #W5671546, delivered, with a garden hose on it.\nThe garden hose split down the middle the first time I turned the water on -- totally defective. Please return it and refund my credit card.",
       "real_excerpt": "You want to return the skateboard, garden hose, backpack, keyboard, and bed. You also want to cancel the garden hose from the pending order you just placed (you ONLY want to cancel that hose \u2014 if this would require cancelling the entire order, tell the agent not to do it). Make sure ALL the items y\u2026"
@@ -61,7 +61,7 @@
     {
       "synthetic_id": "happy_path__electronics_returns_exchanges__003",
       "real_task_id": "93",
-      "text_similarity": 0.2153,
+      "text_similarity": 0.2154,
       "tool_shape_score": 1.0,
       "synthetic_excerpt": "I want to upgrade the laptop from order #W1840144 to the i9 configuration -- 15-inch, 32GB RAM, 512GB SSD, black -- if it's in stock.\nThat configuration is available for $2701.89. Your current laptop (15-inch, i7, 32GB RAM, 1TB SSD, space grey) was $2292.37, so the exchange would add a charge of $4\u2026",
       "real_excerpt": "You received a laptop and you want to exchange it to i7 processor, 8GB, 1TB SSD. If the agent asks for which laptop, it is 15-inch, 32GB."
@@ -69,7 +69,7 @@
     {
       "synthetic_id": "requires_earlier_context__damaged_or_defective_item_narratives__003",
       "real_task_id": "56",
-      "text_similarity": 0.201,
+      "text_similarity": 0.2012,
       "tool_shape_score": 0.0,
       "synthetic_excerpt": "My order #W6304490 arrived, but the Air Purifier's control panel is completely unresponsive, doesn't turn on at all.\nI'm sorry about that. I found order #W6304490 (delivered) with the Air Purifier, item 9375701158. I can return it and refund the original credit card on file -- would that work?\nYes,\u2026",
       "real_excerpt": "You wonder when is your air purifier is arriving. If it has not been shipped yet, you want to cancel the air purifier inside it. If you cannot cancel just the air purifier, you want to modify it to the cheapest possible air purifier, and refund to the gift card. You do not remember your gift card i\u2026"
@@ -77,7 +77,7 @@
     {
       "synthetic_id": "requires_earlier_context__damaged_or_defective_item_narratives__014",
       "real_task_id": "44",
-      "text_similarity": 0.2003,
+      "text_similarity": 0.2005,
       "tool_shape_score": 0.0,
       "synthetic_excerpt": "The Desk Lamp in order #W9784474 flickers on and off constantly, item 8384507844.\nThat's a delivered order. I can process a return refunded to the gift card you originally paid with -- want me to go ahead?\nYes, that's fine.\nOkay, please submit it.",
       "real_excerpt": "You want to change the Desk Lamp in order #W9300146 that you've placed for the cheapest Desk Lamp that's available. Any price difference should go to a gift card. You also want to know how much you get back in total."
