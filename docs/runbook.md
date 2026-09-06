@@ -116,6 +116,41 @@ The scorecard ranks all 30 cells by yield x headroom and prints a recommended
 after shaping, plus how much of the corpus is structurally binary and therefore
 beyond any sampling fix.
 
+### Two different things this command can measure
+
+`--split all` (the default above) scores every scenario. That is the right
+setting for a variance audit: you want the whole corpus characterized.
+
+It is the wrong setting for a **before/after on synthetic data**. Train on the
+corpus, re-score the same corpus, and the improvement you measure is partly the
+policy having memorized those exact prompts. For that comparison use the
+held-out slice:
+
+```bash
+uv run python -m tau_forge.train.zero_shot_baseline --use-vllm \
+    --split val --val-fraction 0.1 --category-mix real --curriculum-seed 0 \
+    --samples-per-scenario 16 \
+    --temperature 1.0 --top-p 1.0 --top-k 0 \
+    --max-new-tokens 256 --max-model-len 8192 --with-shaping \
+    --output data/trained/synth_baseline_val.json
+```
+
+`--split val` reproduces exactly the slice `grpo_train` holds out, so pass the
+**same** `--val-fraction`, `--category-mix` and `--curriculum-seed` to both
+commands. Different values compute different splits and the comparison is void;
+a test asserts the two code paths agree given equal flags, and the settings are
+recorded into the output JSON so a later run can be checked rather than assumed.
+
+After training, re-run that exact command against the checkpoint and compare
+`mean_score`.
+
+**What that number does and does not tell you.** It measures whether training
+moved the reward it was optimized against, on prompts it did not see. That is a
+real sanity check and it is cheap. It is not evidence of tau2-bench improvement:
+reward can rise while benchmark performance does not, because each scenario is
+one decision graded in isolation while a real task chains roughly five and fails
+whole. Step 5 is the number that answers the actual question.
+
 ---
 
 ## Step 5 -- baseline evaluation (single GPU)

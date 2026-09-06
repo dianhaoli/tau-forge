@@ -43,12 +43,26 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = REPO_ROOT / "data" / "trained" / "zero_shot_baseline.json"
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", default="Qwen/Qwen3-4B-Instruct-2507")
     p.add_argument("--data-glob", default=None)
     p.add_argument("--category", default=None, help="Only run scenarios whose id starts with this category (e.g. 'out_of_scope').")
     p.add_argument("--scenario-ids-file", default=None, help="Path to a text file of scenario ids (one per line) to restrict the run to.")
+    p.add_argument(
+        "--split",
+        choices=["all", "train", "val"],
+        default="all",
+        help="Which curriculum split to score. 'all' (default) is the whole corpus -- right for "
+        "a variance audit, wrong for a before/after. For a synthetic-data baseline you intend to "
+        "re-measure after training, use --split val: it reproduces exactly the held-out slice "
+        "grpo_train carves off, so the second measurement is on scenarios the run never trained "
+        "on. Pass the SAME --val-fraction, --category-mix and --curriculum-seed here as you pass "
+        "to grpo_train, or the two commands compute different splits and the comparison is void.",
+    )
+    p.add_argument("--val-fraction", type=float, default=0.1, help="See --split. Must match grpo_train's.")
+    p.add_argument("--category-mix", default=None, help="See --split. Must match grpo_train's. 'real', 'uniform', or an explicit spec.")
+    p.add_argument("--curriculum-seed", type=int, default=0, help="See --split. Must match grpo_train's.")
     p.add_argument("--samples-per-scenario", type=int, default=4, help="Repeats per scenario, for a rough within-scenario variance read -- not a full GRPO group, just enough to see if a scenario is deterministic.")
     p.add_argument("--max-new-tokens", type=int, default=512)
     p.add_argument("--temperature", type=float, default=1.0)
@@ -77,7 +91,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--max-model-len", type=int, default=8192, help="vLLM only. Caps the KV cache to this many tokens instead of the model's full native context (Qwen3's is 262144, which needs far more KV cache memory than a single GPU has). Must exceed the longest prompt (the retail system prompt + policy text + tool schemas can run several thousand tokens) plus --max-new-tokens, or vLLM rejects that request outright.")
     p.add_argument("--save-completions", action="store_true", help="Include raw completion text per sample in the output JSON, not just scores. Off by default since it makes the output much larger.")
     p.add_argument("--output", default=str(DEFAULT_OUTPUT))
-    return p.parse_args()
+    return p.parse_args(argv)
 
 
 def check_context_budget(prompts: list[str], tokenizer, args: argparse.Namespace) -> int:
@@ -200,6 +214,24 @@ def main() -> None:
     examples = build_examples(data_glob=args.data_glob or DEFAULT_DATA_GLOB)
     rows = to_hf_rows(examples, apply_chat_template, tools)
 
+    if args.split != "all":
+        from tau_forge.train.curriculum import build_training_sets
+        from tau_forge.train.grpo_train import resolve_mix
+
+        train_examples, val_examples = build_training_sets(
+            examples,
+            mix=resolve_mix(args.category_mix),
+            val_fraction=args.val_fraction,
+            seed=args.curriculum_seed,
+        )
+        keep = {e.id for e in (val_examples if args.split == "val" else train_examples)}
+        rows = [r for r in rows if r["id"] in keep]
+        print(
+            f"[zero_shot_baseline] --split {args.split}: {len(rows)} scenarios "
+            f"(val_fraction={args.val_fraction}, mix={args.category_mix}, seed={args.curriculum_seed}). "
+            "Re-run with these exact values after training to compare like with like."
+        )
+
     if args.category:
         rows = [r for r in rows if r["id"].startswith(args.category)]
     if args.scenario_ids_file:
@@ -275,6 +307,15 @@ def main() -> None:
 
     summary = {
         "model": args.model,
+        # Recorded so a later run can be checked for split identity rather than
+        # assumed to match -- a before/after across two different splits is not
+        # a comparison, and nothing else in the output would reveal it.
+        "split": args.split,
+        "val_fraction": args.val_fraction,
+        "category_mix": args.category_mix,
+        "curriculum_seed": args.curriculum_seed,
+        "top_p": args.top_p,
+        "top_k": args.top_k,
         "n_scenarios": len(rows),
         "samples_per_scenario": args.samples_per_scenario,
         "temperature": args.temperature,

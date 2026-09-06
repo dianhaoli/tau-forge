@@ -418,3 +418,58 @@ def test_recommended_mix_applies_cleanly_to_the_real_corpus():
     mix = recommend_mix(cells)
     mixed = curriculum.apply_mixture(build_examples(), mix, seed=0)
     assert mixed and curriculum.summarize(mixed)["n_cells"] == 30
+
+
+# --------------------------------------------------------------------------
+# split selection: a synthetic before/after has to be measured on held-out data
+# --------------------------------------------------------------------------
+
+
+def test_baseline_and_trainer_compute_the_same_split_from_the_same_flags():
+    """The whole contract behind `zero_shot_baseline --split val`: given equal
+    --val-fraction / --category-mix / --curriculum-seed, the ids it scores are
+    exactly the ones grpo_train holds out. If these ever diverge, a synthetic
+    before/after silently becomes a train-on-test measurement."""
+    from tau_forge.train.grpo_train import build_examples_for_run, parse_args as train_args
+
+    examples = build_examples()
+    args = train_args(["--val-fraction", "0.1", "--category-mix", "real", "--curriculum-seed", "3"])
+    trainer_train, trainer_val = build_examples_for_run(args)
+
+    baseline_train, baseline_val = curriculum.build_training_sets(
+        examples,
+        mix=curriculum.REAL_TASK_ALIGNED_MIX,
+        val_fraction=0.1,
+        seed=3,
+    )
+    assert {e.id for e in baseline_val} == {e.id for e in trainer_val}
+    assert {e.id for e in baseline_train} == {e.id for e in trainer_train}
+    assert baseline_val, "an empty held-out split would make the comparison vacuous"
+
+
+def test_val_split_is_disjoint_from_what_training_sees():
+    examples = build_examples()
+    train, val = curriculum.build_training_sets(examples, val_fraction=0.1, seed=0)
+    assert not ({e.id for e in train} & {e.id for e in val})
+
+
+def test_baseline_parser_defaults_match_the_trainer_defaults():
+    """Divergent defaults are the likeliest way these two commands end up
+    computing different splits without anyone noticing, since the split is
+    silent -- nothing in either output announces which scenarios were used."""
+    from tau_forge.train.grpo_train import parse_args as train_args
+    from tau_forge.train.zero_shot_baseline import parse_args as baseline_args
+
+    trainer = train_args([])
+    baseline = baseline_args([])
+    for field in ("val_fraction", "curriculum_seed", "category_mix"):
+        assert getattr(trainer, field) == getattr(baseline, field), field
+
+
+def test_baseline_split_flag_defaults_to_the_whole_corpus():
+    """--split all is right for a variance audit and wrong for a before/after;
+    defaulting to the audit keeps the existing workflow unchanged."""
+    from tau_forge.train.zero_shot_baseline import parse_args as baseline_args
+
+    assert baseline_args([]).split == "all"
+    assert baseline_args(["--split", "val"]).split == "val"
