@@ -76,8 +76,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument(
         "--user-llm",
         default="gpt-4.1-2025-04-14",
-        help="The user simulator. HOLD THIS FIXED across baseline and trained runs -- it is "
-        "half of every conversation, and changing it changes the benchmark, not the policy.",
+        help="The user simulator. tau2 routes this through litellm, so any provider works: "
+        "'anthropic/claude-sonnet-5' or 'anthropic/claude-haiku-4-5' with ANTHROPIC_API_KEY set "
+        "are drop-in alternatives to the OpenAI default. Two caveats. First, HOLD THIS FIXED "
+        "across the baseline and every trained run -- it speaks half of every conversation, so "
+        "changing it changes the benchmark rather than the policy, and a before/after across "
+        "two different simulators measures nothing. Second, tau2's published leaderboard numbers "
+        "use the gpt-4.1 default; a run on any other simulator is internally valid but not "
+        "comparable to those, so keep the default if you ever want to line up against them.",
     )
     p.add_argument("--user-temperature", type=float, default=0.0)
     p.add_argument(

@@ -921,6 +921,9 @@ committing GPU-hours to a mixture.
 
 ### Recommended order for the GPU box
 
+Full command-by-command sequence, from SSH login through getting results off the
+box: **`docs/runbook.md`**. Summary:
+
 1. **Baseline eval.** `run_tau2 --label baseline --task-split-name test --num-trials 4`.
    Nothing downstream is interpretable without it, and its failure trajectories
    are the only evidence-based input to what the corpus should contain.

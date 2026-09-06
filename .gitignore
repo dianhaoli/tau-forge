@@ -5,3 +5,16 @@ __pycache__/
 *.egg-info/
 .ruff_cache/
 scratch/
+
+# Secrets. tau2 loads .env from the working directory upward (dotenv's default
+# search), so the API key for the user simulator lives at the repo root -- which
+# makes not committing it a hard requirement, not a preference.
+.env
+.env.*
+!.env.example
+
+# Training and evaluation outputs: checkpoints are gigabytes, audit JSONs with
+# --save-completions are hundreds of megabytes. Commit the summary numbers to
+# the README instead of the artifacts.
+data/trained/
+data/simulations/
