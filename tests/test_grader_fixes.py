@@ -28,7 +28,12 @@ from tau_forge.reward.reward import (
 from tau_forge.train import reward_adapter, shaping
 from tau_forge.train.completion_parsing import MALFORMED_TOOL_CALL, parse_completion
 from tau_forge.train.dataset import load_scenarios
-from tau_forge.train.reward_adapter import _get_shared_db, grpo_reward_func, score_completion
+from tau_forge.train.reward_adapter import (
+    _get_shared_db,
+    grade_completion,
+    grpo_reward_func,
+    score_completion,
+)
 
 TRANSFER = "transfer_to_human_agents"
 PENDING_ORDER = "#W5918442"  # pending, user sofia_rossi_8776 (see tests/test_reward.py)
@@ -216,6 +221,48 @@ def test_empty_reply_through_the_trl_adapter():
 
 def test_empty_completion_on_call_gold_is_still_a_missing_call():
     assert score_completion("", "cancel_pending_order", {"order_id": PENDING_ORDER}) == 0.0
+
+
+def test_grade_completion_is_what_score_completion_scores():
+    """`grade_completion` is the one place a raw completion becomes a graded
+    `Action`; training and inspect_stuck both go through it."""
+    for text, name, args in [
+        ("", None, {}),
+        ("Which order did you mean?", None, {}),
+        (BARE, None, {}),
+        (_call("cancel_pending_order", {"order_id": PENDING_ORDER, "reason": "no longer needed"}),
+         "cancel_pending_order", {"order_id": PENDING_ORDER, "reason": "no longer needed"}),
+    ]:
+        assert grade_completion(text, name, args).score == score_completion(text, name, args)
+    assert grade_completion("", None, {}).reason == "empty_reply"
+
+
+def test_inspect_stuck_reports_empty_reply_not_correct_no_call(tmp_path, capsys):
+    """Reviewer repro: inspect_stuck re-graded without the raw text, so a band
+    of empty completions on a no-call gold -- flat at 0.0 in training -- was
+    reported as 100% `correct_no_call`."""
+    import importlib.util
+    from pathlib import Path
+
+    from tau_forge.train.dataset import DEFAULT_DATA_GLOB, build_examples
+
+    sid = next(e.id for e in build_examples(data_glob=DEFAULT_DATA_GLOB) if e.expected_tool_name is None)
+    audit = tmp_path / "audit.json"
+    audit.write_text(json.dumps({
+        "per_scenario_scores": {sid: [0.0] * 4},
+        "per_scenario_completions": {sid: [{"completion": t} for t in ["", " ", "\n", ""]]},
+    }))
+
+    script = Path(__file__).resolve().parents[1] / "scripts" / "inspect_stuck.py"
+    spec = importlib.util.spec_from_file_location("inspect_stuck", script)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.main([str(audit), "--score", "0.0"])
+
+    out = capsys.readouterr().out
+    reasons = out.split("reward reasons:")[1].split("\n\n")[0]
+    assert "empty_reply" in reasons
+    assert "correct_no_call" not in reasons
 
 
 # --------------------------------------------------------------------------

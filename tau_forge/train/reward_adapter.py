@@ -20,7 +20,7 @@ from tau2.domains.retail.data_model import RetailDB
 from tau2.domains.retail.utils import RETAIL_DB_PATH
 
 from tau_forge.envs.retail import ToolResult, execute_against
-from tau_forge.reward.reward import TRANSFER_TOOL, Action, reward
+from tau_forge.reward.reward import TRANSFER_TOOL, Action, RewardBreakdown, reward
 from tau_forge.train.completion_parsing import parse_completion
 
 _shared_db: Optional[RetailDB] = None
@@ -73,11 +73,20 @@ def _gold_outcome(
     return outcome
 
 
-def score_completion(
+def grade_completion(
     completion_text: str,
     expected_tool_name: Optional[str],
     expected_tool_arguments: dict[str, Any],
-) -> float:
+) -> RewardBreakdown:
+    """Full reward breakdown (score, reason, detail) for one raw completion.
+
+    The single place a completion becomes a graded `Action`, shared by training
+    (`score_completion`) and diagnostics (`scripts/inspect_stuck.py`). They used
+    to build the `Action` separately and drifted: once `reward()` started
+    reading the raw text, inspect_stuck still graded without it, so an empty
+    completion on a no-call gold -- 0.0 `empty_reply` in training -- was
+    reported as 1.0 `correct_no_call`, pointing a 0.0-flat band at the opposite
+    of its real cause."""
     predicted_name, predicted_args = parse_completion(completion_text)
     # The raw text rides along so `reward()` can tell an empty turn from a real
     # reply on a no-call gold; parsing alone maps both to `tool_name=None`.
@@ -96,7 +105,15 @@ def score_completion(
         and expected_tool_name != TRANSFER_TOOL
         else None
     )
-    return reward(rollout_action, gold_action, _get_shared_db(), gold_outcome=gold_outcome).score
+    return reward(rollout_action, gold_action, _get_shared_db(), gold_outcome=gold_outcome)
+
+
+def score_completion(
+    completion_text: str,
+    expected_tool_name: Optional[str],
+    expected_tool_arguments: dict[str, Any],
+) -> float:
+    return grade_completion(completion_text, expected_tool_name, expected_tool_arguments).score
 
 
 def grpo_reward_func(
