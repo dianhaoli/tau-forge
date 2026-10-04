@@ -1,0 +1,5596 @@
+{
+ "description": "Per-scenario label audit of data/synthetic/raw (541 scenarios), produced by a multi-agent audit of why GRPO groups were zero-variance. A scenario with a non-empty 'blocking' list has a gold label under which the policy-correct action (per data/tau2/domains/retail/policy.md) scores 0 -- training on it pushes the policy away from the retail policy and, because every policy-following sample scores the same 0, it also produces flat groups. 'labels' are informational. gold_ids_unreachable is computed live against tau_forge.train.grounding at the time of writing; the rest are auditor judgements (writes: all 150 read; reads/no-call: all 284 read; out_of_scope: all 107 read), adversarially re-checked.",
+ "blocking_labels": {
+  "confirmation_missing": "gold is a DB write but the user never gave an explicit yes to the listed action; policy requires asking first",
+  "auth_missing": "gold write acts for a user who never authenticated (email, or name+zip)",
+  "gold_ids_unreachable": "a gold id argument appears nowhere in the grounded prompt; only a guess can produce it",
+  "unauth_policy_conflict": "read gold with no authentication in context; policy-correct move is to authenticate first",
+  "unauthenticated_identity_given_lookup_due": "out_of_scope: the user gave identity but no lookup happened; policy-correct move is to authenticate",
+  "unauthenticated_no_identity": "out_of_scope: no identity at all; policy-correct move is to ask for it",
+  "gold_should_be_deny": "out_of_scope transfer where policy.md says to deny (contradicts policy_violation labels for the same rule)",
+  "gold_should_be_plain_reply": "out_of_scope transfer for an information question the agent can just answer",
+  "grounding_reveals_foreign_order": "grounded context shows the gold order belongs to another user; refusing becomes correct",
+  "grounding_contradicts_narration": "prose narrates a prior write the db.json state does not reflect",
+  "malformed_dialogue": "consecutive user turns, nothing actually confirmed",
+  "label_error": "gold modifies an order the narrative says is already 'pending (item modified)'"
+ },
+ "scenarios": {
+  "ambiguous__address_payment_modification__001": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__002": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__address_payment_modification__003": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__004": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__address_payment_modification__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__007": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__010": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__011": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__013": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__014": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__address_payment_modification__015": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__address_payment_modification__017": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__002": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__003": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__007": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__008": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__010": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__011": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__014": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__015": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__apparel_footwear_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__001": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__002": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__003": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__004": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__007": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__008": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__010": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__011": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__012": {
+   "blocking": [],
+   "labels": [
+    "message_content_ungraded",
+    "mixed",
+    "tests_real_skill(user_confirmed)",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__013": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__017": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:get_product_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__damaged_or_defective_item_narratives__018": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__002": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__003": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__007": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__008": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__010": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__011": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded",
+    "unauth_no_grounding"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__014": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded",
+    "unauth_no_grounding"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__electronics_returns_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__001": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__002": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__003": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__004": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__005": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:find_user_id_by_name_zip",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__007": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__008": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__009": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__010": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__011": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__012": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__013": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__014": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__identity_and_order_lookup__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__order_state_confusion__001": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__order_state_confusion__002": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__order_state_confusion__003": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details(weak)",
+    "message_content_ungraded",
+    "mixed",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__order_state_confusion__004": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__007": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__008": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__009": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__010": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__011": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__012": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__013": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__014": {
+   "blocking": [
+    "grounding_contradicts_narration"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__015": {
+   "blocking": [
+    "grounding_contradicts_narration"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__016": {
+   "blocking": [
+    "grounding_contradicts_narration"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_ambiguity",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "ambiguous__order_state_confusion__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "ambiguous__order_state_confusion__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "visible_ambiguity"
+   ]
+  },
+  "happy_path__address_payment_modification__001": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_user_address"
+   ]
+  },
+  "happy_path__address_payment_modification__002": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_user_address"
+   ]
+  },
+  "happy_path__address_payment_modification__003": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "happy_path__address_payment_modification__004": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__address_payment_modification__005": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__address_payment_modification__006": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__address_payment_modification__007": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__address_payment_modification__008": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__address_payment_modification__009": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "happy_path__address_payment_modification__010": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_user_address"
+   ]
+  },
+  "happy_path__address_payment_modification__011": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__address_payment_modification__012": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ],
+   "notes": [
+    "gold zip 90210 with state DC kept from narrative; harmless"
+   ]
+  },
+  "happy_path__address_payment_modification__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__address_payment_modification__014": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__address_payment_modification__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__address_payment_modification__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__address_payment_modification__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__address_payment_modification__018": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "exchange_delivered_order_items",
+    "ids_reachable",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__002": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__003": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__005": {
+   "blocking": [],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__006": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__007": {
+   "blocking": [],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__008": {
+   "blocking": [],
+   "labels": [
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__010": {
+   "blocking": [],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmation_ambiguous",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__011": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__015": {
+   "blocking": [
+    "gold_ids_unreachable:product_id"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:list_all_product_types",
+    "likely_coldstart"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:find_user_id_by_name_zip",
+    "mixed"
+   ]
+  },
+  "happy_path__apparel_footwear_exchanges__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__001": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__002": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__003": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "pm digits quoted ('gift card ending in 8883122'), only format-derivable pm in corpus"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__004": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "mixed"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__005": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__006": {
+   "blocking": [
+    "confirmation_missing",
+    "gold_ids_unreachable:item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:find_user_id_by_email",
+    "alt:get_order_details",
+    "args_fully_specified",
+    "auth_pending",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "no prior turns; creds arrive in the final user message, so find_user_id_by_email is the policy-correct next step (0.08)"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__007": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__009": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "grounding_gap",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "'I've confirmed your identity' not matched by ACCOUNT_OPEN_RE"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__010": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "mixed"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__011": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__012": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__013": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__015": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "mixed"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__016": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "grounding_gap",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "'I've verified your identity' not matched by ACCOUNT_OPEN_RE"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__017": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__damaged_or_defective_item_narratives__018": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__001": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__002": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "user pre-authorises before the agent lists the return"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__003": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_underspecified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "assistant invents a user payment preference that was never stated"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__004": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__005": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__006": {
+   "blocking": [],
+   "labels": [
+    "alt:get_order_details",
+    "alt:get_product_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "grounding_gap",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "'Thanks, you're verified.' not matched by ACCOUNT_OPEN_RE"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__007": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__008": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids",
+    "malformed_dialogue"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "two consecutive user turns with no assistant turn between them"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__009": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__010": {
+   "blocking": [
+    "gold_ids_unreachable:product_id"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "likely_coldstart"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__011": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__012": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__013": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids",
+    "malformed_dialogue"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "two consecutive user turns; the agent never stated the new item or price"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__014": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id",
+    "malformed_dialogue"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__015": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__016": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__017": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__018": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__019": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_product_details",
+    "args_fully_specified",
+    "auth_claimed_offscreen",
+    "exchange_delivered_order_items",
+    "grounding_gap",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "'You're verified' not matched by ACCOUNT_OPEN_RE"
+   ]
+  },
+  "happy_path__electronics_returns_exchanges__020": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids",
+    "malformed_dialogue"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "user turn duplicated; no assistant turn"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__001": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__002": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__003": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__004": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__005": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__006": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__007": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__008": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__009": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__010": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__011": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__012": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__013": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__014": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_user_address"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__015": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__016": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__017": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ],
+   "notes": [
+    "also asks to cancel a roommate's order (must be refused)"
+   ]
+  },
+  "happy_path__identity_and_order_lookup__018": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "happy_path__order_state_confusion__001": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "happy_path__order_state_confusion__002": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "happy_path__order_state_confusion__003": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:payment_method_id",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__order_state_confusion__004": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__order_state_confusion__005": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__order_state_confusion__006": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__order_state_confusion__007": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "happy_path__order_state_confusion__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__order_state_confusion__009": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "happy_path__order_state_confusion__010": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "happy_path__order_state_confusion__011": {
+   "blocking": [
+    "confirmation_missing",
+    "label_error"
+   ],
+   "labels": [
+    "alt:refuse",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ],
+   "notes": [
+    "narrative says 'pending (item modified)', so policy requires refusal; db still pending, so gold executes"
+   ]
+  },
+  "happy_path__order_state_confusion__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__order_state_confusion__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__order_state_confusion__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "happy_path__order_state_confusion__015": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "happy_path__order_state_confusion__016": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "happy_path__order_state_confusion__017": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "happy_path__order_state_confusion__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "out_of_scope__address_payment_modification__001": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "account change no tool can make (add card)"
+   ]
+  },
+  "out_of_scope__address_payment_modification__002": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "account change no tool can make (delete gift card)"
+   ]
+  },
+  "out_of_scope__address_payment_modification__003": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "update card details; unreachable sofia_li_9219"
+   ]
+  },
+  "out_of_scope__address_payment_modification__004": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "second address"
+   ]
+  },
+  "out_of_scope__address_payment_modification__005": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "recipient name"
+   ]
+  },
+  "out_of_scope__address_payment_modification__006": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "UPS hold; unreachable emma_smith_8564"
+   ]
+  },
+  "out_of_scope__address_payment_modification__007": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "bank dispute; unreachable omar_khan_2363"
+   ]
+  },
+  "out_of_scope__address_payment_modification__008": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "load gift card balance; unreachable ava_nguyen_2175"
+   ]
+  },
+  "out_of_scope__address_payment_modification__009": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "link bank account; unreachable yara_sanchez_1902"
+   ]
+  },
+  "out_of_scope__address_payment_modification__010": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "installments"
+   ]
+  },
+  "out_of_scope__address_payment_modification__011": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "billing country"
+   ]
+  },
+  "out_of_scope__address_payment_modification__012": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "no subscription concept; unreachable mia_jackson_2250"
+   ]
+  },
+  "out_of_scope__address_payment_modification__013": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "cancelled order cannot be changed (explicit policy rule)"
+   ]
+  },
+  "out_of_scope__address_payment_modification__014": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "billing zip on card"
+   ]
+  },
+  "out_of_scope__address_payment_modification__015": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "refund destination rule (explicit policy rule); unreachable yara_moore_6466"
+   ]
+  },
+  "out_of_scope__address_payment_modification__016": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [],
+   "notes": [
+    "ID upload: authentication is only by email or name+zip"
+   ]
+  },
+  "out_of_scope__address_payment_modification__017": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "credit limit is set by the bank; unreachable fatima_wilson_6873"
+   ]
+  },
+  "out_of_scope__address_payment_modification__018": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "one user per conversation (explicit policy rule)"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "bundled_in_scope_action"
+   ],
+   "notes": [
+    "exchange + price match"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__002": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "prepaid label; unreachable yara_muller_8652"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__003": {
+   "blocking": [
+    "unauthenticated_no_identity"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "voucher demand; user never identified; unreachable aarav_sanchez_6636"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__004": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "policy bars subjective recommendations (explicit rule)"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__005": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "embroidery customization"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__006": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "loyalty points"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__007": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "bundled_in_scope_action",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "exchange + customs info"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__008": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [],
+   "notes": [
+    "recall info"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__009": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "donation"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__010": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "warranty purchase"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__011": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [],
+   "notes": [
+    "restock date"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__012": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "in-store cash purchase, no online order"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__013": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [],
+   "notes": [
+    "tracking: get_order_details exposes tracking ids, so partly doable"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__014": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "bundled_in_scope_action",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "exchange + overnight shipping"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__015": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "promo code"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__016": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "post review"
+   ]
+  },
+  "out_of_scope__apparel_footwear_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "health hazard"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__001": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "property damage"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__002": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "repair visit"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__003": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "injury"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__004": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "ship replacement before return"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__005": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "manufacturer report"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__006": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "property damage"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__007": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "gas leak"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__008": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "warranty repair"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__009": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "fire hazard"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__010": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "shock injury"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__011": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "ship replacement before return"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__012": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "carrier claim"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__013": {
+   "blocking": [],
+   "labels": [
+    "bundled_in_scope_action"
+   ],
+   "notes": [
+    "exchange + warranty extension"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__014": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "fire hazard + damage"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__015": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "explicit supervisor request"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__016": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "property damage"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__017": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "injury"
+   ]
+  },
+  "out_of_scope__damaged_or_defective_item_narratives__018": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "fire hazard"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "repair; unreachable item 7441167885"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__002": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "fraud; unreachable item 5669664287"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__003": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "troubleshooting"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "warranty transfer"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__005": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "e-waste info"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__006": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "recall info"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__007": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "price match"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__008": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "review"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "bundled_in_scope_action",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "exchange for another variant is doable by mail"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__010": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "manufacturer contact"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__011": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "explicit request for a human"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "legal"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__013": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "protection plan"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__014": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "goodwill credit"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__015": {
+   "blocking": [
+    "gold_should_be_plain_reply"
+   ],
+   "labels": [],
+   "notes": [
+    "financing info"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__016": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "shipping speed"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__017": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [],
+   "notes": [
+    "promo code"
+   ]
+  },
+  "out_of_scope__electronics_returns_exchanges__018": {
+   "blocking": [
+    "gold_should_be_deny"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "donation"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__001": {
+   "blocking": [],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "email change"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__002": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "merge accounts (touches another account)"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__003": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "order pulled up from order number alone, no authentication"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__004": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "driver damage"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__005": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "invoice/W9"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__006": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "account deletion"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__007": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "combine orders"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__008": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "promo code"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__009": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "password reset"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__010": {
+   "blocking": [],
+   "labels": [
+    "defensible_transfer"
+   ],
+   "notes": [
+    "unsubscribe"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__011": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "explicit request for a human"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__012": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "price match"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__013": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "donation"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__014": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "phishing"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__015": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "phone number"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__016": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "clear_transfer",
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "account security"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__017": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "pending order: 'nothing else' can be modified (explicit rule)"
+   ]
+  },
+  "out_of_scope__identity_and_order_lookup__018": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "gold_summary_ids_unreachable"
+   ],
+   "notes": [
+    "wholesale info"
+   ]
+  },
+  "out_of_scope__order_state_confusion__001": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "rush shipping"
+   ]
+  },
+  "out_of_scope__order_state_confusion__002": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "gift note (explicit rule); grounding regex missed 'confirmed your identity'"
+   ]
+  },
+  "out_of_scope__order_state_confusion__003": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "split payment (explicit single-payment-method rule)"
+   ]
+  },
+  "out_of_scope__order_state_confusion__004": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "mail printed manual"
+   ]
+  },
+  "out_of_scope__order_state_confusion__005": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "review"
+   ]
+  },
+  "out_of_scope__order_state_confusion__006": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "donation"
+   ]
+  },
+  "out_of_scope__order_state_confusion__007": {
+   "blocking": [
+    "unauthenticated_identity_given_lookup_due"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "user_self_asserts_user_id"
+   ],
+   "notes": [
+    "policy requires authentication even when the user gives an id"
+   ]
+  },
+  "out_of_scope__order_state_confusion__008": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "delivery window"
+   ]
+  },
+  "out_of_scope__order_state_confusion__009": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "refund destination rule (explicit)"
+   ]
+  },
+  "out_of_scope__order_state_confusion__010": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "undo cancellation (explicit rule)"
+   ]
+  },
+  "out_of_scope__order_state_confusion__011": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "add new product (explicit rule)"
+   ]
+  },
+  "out_of_scope__order_state_confusion__012": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "split payment (explicit rule)"
+   ]
+  },
+  "out_of_scope__order_state_confusion__013": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "warranty registration"
+   ]
+  },
+  "out_of_scope__order_state_confusion__014": {
+   "blocking": [
+    "gold_should_be_plain_reply",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [],
+   "notes": [
+    "software troubleshooting"
+   ]
+  },
+  "out_of_scope__order_state_confusion__015": {
+   "blocking": [
+    "unauthenticated_no_identity"
+   ],
+   "labels": [
+    "defensible_transfer",
+    "prior_turn_write_without_confirmation"
+   ],
+   "notes": [
+    "expedite or goodwill credit"
+   ]
+  },
+  "out_of_scope__order_state_confusion__016": {
+   "blocking": [
+    "unauthenticated_no_identity"
+   ],
+   "labels": [
+    "clear_transfer",
+    "prior_turn_write_without_confirmation"
+   ],
+   "notes": [
+    "explicit request for a human"
+   ]
+  },
+  "out_of_scope__order_state_confusion__017": {
+   "blocking": [
+    "gold_should_be_deny",
+    "unauthenticated_no_identity"
+   ],
+   "labels": [
+    "prior_turn_write_without_confirmation"
+   ],
+   "notes": [
+    "price match"
+   ]
+  },
+  "out_of_scope__order_state_confusion__018": {
+   "blocking": [
+    "unauthenticated_no_identity"
+   ],
+   "labels": [
+    "clear_transfer"
+   ],
+   "notes": [
+    "explicit request for a human; grounding regex missed 'You're verified'"
+   ]
+  },
+  "policy_violation__address_payment_modification__001": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__address_payment_modification__002": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__address_payment_modification__003": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__address_payment_modification__004": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__address_payment_modification__005": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__address_payment_modification__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "hidden_violation",
+    "likely_coldstart",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__address_payment_modification__007": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__address_payment_modification__008": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:nocall_refuse",
+    "label_leak:get_user_details_omitted",
+    "mixed"
+   ]
+  },
+  "policy_violation__address_payment_modification__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__address_payment_modification__010": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__address_payment_modification__011": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__address_payment_modification__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__address_payment_modification__013": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__address_payment_modification__014": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "label_leak:get_user_details_omitted",
+    "mixed"
+   ]
+  },
+  "policy_violation__address_payment_modification__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__address_payment_modification__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__address_payment_modification__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__address_payment_modification__018": {
+   "blocking": [],
+   "labels": [
+    "message_content_ungraded",
+    "mixed",
+    "third_party_read_distractor"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__002": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__003": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__006": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__007": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_item_details(old_item)",
+    "alt_valid:get_order_details",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__010": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__011": {
+   "blocking": [
+    "grounding_reveals_foreign_order"
+   ],
+   "labels": [
+    "alt_valid:nocall_refuse",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__015": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "label_leak:get_user_details_omitted",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__016": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__apparel_footwear_exchanges__018": {
+   "blocking": [
+    "gold_ids_unreachable:product_id"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:list_all_product_types",
+    "likely_coldstart"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__001": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:get_order_details",
+    "message_content_ungraded",
+    "mixed"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__002": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__003": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__004": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__005": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__006": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__007": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__010": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__011": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__014": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__015": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__damaged_or_defective_item_narratives__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__002": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__003": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__005": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__006": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__007": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__010": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__011": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__016": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "likely_coldstart",
+    "message_content_ungraded",
+    "unauth_with_email"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__electronics_returns_exchanges__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "unauth_masks_violation"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__001": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__002": {
+   "blocking": [
+    "grounding_reveals_foreign_order"
+   ],
+   "labels": [
+    "alt_valid:nocall_refuse",
+    "mixed"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__003": {
+   "blocking": [],
+   "labels": [
+    "auth_refusal_visible",
+    "likely_trivial",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__004": {
+   "blocking": [],
+   "labels": [
+    "message_content_ungraded",
+    "mixed",
+    "third_party_read_distractor"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__005": {
+   "blocking": [],
+   "labels": [
+    "auth_refusal_visible",
+    "likely_trivial",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__006": {
+   "blocking": [],
+   "labels": [
+    "message_content_ungraded",
+    "mixed",
+    "third_party_read_distractor"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__007": {
+   "blocking": [],
+   "labels": [
+    "auth_refusal_visible",
+    "likely_trivial",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__008": {
+   "blocking": [
+    "grounding_reveals_foreign_order"
+   ],
+   "labels": [
+    "alt_valid:nocall_refuse",
+    "mixed"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__010": {
+   "blocking": [
+    "grounding_reveals_foreign_order"
+   ],
+   "labels": [
+    "alt_valid:nocall_refuse",
+    "mixed"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__011": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__012": {
+   "blocking": [],
+   "labels": [
+    "auth_refusal_visible",
+    "likely_trivial",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__013": {
+   "blocking": [],
+   "labels": [
+    "auth_refusal_visible",
+    "likely_trivial",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__014": {
+   "blocking": [],
+   "labels": [
+    "auth_refusal_visible",
+    "likely_trivial",
+    "message_content_ungraded"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__015": {
+   "blocking": [
+    "grounding_reveals_foreign_order"
+   ],
+   "labels": [
+    "alt_valid:nocall_refuse",
+    "mixed"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__017": {
+   "blocking": [
+    "grounding_reveals_foreign_order"
+   ],
+   "labels": [
+    "alt_valid:nocall_refuse",
+    "mixed"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__018": {
+   "blocking": [],
+   "labels": [
+    "message_content_ungraded",
+    "mixed",
+    "third_party_read_distractor"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__019": {
+   "blocking": [],
+   "labels": [
+    "message_content_ungraded",
+    "mixed",
+    "third_party_read_distractor"
+   ]
+  },
+  "policy_violation__identity_and_order_lookup__020": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "third_party_visible"
+   ]
+  },
+  "policy_violation__order_state_confusion__001": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__002": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__order_state_confusion__003": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__004": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__005": {
+   "blocking": [],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "likely_coldstart",
+    "message_content_ungraded",
+    "unauth_with_email"
+   ]
+  },
+  "policy_violation__order_state_confusion__006": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__007": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "mixed"
+   ]
+  },
+  "policy_violation__order_state_confusion__008": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "mixed"
+   ]
+  },
+  "policy_violation__order_state_confusion__009": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__010": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__order_state_confusion__011": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__012": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__order_state_confusion__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__017": {
+   "blocking": [],
+   "labels": [
+    "competes_with_confirm_prompt",
+    "mixed",
+    "unique_gold"
+   ]
+  },
+  "policy_violation__order_state_confusion__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__019": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "message_content_ungraded",
+    "violation_visible_in_prose"
+   ]
+  },
+  "policy_violation__order_state_confusion__020": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:find_user_id_by_email",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__001": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__002": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__003": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:user_id",
+    "modify_user_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__004": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__005": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__006": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__007": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__008": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:user_id",
+    "modify_user_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__009": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__010": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__011": {
+   "blocking": [],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmation_ambiguous",
+    "ids_missing:user_id",
+    "modify_user_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__012": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__013": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__address_payment_modification__018": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__001": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__002": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__003": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__004": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__005": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__006": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__007": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__008": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__009": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__010": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__011": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__012": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,new_item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:new_item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__013": {
+   "blocking": [
+    "gold_ids_unreachable:item_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__014": {
+   "blocking": [
+    "gold_ids_unreachable:item_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__015": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__016": {
+   "blocking": [
+    "gold_ids_unreachable:product_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:list_all_product_types",
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__017": {
+   "blocking": [
+    "gold_ids_unreachable:item_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__apparel_footwear_exchanges__018": {
+   "blocking": [
+    "gold_ids_unreachable:user_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__001": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "user gives name only ('James Li'), no zip or email"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__002": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__003": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__004": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__005": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__006": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ],
+   "notes": [
+    "'my other credit card' can only be resolved through get_user_details"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__007": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__008": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__009": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__010": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__011": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__012": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__013": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__014": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__015": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__016": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__017": {
+   "blocking": [
+    "gold_ids_unreachable:product_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:list_all_product_types",
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__damaged_or_defective_item_narratives__018": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__001": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__002": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__003": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:item_ids,payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__004": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__005": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__006": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__007": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__008": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__009": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__010": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__011": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__012": {
+   "blocking": [],
+   "labels": [
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__013": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__014": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__015": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__016": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__017": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__electronics_returns_exchanges__018": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__001": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__002": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__003": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__004": {
+   "blocking": [
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:nocall_ask_auth",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__005": {
+   "blocking": [
+    "gold_ids_unreachable:product_id",
+    "unauth_policy_conflict"
+   ],
+   "labels": [
+    "alt_valid:get_order_details",
+    "alt_valid:list_all_product_types",
+    "alt_valid:nocall_ask_auth",
+    "likely_coldstart"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__006": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__007": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__008": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__009": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__010": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:user_id",
+    "modify_user_address"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__011": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_missing:payment_method_id",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__012": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_missing:payment_method_id",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__013": {
+   "blocking": [
+    "auth_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "confirmation_ambiguous",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__014": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "exchange_delivered_order_items",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__015": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__016": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing",
+    "gold_ids_unreachable:payment_method_id"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__017": {
+   "blocking": [
+    "auth_missing"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "args_fully_specified",
+    "cancel_pending_order",
+    "confirmed_explicit",
+    "ids_reachable"
+   ],
+   "notes": [
+    "also asks to cancel a friend's order (must be refused)"
+   ]
+  },
+  "requires_earlier_context__identity_and_order_lookup__018": {
+   "blocking": [
+    "auth_missing",
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_auth",
+    "alt:ask_yes",
+    "args_fully_specified",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__001": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__002": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_underspecified",
+    "authenticated",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ],
+   "notes": [
+    "user says 'card I paid with' but the order was paid via PayPal"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__003": {
+   "blocking": [],
+   "labels": [
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__004": {
+   "blocking": [],
+   "labels": [
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__005": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__006": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__007": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__008": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__009": {
+   "blocking": [],
+   "labels": [
+    "answerable_from_prose",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__010": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "args_fully_specified",
+    "authenticated",
+    "cancel_pending_order",
+    "ids_reachable"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__011": {
+   "blocking": [
+    "confirmation_missing",
+    "label_error"
+   ],
+   "labels": [
+    "alt:refuse",
+    "args_fully_specified",
+    "authenticated",
+    "ids_reachable",
+    "modify_pending_order_address"
+   ],
+   "notes": [
+    "narrative says 'pending (item modified)', so policy requires refusal"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__012": {
+   "blocking": [],
+   "labels": [
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "copyable_from_last_turn",
+    "ids_reachable",
+    "modify_pending_order_payment"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__013": {
+   "blocking": [
+    "confirmation_missing"
+   ],
+   "labels": [
+    "alt:ask_yes",
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "return_delivered_order_items"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__014": {
+   "blocking": [],
+   "labels": [
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "exchange_delivered_order_items",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__015": {
+   "blocking": [],
+   "labels": [
+    "likely_trivial",
+    "unique_gold"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__016": {
+   "blocking": [],
+   "labels": [
+    "alt:get_order_details",
+    "alt:get_user_details",
+    "args_fully_specified",
+    "authenticated",
+    "confirmed_explicit",
+    "ids_missing:item_ids",
+    "ids_missing:payment_method_id",
+    "items_reminder_missing",
+    "modify_pending_order_items"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__017": {
+   "blocking": [],
+   "labels": [
+    "answerable_from_prose",
+    "mixed"
+   ]
+  },
+  "requires_earlier_context__order_state_confusion__018": {
+   "blocking": [],
+   "labels": [
+    "label_leak:get_user_details_omitted",
+    "likely_trivial",
+    "unique_gold"
+   ]
+  }
+ }
+}

@@ -64,7 +64,10 @@ USER_ID_RE = re.compile(r"\b[a-z]+_[a-z]+_\d{4}\b")
 ACCOUNT_OPEN_RE = re.compile(
     r"\b(located|found|pulled up|verified|authenticated|identified|have|opened|confirmed|matched)\b"
     r"[^.?!]{0,40}\b(your|the)\s+(account|profile)\b"
-    r"|\byour account\s*\(|\b(i have|i've got) your account\b",
+    r"|\byour account\s*\(|\b(i have|i've got) your account\b"
+    r"|\b(you're|you are) (now )?(verified|authenticated)\b"
+    r"|\b(confirmed|verified|authenticated) your identity\b"
+    r"|\bidentity (is |has been )?(verified|confirmed)\b",
     re.IGNORECASE,
 )
 
