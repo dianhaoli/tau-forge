@@ -32,9 +32,9 @@ connection kills a foreground process and takes the run with it. Detach with
 you do not clone first:
 
 ```bash
-curl -O https://raw.githubusercontent.com/dianhaoli/tau-forge/main/infra/ec2_bootstrap.sh
+curl -O https://raw.githubusercontent.com/dianhaoli/tau-forge/claude/keen-dirac-3pocui/infra/ec2_bootstrap.sh
 chmod +x ec2_bootstrap.sh
-./ec2_bootstrap.sh claude/grpo-reward-variance-47cbgo   # or main, once merged
+./ec2_bootstrap.sh claude/keen-dirac-3pocui   # or main, once merged
 ```
 
 **Box that already has `~/tau-forge`** from an earlier session -- the common case
@@ -42,8 +42,8 @@ once you have run anything on it before. Do not re-clone; fetch the branch:
 
 ```bash
 cd ~/tau-forge
-git fetch origin claude/grpo-reward-variance-47cbgo
-git checkout claude/grpo-reward-variance-47cbgo
+git fetch origin claude/keen-dirac-3pocui
+git checkout claude/keen-dirac-3pocui
 git submodule update --init --recursive
 ```
 
@@ -256,6 +256,35 @@ real sanity check and it is cheap. It is not evidence of tau2-bench improvement:
 reward can rise while benchmark performance does not, because each scenario is
 one decision graded in isolation while a real task chains roughly five and fails
 whole. Step 5 is the number that answers the actual question.
+
+---
+
+## Step 4b -- episode variance audit (single GPU)
+
+Multi-step episode tasks (`tau_forge/episodes/`, see `docs/variance_audit.md`
+for why) are where the variance is expected to come from. This measures the
+base model's success rate per task template and difficulty knob, so training
+can be weighted toward cells with p in ~0.15-0.85.
+
+```bash
+cd ~/tau-forge
+uv run python -m tau_forge.episodes.generate --per-template 200 --seed 0 \
+    --out data/episodes/episodes_s0.jsonl
+# CPU dry run first -- no model, scripted oracle policy, should be all 1.0:
+uv run python scripts/episode_audit.py --tasks data/episodes/episodes_s0.jsonl \
+    --samples-per-task 2 --fake-policy oracle --output /tmp/dry.json
+# The real audit:
+uv run --extra train python scripts/episode_audit.py \
+    --tasks data/episodes/episodes_s0.jsonl \
+    --samples-per-task 16 --temperature 1.0 --top-p 1.0 --top-k 0 \
+    --max-new-tokens 1024 --max-model-len 16384 \
+    --output data/trained/episode_audit.json
+```
+
+Each finished task is appended to `data/trained/episode_audit.json.partial.jsonl`
+as it completes, so a crash loses nothing finished. Read the per-template and
+per-knob `p` and effective-variance numbers it prints; copy the JSON off the box
+(Step 8) along with the single-step audit.
 
 ---
 
