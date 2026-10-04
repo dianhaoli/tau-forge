@@ -6,12 +6,16 @@ state equivalence, not trajectory match). Built on top of `tau_forge.envs.retail
 does not reimplement any tool logic.
 
 Score tiers (see module docstring in the Phase 4 plan for the full rationale):
-    0.0        wrong tool / missing or unexpected call
+    0.0        wrong tool / missing or unexpected call / an empty reply where
+               gold is a plain message
     0.2        schema-invalid args, hallucinated (unknown) args, or the call
                raised at execution time despite valid schema
     0.3 - 1.0  schema-valid, right tool, right target record: graded on how close
                the outcome (resulting DB state, or output/args when there's no DB
                side effect) is to gold. 1.0 only for an exact outcome match.
+
+`transfer_to_human_agents` is the one tool graded on the *decision* rather than
+on its argument: see `transfer_decision_score`.
 
 `reward()` is stateless: it never mutates the `db_state` passed in.
 """
@@ -73,8 +77,9 @@ GRADED_ORDER_FIELDS: dict[str, str] = {
 # call was right or wrong -- two different-but-valid inputs producing the same
 # output means the rollout is correct. `transfer_to_human_agents` is GENERIC
 # but its return value ("Transfer successful") is constant regardless of
-# `summary`, so output-equality would silently ignore summary quality. Do not
-# add a tool here unless its return value actually varies with its arguments.
+# `summary`, so it is not here either; it has its own decision grader
+# (`transfer_decision_score`). Do not add a tool here unless its return value
+# actually varies with its arguments.
 OUTPUT_DETERMINES_CORRECTNESS = {
     "calculate",
     "find_user_id_by_name_zip",
@@ -97,6 +102,24 @@ ID_LIKE_KEYS = {
     "email",
 }
 
+TRANSFER_TOOL = "transfer_to_human_agents"
+
+# A transfer summary with at least this many non-whitespace characters counts as
+# a real hand-off note. 20 is about four words -- enough to name a request
+# ("refund to a check for #W1234567" is 26) -- and rejects the content-free
+# fillers a policy collapses to ("n/a" 3, "transfer" 8, "Customer needs help."
+# 18). Over the 107 out_of_scope scenarios the shortest user_message is 67
+# non-whitespace characters and the shortest gold summary 113, so a summary
+# that restates the request clears this by more than 3x. Length is the only
+# check on purpose: see `transfer_decision_score`.
+TRANSFER_SUMMARY_MIN_CHARS = 20
+# Right decision, but a hand-off note a human agent could not act on. Kept well
+# above the 0.3 floor of other right-tool outcomes, because tau2 itself scores
+# this transfer exactly like a well-summarised one, and well below 1.0 so a
+# group that transfers with and without a summary still has a gradient toward
+# writing one.
+TRANSFER_TRIVIAL_SUMMARY_SCORE = 0.6
+
 NUMERIC_TOLERANCE = 0.05  # relative
 TEXT_SIMILARITY_FLOOR = 0.3  # below this, a free-text field scores 0
 SHORT_STRING_LEN = 40  # at/under this length, treat strings as exact-match categorical, not free text
@@ -110,6 +133,11 @@ class Action:
 
     tool_name: Optional[str]
     tool_input: dict[str, Any] = field(default_factory=dict)
+    # The raw completion text, when the caller has it (`reward_adapter` does;
+    # the multi-step harness, which only has parsed actions, does not). `None`
+    # means "unknown", not "empty": it only matters for a message-only rollout
+    # against a no-call gold, where an empty reply is graded as a miss.
+    text: Optional[str] = None
 
 
 @dataclass
@@ -133,8 +161,44 @@ def _numeric_tolerance(pv: Any, gv: Any) -> float:
 
 
 def _text_similarity_score(pv: str, gv: str) -> float:
-    sim = SequenceMatcher(None, str(pv).strip().lower(), str(gv).strip().lower()).ratio()
+    # autojunk=False: difflib's default heuristic, on any string of 200+ chars,
+    # treats every character occurring in more than 1% of positions as junk --
+    # in English prose that is every common letter and the space. On a 283-char
+    # string a trivial paraphrase (User->Customer, '; '->' -- ') measured 0.724
+    # with autojunk and 0.986 without, so the score tracked the gold's *length*
+    # rather than the text. Error strings and long free-text args still land here.
+    sim = SequenceMatcher(
+        None, str(pv).strip().lower(), str(gv).strip().lower(), autojunk=False
+    ).ratio()
     return max(0.0, (sim - TEXT_SIMILARITY_FLOOR) / (1 - TEXT_SIMILARITY_FLOOR))
+
+
+def transfer_decision_score(tool_input: dict[str, Any]) -> RewardBreakdown:
+    """Grade a schema-valid `transfer_to_human_agents` call whose gold is also a
+    transfer. A pure function of the rollout: gold's summary is never read.
+
+    This used to fall through to `arg_match_score`, i.e. SequenceMatcher
+    similarity of the summary to the generator's gold prose, floored so the
+    effective reward was max(0.3, ratio). Over the 107 out_of_scope scenarios
+    that graded wording, not the decision: an empty summary scored 0.300 on
+    107/107, the same as half of 50 hand-written *correct* paraphrases; gold
+    wording with the wrong order/user id averaged 0.974; and 46/107 gold
+    summaries contain ids the policy never sees in its prompt, so the top of
+    the scale was reachable only by inventing them. tau2 grades a retail
+    transfer by DB end state, which a transfer does not touch, and never reads
+    `summary` -- what is being trained here is the decision to escalate.
+
+    So: the right tool with a hand-off note of at least
+    `TRANSFER_SUMMARY_MIN_CHARS` non-whitespace characters is 1.0; an empty or
+    trivial note is `TRANSFER_TRIVIAL_SUMMARY_SCORE`. Any content check beyond
+    length (keywords, ids, similarity to gold) would bring prose-matching back."""
+    summary = tool_input.get("summary")
+    n_chars = len("".join(str(summary or "").split()))
+    if n_chars >= TRANSFER_SUMMARY_MIN_CHARS:
+        return RewardBreakdown(1.0, "transfer_decision", {"summary_chars": n_chars})
+    return RewardBreakdown(
+        TRANSFER_TRIVIAL_SUMMARY_SCORE, "transfer_trivial_summary", {"summary_chars": n_chars}
+    )
 
 
 def _field_score(key: str, pv: Any, gv: Any) -> float:
@@ -261,6 +325,12 @@ def reward(
     """
     if expected.tool_name is None:
         if rollout.tool_name is None:
+            # An empty turn is not "correctly withholding a call": in a live
+            # episode it says nothing to a user who is owed a question or a
+            # refusal. Scoring it 1.0 made stopping immediately a free full
+            # reward on all 182 no-call scenarios (a third of the corpus).
+            if rollout.text is not None and not rollout.text.strip():
+                return RewardBreakdown(0.0, "empty_reply")
             return RewardBreakdown(1.0, "correct_no_call")
         return RewardBreakdown(0.0, "unexpected_call", {"rollout_tool": rollout.tool_name})
 
@@ -296,6 +366,11 @@ def reward(
             "schema_invalid_or_hallucinated_args",
             {"schema_error": schema_err, "extra_args": extra_args},
         )
+
+    if rollout.tool_name == TRANSFER_TOOL:
+        # Graded from the rollout alone, so neither side needs executing: the
+        # tool's only effect is its constant "Transfer successful" return.
+        return transfer_decision_score(rollout.tool_input)
 
     predicted_result, predicted_db = execute_against(db_state, rollout.tool_name, rollout.tool_input)
     if gold_outcome is None:
