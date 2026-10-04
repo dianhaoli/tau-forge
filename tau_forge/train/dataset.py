@@ -22,7 +22,10 @@ import glob
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+if TYPE_CHECKING:
+    from tau_forge.envs.retail import RetailEnv
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_DATA_GLOB = str(REPO_ROOT / "data" / "synthetic" / "raw" / "*.json")
@@ -51,7 +54,7 @@ class TrainingExample:
     id: str
     category: str
     theme: str
-    prompt_messages: list[dict[str, str]]
+    prompt_messages: list[dict[str, Any]]
     expected_tool_name: Optional[str]
     expected_tool_arguments: dict[str, Any] = field(default_factory=dict)
 
@@ -92,10 +95,23 @@ def _default_policy_text() -> str:
     return Path(RETAIL_POLICY_PATH).read_text()
 
 
-def scenario_to_example(scenario: dict[str, Any], system_message: dict[str, str]) -> TrainingExample:
-    messages = [system_message]
-    for turn in scenario.get("prior_turns", []):
-        messages.append({"role": turn["role"], "content": turn["content"]})
+def scenario_to_example(
+    scenario: dict[str, Any],
+    system_message: dict[str, str],
+    grounding_env: Optional["RetailEnv"] = None,
+) -> TrainingExample:
+    """`grounding_env`, when given, inserts the lookups `prior_turns` narrate
+    as real tool-call/tool-result turns executed against that env's db (see
+    `tau_forge.train.grounding`); without it, prior turns are prose only and
+    any id a prior lookup would have returned is missing from the prompt."""
+    messages: list[dict[str, Any]] = [system_message]
+    if grounding_env is not None:
+        from tau_forge.train.grounding import grounded_prior_turns
+
+        messages.extend(grounded_prior_turns(scenario, grounding_env))
+    else:
+        for turn in scenario.get("prior_turns", []):
+            messages.append({"role": turn["role"], "content": turn["content"]})
     messages.append({"role": "user", "content": scenario["user_message"]})
 
     calls = scenario.get("expected_tool_calls") or []
@@ -120,12 +136,20 @@ def build_examples(
     data_glob: str = DEFAULT_DATA_GLOB,
     policy_text: Optional[str] = None,
     include_format_instruction: bool = True,
+    ground_lookups: bool = True,
 ) -> list[TrainingExample]:
+    """`ground_lookups=False` reproduces the original prose-only prompts, for
+    comparing an audit against one taken before grounding existed."""
     system_message = _system_message(
         policy_text if policy_text is not None else _default_policy_text(),
         include_format_instruction=include_format_instruction,
     )
-    return [scenario_to_example(s, system_message) for s in load_scenarios(data_glob)]
+    env = None
+    if ground_lookups:
+        from tau_forge.envs.retail import RetailEnv
+
+        env = RetailEnv()
+    return [scenario_to_example(s, system_message, env) for s in load_scenarios(data_glob)]
 
 
 def render_prompt(

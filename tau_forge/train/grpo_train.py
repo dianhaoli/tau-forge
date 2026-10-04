@@ -54,6 +54,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "tau_forge.train.dataset.DEFAULT_DATA_GLOB (all of data/synthetic/raw/). "
         "Held-out data policy: never point this at data/tau2/domains/retail/tasks.json.",
     )
+    p.add_argument(
+        "--no-ground-lookups",
+        action="store_true",
+        help="Build prompts with prior_turns as prose only, as before tau_forge.train.grounding "
+        "existed. By default the lookups the prose narrates are inserted as real "
+        "tool-call/tool-result turns, so ids a prior lookup returned (item ids, payment method "
+        "ids) are in context. Must match the zero_shot_baseline audit the mixture came from.",
+    )
     p.add_argument("--output-dir", default=None)
     p.add_argument("--max-steps", type=int, default=None)
     p.add_argument("--num-generations", type=int, default=16, help="GRPO group size per prompt.")
@@ -228,7 +236,9 @@ def build_examples_for_run(args: argparse.Namespace):
     from tau_forge.train.curriculum import build_training_sets, load_zero_variance_ids, summarize
     from tau_forge.train.dataset import DEFAULT_DATA_GLOB, build_examples
 
-    examples = build_examples(data_glob=args.data_glob or DEFAULT_DATA_GLOB)
+    examples = build_examples(
+        data_glob=args.data_glob or DEFAULT_DATA_GLOB, ground_lookups=not args.no_ground_lookups
+    )
     print(f"[grpo_train] corpus as loaded: {json.dumps(summarize(examples))}")
 
     exclude: set[str] = set()

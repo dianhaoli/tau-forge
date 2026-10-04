@@ -122,7 +122,7 @@ cd ~/tau-forge
 uv run --extra train python -m tau_forge.train.zero_shot_baseline --use-vllm \
     --samples-per-scenario 16 \
     --temperature 1.0 --top-p 1.0 --top-k 0 \
-    --max-new-tokens 256 --max-model-len 8192 \
+    --max-new-tokens 256 --max-model-len 12288 \
     --with-shaping --save-completions \
     --output data/trained/audit_n16.json
 ```
@@ -215,7 +215,7 @@ uv run --extra train python -m tau_forge.train.zero_shot_baseline --use-vllm \
     --split val --val-fraction 0.1 --category-mix real --curriculum-seed 0 \
     --samples-per-scenario 16 \
     --temperature 1.0 --top-p 1.0 --top-k 0 \
-    --max-new-tokens 256 --max-model-len 8192 --with-shaping \
+    --max-new-tokens 256 --max-model-len 12288 --with-shaping \
     --output data/trained/synth_baseline_val.json
 ```
 

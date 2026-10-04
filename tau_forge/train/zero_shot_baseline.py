@@ -67,6 +67,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--val-fraction", type=float, default=0.1, help="See --split. Must match grpo_train's.")
     p.add_argument("--category-mix", default=None, help="See --split. Must match grpo_train's. 'real', 'uniform', or an explicit spec.")
     p.add_argument("--curriculum-seed", type=int, default=0, help="See --split. Must match grpo_train's.")
+    p.add_argument(
+        "--no-ground-lookups",
+        action="store_true",
+        help="Build prompts with prior_turns as prose only, as before tau_forge.train.grounding existed. "
+        "By default the lookups the prose narrates are inserted as real tool-call/tool-result "
+        "turns, so ids a prior lookup returned (item ids, payment method ids) are in context -- "
+        "without them 103 of 150 write-gold scenarios cannot be solved except by guessing. Only "
+        "for reproducing an audit taken before grounding.",
+    )
     p.add_argument("--samples-per-scenario", type=int, default=4, help="Repeats per scenario, for a rough within-scenario variance read -- not a full GRPO group, just enough to see if a scenario is deterministic.")
     p.add_argument("--max-new-tokens", type=int, default=512)
     p.add_argument("--temperature", type=float, default=1.0)
@@ -92,7 +101,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     p.add_argument("--batch-size", type=int, default=8, help="Ignored when --use-vllm is set (vLLM batches internally).")
     p.add_argument("--use-vllm", action="store_true", help="Generate with vLLM instead of plain HF .generate() -- much faster, same dependency already installed.")
-    p.add_argument("--max-model-len", type=int, default=8192, help="vLLM only. Caps the KV cache to this many tokens instead of the model's full native context (Qwen3's is 262144, which needs far more KV cache memory than a single GPU has). Must exceed the longest prompt (the retail system prompt + policy text + tool schemas can run several thousand tokens) plus --max-new-tokens, or vLLM rejects that request outright.")
+    p.add_argument("--max-model-len", type=int, default=12288, help="vLLM only. Caps the KV cache to this many tokens instead of the model's full native context (Qwen3's is 262144, which needs far more KV cache memory than a single GPU has). Must exceed the longest prompt (the retail system prompt + policy text + tool schemas can run several thousand tokens) plus --max-new-tokens, or vLLM rejects that request outright.")
     p.add_argument("--save-completions", action="store_true", help="Include raw completion text per sample in the output JSON, not just scores. Off by default since it makes the output much larger.")
     p.add_argument(
         "--score-workers",
@@ -278,7 +287,9 @@ def main() -> None:
     )
     tools = RetailEnv().all_openai_schemas()
 
-    examples = build_examples(data_glob=args.data_glob or DEFAULT_DATA_GLOB)
+    examples = build_examples(
+        data_glob=args.data_glob or DEFAULT_DATA_GLOB, ground_lookups=not args.no_ground_lookups
+    )
     rows = to_hf_rows(examples, apply_chat_template, tools)
 
     if args.split != "all":
@@ -437,6 +448,7 @@ def main() -> None:
         "curriculum_seed": args.curriculum_seed,
         "top_p": args.top_p,
         "top_k": args.top_k,
+        "ground_lookups": not args.no_ground_lookups,
         "n_scenarios": len(rows),
         "samples_per_scenario": args.samples_per_scenario,
         "temperature": args.temperature,
