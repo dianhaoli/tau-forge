@@ -43,6 +43,9 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Optional
 
+from tau_forge.train.grpo_train import TOP_K_DISABLED, add_exclusion_args, normalize_top_k
+from tau_forge.train.scorecard import variance_by_label_status, variance_summary
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = REPO_ROOT / "data" / "trained" / "zero_shot_baseline.json"
 
@@ -61,9 +64,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "a variance audit, wrong for a before/after. For a synthetic-data baseline you intend to "
         "re-measure after training, use --split val: it reproduces exactly the held-out slice "
         "grpo_train carves off, so the second measurement is on scenarios the run never trained "
-        "on. Pass the SAME --val-fraction, --category-mix and --curriculum-seed here as you pass "
-        "to grpo_train, or the two commands compute different splits and the comparison is void.",
+        "on. Pass the SAME --val-fraction, --category-mix, --curriculum-seed and exclusion flags "
+        "(--label-audit/--keep-label-defects/--exclude-zero-variance-from/--exclude-solved/"
+        "--exclude-zero-variance-raw/--min-std) here as you pass to grpo_train, or the two commands compute "
+        "different splits and the comparison is void. With --split all nothing is excluded, but "
+        "each scenario's label-audit blocking labels are recorded so the variance numbers can be "
+        "read separately for clean and label-defective scenarios.",
     )
+    add_exclusion_args(p)
     p.add_argument("--val-fraction", type=float, default=0.1, help="See --split. Must match grpo_train's.")
     p.add_argument("--category-mix", default=None, help="See --split. Must match grpo_train's. 'real', 'uniform', or an explicit spec.")
     p.add_argument("--curriculum-seed", type=int, default=0, help="See --split. Must match grpo_train's.")
@@ -89,7 +97,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "inherits Qwen's shipped generation_config (top_p=0.8, top_k=20), which suppresses "
         "exactly the variance being measured -- so this is passed explicitly on both backends.",
     )
-    p.add_argument("--top-k", type=int, default=0, help="0 / -1 = disabled. See --top-p.")
+    p.add_argument(
+        "--top-k",
+        type=int,
+        default=TOP_K_DISABLED,
+        help="0 (default) = disabled; any value <= 0 is treated as 0 on both backends, the same "
+        "normalization grpo_train applies (-1 used to reach HF's TopKLogitsWarper, which raises). "
+        "See --top-p.",
+    )
     p.add_argument(
         "--with-shaping",
         action="store_true",
@@ -172,7 +187,7 @@ def _generate_hf(model, tokenizer, prompts: list[str], args: argparse.Namespace)
                 # top_p=0.8/top_k=20, which would quietly narrow the very
                 # distribution this run exists to measure.
                 top_p=args.top_p,
-                top_k=args.top_k if args.top_k else 0,
+                top_k=normalize_top_k(args.top_k),
                 pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
             )
         completions.extend(
@@ -204,7 +219,9 @@ def _generate_vllm(args: argparse.Namespace, prompts: list[str], samples_per_pro
         n=samples_per_prompt,
         temperature=args.temperature,
         top_p=args.top_p,
-        top_k=args.top_k if args.top_k else -1,
+        # 0 is vLLM 0.28's documented "disabled" (-1 is only tolerated), and
+        # the same value grpo_train hands TRL -- see grpo_train.TOP_K_DISABLED.
+        top_k=normalize_top_k(args.top_k),
         max_tokens=args.max_new_tokens,
     )
     outputs = llm.generate(prompts, sampling_params)
@@ -263,6 +280,64 @@ def _score_scenario(
     return scores, shaped
 
 
+def select_split(examples, args: argparse.Namespace):
+    """`(ids to score or None for all, Exclusions or None)`.
+
+    `--split train/val` goes through `grpo_train.split_examples` -- the same
+    function the trainer splits with, exclusions included -- because a val set
+    computed without the trainer's exclusions is a different val set: with a
+    25% exclusion list the two shared 0 of ~40 ids, and about half of the
+    "held-out" slice was in the trainer's training split."""
+    if args.split == "all":
+        if args.exclude_zero_variance_from:
+            print(
+                "[zero_shot_baseline] --split all scores every scenario; "
+                "--exclude-zero-variance-from only applies to --split train/val."
+            )
+        return None, None
+
+    from tau_forge.train.grpo_train import split_examples
+
+    train_examples, val_examples, exclusions = split_examples(examples, args, tag="zero_shot_baseline")
+    chosen = val_examples if args.split == "val" else train_examples
+    return {e.id for e in chosen}, exclusions
+
+
+def load_scenario_blocking(args: argparse.Namespace, ids) -> Optional[dict[str, list[str]]]:
+    """Label-audit blocking labels for every scored scenario ([] = clean), or
+    None when no label audit is in use. Recorded for every split, so
+    bucket_analysis/data_scorecard can report variance separately for clean
+    and label-defective scenarios even on a `--split all` audit."""
+    if not args.label_audit or not Path(args.label_audit).exists():
+        return None
+    from tau_forge.train.curriculum import load_blocking_labels
+
+    blocking = load_blocking_labels(args.label_audit)
+    return {sid: blocking.get(sid, []) for sid in ids}
+
+
+def variance_report(
+    table: dict[str, list[float]],
+    blocking: Optional[dict[str, list[str]]],
+    min_std: float,
+) -> dict:
+    """Effective-variance counts (and, with label-audit labels, the clean vs
+    label-defect breakdown) for one score table, keyed to sit next to the
+    existing `zero_variance_scenario_*` fields. The zero-variance fraction
+    counts a 15x0.0 + 1x0.02 group as alive; the effective fraction is the one
+    to read for "how much of this run carries real gradient"."""
+    overall = variance_summary(table, min_std)
+    out = {
+        "effective_variance_min_std": min_std,
+        "effective_variance_scenario_count": overall["effective_variance_count"],
+        "effective_variance_scenario_fraction": overall["effective_variance_fraction"],
+        "micro_variance_scenario_count": overall["micro_variance_count"],
+    }
+    if blocking is not None:
+        out["variance_by_label_status"] = variance_by_label_status(table, blocking, min_std)
+    return out
+
+
 def resolve_score_workers(requested: int) -> int:
     """`--score-workers 0` means one per core, capped. The cap is there because
     past ~16 the per-worker db parse and the parent's result handling start
@@ -292,21 +367,13 @@ def main() -> None:
     )
     rows = to_hf_rows(examples, apply_chat_template, tools)
 
-    if args.split != "all":
-        from tau_forge.train.curriculum import build_training_sets
-        from tau_forge.train.grpo_train import resolve_mix
-
-        train_examples, val_examples = build_training_sets(
-            examples,
-            mix=resolve_mix(args.category_mix),
-            val_fraction=args.val_fraction,
-            seed=args.curriculum_seed,
-        )
-        keep = {e.id for e in (val_examples if args.split == "val" else train_examples)}
+    keep, exclusions = select_split(examples, args)
+    if keep is not None:
         rows = [r for r in rows if r["id"] in keep]
         print(
             f"[zero_shot_baseline] --split {args.split}: {len(rows)} scenarios "
-            f"(val_fraction={args.val_fraction}, mix={args.category_mix}, seed={args.curriculum_seed}). "
+            f"(val_fraction={args.val_fraction}, mix={args.category_mix}, seed={args.curriculum_seed}, "
+            f"excluded-id fingerprint={exclusions.fingerprint()}). "
             "Re-run with these exact values after training to compare like with like."
         )
 
@@ -433,6 +500,7 @@ def main() -> None:
         ]
 
     zero_variance_scenarios = _zero_variance(per_scenario_scores)
+    blocking = load_scenario_blocking(args, [row["id"] for row in rows])
 
     all_scores = [s for scores in per_scenario_scores.values() for s in scores]
     histogram = Counter(round(s, 1) for s in all_scores)
@@ -447,8 +515,16 @@ def main() -> None:
         "category_mix": args.category_mix,
         "curriculum_seed": args.curriculum_seed,
         "top_p": args.top_p,
-        "top_k": args.top_k,
+        "top_k": normalize_top_k(args.top_k),
         "ground_lookups": not args.no_ground_lookups,
+        "label_audit": args.label_audit or None,
+        "keep_label_defects": args.keep_label_defects,
+        "exclude_zero_variance_from": args.exclude_zero_variance_from,
+        "exclude_solved": args.exclude_solved,
+        "exclude_zero_variance_raw": args.exclude_zero_variance_raw,
+        # None for --split all (nothing excluded). For train/val, the
+        # fingerprint must equal the one grpo_train printed for the run.
+        "exclusions": exclusions.as_dict() if exclusions is not None else None,
         "n_scenarios": len(rows),
         "samples_per_scenario": args.samples_per_scenario,
         "temperature": args.temperature,
@@ -456,12 +532,15 @@ def main() -> None:
         "score_histogram": {str(k): v for k, v in sorted(histogram.items())},
         "zero_variance_scenario_count": len(zero_variance_scenarios),
         "zero_variance_scenario_fraction": len(zero_variance_scenarios) / len(rows) if rows else 0.0,
+        **variance_report(per_scenario_scores, blocking, args.min_std),
         "per_scenario_scores": per_scenario_scores,
         # Lets scripts/bucket_analysis.py separate scenarios that *can* score
         # between 0 and 1 from ones that are structurally binary (gold is
         # silence), which no sampling or shaping change can ever make
         # middle-difficulty.
         "per_scenario_expected_tool_name": {row["id"]: row["expected_tool_name"] for row in rows},
+        # {id: [blocking label, ...]}, [] = clean; None without a label audit.
+        "per_scenario_blocking_labels": blocking,
     }
     if args.with_shaping:
         shaped_dead = _zero_variance(per_scenario_shaped)
@@ -471,6 +550,7 @@ def main() -> None:
             "zero_variance_scenario_count": len(shaped_dead),
             "zero_variance_scenario_fraction": len(shaped_dead) / len(rows) if rows else 0.0,
             "scenarios_revived_by_shaping": len(zero_variance_scenarios) - len(shaped_dead),
+            **variance_report(per_scenario_shaped, blocking, args.min_std),
         }
         summary["per_scenario_shaped_scores"] = per_scenario_shaped
     if args.save_completions:
@@ -489,14 +569,31 @@ def main() -> None:
         f"training signal at this group size. A high fraction here is the cue to revisit "
         f"scenario difficulty/curriculum before the full run, per docs/phase7_aws_setup.md."
     )
+
+    def _print_effective(label: str, block: dict) -> None:
+        print(
+            f"[zero_shot_baseline] {label}: {block['effective_variance_scenario_count']}/{len(rows)} "
+            f"({block['effective_variance_scenario_fraction']:.1%}) effectively varying "
+            f"(group std >= {args.min_std}); {block['micro_variance_scenario_count']} more vary "
+            "only by less than that."
+        )
+        for status, stats in (block.get("variance_by_label_status") or {}).items():
+            print(
+                f"[zero_shot_baseline]   {status:12} n={stats['n']:4}  "
+                f"zero-variance {stats['zero_variance_fraction']:6.1%}  "
+                f"effective {stats['effective_variance_fraction']:6.1%}"
+            )
+
+    _print_effective("reward() alone", summary)
     if args.with_shaping:
         sh = summary["shaping"]
         print(
             f"[zero_shot_baseline] with shaping: mean {sh['mean_shaped_score']:.3f}, "
             f"{sh['zero_variance_scenario_count']}/{len(rows)} "
             f"({sh['zero_variance_scenario_fraction']:.1%}) still zero-variance -- "
-            f"{sh['scenarios_revived_by_shaping']} scenarios gained a usable gradient."
+            f"{sh['scenarios_revived_by_shaping']} scenarios gained some variance."
         )
+        _print_effective("with shaping", sh)
     print(f"[zero_shot_baseline] Full detail written to {output_path}")
 
 

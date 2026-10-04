@@ -184,7 +184,9 @@ def test_load_zero_variance_ids_separates_cold_start_from_solved(tmp_path):
             }
         )
     )
-    assert curriculum.load_zero_variance_ids(path) == {"cold"}
+    # A flat 0.3 plateau carries no more gradient than a flat 0.0, so it is
+    # dropped by default too; only the solved group is kept as insurance.
+    assert curriculum.load_zero_variance_ids(path) == {"cold", "stuck"}
     assert curriculum.load_zero_variance_ids(path, include_solved=True) == {"cold", "solved", "stuck"}
 
 
@@ -312,9 +314,11 @@ def test_signal_ranks_a_varying_hard_cell_above_a_varying_easy_one():
     reward left on the table is where compute converts into improvement."""
     from tau_forge.train.scorecard import score_cells
 
+    # The easy cell varies by 0.2-0.3 (std 0.14-0.21), comfortably above the
+    # effective-variance threshold yield now uses; a 0.05 wobble would not be.
     scores = _audit(
         happy_path__hard=[[0.0, 0.3], [0.0, 0.6]],
-        happy_path__easy=[[0.95, 1.0], [0.9, 1.0]],
+        happy_path__easy=[[0.8, 1.0], [0.7, 1.0]],
     )
     by_cell = {c.cell: c for c in score_cells(scores)}
     hard, easy = by_cell["happy_path__hard"], by_cell["happy_path__easy"]
@@ -425,26 +429,56 @@ def test_recommended_mix_applies_cleanly_to_the_real_corpus():
 # --------------------------------------------------------------------------
 
 
-def test_baseline_and_trainer_compute_the_same_split_from_the_same_flags():
+def _dead_audit(tmp_path, examples):
+    """A zero_shot_baseline-shaped audit where every 4th scenario is flat 0.0
+    under raw reward(), and half of those are revived by shaping -- so the
+    exclusion list depends on which scores are read, as in a real audit."""
+    raw, shaped = {}, {}
+    for i, e in enumerate(examples):
+        dead = i % 4 == 0
+        raw[e.id] = [0.0] * 4 if dead else [0.0, 1.0, 0.0, 1.0]
+        shaped[e.id] = [0.0, 0.0, 0.1, 0.15] if dead and i % 8 == 0 else raw[e.id]
+    path = tmp_path / "audit.json"
+    path.write_text(json.dumps({"per_scenario_scores": raw, "per_scenario_shaped_scores": shaped}))
+    return path
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        [],  # default: label-audit defects dropped
+        ["--keep-label-defects"],
+        ["--exclude-zero-variance-from", "{audit}"],
+        ["--exclude-zero-variance-from", "{audit}", "--exclude-zero-variance-raw", "--keep-label-defects"],
+    ],
+    ids=["label-defects", "keep-label-defects", "zero-variance-shaped", "zero-variance-raw"],
+)
+@pytest.mark.parametrize("split", ["val", "train"])
+def test_baseline_and_trainer_compute_the_same_split_from_the_same_flags(tmp_path, extra, split):
     """The whole contract behind `zero_shot_baseline --split val`: given equal
-    --val-fraction / --category-mix / --curriculum-seed, the ids it scores are
-    exactly the ones grpo_train holds out. If these ever diverge, a synthetic
-    before/after silently becomes a train-on-test measurement."""
+    --val-fraction / --category-mix / --curriculum-seed AND exclusion flags,
+    the ids it scores are exactly the ones grpo_train holds out (or trains on,
+    for --split train). If these ever diverge, a synthetic before/after
+    silently becomes a train-on-test measurement -- which is what happened
+    once exclusions existed: the baseline ignored them, and with a 25%
+    exclusion list the two val sets shared 0 ids."""
     from tau_forge.train.grpo_train import build_examples_for_run, parse_args as train_args
+    from tau_forge.train.zero_shot_baseline import parse_args as baseline_args, select_split
 
     examples = build_examples()
-    args = train_args(["--val-fraction", "0.1", "--category-mix", "real", "--curriculum-seed", "3"])
-    trainer_train, trainer_val = build_examples_for_run(args)
+    audit = _dead_audit(tmp_path, examples)
+    flags = ["--val-fraction", "0.1", "--category-mix", "real", "--curriculum-seed", "3"]
+    flags += [f.format(audit=audit) for f in extra]
 
-    baseline_train, baseline_val = curriculum.build_training_sets(
-        examples,
-        mix=curriculum.REAL_TASK_ALIGNED_MIX,
-        val_fraction=0.1,
-        seed=3,
-    )
-    assert {e.id for e in baseline_val} == {e.id for e in trainer_val}
-    assert {e.id for e in baseline_train} == {e.id for e in trainer_train}
-    assert baseline_val, "an empty held-out split would make the comparison vacuous"
+    trainer_train, trainer_val = build_examples_for_run(train_args(flags))
+    keep, exclusions = select_split(examples, baseline_args(flags + ["--split", split]))
+
+    trainer_side = trainer_val if split == "val" else trainer_train
+    assert keep == {e.id for e in trainer_side}
+    assert keep, "an empty split would make the comparison vacuous"
+    assert not (keep & exclusions.ids), "an excluded scenario must not be scored as held-out"
+    if split == "val":
+        assert not (keep & {e.id for e in trainer_train})
 
 
 def test_val_split_is_disjoint_from_what_training_sees():
