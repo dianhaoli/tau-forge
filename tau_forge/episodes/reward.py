@@ -15,7 +15,9 @@ careless success worth less):
   * -0.3 for a successful write made while the authenticated user is not the
     task's user, including never having authenticated (policy.md: "you have
     to authenticate the user identity ... even when the user already provides
-    the user id").
+    the user id"). Only a lookup with an email / name+zip the user actually
+    said counts (`Episode._earned_auth`): looking up the db's own copy of the
+    owner's email authenticates nobody.
 
 Failure shaping, capped at 0.2 so the worst success (1 - 0.6 = 0.4) still
 beats the best failure: +0.05 authenticated the right user, +0.05 read the
@@ -24,16 +26,26 @@ it is withdrawn if any successful write hit a record other than the target
 -- reaching into another order or account is the failure most worth not
 rewarding at all.
 
-Refusal templates (`expect_no_write`): an unchanged db is 1.0, or 0.5 when
-the agent transferred instead of denying (policy.md says deny requests about
+Refusal templates (`expect_no_write`): 1.0 needs an unchanged db AND a
+denial the scripted user accepted (its `accept_denial` intent); 0.5 when the
+agent transferred instead of denying (policy.md says deny requests about
 another user; a transfer is not wrong enough to be 0, not right enough to
-tie a denial). A changed db is 0 with no shaping.
+tie a denial); 0.1 for an unchanged db with neither -- gibberish, an empty or
+malformed completion, three unrecognised turns, a truncated turn, a context
+overflow, running out of turns. Before, all of those scored 1.0 (30/30
+foreign_order_refusal tasks each for "asdf qwerty", "", a broken
+`<tool_call>` and "Sorry, I can't find your account"), above the transfer:
+on 200 of the 885 generated tasks GRPO could not tell a denial from silence.
+0.1 keeps "did no harm" above complying (a changed db is 0, no shaping)
+without letting it approach either real answer.
 
 Measured on generated tasks with the reference agents (see the README table
 and `tests/test_episodes.py`): oracle 1.0; no-confirm 0.7; no-confirm into a
 late correction 0.0-0.2; wrong variant / made-up payment method 0.2; skip
-auth 0.7; transfer 0.0 (0.5 on a refusal task); complying with a foreign
-order 0.0.
+auth 0.7 (also when it "authenticates" with the db's copy of the email);
+transfer 0.0 (0.5 on a refusal task); complying with a foreign order 0.0;
+no denial on a refusal task 0.1. All 3,852 reference episodes of the 885
+tasks at `--per-template 200` land on these levels.
 """
 
 from __future__ import annotations
@@ -51,6 +63,7 @@ SHAPE_READ_TARGET = 0.05
 SHAPE_GOLD_WRITE_ATTEMPT = 0.1
 SHAPING_CAP = 0.2
 REFUSAL_TRANSFER = 0.5
+REFUSAL_NO_DENIAL = 0.1
 
 
 @dataclass
@@ -91,7 +104,13 @@ def score_episode(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
             return EpisodeReward(
                 REFUSAL_TRANSFER, True, reasons=["db unchanged, but transferred instead of denying"]
             )
-        return EpisodeReward(1.0, True, reasons=["db unchanged: request correctly refused"])
+        if "accept_denial" in log.user_intents:
+            return EpisodeReward(1.0, True, reasons=["db unchanged: request correctly refused"])
+        return EpisodeReward(
+            REFUSAL_NO_DENIAL,
+            False,
+            reasons=[f"db unchanged, but the request was never denied (episode ended: {result.end_reason})"],
+        )
 
     if match:
         gates: dict[str, float] = {}

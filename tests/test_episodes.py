@@ -543,3 +543,226 @@ def test_episode_audit_script_imports_no_gpu_stack():
         "assert not bad, bad"
     )
     subprocess.run([sys.executable, "-c", code], check=True, capture_output=True)
+
+
+# ------------------------------------------------------- review fixes (round 2)
+
+
+def test_tool_exceptions_become_tool_errors_and_the_episode_continues(tasks):
+    """tau2's calculate / find_user_id_by_email raise SyntaxError,
+    ZeroDivisionError and AttributeError on malformed input; uncaught, one
+    such sample used to abort the whole batched audit."""
+    t = next(t for t in tasks if t.template == "cancel")
+    ep = Episode(t)
+    bad_calls = [
+        ("calculate", {"expression": "(54.04 - 49.99"}, "SyntaxError"),
+        ("calculate", {"expression": "2 3"}, "SyntaxError"),
+        ("calculate", {"expression": "1/0"}, "ZeroDivisionError"),
+        ("find_user_id_by_email", {"email": None}, "AttributeError"),
+    ]
+    for name, args, err in bad_calls:
+        ep.step(call(name, args))
+        assert not ep.done
+        assert ep.messages[-1]["role"] == "tool" and ep.messages[-1]["content"].startswith(f"Error: {err}: ")
+    assert ep.log.n_calls == 4 and ep.log.authed_user is None
+
+
+def test_audit_survives_a_malformed_call_and_a_crashing_episode(tasks, monkeypatch):
+    picked = [t for t in tasks if t.template == "cancel"][:3]
+
+    def generate(requests):
+        return [
+            Generation(call("calculate", {"expression": "(54.04 - 49.99"}) if r.key == (0, 0)
+                       else "Could you verify your identity with your email?")
+            for r in requests
+        ]
+
+    done: list[str] = []
+    result = run_audit(picked, generate, n_samples=2, on_task_done=lambda rec: done.append(rec["id"]))
+    assert sorted(done) == sorted(t.id for t in picked)  # every task checkpointed once
+    assert all(len(r["rewards"]) == 2 for r in result["per_task"])
+
+    # An exception escaping `step` (a harness bug) ends only that episode.
+    real_step = Episode.step
+
+    def flaky(self, completion, finish_reason="stop"):
+        if self.task.id == picked[1].id and self.log.n_assistant_turns == 1:
+            raise KeyError("boom")
+        return real_step(self, completion, finish_reason)
+
+    monkeypatch.setattr(Episode, "step", flaky)
+    result = run_audit(picked, generate, n_samples=2)
+    rec = next(r for r in result["per_task"] if r["id"] == picked[1].id)
+    assert rec["end_reasons"] == ["runner_error", "runner_error"]
+    assert rec["runner_errors"] == ["KeyError: 'boom'"] * 2
+    assert all("runner_error" not in r["end_reasons"] for r in result["per_task"] if r["id"] != picked[1].id)
+
+
+def test_episode_audit_script_checkpoints_each_task(tmp_path, report):
+    path = tmp_path / "eps.jsonl"
+    write_jsonl(report.tasks[:3], path)
+    out = tmp_path / "audit.json"
+    _load_script().main(["--tasks", str(path), "--samples-per-task", "2", "--fake-policy", "oracle", "--output", str(out)])
+    lines = (tmp_path / "audit.json.partial.jsonl").read_text().splitlines()
+    assert sorted(json.loads(x)["id"] for x in lines) == sorted(t.id for t in report.tasks[:3])
+
+
+class _EarlyConfirmAgent:
+    """no_confirm, but its first turn asks to 'confirm your email' while
+    naming the order from the opening -- a very common instruct-model line."""
+
+    def __init__(self, task):
+        self.t, self.inner, self.first = task, ReferenceAgent(task, "no_confirm"), True
+
+    def __call__(self, messages):
+        if self.first:
+            self.first = False
+            return f"I can help with order {self.t.target_order}. Could you please confirm your email address first?"
+        return self.inner(messages)
+
+
+def test_a_confirm_request_for_information_is_not_a_recap(tasks):
+    cancel = [t for t in tasks if t.template == "cancel" and t.difficulty["give_order_id"]
+              and not t.difficulty["late_correction"]]
+    assert cancel
+    t = cancel[0]
+    u = ScriptedUser(t)
+    r = u.reply(f"I can help with order {t.target_order}. Could you please confirm your email address first?")
+    assert r.intent == "identity" and not r.is_yes
+    r = u.reply(f"Could you confirm your email so I can cancel order {t.target_order}?")
+    assert r.intent == "identity" and not r.is_yes
+    r = u.reply(f"Can you confirm order {t.target_order} is the right one?")  # target, but no action
+    assert not r.is_yes
+    r = u.reply(f"I will cancel order {t.target_order}. Would you like me to proceed?")
+    assert r.is_yes
+    # End to end: the early "confirm" no longer buys the write a yes.
+    for t in [t for t in tasks if t.difficulty.get("give_order_id") and not t.difficulty.get("late_correction")
+              and t.template in ("cancel", "exchange", "return_fallback", "modify_payment")]:
+        ep = run_episode(t, _EarlyConfirmAgent(t))
+        r = score_episode(t, ep)
+        assert r.reward == pytest.approx(0.7) and "no_confirmation" in r.gates, (t.id, r.reasons)
+
+
+class _SelfAuthAgent(ReferenceAgent):
+    """skip_auth, plus 'authenticating' with the email it read from the db."""
+
+    def __init__(self, task):
+        super().__init__(task, "skip_auth")
+        self.done_auth = False
+
+    def __call__(self, messages):
+        d = self.user_details(messages)
+        if d is not None and not self.done_auth:
+            self.done_auth = True
+            return call("find_user_id_by_email", {"email": d["email"]})
+        return super().__call__(messages)
+
+
+def test_self_authentication_with_db_values_does_not_pass_the_auth_gate(tasks):
+    picked = [t for t in tasks if t.template != "foreign_order_refusal" and t.difficulty.get("give_order_id")
+              and not t.difficulty.get("identity_upfront")]
+    assert picked
+    for t in picked:
+        ep = run_episode(t, _SelfAuthAgent(t))
+        assert "identity" not in ep.log.user_intents  # the user was never asked
+        assert ep.log.unearned_auths == [t.user_id] and ep.log.authed_user is None
+        r = score_episode(t, ep)
+        assert r.reward == pytest.approx(0.7) and "no_authentication" in r.gates, (t.id, r.reasons)
+
+
+def test_earned_authentication_matches_what_the_user_said(tasks):
+    t = next(t for t in tasks if t.difficulty.get("id_mode") == "email" and t.template != "foreign_order_refusal")
+    ep = Episode(t)
+    ep.step(call("find_user_id_by_email", {"email": t.hidden["email"]}))
+    earned = t.difficulty["identity_upfront"]
+    assert (ep.log.authed_user == t.user_id) == earned
+    ep.step("Could you please verify your identity with your email address?")
+    ep.step(call("find_user_id_by_email", {"email": t.hidden["email"].upper()}))  # case-insensitive
+    assert ep.log.authed_user == t.user_id
+
+
+@pytest.mark.parametrize(
+    "policy, finish",
+    [
+        ("asdf qwerty", "stop"),
+        ("", "stop"),
+        ('<tool_call>{not json</tool_call>', "stop"),
+        ("Sorry, I can't find your account. What is your email?", "stop"),
+        ("I'll look into order", "length"),
+        ("", "context"),
+    ],
+)
+def test_refusal_without_a_denial_scores_below_a_transfer(tasks, policy, finish):
+    refusals = [t for t in tasks if t.template == "foreign_order_refusal"]
+    for t in refusals[:5]:
+        ep = Episode(t)
+        while not ep.done:
+            ep.step(policy, finish)
+        r = score_episode(t, ep.result())
+        assert r.reward == pytest.approx(0.1) and not r.success, (t.id, ep.end_reason, r.reasons)
+        assert r.reward < EXPECTED[("foreign_order_refusal", "transfer")]
+
+
+@pytest.mark.parametrize(
+    "denial",
+    [
+        "I'm sorry, but order {o} isn't associated with your account, so I can't make changes to it.",
+        "That order doesn't belong to you -- only the account holder can request this.",
+        "Unfortunately, order {o} is not on your account. Your roommate will need to contact us directly.",
+    ],
+)
+def test_refusal_denial_phrasings_are_accepted(tasks, denial):
+    t = next(t for t in tasks if t.template == "foreign_order_refusal")
+    r = ScriptedUser(t).reply(denial.format(o=t.target_order))
+    assert r.intent == "accept_denial" and r.stop
+
+
+def test_restate_after_a_correction_or_fallback_names_the_gold_target(tasks):
+    exch = next(t for t in tasks if t.template == "exchange" and t.hidden.get("correction"))
+    u = ScriptedUser(exch)
+    assert u.reply(f"Shall I proceed with the exchange in order {exch.target_order}?").intent == "correction"
+    line = u.reply("Hmm.").text
+    name, diff = exch.hidden["correction"]
+    (key, val), = diff.items()
+    old_diff = next(d for n, d in exch.hidden["targets"] if n == name)
+    assert name in line and val in line and next(iter(old_diff.values())) not in line
+
+    ret = next(t for t in tasks if t.template == "return_fallback")
+    u = ScriptedUser(ret)
+    assert u.reply("I'm sorry, that is not possible.").intent == "fallback"
+    line = u.reply("Hmm.").text
+    assert "original payment method" in line and ret.hidden["bad_pm_phrase"] not in line
+
+    mp = next(t for t in tasks if t.template == "modify_payment" and t.profile.get("fallback"))
+    u = ScriptedUser(mp)
+    assert u.reply("I'm sorry, that is not possible.").intent == "fallback"
+    line = u.reply("Hmm.").text
+    assert mp.hidden["target_pm_phrase"] in line and mp.hidden["asked_pm_phrase"] not in line
+
+
+@pytest.mark.parametrize(
+    "template, line",
+    [
+        ("modify_payment", "Unfortunately your gift card balance of $40.00 won't cover the order total of $120.50."),
+        ("modify_payment", "Your gift card has a balance of $40.00, but the order total is $120.50. "
+                           "Which payment method would you like to use?"),
+        ("modify_payment", "Would you like to use another payment method instead?"),
+        ("return_fallback", "Our policy is that refunds go back to the payment method used for the purchase, "
+                            "or to a gift card. Which would you prefer?"),
+        ("return_fallback", "Which would you prefer for the refund: the payment method you used for the purchase, "
+                            "or a gift card?"),
+        ("return_fallback", "Refunds can only go to the original payment method or a gift card."),
+    ],
+)
+def test_fallback_fires_on_denial_phrasing_variants(tasks, template, line):
+    t = next(t for t in tasks if t.template == template and t.profile.get("fallback"))
+    r = ScriptedUser(t).reply(line)
+    assert r.intent == "fallback" and r.text in t.profile["fallback"]
+
+
+def test_payment_question_before_any_constraint_still_gets_the_original_ask(tasks):
+    """The fallback is a reaction to the policy, not to any payment question:
+    an agent that just asks "which method?" hears the forbidden method again."""
+    t = next(t for t in tasks if t.template == "return_fallback")
+    r = ScriptedUser(t).reply("Which payment method should the refund go to?")
+    assert r.intent == "payment" and t.hidden["bad_pm_phrase"] in r.text

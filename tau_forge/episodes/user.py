@@ -11,9 +11,13 @@ generated set.
 Intent matching on each agent TEXT turn (tool calls never reach the user), in
 priority order -- first match wins:
   1. a write has succeeded              -> thanks + STOP
-  2. refusal task, agent denies         -> accept the denial + STOP
-  3. agent denies, fallback pending     -> give the fallback (once)
-  4. confirmation request naming the target order/product
+  2. refusal task, agent denies (and is not asking who the user is)
+                                        -> accept the denial + STOP
+  3. fallback pending, agent denies or states the constraint (the balance,
+     the original/purchase method, "another payment method")
+                                        -> give the fallback (once)
+  4. a recap: a confirmation request naming the target order/product AND
+     the action, whose questions ask for no information
                                         -> the late correction (once), else yes
   5. identity asked                     -> identity answer
   6. all/other items asked              -> "that's everything"
@@ -26,10 +30,17 @@ Rules 10 and 11 count as unrecognised; the third unrecognised turn ends the
 episode with STOP.
 
 Anti-exploit rules:
-  * "yes" only answers a confirmation request that names the current target
-    (an order id or product name from `profile["recap_keys"]`), so a bare
-    "shall I proceed?" cannot harvest a yes, and after a late correction the
-    recap has to name the corrected target.
+  * "yes" only answers a recap: a confirmation request that names the current
+    target (an order id or product name from `profile["recap_keys"]`) and the
+    template's action (`ACTION_RE`), and none of whose question sentences
+    asks for identity, an order id or a choice. So a bare "shall I proceed?"
+    cannot harvest a yes, after a late correction the recap has to name the
+    corrected target, and "I can help with order #W... Could you please
+    confirm your email address first?" -- the word "confirm" plus the order
+    id from the opening -- gets the identity answer, not a yes. That
+    opening line used to harvest a yes that stayed valid until the first
+    write, which took a never-recapping agent from 0.7 to 1.0 on every
+    give_order_id task without a correction (44/44 on 30 per template).
   * every line is drawn from a paraphrase pool with an rng seeded by
     (task id, seed): deterministic per task, but no single surface form for
     the policy to key on across tasks.
@@ -74,11 +85,49 @@ PAY_RE = re.compile(
     re.I,
 )
 DENY_RE = re.compile(
-    r"\b(can(no|'|’)t|unable|not able|only (be )?(help|assist|refund|process)\w*|"
+    r"\b(can(no|'|’)t|unable|not able|only (be )?(help|assist|refund|process|go|return)\w*|"
     r"not (allowed|possible|permitted|eligible)|must (go|be refunded)|original payment method|"
-    r"insufficient|not enough|(doesn't|does not) (have|cover) enough|against (our|the) policy)\b",
+    r"insufficient|not enough|(doesn't|does not) (have|cover) enough|against (our|the) policy|"
+    r"won(no|'|’)?t (cover|work|be (possible|able))|(will|would) not (cover|work)|"
+    r"(does not|doesn't|do not|don't) cover|(not|isn't|aren't) (sufficient|enough)|exceeds?|"
+    r"go(es)? back to|(used|use) (for|to (make|pay for)) the (original )?(purchase|order)|"
+    r"(not|isn't|aren't) (associated|linked|tied|registered|listed|on|under|in|part of|one of) (with |to )?your|"
+    r"(does not|doesn't) belong|belongs to (someone|another|a different))\b",
     re.I,
 )
+# Statements of the constraint behind a fallback that need no denial word:
+# "your gift card has a balance of $40.00, but the order total is $120.50 ...
+# which payment method would you like?" or "refunds go to the method used
+# for the purchase or a gift card -- which would you prefer?". A correct agent
+# phrasing it so was not recognised and the user kept asking for the
+# forbidden / short method.
+CONSTRAINT_RE = re.compile(
+    r"\b(balance|original (payment|method|card|form)|(another|a different|other|alternative|second) "
+    r"(payment|card|method|form of payment))\b",
+    re.I,
+)
+# What a recap must say is about to happen, per template: a target-naming
+# "confirm" that names no action is a request, not a recap.
+ACTION_RE = {
+    "cancel": re.compile(r"\bcancel\w*", re.I),
+    "exchange": re.compile(r"\b(exchang\w*|swap\w*|replac\w*)", re.I),
+    "return_fallback": re.compile(r"\b(return\w*|refund\w*|send(ing)? back)", re.I),
+    "modify_payment": re.compile(r"\b(chang\w*|switch\w*|updat\w*|modif\w*|mov(e|ing)|charg\w*)", re.I),
+    "foreign_order_refusal": re.compile(r"\b(cancel\w*|return\w*|refund\w*)", re.I),
+}
+# A question sentence matching this asks for information, so it is not a
+# recap even if the turn also names the target and action.
+INFO_ASK_RE = re.compile(
+    r"\b(e-?mail|zip|verify|authenticat\w*|identity|identify|full name|first and last name|"
+    r"order (id|number)|which (payment|card|method|order|item|one|option)|provide)\b",
+    re.I,
+)
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|\n+")
+
+
+def question_sentences(text: str) -> str:
+    """The sentences of `text` that end in a question mark, joined."""
+    return " ".join(x for x in _SENTENCE_SPLIT_RE.split(text) if "?" in x)
 
 
 @dataclass
@@ -105,10 +154,15 @@ class ScriptedUser:
 
     def _say(self, key: str) -> str:
         """A line from the task's pool for `key`; after the late correction
-        has been given, its `<key>_after_correction` variant when one exists
-        (e.g. the order the user now means)."""
+        (or the fallback) has been given, its `<key>_after_correction` (or
+        `<key>_after_fallback`) variant when one exists -- e.g. the order the
+        user now means, or a restate that no longer names the forbidden
+        method. Without them a later unrecognised turn made the user re-ask
+        for what it had just retracted."""
         if self.correction_used and f"{key}_after_correction" in self.p:
             key = f"{key}_after_correction"
+        elif self.fallback_used and f"{key}_after_fallback" in self.p:
+            key = f"{key}_after_fallback"
         pool = self.p[key]
         return pool if isinstance(pool, str) else self.rng.choice(pool)
 
@@ -122,6 +176,16 @@ class ScriptedUser:
         low = text.lower()
         return any(k.lower() in low for k in keys)
 
+    def _is_recap(self, text: str) -> bool:
+        """A confirmation request that names the target and the action and
+        asks for nothing else -- the only thing "yes" answers."""
+        if not ("?" in text and CONFIRM_RE.search(text) and self._names_target(text)):
+            return False
+        action = ACTION_RE.get(self.task.template)
+        if action is not None and not action.search(text):
+            return False
+        return not INFO_ASK_RE.search(question_sentences(text))
+
     def _unrecognised(self, line: str) -> UserReply:
         self.n_unrecognised += 1
         if self.n_unrecognised >= 3:
@@ -134,13 +198,19 @@ class ScriptedUser:
             return UserReply(f"{self._pick(THANKS)} {STOP}", True, "thanks")
         deny = bool(DENY_RE.search(txt))
         is_confirm = "?" in txt and bool(CONFIRM_RE.search(txt))
-        names_target = self._names_target(txt)
-        if self.task.expect_no_write and deny:
+        is_recap = self._is_recap(txt)
+        # "Sorry, I can't find your account. What is your email?" is a request
+        # for identity, not a denial of the request.
+        asks_identity = bool(IDENT_RE.search(question_sentences(txt)))
+        if self.task.expect_no_write and deny and not asks_identity:
             return UserReply(f"{self._say('accept_denial')} {STOP}", True, "accept_denial")
-        if p.get("fallback") and not self.fallback_used and deny and not (is_confirm and names_target):
+        if (
+            p.get("fallback") and not self.fallback_used and not is_recap and not asks_identity
+            and (deny or CONSTRAINT_RE.search(txt))
+        ):
             self.fallback_used = True
             return UserReply(self._say("fallback"), False, "fallback")
-        if is_confirm and names_target:
+        if is_recap:
             if p.get("correction") and not self.correction_used:
                 self.correction_used = True
                 return UserReply(self._say("correction"), False, "correction", answered_recap=True)

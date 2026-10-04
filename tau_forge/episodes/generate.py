@@ -365,6 +365,9 @@ def gen_exchange(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[E
                 f"Wait, sorry -- for the {it0.name}, I actually want it {change_phrase(key, val)}. Everything else is right.",
                 f"Hold on, I changed my mind on the {it0.name}: make it {change_phrase(key, val)} instead. The rest is fine.",
             ]
+            profile["restate_after_correction"] = (
+                f"I want to exchange {_join([req(it, d) for it, (v, d) in final])} from {order_ref}."
+            )
         gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
         gold += _order_reads(user, order.order_id, k["give_order_id"])
         for pid in dict.fromkeys(it.product_id for it, _ in final):
@@ -430,6 +433,7 @@ def gen_return_fallback(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Opt
                 "Alright, the original payment method is fine.",
             ],
             "restate": f"I want to return {what} from {ref}, refunded to {badpm}.",
+            "restate_after_fallback": f"I want to return {what} from {ref}, refunded to the original payment method.",
             "recap_keys": [order.order_id] + names,
         }
         gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
@@ -507,6 +511,7 @@ def _modify_payment_task(user, order, hint, asked, target_pm, amount, rng, k) ->
     if target_pm.id != asked.id:
         fp = pm_phrase(target_pm.model_dump())
         profile["fallback"] = [f"Oh, I see. Then please use {fp} instead.", f"Okay -- switch it to {fp} then."]
+        profile["restate_after_fallback"] = f"I want {ref} paid with {fp} instead."
     gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
     gold += _order_reads(user, order.order_id, k["give_order_id"])
     gold.append({"name": "modify_pending_order_payment",

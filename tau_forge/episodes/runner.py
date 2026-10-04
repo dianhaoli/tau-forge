@@ -41,7 +41,7 @@ from typing import Any, Callable, Optional
 from tau2.domains.retail.data_model import RetailDB
 from tau2.utils import get_dict_hash
 
-from tau_forge.envs.retail import RetailEnv
+from tau_forge.envs.retail import RetailEnv, ToolResult
 from tau_forge.episodes.task import (
     AUTH_TOOLS,
     READ_TOOLS,
@@ -72,7 +72,12 @@ class WriteRecord:
 
 @dataclass
 class EpisodeLog:
+    # The user id of the last successful auth lookup whose identifying
+    # arguments the user had actually said (see `Episode._earned_auth`).
     authed_user: Optional[str] = None
+    # Successful auth lookups with identifying values the user never said --
+    # e.g. the email copied out of `get_user_details` -- by returned user id.
+    unearned_auths: list[str] = field(default_factory=list)
     read_orders: list[str] = field(default_factory=list)
     writes: list[WriteRecord] = field(default_factory=list)
     transfer: bool = False
@@ -80,6 +85,9 @@ class EpisodeLog:
     n_assistant_turns: int = 0
     n_malformed_calls: int = 0
     user_intents: list[str] = field(default_factory=list)
+    # Set when the audit loop caught an exception from `step` (a harness bug,
+    # not a policy error): "<type>: <message>".
+    runner_error: Optional[str] = None
 
 
 @dataclass
@@ -152,10 +160,25 @@ class CowEnv:
         env._toolkit.db = self.db
         return env
 
-    def execute(self, name: str, arguments: dict[str, Any]):
+    def execute(self, name: str, arguments: dict[str, Any]) -> ToolResult:
+        """Never raises. `RetailEnv.execute` turns ValueError/TypeError into a
+        failed ToolResult, but tau2's tools raise other things on ordinary
+        malformed model input -- `calculate("(54.04 - 49.99")` and
+        `calculate("2 3")` raise SyntaxError, `calculate("1/0")`
+        ZeroDivisionError, `find_user_id_by_email(email=None)`
+        AttributeError. Uncaught, one such sample ended a whole batched audit
+        (every episode of every task, results only written at the end). tau2's
+        own environment answers any tool exception with "Error: ..." and lets
+        the agent carry on; so does this."""
         if name not in READ_TOOLS and name != TRANSFER_TOOL:
             self._isolate(arguments)
-        return self._bound().execute(name, arguments)
+        try:
+            return self._bound().execute(name, arguments)
+        except Exception as e:  # noqa: BLE001 -- any tool failure is the policy's error, not the runner's
+            return ToolResult(
+                ok=False, tool_name=name, arguments=arguments, error=f"{type(e).__name__}: {e}",
+                error_type=type(e).__name__,
+            )
 
     def tool_mutates_state(self, name: str) -> bool:
         return _shared_env().tool_mutates_state(name)
@@ -215,6 +238,12 @@ class Episode:
         self.done = True
         self.end_reason = reason
 
+    def abort(self, error: str) -> None:
+        """End the episode on a harness failure, keeping what it did so far."""
+        self.log.runner_error = error
+        if not self.done:
+            self._finish("runner_error")
+
     def step(self, completion: str, finish_reason: str = "stop") -> None:
         if self.done:
             raise RuntimeError(f"episode {self.task.id} already ended ({self.end_reason})")
@@ -259,7 +288,10 @@ class Episode:
         self.messages.append({"role": "tool", "tool_call_id": call_id, "name": name, "content": _tool_content(result)})
 
         if result.ok and name in AUTH_TOOLS:
-            self.log.authed_user = result.value
+            if self._earned_auth(name, arguments):
+                self.log.authed_user = result.value
+            else:
+                self.log.unearned_auths.append(result.value)
         if result.ok and name == "get_order_details":
             self.log.read_orders.append(arguments.get("order_id"))
         if name in WRITE_TOOLS:
@@ -271,6 +303,28 @@ class Episode:
         if name == TRANSFER_TOOL:
             self.log.transfer = True
             self._finish("transfer")
+
+    def _earned_auth(self, name: str, arguments: dict[str, Any]) -> bool:
+        """Whether an auth lookup's identifying values came from the user.
+
+        policy.md wants the agent to authenticate *the user*: the lookup
+        proves identity only if its email (or first name, last name and zip)
+        is something the user said. Without this check the no_authentication
+        gate was satisfied by self-authentication -- read the order from the
+        id in the opening, `get_user_details` on its owner, then
+        `find_user_id_by_email` with the email just read from the db -- which
+        took every give_order_id task without identity in the opening from
+        0.7 to the full 1.0 (cancel 46/46, exchange 53/53, modify_payment
+        35/35, return_fallback 57/57 on 200 tasks per template), the user
+        never having been asked who they are. Matching is case-insensitive
+        substring on the user's turns, the opening included."""
+        said = "\n".join(m["content"] for m in self.messages if m["role"] == "user").lower()
+        if name == "find_user_id_by_email":
+            keys = ("email",)
+        else:
+            keys = ("first_name", "last_name", "zip")
+        values = [arguments.get(k) for k in keys]
+        return all(isinstance(v, str) and v.strip() and v.strip().lower() in said for v in values)
 
     def _text_turn(self, completion: str) -> None:
         self.messages.append({"role": "assistant", "content": completion})

@@ -98,12 +98,32 @@ def run_audit(
     max_calls: int = 30,
     keep_transcripts: bool = False,
     progress: Optional[Callable[[int, int], None]] = None,
+    on_task_done: Optional[Callable[[dict[str, Any]], None]] = None,
 ) -> dict[str, Any]:
+    """Run every task's n_samples episodes to the end, one batched generate
+    per turn.
+
+    A multi-hour GPU audit must not be lost to one bad sample, so (a) an
+    exception escaping one episode's `step` ends that episode alone, with
+    end reason "runner_error" (counted in the summary's end_reasons; tool
+    exceptions never get here -- `CowEnv.execute` turns them into tool
+    errors), and (b) `on_task_done(record)` is called with each task's record
+    as soon as all its samples have ended, so the caller can checkpoint
+    (`scripts/episode_audit.py` appends it to `<output>.partial.jsonl`)."""
     episodes = {
         (i, s): Episode(task, system_message=system_message, max_turns=max_turns, max_calls=max_calls)
         for i, task in enumerate(tasks)
         for s in range(n_samples)
     }
+    records: dict[int, dict[str, Any]] = {}
+
+    def finish_tasks(indices) -> None:
+        for i in sorted(set(indices)):
+            if i not in records and all(episodes[(i, s)].done for s in range(n_samples)):
+                records[i] = _task_record(tasks[i], [episodes[(i, s)] for s in range(n_samples)], keep_transcripts)
+                if on_task_done:
+                    on_task_done(records[i])
+
     turn = 0
     while active := [k for k, ep in episodes.items() if not ep.done]:
         requests = [EpisodeRequest(k, episodes[k].task, episodes[k].messages) for k in active]
@@ -111,29 +131,39 @@ def run_audit(
         if len(generations) != len(requests):
             raise RuntimeError(f"generator returned {len(generations)} turns for {len(requests)} requests")
         for k, g in zip(active, generations):
-            episodes[k].step(g.text, g.finish_reason)
+            try:
+                episodes[k].step(g.text, g.finish_reason)
+            except Exception as e:  # noqa: BLE001 -- isolate the failure to this episode
+                episodes[k].abort(f"{type(e).__name__}: {e}")
         turn += 1
         if progress:
             progress(turn, len(active))
+        finish_tasks(i for i, _ in active)
 
-    per_task = []
-    for i, task in enumerate(tasks):
-        scored = [(episodes[(i, s)], score_episode(task, episodes[(i, s)].result())) for s in range(n_samples)]
-        rec: dict[str, Any] = {
-            "id": task.id,
-            "template": task.template,
-            "difficulty": task.difficulty,
-            "rewards": [r.reward for _, r in scored],
-            "successes": [r.success for _, r in scored],
-            "end_reasons": [ep.end_reason for ep, _ in scored],
-            "n_calls": [ep.log.n_calls for ep, _ in scored],
-            "n_assistant_turns": [ep.log.n_assistant_turns for ep, _ in scored],
-        }
-        if keep_transcripts:
-            rec["transcripts"] = [ep.messages for ep, _ in scored]
-            rec["reward_breakdowns"] = [r.to_dict() for _, r in scored]
-        per_task.append(rec)
+    finish_tasks(range(len(tasks)))  # tasks with no turns at all (n_samples=0)
+    per_task = [records[i] for i in range(len(tasks))]
     return {"n_turns": turn, "per_task": per_task, "summary": summarize(per_task)}
+
+
+def _task_record(task: EpisodeTask, eps: list[Episode], keep_transcripts: bool) -> dict[str, Any]:
+    scored = [(ep, score_episode(task, ep.result())) for ep in eps]
+    rec: dict[str, Any] = {
+        "id": task.id,
+        "template": task.template,
+        "difficulty": task.difficulty,
+        "rewards": [r.reward for _, r in scored],
+        "successes": [r.success for _, r in scored],
+        "end_reasons": [ep.end_reason for ep, _ in scored],
+        "n_calls": [ep.log.n_calls for ep, _ in scored],
+        "n_assistant_turns": [ep.log.n_assistant_turns for ep, _ in scored],
+    }
+    errors = [ep.log.runner_error for ep, _ in scored if ep.log.runner_error]
+    if errors:
+        rec["runner_errors"] = errors
+    if keep_transcripts:
+        rec["transcripts"] = [ep.messages for ep, _ in scored]
+        rec["reward_breakdowns"] = [r.to_dict() for _, r in scored]
+    return rec
 
 
 def _task_stats(rec: dict[str, Any]) -> dict[str, Any]:

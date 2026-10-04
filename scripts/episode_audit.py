@@ -185,6 +185,17 @@ def main(argv: Optional[list[str]] = None, *, tokenizer=None, engine=None) -> di
         raise ValueError("no tasks to audit -- check --tasks/--templates")
     policy, facts = build_policy(args, tokenizer=tokenizer, engine=engine)
     print(f"[episode_audit] {len(tasks)} tasks x {args.samples_per_task} samples")
+    out = Path(args.output)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    # Per-task checkpoint: each task's record is appended the moment its last
+    # sample ends, so a crash or preemption hours in keeps what finished.
+    partial = out.with_name(out.name + ".partial.jsonl")
+    partial.write_text("")
+
+    def checkpoint(rec: dict[str, Any]) -> None:
+        with partial.open("a") as f:
+            f.write(json.dumps(rec, default=str) + "\n")
+
     t0 = time.time()
     result = run_audit(
         tasks,
@@ -195,6 +206,7 @@ def main(argv: Optional[list[str]] = None, *, tokenizer=None, engine=None) -> di
         max_calls=args.max_calls,
         keep_transcripts=args.save_transcripts,
         progress=lambda turn, n: print(f"[episode_audit] turn {turn}: {n} active episodes", file=sys.stderr),
+        on_task_done=checkpoint,
     )
     if isinstance(policy, ChatTemplatePolicy):
         facts.update(max_prompt_tokens=policy.max_prompt_tokens, context_overflows=policy.n_context_overflows)
@@ -203,8 +215,6 @@ def main(argv: Optional[list[str]] = None, *, tokenizer=None, engine=None) -> di
         **facts,
         "seconds": round(time.time() - t0, 1),
     }
-    out = Path(args.output)
-    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=1, default=str))
     print_summary(result["summary"])
     print(f"[episode_audit] wrote {out}")

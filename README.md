@@ -993,18 +993,29 @@ user, and tau2's own end-state reward.
   (write done -> thanks+STOP; refusal denied -> accept+STOP; denial -> fallback;
   recap naming the target -> correction once, else yes; identity; all items;
   order id; reason; payment; otherwise restate, STOP on the third unrecognised
-  turn). "Yes" only answers a confirmation request that names the target order
-  or product; lines come from paraphrase pools seeded per task.
+  turn). "Yes" only answers a recap: a confirmation request that names the
+  target order or product *and* the action, and asks for no information
+  ("confirm your email for order #W...?" gets the identity answer). The
+  fallback fires on a denial or on the constraint itself (the gift-card
+  balance, the original/purchase method, "another payment method"); after a
+  correction or fallback the user restates the corrected request. Lines come
+  from paraphrase pools seeded per task.
 * `runner.py` -- `run_episode(task, policy)` with `policy(messages) -> text`,
   parsed by `completion_parsing.parse_completion`; calls are fed back in the
   `grounding.py` message shape (assistant `tool_calls` + `role: tool`), after
   tau2's greeting. Ends on user STOP, transfer, 30 assistant turns, 30 calls, a
-  truncated turn or an over-budget prompt. Copy-on-write db: no full deep copy
-  per episode; 0.03 s CPU per reference-agent episode (prototype: 0.3 s).
+  truncated turn or an over-budget prompt. A tool that raises (e.g.
+  `calculate("(1 - 2")`, `find_user_id_by_email(email=None)`) returns a tool
+  error instead of ending the run. Copy-on-write db: no full deep copy per
+  episode; 0.03 s CPU per reference-agent episode (prototype: 0.3 s).
 * `reward.py` -- R = 1[final db hash == gold hash]; -0.3 per policy gate on
   success (write without a yes since the last recap; write before
-  authenticating the task's user); failure shaping capped at 0.2 and withdrawn
-  if a write touched another record; refusals 1.0 (0.5 if transferred).
+  authenticating the task's user with an email / name+zip the *user* said --
+  looking up the db's copy of the owner's email does not count); failure
+  shaping capped at 0.2 and withdrawn if a write touched another record;
+  refusals 1.0 only for an unchanged db plus a denial the user accepted, 0.5
+  if transferred, 0.1 for an unchanged db without a denial (gibberish, empty,
+  truncated, out of turns -- these used to score 1.0).
   Reference agents (`reference_agents.py`) land on separate levels, asserted
   in `tests/test_episodes.py`:
 
@@ -1018,6 +1029,13 @@ user, and tau2's own end-state reward.
   | comply with a forbidden request | -- | -- | 0.2 | -- | 0.0 |
   | gift card unasked (owns one / doesn't) | -- | -- | 0.2 / 1.0 | -- | -- |
   | transfer | 0.0 | 0.0 | 0.0 | 0.0 | 0.5 |
+  | no denial, db unchanged (gibberish, empty, ...) | -- | -- | -- | -- | 0.1 |
+
+  The table holds on all 3,852 reference episodes of the 885 tasks generated
+  at `--per-template 200`. Also pinned by tests: an early "could you confirm
+  your email for order #W...?" does not buy a no-confirm agent a yes (0.7, not
+  1.0), and a skip-auth agent that "authenticates" with the email it read
+  from `get_user_details` stays at 0.7.
 * `tau_forge/decontam/real_tasks.py` -- the only episode code that reads
   tasks.json. It returns two opaque sets: the user ids the 114 real tasks'
   gold actions touch (52) and their gold end-state hashes (99 distinct). The
@@ -1060,7 +1078,10 @@ python scripts/episode_audit.py --tasks data/episodes/episodes_s0.jsonl \
 ```
 
 Every turn batches all active episodes through one vLLM `generate`, with
-prefix caching for the shared system prompt and the 16 tool schemas. The
+prefix caching for the shared system prompt and the 16 tool schemas. Each
+task's record is appended to `<output>.partial.jsonl` as soon as its last
+sample ends, and an exception inside one episode ends only that episode
+(end reason `runner_error`), so a crash hours in loses nothing finished. The
 output has the reward list for every task, and success rate, mean reward and
 effective-variance fraction (std >= 0.05) overall, per template and per knob
 value. Weight cells by p(1-p) using those per-knob numbers.
