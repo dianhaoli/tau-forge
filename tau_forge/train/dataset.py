@@ -34,18 +34,26 @@ DEFAULT_DATA_GLOB = str(REPO_ROOT / "data" / "synthetic" / "raw" / "*.json")
 # model is told the exact wire format its tool calls will be parsed with --
 # `tau_forge.train.completion_parsing` parses this same <tool_call> convention,
 # which is Qwen's own native tool-calling format, not an invented one.
+#
+# The escalation paragraph used to read "do not just apologize or ask
+# clarifying questions in place of escalating", unscoped. That told the policy
+# to transfer exactly where 104 ambiguous golds want a clarifying question and
+# the policy_violation golds want a refusal (policy.md: "deny user requests
+# that are against this policy"), so whichever the model obeyed, one category
+# was a flat 0. It is now scoped to requests the policy permits.
 TOOL_CALL_FORMAT_INSTRUCTION = (
     "\n\nWhen you decide to make a tool call, emit exactly one, in this exact "
     'form:\n<tool_call>\n{"name": "<tool_name>", "arguments": {...}}\n</tool_call>\n'
     "If the correct action is not calling a tool right now -- e.g. the request "
     "is ambiguous, out of policy, or a plain reply is what's needed -- send a "
     "message with no <tool_call> block instead.\n\n"
-    "If the user's request cannot be satisfied by any tool available to you "
-    "-- there is simply no capability that does what they're asking, even "
-    "though the request itself is clear -- that is not a case for a plain "
-    "reply. Call transfer_to_human_agents with a summary of the issue. Do "
-    "not try to solve it with an unrelated tool, and do not just apologize "
-    "or ask clarifying questions in place of escalating."
+    "If the user's request is clear and allowed by the policy, but no tool "
+    "available to you can do it -- there is simply no capability for it -- "
+    "that is not a case for a plain reply. Call transfer_to_human_agents "
+    "with a summary of the issue rather than trying an unrelated tool. This "
+    "is only for requests the policy permits: if a request is against the "
+    "policy, explain why and decline it; if it is unclear which order, item "
+    "or option the user means, ask."
 )
 
 
