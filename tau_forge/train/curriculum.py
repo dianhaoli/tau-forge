@@ -42,9 +42,21 @@ solves on its own.
    intervention -- shaping (`tau_forge.train.shaping`), prompting, or an SFT
    warm-start -- and will stay dead no matter how long it is trained on.
    `load_zero_variance_ids` reads a `zero_shot_baseline` output directly so the
-   exclusion list is measured, never guessed.
+   exclusion list is measured, never guessed -- and it reads the *shaped*
+   scores when the audit has them, because those are what GRPO sees with
+   `--shaping` on (its default). Reading raw `reward()` instead dropped exactly
+   the groups shaping exists to revive: shaping only adds credit to wrong-tool
+   completions, so every revived group is flat 0.0 under raw scores.
 
-3. Validation. Checkpoint selection needs a held-out score, and the held-out
+3. Label defects. `data/synthetic/label_audit.json` marks 222 of the 541
+   scenarios whose gold label contradicts the retail policy (a write the user
+   never confirmed, an id only a guess can produce, a transfer where policy.md
+   says deny, ...). On those the policy-correct action scores 0, so training
+   on them pushes *away* from the policy, and since every policy-following
+   sample scores the same 0 they are also flat groups. `load_label_defect_ids`
+   reads that file; grpo_train drops them by default.
+
+4. Validation. Checkpoint selection needs a held-out score, and the held-out
    data policy (README) puts all 114 real tasks off-limits to anything steering
    weight updates -- which selecting a checkpoint by them would be. So the
    validation set is carved out of the synthetic corpus instead, stratified by
@@ -55,13 +67,18 @@ Torch/trl-free.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import random
-from collections import defaultdict
+from collections import Counter, defaultdict
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Optional
 
 from tau_forge.train.dataset import TrainingExample
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_LABEL_AUDIT = REPO_ROOT / "data" / "synthetic" / "label_audit.json"
 
 # Target *shares* of the final training set, not counts. Shaped after the real
 # benchmark's distribution (see module docstring), not after the generation
@@ -97,7 +114,10 @@ def _cell(example: TrainingExample) -> str:
 
 
 def load_zero_variance_ids(
-    baseline_path: str | Path, include_solved: bool = False, tolerance: float = 1e-3
+    baseline_path: str | Path,
+    include_solved: bool = False,
+    tolerance: float = 1e-3,
+    prefer_shaped: bool = True,
 ) -> set[str]:
     """Scenario ids that scored a constant reward across every sample of a
     `zero_shot_baseline` run.
@@ -106,9 +126,40 @@ def load_zero_variance_ids(
     starts -- the ones that stay dead. Constant-at-1.0 scenarios are kept in
     training by default because they are cheap insurance against regression on
     behavior the policy already has, and because a scenario that is solved for
-    the *base* model can stop being solved a few hundred steps in."""
-    data = json.loads(Path(baseline_path).read_text())
-    per_scenario = data["per_scenario_scores"]
+    the *base* model can stop being solved a few hundred steps in.
+
+    `prefer_shaped=True` (the default) judges flatness on
+    `per_scenario_shaped_scores` when the audit was run `--with-shaping`,
+    matching `scorecard.load_scores` and `data_scorecard --emit-dead-ids`. Pass
+    False to force raw `reward()` -- right for a `--no-shaping` run, whose
+    groups are exactly the raw ones.
+
+    A plain id list (one per line, `#` comments allowed -- what
+    `data_scorecard --emit-dead-ids` writes) is also accepted and returned
+    as-is; the dead/solved split was already decided when it was emitted, so
+    `include_solved` and `prefer_shaped` do not apply to it."""
+    return zero_variance_ids_with_basis(baseline_path, include_solved, tolerance, prefer_shaped)[0]
+
+
+def zero_variance_ids_with_basis(
+    baseline_path: str | Path,
+    include_solved: bool = False,
+    tolerance: float = 1e-3,
+    prefer_shaped: bool = True,
+) -> tuple[set[str], str]:
+    """`load_zero_variance_ids`, plus which scores it judged on -- so the
+    trainer's log can say so rather than leave the reader to assume."""
+    text = Path(baseline_path).read_text()
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError:
+        ids = {line.strip() for line in text.splitlines() if line.strip() and not line.startswith("#")}
+        return ids, "plain id list"
+
+    if prefer_shaped and data.get("per_scenario_shaped_scores"):
+        per_scenario, basis = data["per_scenario_shaped_scores"], "reward() + shaping"
+    else:
+        per_scenario, basis = data["per_scenario_scores"], "reward() alone"
     dead: set[str] = set()
     for scenario_id, scores in per_scenario.items():
         if not scores:
@@ -117,7 +168,128 @@ def load_zero_variance_ids(
             continue
         if include_solved or abs(scores[0]) <= tolerance:
             dead.add(scenario_id)
-    return dead
+    return dead, basis
+
+
+def load_blocking_labels(path: str | Path = DEFAULT_LABEL_AUDIT) -> dict[str, list[str]]:
+    """`{scenario_id: [blocking label, ...]}` for every scenario the label
+    audit covers; an empty list means the gold is consistent with policy.md."""
+    data = json.loads(Path(path).read_text())
+    return {sid: list(entry.get("blocking") or []) for sid, entry in data["scenarios"].items()}
+
+
+def load_label_defect_ids(path: str | Path = DEFAULT_LABEL_AUDIT) -> set[str]:
+    """Ids whose gold contradicts the retail policy (a non-empty `blocking`
+    list in the label audit). 222 of 541 as committed."""
+    return {sid for sid, blocking in load_blocking_labels(path).items() if blocking}
+
+
+def blocking_category(label: str) -> str:
+    """`gold_ids_unreachable:item_ids,payment_method_id` -> `gold_ids_unreachable`:
+    the suffix names which ids, the prefix is the defect kind worth counting."""
+    return label.split(":", 1)[0]
+
+
+@dataclass
+class Exclusions:
+    """What a run drops before mixing/splitting, and why. Built once by
+    `resolve_exclusions` and used by both grpo_train and zero_shot_baseline
+    `--split train/val`, so the two compute the same split by construction --
+    before this, the baseline ignored exclusions entirely, and with a 25%
+    exclusion list its val set and grpo_train's shared 0 of ~40 ids."""
+
+    label_defects: set[str] = field(default_factory=set)
+    zero_variance: set[str] = field(default_factory=set)
+    zero_variance_basis: Optional[str] = None
+    blocking: dict[str, list[str]] = field(default_factory=dict)
+    report: list[str] = field(default_factory=list)
+
+    @property
+    def ids(self) -> set[str]:
+        return self.label_defects | self.zero_variance
+
+    def fingerprint(self) -> str:
+        """Short hash of the excluded id set. Recorded by both entry points so
+        a before/after can be checked for identical exclusions rather than
+        assumed to have them."""
+        return hashlib.sha256("\n".join(sorted(self.ids)).encode()).hexdigest()[:12]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "n_label_defects_excluded": len(self.label_defects),
+            "n_zero_variance_excluded": len(self.zero_variance - self.label_defects),
+            "zero_variance_basis": self.zero_variance_basis,
+            "n_excluded": len(self.ids),
+            "excluded_ids_sha256_12": self.fingerprint(),
+        }
+
+
+def resolve_exclusions(
+    examples: list[TrainingExample],
+    label_audit: Optional[str | Path] = DEFAULT_LABEL_AUDIT,
+    keep_label_defects: bool = False,
+    zero_variance_from: Optional[str | Path] = None,
+    include_solved: bool = False,
+    prefer_shaped: bool = True,
+) -> Exclusions:
+    """Label defects (unless `keep_label_defects`) plus measured zero-variance
+    scenarios, restricted to ids actually in `examples`, with a per-category
+    report of what is dropped and what remains."""
+    corpus_ids = {e.id for e in examples}
+    out = Exclusions()
+
+    if label_audit:
+        out.blocking = load_blocking_labels(label_audit)
+        uncovered = corpus_ids - set(out.blocking)
+        if uncovered:
+            out.report.append(
+                f"label audit {label_audit} does not cover {len(uncovered)} corpus scenarios "
+                f"(e.g. {sorted(uncovered)[:3]}); they are treated as clean. Re-run the label "
+                "audit if the corpus changed."
+            )
+        if not keep_label_defects:
+            out.label_defects = {sid for sid, b in out.blocking.items() if b} & corpus_ids
+
+    if zero_variance_from:
+        ids, out.zero_variance_basis = zero_variance_ids_with_basis(
+            zero_variance_from, include_solved=include_solved, prefer_shaped=prefer_shaped
+        )
+        out.zero_variance = ids & corpus_ids
+
+    out.report.extend(exclusion_table(examples, out))
+    return out
+
+
+def exclusion_table(examples: list[TrainingExample], ex: Exclusions) -> list[str]:
+    """Per-category counts of corpus, dropped (by reason) and remaining, then
+    the blocking-label kinds among the label-defect drops. A scenario both
+    defective and zero-variance is counted once, as a label defect."""
+    if not ex.ids:
+        return []
+    total = Counter(e.category for e in examples)
+    label = Counter(e.category for e in examples if e.id in ex.label_defects)
+    zero = Counter(
+        e.category for e in examples if e.id in ex.zero_variance and e.id not in ex.label_defects
+    )
+    lines = [f"{'category':26} {'corpus':>6} {'label_defect':>12} {'zero_var':>8} {'remaining':>9}"]
+    for category in sorted(total):
+        remaining = total[category] - label[category] - zero[category]
+        lines.append(
+            f"{category:26} {total[category]:6} {label[category]:12} {zero[category]:8} {remaining:9}"
+        )
+    n_total, n_label, n_zero = sum(total.values()), sum(label.values()), sum(zero.values())
+    lines.append(f"{'TOTAL':26} {n_total:6} {n_label:12} {n_zero:8} {n_total - n_label - n_zero:9}")
+    if ex.label_defects:
+        kinds = Counter(
+            kind
+            for sid in ex.label_defects
+            for kind in {blocking_category(b) for b in ex.blocking.get(sid, [])}
+        )
+        lines.append(
+            "label-defect drops by blocking label (a scenario can carry several): "
+            + ", ".join(f"{k}={v}" for k, v in kinds.most_common())
+        )
+    return lines
 
 
 def exclude_ids(examples: list[TrainingExample], ids: Iterable[str]) -> list[TrainingExample]:

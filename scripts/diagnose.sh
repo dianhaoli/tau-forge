@@ -13,6 +13,12 @@
 #   bash scripts/diagnose.sh                              # defaults below
 #   bash scripts/diagnose.sh data/trained/audit_n16.json
 #   bash scripts/diagnose.sh <audit.json> <report.txt>
+#   MIN_STD=0.1 bash scripts/diagnose.sh <audit.json>      # stricter "effective variance"
+#
+# Every section reports zero-variance AND effective variance (group std >=
+# MIN_STD, default 0.05), the latter split into clean vs label-defective
+# scenarios (data/synthetic/label_audit.json 'blocking' list). Yield and the
+# recommended mix use the effective definition.
 #
 # Then, to hand the report to someone (or to a Claude session) without pasting
 # a screenful into a terminal:
@@ -23,6 +29,7 @@ cd "$(dirname "$0")/.."
 
 AUDIT="${1:-data/trained/audit_n16.json}"
 OUT="${2:-data/reports/diagnosis.txt}"
+MIN_STD="${MIN_STD:-0.05}"
 
 if [ ! -f "$AUDIT" ]; then
     echo "No audit at $AUDIT -- pass the path as the first argument." >&2
@@ -63,6 +70,7 @@ skip = {
     "per_scenario_shaped_scores",
     "per_scenario_completions",
     "per_scenario_expected_tool_name",
+    "per_scenario_blocking_labels",
     "score_histogram",
     "zero_variance_scenarios",
 }
@@ -82,28 +90,28 @@ PY
     echo
     echo "### scorecard: per-cell yield x headroom, benchmark-weighted ###"
     echo
-    uv run python scripts/data_scorecard.py "$AUDIT"
+    uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD"
 
     echo
     echo "### scorecard: same table, unweighted ###"
     echo
-    uv run python scripts/data_scorecard.py "$AUDIT" --relevance uniform
+    uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD" --relevance uniform
 
     echo
     echo "### scorecard: reward() alone, no shaping ###"
     echo
-    uv run python scripts/data_scorecard.py "$AUDIT" --raw
+    uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD" --raw
 
     echo
     echo "### buckets: flat vs varying, before and after shaping ###"
     echo
-    uv run python scripts/bucket_analysis.py "$AUDIT"
+    uv run python scripts/bucket_analysis.py "$AUDIT" --min-std "$MIN_STD"
 } 2>&1 | tee "$OUT"
 
 # The two machine-readable side outputs, written separately so they can be fed
 # straight back into grpo_train rather than retyped out of the report.
-uv run python scripts/data_scorecard.py "$AUDIT" --emit-mix > "$MIX_FILE"
-uv run python scripts/data_scorecard.py "$AUDIT" --emit-dead-ids "$DEAD_FILE" > /dev/null
+uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD" --emit-mix > "$MIX_FILE"
+uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD" --emit-dead-ids "$DEAD_FILE" > /dev/null
 
 echo
 echo "wrote:"

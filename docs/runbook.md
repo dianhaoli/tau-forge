@@ -137,6 +137,15 @@ variance this run exists to measure.
 fractions. `--save-completions` makes the output large but is what lets you read
 the actual failures afterward.
 
+Next to each zero-variance fraction the summary now reports the **effective**
+variance fraction: groups whose reward std is at least `--min-std` (default
+0.05). The zero-variance test counts fifteen 0.0s and one 0.02 as a live group.
+Shaping produces that shape a lot, and its gradient is 5 to 50 times weaker than
+a real 0/1 split. Read the effective number. The output also records each
+scenario's label-audit blocking labels (`per_scenario_blocking_labels`) and
+splits both fractions into `clean` vs `label_defect` (`variance_by_label_status`).
+`--split all` still scores every scenario, defective ones included.
+
 Generation is the GPU part and finishes in minutes. Scoring is the CPU part and
 runs *after* vLLM tears its engine down and prints its shutdown banner, which is
 why a run that is working can look hung. It now prints progress, and
@@ -154,8 +163,11 @@ That runs every diagnostic and writes the lot to `data/reports/diagnosis.txt`
 rather than only to the terminal, which matters because the report is a few
 hundred lines and tmux scrollback is easy to lose. It also drops two
 machine-readable side files next to it: `recommended_mix.txt`, ready to paste
-into `--category-mix`, and `dead_scenario_ids.txt`, ready for
-`--exclude-zero-variance-from`.
+into `--category-mix`, and `dead_scenario_ids.txt`, which
+`--exclude-zero-variance-from` takes as-is (it accepts a plain id list as well
+as an audit JSON). Yield and the recommended mix use effective variance. The
+older "varied at all" yield is printed next to it. Set `MIN_STD=0.1 bash
+scripts/diagnose.sh ...` for a stricter threshold.
 
 Read it with `less data/reports/diagnosis.txt` (scrolls independently of tmux),
 or commit it -- unlike the audit JSONs, `data/reports/` is not gitignored,
@@ -220,10 +232,16 @@ uv run --extra train python -m tau_forge.train.zero_shot_baseline --use-vllm \
 ```
 
 `--split val` reproduces exactly the slice `grpo_train` holds out, so pass the
-**same** `--val-fraction`, `--category-mix` and `--curriculum-seed` to both
-commands. Different values compute different splits and the comparison is void;
-a test asserts the two code paths agree given equal flags, and the settings are
-recorded into the output JSON so a later run can be checked rather than assumed.
+**same** `--val-fraction`, `--category-mix`, `--curriculum-seed` and exclusion
+flags (`--exclude-zero-variance-from`, `--exclude-solved`,
+`--exclude-zero-variance-raw`, `--label-audit`, `--keep-label-defects`) to both
+commands. Both go through one split function, and both drop the label-audit
+defects by default. Different values compute different splits and the
+comparison is void. Before this, the baseline ignored exclusions, and its val
+set could share 0 ids with the trainer's. A test asserts the two code paths
+agree given equal flags. The output JSON records the settings and an
+`exclusions.excluded_ids_sha256_12` fingerprint, which must match the
+`excluded-id fingerprint` line `grpo_train` prints.
 
 After training, re-run that exact command against the checkpoint and compare
 `mean_score`.
@@ -283,7 +301,26 @@ uv run --extra train python -m tau_forge.train.grpo_train --dry-run \
 ```
 
 Read the printed mixture and prompt-token distribution before spending a
-GPU-hour. Then the smoke test, then the full run:
+GPU-hour. Four things in that output come from the exclusion and sampling
+fixes:
+
+- **Label defects are dropped by default.** By default, `--label-audit` is
+  `data/synthetic/label_audit.json`. It marks 222 of 541 scenarios whose gold
+  contradicts policy.md, and the table shows what was dropped and what remains
+  per category. `--keep-label-defects` opts out. The drops are uneven
+  (happy_path 110 to 40, requires_earlier_context 108 to 43). A mixture is
+  capped by its scarcest category, so `--category-mix real` shrinks the corpus
+  to about 112 scenarios. Check the `train split: n=` line before committing.
+- **Zero-variance exclusion judges on shaped scores** when the audit has them,
+  because GRPO sees those with `--shaping`. Pass `--exclude-zero-variance-raw`
+  together with `--no-shaping`.
+- **`sampling: ... top_k=0 (disabled)`.** Compare this against the audit
+  JSON's `temperature`, `top_p` and `top_k`. `top_k` is never `None`, which used
+  to mean Qwen's shipped top_k=20 on the HF path and a crash on vLLM.
+- **`excluded-id fingerprint`** is the value to match against a `--split val`
+  baseline.
+
+Then the smoke test, then the full run:
 
 ```bash
 uv run --extra train accelerate launch --config_file infra/accelerate_zero2.yaml \
@@ -358,5 +395,8 @@ aws ec2 stop-instances --instance-ids <InstanceId>
 | `--max-model-len N is below the M tokens ...` | Raise `--max-model-len`, or lower `--max-new-tokens`. Never shorten the prompt |
 | `AssertionError: Training and evaluation system prompts differ` | Prompt parity regression. See `tau_forge/eval/prompt_parity.py` |
 | `No .env file found` warning from tau2 | Harmless unless you are running Step 5, which needs the key |
+| `FileNotFoundError: ... label_audit.json` | `--label-audit` points nowhere. Fix the path, or pass `--label-audit ''` to skip the label audit (this also keeps the defects) |
+| `WARNING: exclusions judged on shaped scores but this run has --no-shaping` | Add `--exclude-zero-variance-raw` (and the same flag on any `--split val` baseline) |
+| `train split` far smaller than expected | Label-defect exclusion plus a mixture: the scarcest category caps the budget. See Step 6 |
 | CUDA OOM during training | `--per-device-train-batch-size` down, `--gradient-accumulation-steps` up by the same factor. The effective batch is unchanged |
 | Run died when SSH dropped | tmux |
