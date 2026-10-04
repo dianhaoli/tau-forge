@@ -108,6 +108,35 @@ def has_effective_variance(scores: list[float], min_std: float = EFFECTIVE_MIN_S
     return group_std(scores) >= min_std - _STD_EPS
 
 
+def is_solved(scores: list[float], min_std: float = EFFECTIVE_MIN_STD) -> bool:
+    """A group that is (near-)perfect: mean within one effective-std
+    threshold of 1.0 (0.95 by default). Only meaningful for a group *without*
+    effective variance, where it separates "already learned" (regression
+    insurance, kept by default) from every other flat value. The bar sits
+    above every flat value reward() produces short of a near-exact match --
+    0.0, the 0.2/0.3 floors, 0.5 -- and above anything shaping can add
+    (<= 0.15), so a flat 0.13 or 0.3 group never counts as solved. A flat
+    0.97 (right call, slightly-off free text) does: 0.03 of headroom is not
+    worth a slot."""
+    return bool(scores) and sum(scores) / len(scores) >= 1.0 - max(min_std, 1e-3)
+
+
+def lacks_gradient(
+    scores: list[float], min_std: float = EFFECTIVE_MIN_STD, include_solved: bool = False
+) -> bool:
+    """The exclusion test `curriculum.load_zero_variance_ids` and
+    `dead_scenario_ids` share: no effective variance, and not solved (unless
+    `include_solved`). Judged on effective variance rather than on "flat at
+    0.0" because the value a flat group sits at is irrelevant to its gradient:
+    under shaping, a raw cold start whose sixteen samples all make the same
+    right-record lookup sits flat at 0.13 (classify -> stuck_partial), and the
+    old flat-at-0.0 rule kept it in training at std 0. Same for a raw plateau
+    flat at 0.3, and for a one-outlier micro-variance group (std < 0.05)."""
+    if not scores or has_effective_variance(scores, min_std):
+        return False
+    return include_solved or not is_solved(scores, min_std)
+
+
 def has_any_variance(scores: list[float]) -> bool:
     """The pre-existing liveness test (zero_shot_baseline, bucket_analysis):
     more than one distinct score at 3 decimals. Kept so the old zero-variance
@@ -310,10 +339,19 @@ def recommend_mix(
 
 
 def dead_scenario_ids(
-    per_scenario_scores: dict[str, list[float]], include_solved: bool = False
+    per_scenario_scores: dict[str, list[float]],
+    include_solved: bool = False,
+    min_std: float = EFFECTIVE_MIN_STD,
 ) -> list[str]:
-    wanted = {"cold_start"} | ({"already_solved", "stuck_partial"} if include_solved else set())
-    return sorted(sid for sid, scores in per_scenario_scores.items() if classify(scores) in wanted)
+    """Ids `lacks_gradient` flags -- the same rule grpo_train
+    `--exclude-zero-variance-from` applies to an audit JSON, so the emitted
+    list and the audit it came from exclude the same scenarios. It used to be
+    `classify() == cold_start`, which missed flat-but-nonzero shaped groups."""
+    return sorted(
+        sid
+        for sid, scores in per_scenario_scores.items()
+        if lacks_gradient(scores, min_std, include_solved)
+    )
 
 
 def load_scores(path: str | Path, prefer_shaped: bool = True) -> tuple[dict[str, list[float]], str]:

@@ -14,7 +14,15 @@ Then it recommends a --category-mix, as measured signal times a benchmark
 relevance prior. Both factors print separately so a surprising recommendation
 can be traced to whichever one drove it.
 
-When label-audit blocking labels are available (recorded in the audit by
+Label-audit defects (--label-audit, 222 of 541 as committed) are dropped
+before the cells are scored and the mix is recommended, as grpo_train drops
+them before training: a mixture driven by scenarios the trainer never sees is
+not a recommendation for the trainer. On an audit where the defects sat flat
+at 0, scoring them in moved the recommendation by up to 9 points
+(policy_violation 0.150 -> 0.237). --keep-label-defects scores the whole
+audit, for a corpus trained with grpo_train --keep-label-defects; without it,
+the full-audit recommendation still prints under the real one, for
+comparison. When blocking labels are available (recorded in the audit by
 zero_shot_baseline, else read from --label-audit) it also reports zero- and
 effective-variance separately for clean vs label-defective scenarios.
 
@@ -23,6 +31,7 @@ Usage:
     python scripts/data_scorecard.py <audit.json> --emit-mix
     python scripts/data_scorecard.py <audit.json> --emit-dead-ids dead.txt
     python scripts/data_scorecard.py <audit.json> --relevance uniform
+    python scripts/data_scorecard.py <audit.json> --keep-label-defects
 """
 
 import argparse
@@ -60,6 +69,24 @@ def _composition(examples) -> tuple[int, int]:
     return len(examples), non_solving
 
 
+def trainer_label_defects(args) -> set[str]:
+    """The ids grpo_train drops by default given the same --label-audit /
+    --keep-label-defects: read from the label audit itself, not from labels
+    the audit recorded, because the label audit is what the trainer reads."""
+    if not args.label_audit or args.keep_label_defects:
+        return set()
+    return load_label_defect_ids(args.label_audit)
+
+
+def split_scored(
+    scores: dict[str, list[float]], defects: set[str]
+) -> tuple[dict[str, list[float]], dict[str, list[float]]]:
+    """`(trained_on, left_out)`: the scores grpo_train would see vs the label
+    defects it drops. `left_out` is empty when nothing is dropped."""
+    kept = {sid: v for sid, v in scores.items() if sid not in defects}
+    return kept, {sid: v for sid, v in scores.items() if sid in defects}
+
+
 def simulate_mix(args, scores: dict[str, list[float]], basis: str) -> None:
     """Report what a candidate mixture would actually produce, measured against
     this audit's per-scenario scores rather than assumed from category labels."""
@@ -75,12 +102,7 @@ def simulate_mix(args, scores: dict[str, list[float]], basis: str) -> None:
     pool = corpus
     # grpo_train drops label-audit defects by default, so the simulation does
     # too -- otherwise it scores a corpus the trainer never sees.
-    defects = (
-        load_label_defect_ids(args.label_audit)
-        if args.label_audit and not args.simulate_keep_label_defects
-        else set()
-    )
-    pool = [e for e in pool if e.id not in defects]
+    pool = [e for e in pool if e.id not in trainer_label_defects(args)]
     n_defects_dropped = len(corpus) - len(pool)
     if args.simulate_exclude_solved:
         pool = [e for e in pool if classify(scores.get(e.id, [])) != "already_solved"]
@@ -135,7 +157,7 @@ def main() -> None:
     p.add_argument("--raw", action="store_true", help="Use reward() alone even if shaped scores exist.")
     p.add_argument("--emit-mix", action="store_true", help="Print only the --category-mix string, for piping.")
     p.add_argument("--emit-dead-ids", metavar="PATH", help="Write cold-start scenario ids to a file.")
-    p.add_argument("--include-solved", action="store_true", help="With --emit-dead-ids, also list flat-1.0 and flat-partial scenarios.")
+    p.add_argument("--include-solved", action="store_true", help="With --emit-dead-ids, also list solved scenarios (std < --min-std, mean within --min-std of 1.0), as grpo_train --exclude-solved does.")
     p.add_argument(
         "--simulate-mix",
         metavar="SPEC",
@@ -152,10 +174,13 @@ def main() -> None:
         "the way grpo_train --exclude-solved does.",
     )
     p.add_argument(
+        "--keep-label-defects",
         "--simulate-keep-label-defects",
+        dest="keep_label_defects",
         action="store_true",
-        help="With --simulate-mix, keep the label-audit defects grpo_train drops by default "
-        "(the counterpart of grpo_train --keep-label-defects).",
+        help="Score, recommend and simulate over the label-audit defects too, instead of dropping "
+        "them the way grpo_train does by default. The counterpart of grpo_train "
+        "--keep-label-defects; pass it here when you pass it there.",
     )
     p.add_argument(
         "--min-std",
@@ -167,26 +192,36 @@ def main() -> None:
     p.add_argument(
         "--label-audit",
         default=str(DEFAULT_LABEL_AUDIT),
-        help="Blocking labels for an audit that did not record per_scenario_blocking_labels. "
-        "'' to skip the clean vs label-defect breakdown.",
+        help="Label audit whose 'blocking' scenarios are dropped before scoring, as grpo_train's "
+        "--label-audit (same default). Also the blocking labels for the clean vs label-defect "
+        "breakdown when the audit did not record per_scenario_blocking_labels. '' to drop nothing "
+        "and skip the breakdown.",
     )
     args = p.parse_args()
 
-    scores, basis = load_scores(args.audit, prefer_shaped=not args.raw)
-    cells = score_cells(scores, min_std=args.min_std)
+    all_scores, basis = load_scores(args.audit, prefer_shaped=not args.raw)
     relevance = BENCHMARK_RELEVANCE if args.relevance == "benchmark" else UNIFORM_RELEVANCE
-    mix = recommend_mix(cells, relevance=relevance)
 
     if args.simulate_mix:
-        simulate_mix(args, scores, basis)
+        simulate_mix(args, all_scores, basis)
         return
+
+    scores, dropped = split_scored(all_scores, trainer_label_defects(args))
+    cells = score_cells(scores, min_std=args.min_std)
+    mix = recommend_mix(cells, relevance=relevance)
 
     if args.emit_mix:
         print(",".join(f"{c}={v}" for c, v in sorted(mix.items())))
         return
 
     total = sum(c.n for c in cells)
-    print(f"Scored {total} scenarios in {len(cells)} cells, on {basis}.\n")
+    print(f"Scored {total} scenarios in {len(cells)} cells, on {basis}.")
+    if dropped:
+        print(
+            f"{len(dropped)} label-audit defects ({args.label_audit}) left out before scoring, as "
+            "grpo_train drops them by default; --keep-label-defects to score them too."
+        )
+    print()
 
     print(f"yield = group std >= {args.min_std}; any = varied at all (the pre-effective-variance yield).\n")
     header = (
@@ -209,13 +244,15 @@ def main() -> None:
         f"{n_any}/{total} ({n_any / total:.1%}) varied at all."
     )
 
+    # Over the whole audit, defects included: this is a statement about the
+    # audit, not a recommendation for the trainer.
     blocking = load_recorded_blocking(args.audit)
     blocking_source = "recorded in the audit"
     if blocking is None and args.label_audit:
         blocking, blocking_source = load_blocking_labels(args.label_audit), args.label_audit
     if blocking is not None:
         print(f"\nClean vs label-defective scenarios (blocking labels {blocking_source}):")
-        for status, stats in variance_by_label_status(scores, blocking, args.min_std).items():
+        for status, stats in variance_by_label_status(all_scores, blocking, args.min_std).items():
             print(
                 f"  {status:12} n={stats['n']:4}  zero-variance {stats['zero_variance_fraction']:6.1%}  "
                 f"effective {stats['effective_variance_fraction']:6.1%}"
@@ -229,14 +266,21 @@ def main() -> None:
 
     print("\nRecommended mixture:")
     print("  --category-mix " + ",".join(f"{c}={v}" for c, v in sorted(mix.items())))
+    if dropped:
+        # The secondary view: what the full audit, defects included, would
+        # have recommended. A large gap means the defects were steering it.
+        full = recommend_mix(score_cells(all_scores, min_std=args.min_std), relevance=relevance)
+        print(f"  over all {len(all_scores)} scored, label defects included (for comparison only):")
+        print("  " + ", ".join(f"{c}={full[c]:.1%}" for c in sorted(full)))
 
-    cold = dead_scenario_ids(scores, include_solved=False)
-    print(f"\n{len(cold)} cold-start scenarios ({len(cold) / total:.1%}) produce no gradient at any")
-    print("temperature or group size. Shaping is the first thing to try on them; what survives")
-    print("that needs prompting or an SFT warm-start, not more sampling.")
+    cold = dead_scenario_ids(scores, include_solved=False, min_std=args.min_std)
+    print(f"\n{len(cold)} unsolved scenarios ({len(cold) / total:.1%}) have group std < {args.min_std}:")
+    print("no usable gradient at this temperature and group size, whatever value they sit at.")
+    print("Shaping is the first thing to try on them; what survives that needs prompting or an")
+    print("SFT warm-start, not more sampling.")
 
     if args.emit_dead_ids:
-        ids = dead_scenario_ids(scores, include_solved=args.include_solved)
+        ids = dead_scenario_ids(scores, include_solved=args.include_solved, min_std=args.min_std)
         with open(args.emit_dead_ids, "w") as fh:
             fh.write("\n".join(ids) + "\n")
         print(f"\nWrote {len(ids)} ids to {args.emit_dead_ids} (pass the file to grpo_train")

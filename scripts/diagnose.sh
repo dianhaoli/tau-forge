@@ -18,7 +18,9 @@
 # Every section reports zero-variance AND effective variance (group std >=
 # MIN_STD, default 0.05), the latter split into clean vs label-defective
 # scenarios (data/synthetic/label_audit.json 'blocking' list). Yield and the
-# recommended mix use the effective definition.
+# recommended mix use the effective definition, and are computed with the
+# label defects dropped, as grpo_train drops them by default; the last
+# scorecard section keeps them, for comparison.
 #
 # Then, to hand the report to someone (or to a Claude session) without pasting
 # a screenful into a terminal:
@@ -101,6 +103,11 @@ PY
     echo "### scorecard: reward() alone, no shaping ###"
     echo
     uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD" --raw
+
+    echo
+    echo "### scorecard: label defects kept (secondary view; not what grpo_train trains on) ###"
+    echo
+    uv run python scripts/data_scorecard.py "$AUDIT" --min-std "$MIN_STD" --keep-label-defects
 
     echo
     echo "### buckets: flat vs varying, before and after shaping ###"

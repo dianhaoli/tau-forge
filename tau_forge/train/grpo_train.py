@@ -33,9 +33,14 @@ or a mixture that accidentally deleted a category.
 Scenarios the label audit (`data/synthetic/label_audit.json`) marks as
 contradicting the retail policy -- 222 of 541 -- are dropped by default, before
 the mixture; the dry run prints a per-category table of what was dropped and
-what remains. Dropping them is uneven (happy_path keeps 40 of 110), so a mixture
-capped by its scarcest category shrinks accordingly: `--category-mix real`
-trains on ~112 scenarios instead of ~300. `--keep-label-defects` opts out.
+what remains. Dropping them is uneven (happy_path keeps 40 of 110), which
+changes the corpus's shape more than its size suggests: with no mixture, the
+no-call gold share goes from 33.6% to 56.1% (no-call or transfer: 53.4% to
+67.4%), and three cells (54 scenarios) disappear entirely, so only 27 of 30
+cells remain for the val split to cover. The table ends with both lines. A
+mixture capped by its scarcest category shrinks accordingly: `--category-mix
+real` trains on ~112 scenarios instead of ~300. `--keep-label-defects` opts
+out.
 """
 
 from __future__ import annotations
@@ -44,6 +49,8 @@ import argparse
 import functools
 import json
 from pathlib import Path
+
+from tau_forge.train.scorecard import EFFECTIVE_MIN_STD
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MODEL = "Qwen/Qwen3-4B-Instruct-2507"
@@ -96,10 +103,11 @@ def add_exclusion_args(p: argparse.ArgumentParser) -> None:
         "--exclude-zero-variance-from",
         default=None,
         help="Path to a zero_shot_baseline output JSON, or a plain id list (one per line, as "
-        "data_scorecard --emit-dead-ids writes). Scenarios whose reward was constant across "
-        "every sample there are dropped (they produce no gradient). Cold starts (constant at 0.0) "
-        "only, unless --exclude-solved is also passed. Judged on the shaped scores when the audit "
-        "has them -- what GRPO sees with --shaping -- unless --exclude-zero-variance-raw.",
+        "data_scorecard --emit-dead-ids writes). Scenarios whose group had no effective variance "
+        "there (std < --min-std) are dropped, whatever value they sat at -- flat 0.0, a flat "
+        "shaped 0.13, a flat 0.3 plateau -- except solved ones (mean >= 1 - --min-std), unless "
+        "--exclude-solved. Judged on the shaped scores when the audit has them -- what GRPO sees "
+        "with --shaping -- unless --exclude-zero-variance-raw.",
     )
     p.add_argument(
         "--exclude-zero-variance-raw",
@@ -111,8 +119,19 @@ def add_exclusion_args(p: argparse.ArgumentParser) -> None:
     p.add_argument(
         "--exclude-solved",
         action="store_true",
-        help="Also drop scenarios that were constant at 1.0. Off by default: those are cheap "
+        help="Also drop solved scenarios (no effective variance, mean within --min-std of 1.0). "
+        "Off by default: those are cheap "
         "regression insurance, and a scenario the base model solves can stop being solved mid-run.",
+    )
+    p.add_argument(
+        "--min-std",
+        type=float,
+        default=EFFECTIVE_MIN_STD,
+        help="Group reward std at or above which a scenario counts as *effectively* varying: "
+        "--exclude-zero-variance-from drops groups below it, and zero_shot_baseline reports the "
+        "effective-variance fraction with it. Default 0.05: with n=16, one sample at reward()'s "
+        "0.2 tier clears it and one shaping-only outlier (<=0.15) does not. See "
+        "tau_forge/train/scorecard.py, 'Effective variance'.",
     )
 
 
@@ -128,6 +147,7 @@ def resolve_run_exclusions(args: argparse.Namespace, examples, tag: str = "grpo_
         zero_variance_from=args.exclude_zero_variance_from,
         include_solved=args.exclude_solved,
         prefer_shaped=not args.exclude_zero_variance_raw,
+        min_std=args.min_std,
     )
     if args.label_audit:
         verb = "keeping" if args.keep_label_defects else "dropping"
@@ -140,8 +160,8 @@ def resolve_run_exclusions(args: argparse.Namespace, examples, tag: str = "grpo_
     if args.exclude_zero_variance_from:
         print(
             f"[{tag}] zero-variance scenarios measured in {args.exclude_zero_variance_from} on "
-            f"{exclusions.zero_variance_basis}: {len(exclusions.zero_variance)} "
-            f"(include_solved={args.exclude_solved})."
+            f"{exclusions.zero_variance_basis}, std < {args.min_std}: "
+            f"{len(exclusions.zero_variance)} (include_solved={args.exclude_solved})."
         )
         if exclusions.zero_variance_basis == "reward() + shaping" and not getattr(args, "shaping", True):
             print(
@@ -282,8 +302,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Rebalance the training corpus, e.g. 'happy_path=0.36,requires_earlier_context=0.36,"
         "policy_violation=0.15,ambiguous=0.08,out_of_scope=0.05'. Pass 'real' for "
         "curriculum.REAL_TASK_ALIGNED_MIX, 'uniform' for the corpus as generated. Default (None) "
-        "leaves the corpus untouched -- which means 53%% of the training signal rewards NOT acting; "
-        "see tau_forge/train/curriculum.py for why that is a poor match to the benchmark.",
+        "leaves the post-exclusion corpus unmixed -- which, once the label defects are dropped "
+        "(the default), is 56%% no-call golds and 67%% no-call-or-transfer: most of the training "
+        "signal rewards NOT acting (53%% with --keep-label-defects). See "
+        "tau_forge/train/curriculum.py for why that is a poor match to the benchmark.",
     )
     add_exclusion_args(p)
     p.add_argument(
@@ -291,9 +313,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=float,
         default=0.1,
         help="Fraction of the (post-mixture) synthetic corpus held out for checkpoint selection, "
-        "stratified across all 30 category__theme cells. Uses synthetic data rather than any of "
-        "the 114 real tasks, per the README's held-out data policy: selecting a checkpoint by a "
-        "real task's score steers weights by it just as surely as training on it does.",
+        "stratified across every category__theme cell left after exclusions (27 of 30 once the "
+        "label defects are dropped). Uses synthetic data rather than any of the 114 real tasks, "
+        "per the README's held-out data policy: selecting a checkpoint by a real task's score "
+        "steers weights by it just as surely as training on it does.",
     )
     p.add_argument("--curriculum-seed", type=int, default=0)
     p.add_argument(

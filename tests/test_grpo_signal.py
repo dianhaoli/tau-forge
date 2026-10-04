@@ -184,7 +184,9 @@ def test_load_zero_variance_ids_separates_cold_start_from_solved(tmp_path):
             }
         )
     )
-    assert curriculum.load_zero_variance_ids(path) == {"cold"}
+    # A flat 0.3 plateau carries no more gradient than a flat 0.0, so it is
+    # dropped by default too; only the solved group is kept as insurance.
+    assert curriculum.load_zero_variance_ids(path) == {"cold", "stuck"}
     assert curriculum.load_zero_variance_ids(path, include_solved=True) == {"cold", "solved", "stuck"}
 
 

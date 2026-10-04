@@ -89,17 +89,92 @@ def test_installed_trl_agrees_zero_disables_top_k():
 
 
 def test_zero_variance_exclusion_prefers_shaped_scores(tmp_path):
-    """Both groups are flat 0.0 under raw reward(); shaping revives one. The
-    old behavior dropped both -- i.e. exactly the group shaping rescued."""
+    """Both groups are flat 0.0 under raw reward(); shaping revives one (std
+    0.051, past the effective threshold). The old behavior dropped both --
+    i.e. exactly the group shaping rescued."""
     path = _write_audit(
         tmp_path / "a.json",
         raw={"revived": [0.0] * 16, "dead": [0.0] * 16},
-        shaped={"revived": [0.0] * 14 + [0.1, 0.15], "dead": [0.0] * 16},
+        shaped={"revived": [0.0] * 14 + [0.15, 0.15], "dead": [0.0] * 16},
     )
     assert curriculum.load_zero_variance_ids(path) == {"dead"}
     assert curriculum.load_zero_variance_ids(path, prefer_shaped=False) == {"revived", "dead"}
     _, basis = curriculum.zero_variance_ids_with_basis(path)
     assert "shaping" in basis
+
+
+def test_shaped_exclusion_drops_a_group_shaping_lifted_but_left_flat(tmp_path):
+    """Reviewer repro: a raw cold start whose sixteen samples all make the same
+    right-record lookup sits flat at 0.13 under shaping -- std 0, no gradient,
+    classify() says stuck_partial. 'Flat at 0.0' kept it; the effective-
+    variance rule drops it, and drops a one-outlier micro-variance group (std
+    0.044) for the same reason."""
+    path = _write_audit(
+        tmp_path / "a.json",
+        raw={k: [0.0] * 16 for k in ("flat_lookup", "dead", "micro", "revived")},
+        shaped={
+            "flat_lookup": [0.13] * 16,
+            "dead": [0.0] * 16,
+            "micro": [0.0] * 14 + [0.1, 0.15],
+            "revived": [0.0] * 14 + [0.15, 0.15],
+        },
+    )
+    assert scorecard.classify([0.13] * 16) == "stuck_partial"
+    assert curriculum.load_zero_variance_ids(path) == {"flat_lookup", "dead", "micro"}
+    # The threshold is the effective-variance one, and configurable.
+    assert curriculum.load_zero_variance_ids(path, min_std=0.04) == {"flat_lookup", "dead"}
+
+
+def test_solved_groups_are_kept_unless_exclude_solved(tmp_path):
+    """Flat 1.0 (and a flat near-pass, within min_std of 1.0) is regression
+    insurance; a flat plateau below that is just dead."""
+    path = _write_audit(
+        tmp_path / "a.json",
+        raw={
+            "solved": [1.0] * 16,
+            "near_pass": [0.97] * 16,
+            "one_slip": [1.0] * 15 + [0.85],  # std 0.0375
+            "plateau": [0.3] * 16,
+            "live": [0.0] * 8 + [1.0] * 8,
+        },
+    )
+    assert curriculum.load_zero_variance_ids(path) == {"plateau"}
+    assert curriculum.load_zero_variance_ids(path, include_solved=True) == {
+        "solved",
+        "near_pass",
+        "one_slip",
+        "plateau",
+    }
+
+
+def test_emitted_dead_ids_match_what_the_audit_json_excludes(tmp_path):
+    """data_scorecard --emit-dead-ids and --exclude-zero-variance-from on the
+    audit JSON itself must drop the same scenarios; dead_scenario_ids used to
+    list cold starts only and missed the flat 0.13 group."""
+    shaped = {
+        "flat_lookup": [0.13] * 16,
+        "dead": [0.0] * 16,
+        "solved": [1.0] * 16,
+        "live": [0.0] * 8 + [1.0] * 8,
+    }
+    path = _write_audit(tmp_path / "a.json", raw={k: [0.0] * 16 for k in shaped}, shaped=shaped)
+    for include_solved in (False, True):
+        assert set(scorecard.dead_scenario_ids(shaped, include_solved=include_solved)) == (
+            curriculum.load_zero_variance_ids(path, include_solved=include_solved)
+        )
+
+
+def test_trainer_min_std_flag_reaches_the_exclusion(tmp_path, corpus):
+    first = corpus[0].id
+    raw = {e.id: [0.0, 1.0] for e in corpus}
+    raw[first] = [0.0] * 15 + [0.2]  # std exactly 0.05
+    audit = _write_audit(tmp_path / "a.json", raw)
+    flags = ["--keep-label-defects", "--val-fraction", "0", "--exclude-zero-variance-from", str(audit)]
+
+    train, _ = build_examples_for_run(parse_args(flags))
+    assert first in {e.id for e in train}
+    train, _ = build_examples_for_run(parse_args(flags + ["--min-std", "0.1"]))
+    assert first not in {e.id for e in train}
 
 
 def test_zero_variance_exclusion_falls_back_to_raw_without_shaped_scores(tmp_path):
@@ -285,6 +360,26 @@ def test_trainer_drops_label_defects_by_default(corpus, capsys):
     total_line = next(line for line in out.splitlines() if "TOTAL" in line)
     assert total_line.split()[-4:] == ["541", "222", "0", "319"]
     assert "confirmation_missing=" in out
+    # The shape change, not just the size: the default corpus becomes mostly
+    # no-call, and three cells vanish.
+    assert "gold = no tool call: 182/541 (33.6%) -> 179/319 (56.1%)" in out
+    assert "no call or transfer: 53.4% -> 67.4%" in out
+    assert "cells emptied entirely: 3 of 30 (54 scenarios)" in out
+
+
+def test_exclusion_shift_reports_no_call_share_and_emptied_cells(corpus):
+    ex = curriculum.Exclusions(label_defects=curriculum.load_label_defect_ids())
+    shift = curriculum.exclusion_shift(corpus, ex)
+    assert shift["before"]["n"] == 541 and shift["after"]["n"] == 319
+    assert round(shift["before"]["no_call_fraction"], 3) == 0.336
+    assert round(shift["after"]["no_call_fraction"], 3) == 0.561
+    assert shift["after"]["n_cells"] == 27
+    assert shift["emptied_cells"] == {
+        "out_of_scope__order_state_confusion": 18,
+        "requires_earlier_context__apparel_footwear_exchanges": 18,
+        "requires_earlier_context__damaged_or_defective_item_narratives": 18,
+    }
+    assert curriculum.exclusion_shift(corpus, curriculum.Exclusions())["emptied_cells"] == {}
 
 
 def test_trainer_keeps_label_defects_on_request(corpus):
@@ -347,6 +442,7 @@ def test_baseline_parser_shares_the_trainers_exclusion_flags():
         "exclude_zero_variance_from",
         "exclude_zero_variance_raw",
         "exclude_solved",
+        "min_std",
     ):
         assert trainer[flag] == baseline[flag], flag
 
@@ -357,3 +453,61 @@ def test_baseline_parser_can_format_its_help():
     with pytest.raises(SystemExit) as exit_info:
         baseline_args(["--help"])
     assert exit_info.value.code == 0
+
+
+# --------------------------------------------------------------------------
+# data_scorecard: the recommended mix is over what grpo_train trains on
+# --------------------------------------------------------------------------
+
+
+def _run_scorecard(monkeypatch, capsys, argv):
+    data_scorecard = _load_script("data_scorecard")
+    monkeypatch.setattr("sys.argv", ["data_scorecard.py", *argv])
+    data_scorecard.main()
+    return capsys.readouterr().out
+
+
+def test_scorecard_mix_drops_label_defects_like_the_trainer(tmp_path, monkeypatch, capsys):
+    """Reviewer repro: defects flat at 0, clean scenarios 8/8 splits. Over
+    every id the recommendation was happy_path=0.300 / policy_violation=0.237;
+    over the clean ids grpo_train actually trains on it is 0.360 / 0.150."""
+    blocking = curriculum.load_blocking_labels()
+    scores = {sid: ([0.0] * 16 if b else [0.0] * 8 + [1.0] * 8) for sid, b in blocking.items()}
+    clean = {sid: v for sid, v in scores.items() if not blocking[sid]}
+    audit = _write_audit(tmp_path / "a.json", scores)
+
+    def emitted(extra):
+        line = _run_scorecard(monkeypatch, capsys, [str(audit), "--emit-mix", *extra]).strip()
+        return {k: float(v) for k, v in (part.split("=") for part in line.split(","))}
+
+    expected_clean = scorecard.recommend_mix(scorecard.score_cells(clean))
+    expected_all = scorecard.recommend_mix(scorecard.score_cells(scores))
+    assert emitted([]) == expected_clean
+    assert emitted([]) != expected_all
+    assert emitted(["--keep-label-defects"]) == expected_all
+    assert emitted(["--label-audit", ""]) == expected_all
+    assert expected_clean["policy_violation"] == 0.15 and round(expected_all["policy_violation"], 3) == 0.237
+
+
+def test_scorecard_report_says_what_it_left_out_and_keeps_the_full_view(tmp_path, monkeypatch, capsys):
+    blocking = curriculum.load_blocking_labels()
+    scores = {sid: ([0.0] * 16 if b else [0.0] * 8 + [1.0] * 8) for sid, b in blocking.items()}
+    audit = _write_audit(tmp_path / "a.json", scores)
+    out = _run_scorecard(monkeypatch, capsys, [str(audit)])
+    assert "Scored 319 scenarios" in out
+    assert "222 label-audit defects" in out
+    assert "label defects included (for comparison only)" in out
+    # The clean vs defect variance breakdown still covers the whole audit.
+    assert "label_defect n= 222" in out
+    out = _run_scorecard(monkeypatch, capsys, [str(audit), "--keep-label-defects"])
+    assert "Scored 541 scenarios" in out and "for comparison only" not in out
+
+
+def test_scorecard_keep_flag_is_the_old_simulate_flag_too():
+    data_scorecard = _load_script("data_scorecard")
+    import argparse
+
+    args = argparse.Namespace(label_audit=str(curriculum.DEFAULT_LABEL_AUDIT), keep_label_defects=False)
+    assert len(data_scorecard.trainer_label_defects(args)) == 222
+    args.keep_label_defects = True
+    assert data_scorecard.trainer_label_defects(args) == set()

@@ -44,7 +44,7 @@ from pathlib import Path
 from typing import Optional
 
 from tau_forge.train.grpo_train import TOP_K_DISABLED, add_exclusion_args, normalize_top_k
-from tau_forge.train.scorecard import EFFECTIVE_MIN_STD, variance_by_label_status, variance_summary
+from tau_forge.train.scorecard import variance_by_label_status, variance_summary
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = REPO_ROOT / "data" / "trained" / "zero_shot_baseline.json"
@@ -66,7 +66,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "grpo_train carves off, so the second measurement is on scenarios the run never trained "
         "on. Pass the SAME --val-fraction, --category-mix, --curriculum-seed and exclusion flags "
         "(--label-audit/--keep-label-defects/--exclude-zero-variance-from/--exclude-solved/"
-        "--exclude-zero-variance-raw) here as you pass to grpo_train, or the two commands compute "
+        "--exclude-zero-variance-raw/--min-std) here as you pass to grpo_train, or the two commands compute "
         "different splits and the comparison is void. With --split all nothing is excluded, but "
         "each scenario's label-audit blocking labels are recorded so the variance numbers can be "
         "read separately for clean and label-defective scenarios.",
@@ -104,15 +104,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="0 (default) = disabled; any value <= 0 is treated as 0 on both backends, the same "
         "normalization grpo_train applies (-1 used to reach HF's TopKLogitsWarper, which raises). "
         "See --top-p.",
-    )
-    p.add_argument(
-        "--min-std",
-        type=float,
-        default=EFFECTIVE_MIN_STD,
-        help="Group reward std at or above which a scenario counts as *effectively* varying, "
-        "reported next to the zero-variance fraction. Default 0.05: with n=16, one sample at "
-        "reward()'s 0.2 tier clears it and one shaping-only outlier (<=0.15) does not. See "
-        "tau_forge/train/scorecard.py, 'Effective variance'.",
     )
     p.add_argument(
         "--with-shaping",

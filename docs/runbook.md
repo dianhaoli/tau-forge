@@ -166,7 +166,11 @@ machine-readable side files next to it: `recommended_mix.txt`, ready to paste
 into `--category-mix`, and `dead_scenario_ids.txt`, which
 `--exclude-zero-variance-from` takes as-is (it accepts a plain id list as well
 as an audit JSON). Yield and the recommended mix use effective variance. The
-older "varied at all" yield is printed next to it. Set `MIN_STD=0.1 bash
+older "varied at all" yield is printed next to it. The scorecard drops the
+label-audit defects before it scores cells or recommends a mix, as `grpo_train`
+does, so the mix is computed over the scenarios training will see. The
+full-audit mix prints under it for comparison. Pass `--keep-label-defects` to
+both scripts to score the whole audit. Set `MIN_STD=0.1 bash
 scripts/diagnose.sh ...` for a stricter threshold.
 
 Read it with `less data/reports/diagnosis.txt` (scrolls independently of tmux),
@@ -207,7 +211,7 @@ uv run python scripts/data_scorecard.py data/trained/audit_n16.json
 uv run python scripts/bucket_analysis.py data/trained/audit_n16.json
 ```
 
-The scorecard ranks all 30 cells by yield x headroom and prints a recommended
+The scorecard ranks every cell by yield x headroom and prints a recommended
 `--category-mix`. The bucket analysis prints the flat/varying split before and
 after shaping, plus how much of the corpus is structurally binary and therefore
 beyond any sampling fix.
@@ -308,12 +312,19 @@ fixes:
   `data/synthetic/label_audit.json`. It marks 222 of 541 scenarios whose gold
   contradicts policy.md, and the table shows what was dropped and what remains
   per category. `--keep-label-defects` opts out. The drops are uneven
-  (happy_path 110 to 40, requires_earlier_context 108 to 43). A mixture is
-  capped by its scarcest category, so `--category-mix real` shrinks the corpus
-  to about 112 scenarios. Check the `train split: n=` line before committing.
+  (happy_path 110 to 40, requires_earlier_context 108 to 43), so the default
+  corpus becomes **mostly no-call**: without a mixture, no-call golds go from
+  33.6% to 56.1% (no-call or transfer: 53.4% to 67.4%). Three cells (54
+  scenarios) disappear entirely, leaving 27 of 30. The table ends with both
+  lines. Use a mixture. A mixture is capped by its scarcest category, so
+  `--category-mix real` shrinks the corpus to about 112 scenarios. Check the
+  `train split: n=` line before committing.
 - **Zero-variance exclusion judges on shaped scores** when the audit has them,
   because GRPO sees those with `--shaping`. Pass `--exclude-zero-variance-raw`
-  together with `--no-shaping`.
+  together with `--no-shaping`. It drops every unsolved group with std below
+  `--min-std` (0.05), whatever value it sits at. Shaping can lift a cold start
+  to a flat 0.13, which carries no gradient either. Solved groups (mean within
+  `--min-std` of 1.0) stay unless `--exclude-solved`.
 - **`sampling: ... top_k=0 (disabled)`.** Compare this against the audit
   JSON's `temperature`, `top_p` and `top_k`. `top_k` is never `None`, which used
   to mean Qwen's shipped top_k=20 on the HF path and a crash on vLLM.

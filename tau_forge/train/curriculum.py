@@ -46,7 +46,10 @@ solves on its own.
    scores when the audit has them, because those are what GRPO sees with
    `--shaping` on (its default). Reading raw `reward()` instead dropped exactly
    the groups shaping exists to revive: shaping only adds credit to wrong-tool
-   completions, so every revived group is flat 0.0 under raw scores.
+   completions, so every revived group is flat 0.0 under raw scores. What
+   counts as dead is "no effective variance and not solved"
+   (`scorecard.lacks_gradient`), not "flat at 0.0": shaping can lift a cold
+   start to a flat 0.13, which is just as gradient-free.
 
 3. Label defects. `data/synthetic/label_audit.json` marks 222 of the 541
    scenarios whose gold label contradicts the retail policy (a write the user
@@ -54,13 +57,19 @@ solves on its own.
    says deny, ...). On those the policy-correct action scores 0, so training
    on them pushes *away* from the policy, and since every policy-following
    sample scores the same 0 they are also flat groups. `load_label_defect_ids`
-   reads that file; grpo_train drops them by default.
+   reads that file; grpo_train drops them by default. They are not spread
+   evenly: dropping them takes the no-call gold share from 33.6% to 56.1%
+   (no-call or transfer: 53.4% to 67.4%), which makes the mixture in point 1
+   more necessary, not less, and empties three cells outright
+   (`exclusion_shift`).
 
 4. Validation. Checkpoint selection needs a held-out score, and the held-out
    data policy (README) puts all 114 real tasks off-limits to anything steering
    weight updates -- which selecting a checkpoint by them would be. So the
    validation set is carved out of the synthetic corpus instead, stratified by
-   `category__theme` cell so all 30 cells are represented on both sides.
+   `category__theme` cell so every cell with two or more scenarios is
+   represented on both sides -- 30 cells as generated, 27 once the label
+   defects are dropped.
 
 Torch/trl-free.
 """
@@ -76,6 +85,7 @@ from pathlib import Path
 from typing import Any, Iterable, Optional
 
 from tau_forge.train.dataset import TrainingExample
+from tau_forge.train.scorecard import EFFECTIVE_MIN_STD, lacks_gradient
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_LABEL_AUDIT = REPO_ROOT / "data" / "synthetic" / "label_audit.json"
@@ -116,35 +126,43 @@ def _cell(example: TrainingExample) -> str:
 def load_zero_variance_ids(
     baseline_path: str | Path,
     include_solved: bool = False,
-    tolerance: float = 1e-3,
+    min_std: float = EFFECTIVE_MIN_STD,
     prefer_shaped: bool = True,
 ) -> set[str]:
-    """Scenario ids that scored a constant reward across every sample of a
-    `zero_shot_baseline` run.
+    """Scenario ids whose group carried no usable gradient in a
+    `zero_shot_baseline` run: group std below `min_std` (the effective-variance
+    threshold, `scorecard.EFFECTIVE_MIN_STD`), whatever value the group sits at.
 
-    `include_solved=False` (the default) returns only the constant-at-0.0 cold
-    starts -- the ones that stay dead. Constant-at-1.0 scenarios are kept in
-    training by default because they are cheap insurance against regression on
-    behavior the policy already has, and because a scenario that is solved for
-    the *base* model can stop being solved a few hundred steps in.
+    `include_solved=False` (the default) keeps groups that are flat at (or
+    within `min_std` of) 1.0 -- cheap insurance against regression on
+    behavior the policy already has, and a scenario that is solved for the
+    *base* model can stop being solved a few hundred steps in. Everything else
+    without effective variance is dropped: flat at 0.0, flat at a partial
+    plateau, flat at a shaped value, or a one-outlier micro-variance group.
 
-    `prefer_shaped=True` (the default) judges flatness on
-    `per_scenario_shaped_scores` when the audit was run `--with-shaping`,
-    matching `scorecard.load_scores` and `data_scorecard --emit-dead-ids`. Pass
-    False to force raw `reward()` -- right for a `--no-shaping` run, whose
-    groups are exactly the raw ones.
+    That is wider than the original rule ("flat at exactly 0.0"), on purpose.
+    Once flatness is judged on shaped scores, a raw cold start can be lifted
+    to a *flat nonzero* value -- every sample makes the same right-record
+    lookup and earns the same 0.13 -- which is std 0 and no gradient, but
+    "flat at 0.0" kept it. On a 541-id synthetic audit with a fifth of the
+    groups in that state, the narrower rule kept 109 such groups in training.
+
+    `prefer_shaped=True` (the default) judges on `per_scenario_shaped_scores`
+    when the audit was run `--with-shaping`, matching `scorecard.load_scores`
+    and `data_scorecard --emit-dead-ids`. Pass False to force raw `reward()`
+    -- right for a `--no-shaping` run, whose groups are exactly the raw ones.
 
     A plain id list (one per line, `#` comments allowed -- what
     `data_scorecard --emit-dead-ids` writes) is also accepted and returned
     as-is; the dead/solved split was already decided when it was emitted, so
-    `include_solved` and `prefer_shaped` do not apply to it."""
-    return zero_variance_ids_with_basis(baseline_path, include_solved, tolerance, prefer_shaped)[0]
+    `include_solved`, `min_std` and `prefer_shaped` do not apply to it."""
+    return zero_variance_ids_with_basis(baseline_path, include_solved, min_std, prefer_shaped)[0]
 
 
 def zero_variance_ids_with_basis(
     baseline_path: str | Path,
     include_solved: bool = False,
-    tolerance: float = 1e-3,
+    min_std: float = EFFECTIVE_MIN_STD,
     prefer_shaped: bool = True,
 ) -> tuple[set[str], str]:
     """`load_zero_variance_ids`, plus which scores it judged on -- so the
@@ -160,14 +178,11 @@ def zero_variance_ids_with_basis(
         per_scenario, basis = data["per_scenario_shaped_scores"], "reward() + shaping"
     else:
         per_scenario, basis = data["per_scenario_scores"], "reward() alone"
-    dead: set[str] = set()
-    for scenario_id, scores in per_scenario.items():
-        if not scores:
-            continue
-        if max(scores) - min(scores) > tolerance:
-            continue
-        if include_solved or abs(scores[0]) <= tolerance:
-            dead.add(scenario_id)
+    dead = {
+        scenario_id
+        for scenario_id, scores in per_scenario.items()
+        if lacks_gradient(scores, min_std, include_solved)
+    }
     return dead, basis
 
 
@@ -201,6 +216,7 @@ class Exclusions:
     label_defects: set[str] = field(default_factory=set)
     zero_variance: set[str] = field(default_factory=set)
     zero_variance_basis: Optional[str] = None
+    zero_variance_min_std: Optional[float] = None
     blocking: dict[str, list[str]] = field(default_factory=dict)
     report: list[str] = field(default_factory=list)
 
@@ -219,6 +235,7 @@ class Exclusions:
             "n_label_defects_excluded": len(self.label_defects),
             "n_zero_variance_excluded": len(self.zero_variance - self.label_defects),
             "zero_variance_basis": self.zero_variance_basis,
+            "zero_variance_min_std": self.zero_variance_min_std,
             "n_excluded": len(self.ids),
             "excluded_ids_sha256_12": self.fingerprint(),
         }
@@ -231,6 +248,7 @@ def resolve_exclusions(
     zero_variance_from: Optional[str | Path] = None,
     include_solved: bool = False,
     prefer_shaped: bool = True,
+    min_std: float = EFFECTIVE_MIN_STD,
 ) -> Exclusions:
     """Label defects (unless `keep_label_defects`) plus measured zero-variance
     scenarios, restricted to ids actually in `examples`, with a per-category
@@ -252,18 +270,47 @@ def resolve_exclusions(
 
     if zero_variance_from:
         ids, out.zero_variance_basis = zero_variance_ids_with_basis(
-            zero_variance_from, include_solved=include_solved, prefer_shaped=prefer_shaped
+            zero_variance_from, include_solved=include_solved, min_std=min_std, prefer_shaped=prefer_shaped
         )
+        out.zero_variance_min_std = min_std
         out.zero_variance = ids & corpus_ids
 
     out.report.extend(exclusion_table(examples, out))
     return out
 
 
+def exclusion_shift(examples: list[TrainingExample], ex: Exclusions) -> dict[str, Any]:
+    """What the exclusions do to the corpus's *shape*, not just its size.
+
+    The per-category counts undersell it. Measured on the committed corpus,
+    dropping the 222 label defects alone takes the no-call gold share from
+    33.6% (182/541) to 56.1% (179/319), and no-call-or-transfer from 53.4% to
+    67.4%: the defects sit overwhelmingly on the acting golds (happy_path
+    keeps 40 of 110), while ambiguous and refusal golds survive almost whole.
+    It also empties three of the 30 cells outright (54 scenarios), which the
+    stratified val split then cannot cover."""
+    remaining = [e for e in examples if e.id not in ex.ids]
+    before, after = summarize(examples), summarize(remaining)
+    cells_before = Counter(_cell(e) for e in examples)
+    cells_after = Counter(_cell(e) for e in remaining)
+    return {
+        "before": before,
+        "after": after,
+        "emptied_cells": {c: n for c, n in sorted(cells_before.items()) if not cells_after[c]},
+    }
+
+
+def _share(summary: dict[str, Any], key: str) -> str:
+    n = summary["n"]
+    return f"{round(summary[key] * n)}/{n} ({summary[key]:.1%})"
+
+
 def exclusion_table(examples: list[TrainingExample], ex: Exclusions) -> list[str]:
-    """Per-category counts of corpus, dropped (by reason) and remaining, then
-    the blocking-label kinds among the label-defect drops. A scenario both
-    defective and zero-variance is counted once, as a label defect."""
+    """Per-category counts of corpus, dropped (by reason) and remaining, the
+    blocking-label kinds among the label-defect drops, then how the
+    exclusions shift the no-call share and which cells they empty (see
+    `exclusion_shift`). A scenario both defective and zero-variance is counted
+    once, as a label defect."""
     if not ex.ids:
         return []
     total = Counter(e.category for e in examples)
@@ -288,6 +335,18 @@ def exclusion_table(examples: list[TrainingExample], ex: Exclusions) -> list[str
         lines.append(
             "label-defect drops by blocking label (a scenario can carry several): "
             + ", ".join(f"{k}={v}" for k, v in kinds.most_common())
+        )
+    shift = exclusion_shift(examples, ex)
+    before, after = shift["before"], shift["after"]
+    lines.append(
+        f"gold = no tool call: {_share(before, 'no_call_fraction')} -> {_share(after, 'no_call_fraction')}; "
+        f"no call or transfer: {before['non_acting_fraction']:.1%} -> {after['non_acting_fraction']:.1%}"
+    )
+    if shift["emptied_cells"]:
+        emptied = shift["emptied_cells"]
+        lines.append(
+            f"cells emptied entirely: {len(emptied)} of {before['n_cells']} ({sum(emptied.values())} "
+            "scenarios) -- " + ", ".join(f"{c} ({n})" for c, n in emptied.items())
         )
     return lines
 
