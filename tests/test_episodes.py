@@ -1,0 +1,545 @@
+"""Multi-step episode tasks: generation, scripted user, runner, reward, decontam
+hook and the audit loop.
+
+Never reads tasks.json: every generation here passes an explicit (empty or
+injected) `RealTaskExclusions`, and the decontam fingerprinting is exercised
+on stub tasks shaped like tau2's `Task`.
+"""
+
+from __future__ import annotations
+
+import importlib.util
+import json
+import subprocess
+import sys
+from collections import defaultdict
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Optional
+
+import pytest
+from tau2.domains.retail.data_model import RetailDB
+from tau2.domains.retail.utils import RETAIL_DB_PATH
+from tau2.utils import get_dict_hash
+
+from tau_forge.decontam.real_tasks import RealTaskExclusions, fingerprint_tasks, load_real_task_exclusions
+from tau_forge.envs.retail import RetailEnv
+from tau_forge.episodes.audit import ChatTemplatePolicy, Generation, run_audit, summarize
+from tau_forge.episodes.generate import KNOB_SPACE, generate_tasks, read_jsonl, user_lines, verify_task, write_jsonl
+from tau_forge.episodes.reference_agents import ReferenceAgent, call
+from tau_forge.episodes.reward import score_episode
+from tau_forge.episodes.runner import GREETING, Episode, EpisodeLog, EpisodeResult, WriteRecord, run_episode
+from tau_forge.episodes.task import ID_RE, STOP, TEMPLATES, base_db, base_db_hash
+from tau_forge.episodes.user import BE_SPECIFIC, YES, ScriptedUser
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+EMPTY = RealTaskExclusions(frozenset(), frozenset())
+N = 10
+
+# (template, behaviour) -> the reward every such episode must get. Mirrors the
+# design doc's table; "|corr" = a late-correction task, "|gc" = the user owns
+# a gift card.
+EXPECTED = {
+    ("exchange", "oracle"): 1.0,
+    ("exchange", "no_confirm"): 0.7,
+    ("exchange", "no_confirm|corr"): 0.2,  # wrote before the correction: wrong variant
+    ("exchange", "wrong_variant"): 0.2,
+    ("exchange", "halluc_pm"): 0.2,
+    ("exchange", "skip_auth"): 0.7,
+    ("exchange", "transfer"): 0.0,
+    ("cancel", "oracle"): 1.0,
+    ("cancel", "no_confirm"): 0.7,
+    ("cancel", "no_confirm|corr"): 0.0,  # cancelled the wrong order: shaping withdrawn
+    ("cancel", "skip_auth"): 0.7,
+    ("cancel", "transfer"): 0.0,
+    ("return_fallback", "oracle"): 1.0,
+    ("return_fallback", "no_confirm"): 0.7,
+    ("return_fallback", "comply"): 0.2,  # the tool refuses a non-original method
+    ("return_fallback", "giftcard_fallback|gc"): 0.2,
+    ("return_fallback", "giftcard_fallback"): 1.0,  # no gift card: lands on the original
+    ("return_fallback", "transfer"): 0.0,
+    ("modify_payment", "oracle"): 1.0,
+    ("modify_payment", "no_confirm"): 0.7,
+    ("modify_payment", "halluc_pm"): 0.2,
+    ("modify_payment", "skip_auth"): 0.7,
+    ("modify_payment", "transfer"): 0.0,
+    ("foreign_order_refusal", "oracle"): 1.0,
+    ("foreign_order_refusal", "comply"): 0.0,
+    ("foreign_order_refusal", "transfer"): 0.5,
+}
+
+
+def _behaviour(task, mode: str) -> str:
+    if mode == "no_confirm" and task.difficulty.get("late_correction"):
+        return "no_confirm|corr"
+    if mode == "giftcard_fallback" and task.difficulty.get("has_gift_card"):
+        return "giftcard_fallback|gc"
+    return mode
+
+
+def _modes(task) -> list[str]:
+    modes = sorted({m.split("|")[0] for (t, m) in EXPECTED if t == task.template})
+    # skip_auth looks the order up by the id the user gave; without one there is nothing to skip to.
+    return [m for m in modes if m != "skip_auth" or task.difficulty.get("give_order_id")]
+
+
+@pytest.fixture(scope="module")
+def pristine_hash():
+    return get_dict_hash(base_db().model_dump())
+
+
+@pytest.fixture(scope="module")
+def report(pristine_hash):
+    return generate_tasks(N, 0, exclusions=EMPTY, log=lambda _: None)
+
+
+@pytest.fixture(scope="module")
+def tasks(report):
+    # Force coverage of the knob branches the reward table depends on.
+    extra = generate_tasks(
+        2,
+        11,
+        exclusions=EMPTY,
+        knob_overrides={
+            "cancel": {"late_correction": True, "give_order_id": False},
+            "exchange": {"late_correction": True, "n_items": 2, "give_order_id": False},
+            "modify_payment": {"gift_card_short": True},
+        },
+        templates=("cancel", "exchange", "modify_payment"),
+        log=lambda _: None,
+    )
+    return report.tasks + extra.tasks
+
+
+@pytest.fixture(scope="module")
+def episodes(tasks):
+    """(task, behaviour, EpisodeResult, EpisodeReward) for every task x mode."""
+    out = []
+    for t in tasks:
+        for mode in _modes(t):
+            ep = run_episode(t, ReferenceAgent(t, mode))
+            out.append((t, _behaviour(t, mode), ep, score_episode(t, ep)))
+    return out
+
+
+# ------------------------------------------------------------------ generation
+
+
+def test_every_template_generates_n_verified_tasks(report):
+    by_template = defaultdict(list)
+    for t in report.tasks:
+        by_template[t.template].append(t)
+    assert set(by_template) == set(TEMPLATES)
+    for template, ts in by_template.items():
+        assert len(ts) == N, template
+        for t in ts:
+            v = verify_task(t)
+            assert v.ok, (t.id, v.problems)
+            assert v.gold_db_hash == t.gold_db_hash
+            assert set(KNOB_SPACE[template]) <= set(t.difficulty)
+    assert len({t.id for t in report.tasks}) == len(report.tasks)
+    assert len({t.dedupe_key for t in report.tasks}) == len(report.tasks)
+
+
+def test_generation_is_deterministic_by_seed():
+    a = generate_tasks(3, 5, exclusions=EMPTY, log=lambda _: None)
+    b = generate_tasks(3, 5, exclusions=EMPTY, log=lambda _: None)
+    c = generate_tasks(3, 6, exclusions=EMPTY, log=lambda _: None)
+    assert [t.to_dict() for t in a.tasks] == [t.to_dict() for t in b.tasks]
+    assert [t.to_dict() for t in a.tasks] != [t.to_dict() for t in c.tasks]
+
+
+def test_users_never_say_an_id_other_than_an_order_id(tasks):
+    for t in tasks:
+        for line in user_lines(t):
+            assert all(i.startswith("#W") for i in ID_RE.findall(line)), (t.id, line)
+        assert t.user_id not in t.opening
+
+
+def test_writes_and_refusals_change_the_db_as_expected(tasks):
+    base = base_db_hash()
+    for t in tasks:
+        assert (t.gold_db_hash == base) == t.expect_no_write, t.id
+
+
+def test_knob_overrides_shape_the_task(tasks):
+    hard = [t for t in tasks if t.template == "exchange" and t.difficulty["n_items"] == 2
+            and t.difficulty["late_correction"] and not t.difficulty["give_order_id"]]
+    assert hard
+    for t in hard:
+        assert "#W" not in t.opening  # the order must be found by scanning
+        assert t.profile.get("correction")
+        write = t.gold_actions[-1]
+        assert len(write["arguments"]["item_ids"]) == 2
+        # the scan reads orders from the profile until it reaches the target
+        assert sum(a["name"] == "get_order_details" for a in t.gold_actions) >= 1
+
+
+def test_verify_rejects_an_unreachable_id(tasks):
+    t = next(t for t in tasks if t.template == "exchange")
+    broken = type(t).from_dict(t.to_dict())
+    broken.gold_actions = [a for a in broken.gold_actions if a["name"] != "get_product_details"]
+    v = verify_task(broken)
+    assert not v.ok and any("unrevealed" in p for p in v.problems)
+
+
+def test_verify_rejects_a_leaked_id_in_a_user_line(tasks):
+    t = next(t for t in tasks if t.template == "cancel")
+    broken = type(t).from_dict(t.to_dict())
+    broken.profile = {**broken.profile, "identity": [f"My user id is {t.user_id}."]}
+    v = verify_task(broken)
+    assert not v.ok and any("leaks" in p for p in v.problems)
+
+
+def test_tasks_round_trip_through_jsonl(tmp_path, report):
+    path = tmp_path / "eps.jsonl"
+    write_jsonl(report.tasks, path)
+    assert [t.to_dict() for t in read_jsonl(path)] == [t.to_dict() for t in report.tasks]
+
+
+# -------------------------------------------------------------------- reward
+
+
+def test_oracle_scores_one_on_every_task(episodes, tasks):
+    oracle = [(t, ep, r) for t, b, ep, r in episodes if b == "oracle"]
+    assert len(oracle) == len(tasks)
+    for t, ep, r in oracle:
+        assert r.reward == 1.0, (t.id, r.reasons, ep.end_reason)
+
+
+def test_near_miss_agents_land_on_the_design_reward_levels(episodes):
+    seen = set()
+    for t, behaviour, ep, r in episodes:
+        assert r.reward == pytest.approx(EXPECTED[(t.template, behaviour)]), (t.id, behaviour, r.reasons)
+        seen.add((t.template, behaviour))
+    assert seen == set(EXPECTED), set(EXPECTED) - seen
+    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.2, 0.5, 0.7, 1.0}
+
+
+def test_gates_stack_on_success_and_never_go_negative(tasks):
+    t = next(t for t in tasks if t.template == "cancel")
+    write = t.gold_actions[-1]
+    log = EpisodeLog(writes=[WriteRecord(write["name"], write["arguments"], True, confirmed=False, authed_user=None)])
+    r = score_episode(t, EpisodeResult(t.id, t.gold_db_hash, "user_stop", log, []))
+    assert r.success and r.reward == pytest.approx(0.4)
+    assert set(r.gates) == {"no_confirmation", "no_authentication"}
+
+
+def test_shaping_is_capped_and_withdrawn_after_touching_another_record(tasks):
+    t = next(t for t in tasks if t.template == "exchange")
+    gold = t.gold_actions[-1]
+    attempt = WriteRecord(gold["name"], gold["arguments"], False, True, t.user_id)
+    log = EpisodeLog(authed_user=t.user_id, read_orders=[t.target_order], writes=[attempt, attempt])
+    r = score_episode(t, EpisodeResult(t.id, "not-the-gold-hash", "user_stop", log, []))
+    assert not r.success and r.reward == pytest.approx(0.2)
+    stray = WriteRecord("cancel_pending_order", {"order_id": "#W0000000", "reason": "no longer needed"}, True, True, t.user_id)
+    log.writes.append(stray)
+    r = score_episode(t, EpisodeResult(t.id, "not-the-gold-hash", "user_stop", log, []))
+    assert r.reward == 0.0 and not r.shaping
+
+
+# ---------------------------------------------------------------- scripted user
+
+
+def test_scripted_user_is_deterministic(tasks):
+    t = next(t for t in tasks if t.template == "exchange" and t.profile.get("correction"))
+    script = [
+        "Could you verify your identity with your email?",
+        "Which order is this about? I need the order id.",
+        "Which payment method would you like to use for the price difference?",
+        f"To confirm, I will exchange items in order {t.target_order}. Shall I proceed?",
+        f"Updated: exchange in order {t.target_order}. Shall I proceed?",
+    ]
+    a, b = ScriptedUser(t, seed=3), ScriptedUser(t, seed=3)
+    ra = [a.reply(s) for s in script]
+    rb = [b.reply(s) for s in script]
+    assert [r.text for r in ra] == [r.text for r in rb]
+    assert [r.intent for r in ra] == ["identity", "order", "payment", "correction", "yes"]
+    assert ra[3].answered_recap and not ra[3].is_yes and ra[4].is_yes
+
+
+def test_scripted_user_says_yes_only_to_a_recap_naming_the_target(tasks):
+    t = next(t for t in tasks if t.template == "cancel" and not t.profile.get("correction"))
+    u = ScriptedUser(t)
+    vague = u.reply("Shall I proceed with the cancellation?")
+    assert not vague.is_yes and vague.text in BE_SPECIFIC
+    named = u.reply(f"I will cancel order {t.target_order}. Do you want me to proceed?")
+    assert named.is_yes and named.text in YES
+
+
+def test_scripted_user_stops_after_three_unrecognised_turns(tasks):
+    u = ScriptedUser(tasks[0])
+    replies = [u.reply("The weather is lovely today.") for _ in range(3)]
+    assert [r.stop for r in replies] == [False, False, True]
+    assert replies[-1].text.endswith(STOP)
+
+
+def test_scripted_user_fallback_and_refusal(tasks):
+    ret = next(t for t in tasks if t.template == "return_fallback")
+    u = ScriptedUser(ret)
+    deny = u.reply("I'm sorry, refunds can only go to the original payment method. How should I proceed?")
+    assert deny.intent == "fallback" and not deny.stop
+    foreign = next(t for t in tasks if t.template == "foreign_order_refusal")
+    r = ScriptedUser(foreign).reply("I'm sorry, but I can't help with an order on someone else's account.")
+    assert r.stop and r.intent == "accept_denial"
+    done = ScriptedUser(ret).reply("All set!", write_succeeded=True)
+    assert done.stop and done.intent == "thanks"
+
+
+# ----------------------------------------------------------------------- runner
+
+
+def test_runner_never_mutates_the_shared_db(episodes, pristine_hash):
+    assert any(r.success for _, b, _, r in episodes if b != "oracle")  # writes really happened
+    assert get_dict_hash(base_db().model_dump()) == pristine_hash
+    assert get_dict_hash(RetailDB.load(RETAIL_DB_PATH).model_dump()) == pristine_hash
+
+
+def test_copy_on_write_end_state_equals_a_full_deep_copy_replay(episodes):
+    one_each = {}
+    for e in episodes:  # one episode per (template, behaviour): every write path, 0.2 s each
+        one_each.setdefault((e[0].template, e[1]), e)
+    for t, behaviour, ep, _ in one_each.values():
+        env = RetailEnv(db=base_db().model_copy(deep=True))
+        for m in ep.messages:
+            for tc in m.get("tool_calls") or []:
+                env.execute(tc["function"]["name"], json.loads(tc["function"]["arguments"]))
+        assert env.db_hash() == ep.final_db_hash, (t.id, behaviour)
+
+
+def test_runner_message_shape_matches_grounding(episodes):
+    t, _, ep, _ = next(e for e in episodes if e[1] == "oracle" and e[0].template == "exchange")
+    assert ep.messages[0] == {"role": "assistant", "content": GREETING}
+    assert ep.messages[1] == {"role": "user", "content": t.opening}
+    calls = [i for i, m in enumerate(ep.messages) if m.get("tool_calls")]
+    assert calls
+    for i in calls:
+        tc = ep.messages[i]["tool_calls"][0]
+        assert tc["type"] == "function" and isinstance(tc["function"]["arguments"], str)
+        res = ep.messages[i + 1]
+        assert res["role"] == "tool" and res["tool_call_id"] == tc["id"] and res["name"] == tc["function"]["name"]
+
+
+def test_runner_termination_rules(tasks):
+    t = next(t for t in tasks if t.template == "cancel")
+    sys_msg = {"role": "system", "content": "SYS"}
+
+    ep = Episode(t, system_message=sys_msg)
+    assert ep.messages[0] == sys_msg
+    ep.step(call("transfer_to_human_agents", {"summary": "x"}))
+    assert ep.done and ep.end_reason == "transfer" and ep.log.transfer
+
+    ep = Episode(t)
+    ep.step(call("cancel_pending_order", {"order_id": t.target_order, "reason": "no longer needed"}), "length")
+    assert ep.end_reason == "truncated" and not ep.log.writes  # a cut-off turn is never executed
+
+    ep = Episode(t)
+    ep.step('<tool_call>{"name": oops</tool_call>')
+    assert ep.log.n_malformed_calls == 1 and ep.messages[-1]["role"] == "user"
+
+    ep = Episode(t, max_turns=4)
+    while not ep.done:
+        ep.step(call("get_user_details", {"user_id": t.user_id}))
+    assert ep.end_reason == "max_turns" and ep.log.n_assistant_turns == 4
+
+    ep = Episode(t)
+    ep.step("", "context")
+    assert ep.end_reason == "context_budget"
+    with pytest.raises(RuntimeError):
+        ep.step("hello")
+
+
+# ---------------------------------------------------------------------- decontam
+
+
+@dataclass
+class _StubAction:
+    name: str
+    arguments: dict[str, Any]
+    requestor: str = "assistant"
+
+
+@dataclass
+class _StubCriteria:
+    actions: list[_StubAction]
+
+
+@dataclass
+class _StubTask:
+    actions: list[_StubAction]
+    initial_state: Optional[Any] = None
+    evaluation_criteria: Any = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.evaluation_criteria = _StubCriteria(self.actions)
+
+
+def _as_stub(task) -> _StubTask:
+    return _StubTask([_StubAction(a["name"], a["arguments"]) for a in task.gold_actions])
+
+
+def test_fingerprint_matches_the_generator_gold_hash_and_collects_users(tasks):
+    cancel = next(t for t in tasks if t.template == "cancel")
+    fp = fingerprint_tasks([_as_stub(cancel)], base_db())
+    assert fp.gold_db_hashes == {cancel.gold_db_hash}
+    assert cancel.user_id in fp.user_ids
+    assert repr(fp) == "RealTaskExclusions(<1 user ids>, <1 gold hashes>)"
+
+
+def test_generator_rejects_real_task_users_and_gold_hashes():
+    first = generate_tasks(4, 3, exclusions=EMPTY, templates=("cancel",), log=lambda _: None).tasks
+    banned_users = RealTaskExclusions(frozenset({first[0].user_id}), frozenset())
+    lines: list[str] = []
+    again = generate_tasks(4, 3, exclusions=banned_users, templates=("cancel",), log=lines.append)
+    assert first[0].user_id not in {t.user_id for t in again.tasks}
+    assert again.stats["cancel"]["decontam_user"] >= 1
+    # only counts are logged, never an id
+    assert lines and first[0].user_id not in lines[0] and "decontam_user=" in lines[0]
+
+    other_user = next(t for t in first if t.user_id != first[0].user_id)
+    banned_hash = RealTaskExclusions(frozenset(), frozenset({other_user.gold_db_hash, base_db_hash()}))
+    again = generate_tasks(4, 3, exclusions=banned_hash, templates=("cancel", "foreign_order_refusal"), log=lambda _: None)
+    assert other_user.gold_db_hash not in {t.gold_db_hash for t in again.tasks}
+    assert again.stats["cancel"]["decontam_gold_hash"] >= 1
+    # the untouched-db hash identifies nothing, so refusal tasks are not rejected by it
+    assert again.stats["foreign_order_refusal"]["decontam_gold_hash"] == 0
+    assert again.stats["foreign_order_refusal"]["accepted"] == 4
+
+
+def test_decontam_fails_loudly_when_tasks_cannot_be_loaded(monkeypatch):
+    import tau2.domains.retail.environment as retail_env
+
+    def boom(*_a, **_k):
+        raise FileNotFoundError("tasks.json")
+
+    monkeypatch.setattr(retail_env, "get_tasks", boom)
+    load_real_task_exclusions.cache_clear()
+    with pytest.raises(RuntimeError, match="FileNotFoundError"):
+        load_real_task_exclusions()
+    with pytest.raises(RuntimeError):
+        generate_tasks(1, 0, templates=("cancel",), log=lambda _: None)  # no exclusions -> must load, must fail
+    load_real_task_exclusions.cache_clear()
+
+
+# ------------------------------------------------------------------------ audit
+
+
+def _scripted_generator(modes_by_sample: list[str]):
+    agents: dict = {}
+
+    def generate(requests):
+        out = []
+        for r in requests:
+            agent = agents.setdefault(r.key, ReferenceAgent(r.task, modes_by_sample[r.key[1]]))
+            out.append(Generation(agent(r.messages)))
+        return out
+
+    return generate
+
+
+def test_audit_loop_with_a_fake_generator(tasks):
+    picked = [t for t in tasks if t.template == "cancel" and not t.difficulty["late_correction"]][:2]
+    picked += [t for t in tasks if t.template == "foreign_order_refusal"][:2]
+    result = run_audit(picked, _scripted_generator(["oracle", "no_confirm", "transfer"]), n_samples=3)
+    per_task = {r["id"]: r for r in result["per_task"]}
+    for t in picked:
+        rec = per_task[t.id]
+        if t.template == "cancel":
+            assert rec["rewards"] == [1.0, 0.7, 0.0] and rec["successes"] == [True, True, False]
+        else:  # no_confirm complies with a foreign order here
+            assert rec["rewards"] == [1.0, 0.0, 0.5]
+    s = result["summary"]
+    assert s["overall"]["n_tasks"] == 4 and s["overall"]["n_episodes"] == 12
+    assert s["overall"]["effective_variance_fraction"] == 1.0 and s["overall"]["flat_fraction"] == 0.0
+    assert set(s["per_template"]) == {"cancel", "foreign_order_refusal"}
+    assert "id_mode" in s["per_knob"]["cancel"]
+
+
+def test_summary_effective_variance_threshold():
+    recs = [
+        {"template": "x", "difficulty": {"k": True}, "rewards": [0.0, 0.05], "successes": [False, False], "end_reasons": ["a", "a"]},
+        {"template": "x", "difficulty": {"k": False}, "rewards": [0.0, 0.1], "successes": [False, False], "end_reasons": ["a", "a"]},
+    ]
+    s = summarize(recs)
+    assert s["overall"]["effective_variance_fraction"] == 0.5  # std 0.025 < 0.05 <= std 0.05
+    assert s["per_knob"]["x"]["k"]["False"]["effective_variance_fraction"] == 1.0
+
+
+class _FakeTokenizer:
+    def __init__(self):
+        self.rendered: list[tuple[list[dict], int]] = []
+
+    def apply_chat_template(self, messages, tools=None, tokenize=False, add_generation_prompt=True):
+        assert not tokenize and add_generation_prompt
+        self.rendered.append((messages, len(tools)))
+        return " ".join(f"<{m['role']}> {m.get('content') or ''}" for m in messages)
+
+    def __call__(self, text, add_special_tokens=False):
+        return {"input_ids": text.split()}
+
+
+def test_chat_template_policy_batches_and_enforces_the_context_budget(tasks):
+    picked = [t for t in tasks if t.template == "foreign_order_refusal"][:3]
+    tok = _FakeTokenizer()
+    batches: list[int] = []
+
+    def engine(prompts):
+        batches.append(len(prompts))
+        return [(call("transfer_to_human_agents", {"summary": "s"}), "stop") for _ in prompts]
+
+    sys_msg = {"role": "system", "content": "SYSTEM PROMPT"}
+    policy = ChatTemplatePolicy(engine, tok.apply_chat_template, RetailEnv().all_openai_schemas(),
+                                lambda s: len(tok(s)["input_ids"]), max_new_tokens=10, max_model_len=10_000)
+    result = run_audit(picked, policy, n_samples=2, system_message=sys_msg)
+    assert batches == [6]  # one engine call for all 3 tasks x 2 samples
+    assert all(n_tools == 16 and msgs[0] == sys_msg for msgs, n_tools in tok.rendered)
+    assert all(r["rewards"] == [0.5, 0.5] for r in result["per_task"])
+
+    tight = ChatTemplatePolicy(engine, tok.apply_chat_template, [], lambda s: len(s), max_new_tokens=10, max_model_len=20)
+    result = run_audit(picked[:1], tight, n_samples=2)
+    assert result["per_task"][0]["end_reasons"] == ["context_budget", "context_budget"]
+    assert tight.n_context_overflows == 2
+
+
+def _load_script():
+    spec = importlib.util.spec_from_file_location("episode_audit", REPO_ROOT / "scripts" / "episode_audit.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_episode_audit_script_end_to_end_with_injected_model(tmp_path, report):
+    path = tmp_path / "eps.jsonl"
+    write_jsonl([t for t in report.tasks if t.template in ("cancel", "foreign_order_refusal")][:4], path)
+    out = tmp_path / "audit.json"
+    script = _load_script()
+
+    def engine(prompts):
+        return [(call("transfer_to_human_agents", {"summary": "s"}), "stop") for _ in prompts]
+
+    script.main(["--tasks", str(path), "--samples-per-task", "2", "--output", str(out)],
+                tokenizer=_FakeTokenizer(), engine=engine)
+    data = json.loads(out.read_text())
+    assert len(data["per_task"]) == 4 and all(len(r["rewards"]) == 2 for r in data["per_task"])
+    assert data["config"]["n_tools"] == 16 and data["config"]["context_overflows"] == 0
+    assert data["summary"]["overall"]["end_reasons"] == {"transfer": 8}
+
+
+def test_episode_audit_script_dry_run_with_a_scripted_policy(tmp_path, report):
+    path = tmp_path / "eps.jsonl"
+    write_jsonl(report.tasks[:6], path)
+    out = tmp_path / "audit.json"
+    _load_script().main(["--tasks", str(path), "--samples-per-task", "2", "--fake-policy", "oracle", "--output", str(out)])
+    data = json.loads(out.read_text())
+    assert data["summary"]["overall"]["success_rate"] == 1.0
+
+
+def test_episode_audit_script_imports_no_gpu_stack():
+    code = (
+        "import importlib.util, sys;"
+        f"spec = importlib.util.spec_from_file_location('ea', {str(REPO_ROOT / 'scripts' / 'episode_audit.py')!r});"
+        "m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m);"
+        "bad = [x for x in ('torch', 'vllm', 'transformers') if x in sys.modules];"
+        "assert not bad, bad"
+    )
+    subprocess.run([sys.executable, "-c", code], check=True, capture_output=True)
