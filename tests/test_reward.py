@@ -72,28 +72,36 @@ def test_calling_a_tool_when_none_was_expected_scores_zero(base_db: RetailDB) ->
 # ---------------------------------------------------------------------------
 # 1. Padded, generic free-text field -- must not score high just because the
 #    tool and record are right.
+#
+#    This case used to be asserted through `transfer_to_human_agents`, whose
+#    summary was graded by similarity to gold prose. That tool is now graded on
+#    the escalation decision alone (see `reward.transfer_decision_score` and
+#    tests/test_grader_fixes.py), so a padded summary is no longer something
+#    reward() compares against anything. The padding guarantee still holds for
+#    any long free-text argument that *is* similarity-graded, which is what
+#    this now asserts, via the same strings.
 # ---------------------------------------------------------------------------
 
 
 def test_padded_generic_free_text_scores_low(base_db: RetailDB) -> None:
-    gold = Action(
-        "transfer_to_human_agents",
-        {"summary": "Customer disputes a duplicate charge of $84.20 on order #W1234567; needs billing escalation."},
-    )
-    padded = Action(
-        "transfer_to_human_agents",
-        {
-            "summary": (
-                "I am unable to fully assist with this particular request at this time, so I will "
-                "go ahead and connect you with a human agent representative who can help further."
-            )
-        },
-    )
-    result = reward(padded, gold, base_db)
-    assert result.score < 0.5, f"padded/generic summary should score low, got {result.score}"
-    # Sanity: an exact match on the same tool must still score 1.0, proving the
-    # low score above is about content quality, not a broken comparison.
-    assert reward(gold, gold, base_db).score == 1.0
+    from tau_forge.reward.reward import arg_match_score
+
+    gold_args = {
+        "summary": (
+            "Customer disputes a duplicate charge of $84.20 on order #W1234567; needs billing escalation."
+        )
+    }
+    padded_args = {
+        "summary": (
+            "I am unable to fully assist with this particular request at this time, so I will "
+            "go ahead and connect you with a human agent representative who can help further."
+        )
+    }
+    padded = 0.3 + 0.7 * arg_match_score(padded_args, gold_args)
+    assert padded < 0.5, f"padded/generic free text should score low, got {padded}"
+    # Sanity: an exact match must still score 1.0, proving the low score above
+    # is about content, not a broken comparison.
+    assert arg_match_score(gold_args, gold_args) == 1.0
 
 
 # ---------------------------------------------------------------------------

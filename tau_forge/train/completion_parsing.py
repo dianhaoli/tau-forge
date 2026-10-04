@@ -19,6 +19,29 @@ docs/phase7_aws_setup.md, "Methodology risks"). Instead it's graded as an
 attempted call to a sentinel tool name that can't match any real gold tool,
 which `reward()` correctly scores 0 either way (wrong tool, or an unexpected
 call when none was expected).
+
+The same holds for a *bare* tool-call object with no tags at all -- e.g.
+`{"name": "cancel_pending_order", "arguments": {...}}` as plain text, or inside
+a ```json fence. That used to parse as message-only and earned the full 1.0 on
+every no-call gold (182 of 541 scenarios), the same hole through a different
+door. It is now `MALFORMED_TOOL_CALL` too: an attempted call that can never
+match gold.
+
+Parity with eval, deliberately over leniency
+--------------------------------------------
+Phase 8 serves the policy with vLLM's `--tool-call-parser hermes`
+(`tau_forge/eval/run_tau2.py`). That parser only looks inside `<tool_call>`
+tags, `json.loads` the whole body, and reads `name` and `arguments`; anything
+it cannot parse is passed through as plain assistant text with no call. So at
+eval a bare JSON object, a ```json fence inside the tags, trailing prose inside
+the tags, a `"parameters"` key, or a `{"function": {...}}` wrapper is *never* a
+tool call. This module mirrors that rather than "repairing" those formats into
+valid calls: a parser more forgiving than eval's would train the policy to
+emit formats that silently stop working the moment it is evaluated, and the
+measured reward would overstate what eval will see. Concretely, a `"parameters"`
+key or a non-object `arguments` value still parses with empty arguments (and
+so fails schema validation in `reward()`), and none of the above formats is
+ever accepted as the call it resembles.
 """
 
 from __future__ import annotations
@@ -38,10 +61,46 @@ MALFORMED_TOOL_CALL = "__malformed_tool_call__"
 # were never there.
 _TOOL_CALL_RE = re.compile(r"<tool_call>(.*?)(?:</tool_call>|\Z)", re.DOTALL)
 
+# Keys that, next to a string `name`, mark a JSON object as a tool-call attempt.
+# `parameters` is the other common spelling models fall into; it is detected
+# here only to classify the attempt, never accepted as a valid call.
+_CALL_ARGUMENT_KEYS = ("arguments", "parameters")
+
+_JSON_DECODER = json.JSONDecoder()
+
+
+def _is_call_object(obj: Any) -> bool:
+    return (
+        isinstance(obj, dict)
+        and isinstance(obj.get("name"), str)
+        and bool(obj["name"])
+        and any(key in obj for key in _CALL_ARGUMENT_KEYS)
+    )
+
+
+def contains_bare_tool_call(text: str) -> bool:
+    """True if `text` (assumed to have no `<tool_call>` tag) contains a JSON
+    object shaped like a tool call anywhere in it -- plain, fenced, or nested
+    inside a wrapper such as `{"function": {...}}` or a list, since every `{`
+    is tried as a start position. A reply that merely mentions a name, or
+    contains JSON without an `arguments`/`parameters` key, is not a call."""
+    if '"name"' not in text:  # cheap reject for the overwhelmingly common prose reply
+        return False
+    for match in re.finditer(r"\{", text):
+        try:
+            obj, _end = _JSON_DECODER.raw_decode(text, match.start())
+        except json.JSONDecodeError:
+            continue
+        if _is_call_object(obj):
+            return True
+    return False
+
 
 def parse_completion(text: str) -> tuple[Optional[str], dict[str, Any]]:
     match = _TOOL_CALL_RE.search(text)
     if not match:
+        if contains_bare_tool_call(text):
+            return MALFORMED_TOOL_CALL, {}
         return None, {}
     try:
         payload = json.loads(match.group(1).strip())

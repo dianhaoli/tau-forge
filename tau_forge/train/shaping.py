@@ -39,6 +39,11 @@ Where it deliberately stays silent (returns 0.0):
     there is no partial signal in an empty turn to grade, and paying anything
     for silence competes with the no-call scenarios above.
 
+Where it deliberately pays only the 0.05 "real tool" floor: a WRITE when gold
+is not a write (a status-check read, or a transfer). Schema and right-record
+credit there would reward the premature action that policy_violation read
+golds exist to catch -- see `wrong_tool_partial_credit`.
+
 Torch/trl-free, like the rest of `tau_forge.train` except `grpo_train`.
 """
 
@@ -110,13 +115,26 @@ def wrong_tool_partial_credit(
 
     score += REAL_TOOL
 
+    predicted_writes = env.tool_mutates_state(predicted_name)
+    gold_writes = env.has_tool(expected_name) and env.tool_mutates_state(expected_name)
+    if predicted_writes and not gold_writes:
+        # A write where gold does not write is the premature action the
+        # scenario exists to catch, so it stops at "a real tool". Before this,
+        # on all 26 policy_violation scenarios whose gold is a status-check
+        # get_order_details, cancelling/modifying the *gold order* earned 0.13
+        # (schema + right record outweighed the lost class bonus) while a
+        # legitimate lookup of the order's owner earned 0.10 -- shaping paid
+        # most for exactly the violation. Now that write gets 0.05.
+        # Deliberately one-directional: a READ on gold's record when gold is a
+        # write keeps its credit, because that lookup is usually the step the
+        # policy requires before the write (verify status, find the item id).
+        return score
+
     schema_ok, _ = env.validate_arguments(predicted_name, predicted_args)
     if schema_ok and not env.extra_arguments(predicted_name, predicted_args):
         score += SCHEMA_VALID
 
-    if env.has_tool(expected_name) and env.tool_mutates_state(predicted_name) == env.tool_mutates_state(
-        expected_name
-    ):
+    if env.has_tool(expected_name) and predicted_writes == gold_writes:
         score += SAME_TOOL_CLASS
 
     gold_ids = _id_values(expected_args)

@@ -597,6 +597,19 @@ value matched. `OUTPUT_DETERMINES_CORRECTNESS` deliberately excludes it (and any
 other tool whose return value doesn't actually vary with its arguments) so it's
 always graded via `arg_match_score` on the argument content itself.
 
+**Revised after the zero-variance audit:** grading the transfer `summary` by
+similarity to the generator's gold prose turned out to grade *wording*, not the
+decision -- an empty summary scored 0.300 on 107/107 out_of_scope scenarios
+(the same as half of 50 hand-written correct paraphrases), gold wording with
+the wrong ids averaged 0.974, and 46/107 gold summaries contain ids the policy
+never sees. tau2 never reads the summary. `transfer_to_human_agents` is now
+graded by `reward.transfer_decision_score`: right tool + a summary of at least
+20 non-whitespace characters = 1.0, empty/trivial summary = 0.6, gold prose
+never consulted. The same pass made an empty reply on a no-call gold score 0.0
+(`empty_reply`), made a bare untagged tool-call JSON a `MALFORMED_TOOL_CALL`
+instead of a free no-call, and turned off difflib's `autojunk` (see
+`tests/test_grader_fixes.py`).
+
 A second, separate finding from writing the adversarial tests: `modify_pending_order_items`
 has a latent bug in tau2's own implementation (not ours) where `item.price` /
 `item.options` get set from the **last** variant processed in an earlier loop, not
@@ -615,7 +628,7 @@ calling one when none was expected → 0.0) -- 12 tests total, all passing:
 
 | Case | Score | Reason |
 |---|---|---|
-| Padded, generic free-text `summary` (right tool/record) | **0.300** | `arg_match` (similarity floored to 0) |
+| Padded, generic free-text `summary` (right tool/record) | **0.300** | `arg_match` (similarity floored to 0); now asserted on `arg_match_score` directly, since transfer is decision-graded (see above) |
 | Subtly wrong item variant (schema-valid, off-by-one choice) | **0.300** | `state_match_partial` / critical field mismatch |
 | Right tool/args + one hallucinated extra field | **0.200** | `schema_invalid_or_hallucinated_args` |
 | Equivalent reordered args, identical resulting DB state | **1.000** | `state_match_exact` |

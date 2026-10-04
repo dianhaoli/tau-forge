@@ -61,8 +61,8 @@ def flat_at(scores: list[float], target: float, tolerance: float) -> bool:
     return bool(scores) and all(abs(s - target) <= tolerance for s in scores)
 
 
-def main() -> None:
-    args = parse_args()
+def main(argv=None) -> None:
+    args = parse_args(argv)
     data = json.loads(Path(args.audit).read_text())
 
     completions = data.get("per_scenario_completions")
@@ -72,14 +72,12 @@ def main() -> None:
             "Scores alone cannot say why a band is flat."
         )
 
-    from tau_forge.reward.reward import Action, reward
     from tau_forge.train.completion_parsing import parse_completion
-    from tau_forge.train.reward_adapter import _get_shared_db
+    from tau_forge.train.reward_adapter import grade_completion
 
     from tau_forge.train.dataset import DEFAULT_DATA_GLOB, build_examples
 
     gold = {e.id: e for e in build_examples(data_glob=DEFAULT_DATA_GLOB)}
-    db = _get_shared_db()
 
     scores_by_id = data["per_scenario_scores"]
     band = [
@@ -118,19 +116,22 @@ def main() -> None:
         example = gold.get(sid)
         if example is None:
             continue
-        expected = Action(
-            tool_name=example.expected_tool_name, tool_input=example.expected_tool_arguments
-        )
         for record in completions[sid]:
             text = record["completion"]
-            name, parsed = parse_completion(text)
+            name, _ = parse_completion(text)
             predicted_tools[str(name)] += 1
             if name == example.expected_tool_name:
                 right_tool += 1
             else:
                 wrong_tool += 1
 
-            breakdown = reward(Action(tool_name=name, tool_input=parsed), expected, db)
+            # Graded through the same helper training scores with, so the
+            # reasons printed here are the ones behind the band's actual score
+            # (e.g. an empty reply on a no-call gold is `empty_reply` at 0.0,
+            # not `correct_no_call`).
+            breakdown = grade_completion(
+                text, example.expected_tool_name, example.expected_tool_arguments
+            )
             reasons[breakdown.reason] += 1
 
             detail = breakdown.detail or {}
