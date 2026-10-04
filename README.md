@@ -117,6 +117,9 @@ no values). No task content (description text, scenarios, evaluation criteria) h
 been read or is present anywhere in this repo or in generation context. This file's
 actual content is only to be loaded in Phase 5, as an isolated decontamination
 check, never fed into scenario generation prompts.
+`tau_forge/decontam/real_tasks.py` also reads it, for episode decontamination:
+it reduces the file to the user ids the gold actions touch and the gold
+end-state hashes, which the episode generator only uses to reject candidates.
 
 ## Environment wrapper (`tau_forge/envs/retail.py`)
 
@@ -955,6 +958,146 @@ Temperature sweeps and a larger `--num-generations` are further down this list
 than they look. Neither can rescue a scenario whose failures all score exactly
 0.0 -- finding 3 is that intervention, and a genuine cold start needs prompting
 or an SFT warm-start, not more samples.
+
+## Multi-step episode tasks (`tau_forge/episodes/`)
+
+**Why.** The zero-shot n=16 audit found ~72.5% of the single-step scenarios
+zero-variance. Fixing labels, grounding and the grader removes wrong
+gradients but does not create variance: each scenario asks for *one* next
+action, and for a 4B instruct model that choice (call or not, which tool) is
+close to argmax, so p(success) sits near 0 or near 1. With a mostly binary
+reward a group of 16 is flat with probability p^16 + (1-p)^16:
+
+| p | 0.05 | 0.15 | 0.30 | 0.50 | 0.85 | 0.95 | 0.99 |
+|---|---|---|---|---|---|---|---|
+| P(flat group of 16) | 0.44 | 0.074 | 0.003 | 3e-5 | 0.074 | 0.44 | 0.85 |
+
+A chain of k decisions at per-step reliability r succeeds with p ~ r^k --
+0.43-0.53 for r=0.9, k=6-8 -- which is where groups stop being flat. (That is
+arithmetic, not a measurement; the audit below is the measurement.) Episodes
+are whole conversations against a live `RetailEnv`, a deterministic scripted
+user, and tau2's own end-state reward.
+
+**What exists.**
+
+* `generate.py` -- tasks sampled from `db.json` only. Templates and knobs:
+
+  | template | knobs | what the end state tests |
+  |---|---|---|
+  | `cancel` | order id vs product hint, email vs name+zip, late correction ("wrong one, I meant ..."), identity upfront | the reason (stored in the db), the right pending order; a write before the correction cancels the wrong one |
+  | `exchange` | 1-3 items, order id vs "an order I received recently" (scan orders), late option correction, email vs name+zip | variant resolution from `get_product_details`, payment resolution from `get_user_details` |
+  | `return_fallback` | 1-2 items, order id vs hint, email vs name+zip | user first asks for a non-original method; after the denial falls back to the original. Picking a gift card unasked is a wrong end state |
+  | `modify_payment` | gift card short (fallback to a named second method) vs direct switch, order id vs hint, email vs name+zip | balance vs total, the fallback method |
+  | `foreign_order_refusal` | cancel vs return request, email vs name+zip | the tools don't check ownership, so complying changes the db |
+
+  Every task is verified: the gold chain replays with every call succeeding;
+  every id in every gold call appeared in the opening, a scripted-user line or
+  an earlier gold read; user lines contain no id but an order id or email;
+  each product/option/payment phrase, identity and product hint is unique;
+  `gold_db_hash` is stored. Deduped on (template, user, order, item set),
+  deterministic by seed. `python -m tau_forge.episodes.generate --per-template
+  200` measured: 885 tasks in 59 s (28 s of it the decontam replay) -- 200 for
+  every template except `modify_payment`, whose candidate space is exhausted
+  at 85 (280 of 423 pending orders belong to single-payment-method users).
+  Mean gold calls: exchange 6.4, cancel 4.5, modify_payment 4.4,
+  return_fallback 4.2, refusal 2.0; gold tool output ~2.4k tokens median for
+  exchange, ~0.9k for the others.
+* `user.py` -- the scripted user: intent matching in a fixed priority order
+  (write done -> thanks+STOP; refusal denied -> accept+STOP; denial -> fallback;
+  recap naming the target -> correction once, else yes; identity; all items;
+  order id; reason; payment; otherwise restate, STOP on the third unrecognised
+  turn). "Yes" only answers a recap: a confirmation request that names the
+  target order or product *and* the action, and asks for no information
+  ("confirm your email for order #W...?" gets the identity answer). The
+  fallback fires on a denial or on the constraint itself (the gift-card
+  balance, the original/purchase method, "another payment method"); after a
+  correction or fallback the user restates the corrected request. Lines come
+  from paraphrase pools seeded per task.
+* `runner.py` -- `run_episode(task, policy)` with `policy(messages) -> text`,
+  parsed by `completion_parsing.parse_completion`; calls are fed back in the
+  `grounding.py` message shape (assistant `tool_calls` + `role: tool`), after
+  tau2's greeting. Ends on user STOP, transfer, 30 assistant turns, 30 calls, a
+  truncated turn or an over-budget prompt. A tool that raises (e.g.
+  `calculate("(1 - 2")`, `find_user_id_by_email(email=None)`) returns a tool
+  error instead of ending the run. Copy-on-write db: no full deep copy per
+  episode; 0.03 s CPU per reference-agent episode (prototype: 0.3 s).
+* `reward.py` -- R = 1[final db hash == gold hash]; -0.3 per policy gate on
+  success (write without a yes since the last recap; write before
+  authenticating the task's user with an email / name+zip the *user* said --
+  looking up the db's copy of the owner's email does not count); failure
+  shaping capped at 0.2 and withdrawn if a write touched another record;
+  refusals 1.0 only for an unchanged db plus a denial the user accepted, 0.5
+  if transferred, 0.1 for an unchanged db without a denial (gibberish, empty,
+  truncated, out of turns -- these used to score 1.0).
+  Reference agents (`reference_agents.py`) land on separate levels, asserted
+  in `tests/test_episodes.py`:
+
+  | behaviour | exchange | cancel | return_fallback | modify_payment | refusal |
+  |---|---|---|---|---|---|
+  | oracle | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
+  | no confirmation | 0.7 | 0.7 | 0.7 | 0.7 | -- |
+  | no confirmation, late-correction task | 0.2 | 0.0 | -- | -- | -- |
+  | wrong variant / made-up payment id | 0.2 | -- | -- | 0.2 | -- |
+  | skip authentication | 0.7 | 0.7 | -- | 0.7 | -- |
+  | comply with a forbidden request | -- | -- | 0.2 | -- | 0.0 |
+  | gift card unasked (owns one / doesn't) | -- | -- | 0.2 / 1.0 | -- | -- |
+  | transfer | 0.0 | 0.0 | 0.0 | 0.0 | 0.5 |
+  | no denial, db unchanged (gibberish, empty, ...) | -- | -- | -- | -- | 0.1 |
+
+  The table holds on all 3,852 reference episodes of the 885 tasks generated
+  at `--per-template 200`. Also pinned by tests: an early "could you confirm
+  your email for order #W...?" does not buy a no-confirm agent a yes (0.7, not
+  1.0), and a skip-auth agent that "authenticates" with the email it read
+  from `get_user_details` stays at 0.7.
+* `tau_forge/decontam/real_tasks.py` -- the only episode code that reads
+  tasks.json. It returns two opaque sets: the user ids the 114 real tasks'
+  gold actions touch (52) and their gold end-state hashes (99 distinct). The
+  generator rejects tasks involving such a user or reproducing such a hash,
+  logging counts only (at 200/template: 205 candidates rejected on user,
+  none on hash). If tasks.json cannot be loaded, generation raises.
+* `audit.py` + `scripts/episode_audit.py` -- the variance audit below.
+
+**Not done yet.**
+
+* **TRL integration is unimplemented.** Nothing here is wired into
+  `grpo_train`. The design (`rollout_func`, generating each turn through
+  `trainer.vllm_generation`, tool and user turns appended with `env_mask=0`)
+  is in the design doc's section 2.7, with its caveats: don't also pass
+  `tools=`, check how prompts are duplicated, test token-concatenation parity
+  against `apply_chat_template`, the context budget, and the experimental API.
+  TRL's built-in `environment_factory` stops at the first assistant turn
+  without a tool call, so the user can never answer a recap. It cannot train
+  confirmation.
+* Design templates 4 (`modify_items` with a deferred item), 5b (address
+  changes), 7 (`out_of_scope_after_work`) and 8 (`multi_request`) are not
+  implemented.
+* No episode audit has been run (no GPU here), so per-cell p is unknown. Nor
+  has the scripted user been checked for drift against tau2's LLM user
+  simulator.
+
+**Run the episode audit on the GPU box** (`uv sync --extra train`; the
+sampler flags must match `grpo_train`'s):
+
+```
+python -m tau_forge.episodes.generate --per-template 200 --seed 0 \
+    --out data/episodes/episodes_s0.jsonl
+python scripts/episode_audit.py --tasks data/episodes/episodes_s0.jsonl \
+    --samples-per-task 16 --temperature 1.0 --top-p 1.0 --top-k 0 \
+    --max-new-tokens 1024 --max-model-len 16384 \
+    --output data/trained/episode_audit.json
+# CPU check of the same pipeline with a scripted policy, no model:
+python scripts/episode_audit.py --tasks data/episodes/episodes_s0.jsonl \
+    --samples-per-task 2 --fake-policy oracle --output /tmp/dry.json
+```
+
+Every turn batches all active episodes through one vLLM `generate`, with
+prefix caching for the shared system prompt and the 16 tool schemas. Each
+task's record is appended to `<output>.partial.jsonl` as soon as its last
+sample ends, and an exception inside one episode ends only that episode
+(end reason `runner_error`), so a crash hours in loses nothing finished. The
+output has the reward list for every task, and success rate, mean reward and
+effective-variance fraction (std >= 0.05) overall, per template and per knob
+value. Weight cells by p(1-p) using those per-knob numbers.
 
 ## Decontamination check (`tau_forge/decontam/check.py`) — Phase 5
 
