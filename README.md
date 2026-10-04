@@ -745,6 +745,14 @@ data before resuming Phase 2/3 or attempting any GPU training.
 
 ## Phase 7 signal audit — what was actually limiting the run
 
+> **Superseded in part by a later, full-corpus audit: `docs/variance_audit.md`.**
+> It found the remaining causes in three layers. Gold ids were unreachable and
+> 222/541 golds contradict `policy.md` (`data/synthetic/label_audit.json`). The
+> grader tied different behaviours: transfer similarity floor, content-blind
+> no-call. And single near-argmax decisions are flat by construction, which is
+> why `tau_forge/episodes/` exists. Read that first; the findings below are
+> still accurate as far as they go.
+
 Written while diagnosing why a stratified n=16 zero-shot audit came back ~72.5%
 zero-variance. Four findings, in descending order of how much each one costs the
 Phase 8 number. The first two are bugs; the second two are design choices that
@@ -1062,7 +1070,7 @@ user, and tau2's own end-state reward.
 * **TRL integration is unimplemented.** Nothing here is wired into
   `grpo_train`. The design (`rollout_func`, generating each turn through
   `trainer.vllm_generation`, tool and user turns appended with `env_mask=0`)
-  is in the design doc's section 2.7, with its caveats: don't also pass
+  is in `docs/episode_tasks_design.md` section 2.7, with its caveats: don't also pass
   `tools=`, check how prompts are duplicated, test token-concatenation parity
   against `apply_chat_template`, the context budget, and the experimental API.
   TRL's built-in `environment_factory` stops at the first assistant turn
