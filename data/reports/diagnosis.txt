@@ -1,0 +1,389 @@
+==============================================================
+audit:     data/trained/audit_n16.json
+generated: 2026-10-04T23:44:40Z
+commit:    28458c1
+==============================================================
+
+### run settings and headline numbers (from the audit JSON) ###
+
+model: Qwen/Qwen3-4B-Instruct-2507
+split: all
+val_fraction: 0.1
+category_mix: None
+curriculum_seed: 0
+top_p: 1.0
+top_k: 0
+ground_lookups: True
+label_audit: /home/ec2-user/tau-forge/data/synthetic/label_audit.json
+keep_label_defects: False
+exclude_zero_variance_from: None
+exclude_solved: False
+exclude_zero_variance_raw: False
+exclusions: None
+n_scenarios: 541
+samples_per_scenario: 16
+temperature: 1.0
+mean_score: 0.4718576709796673
+zero_variance_scenario_count: 409
+zero_variance_scenario_fraction: 0.756007393715342
+effective_variance_min_std: 0.05
+effective_variance_scenario_count: 132
+effective_variance_scenario_fraction: 0.24399260628465805
+micro_variance_scenario_count: 0
+variance_by_label_status: {'clean': {'n': 319, 'zero_variance_count': 254, 'zero_variance_fraction': 0.7962382445141066, 'effective_variance_count': 65, 'effective_variance_fraction': 0.20376175548589343, 'micro_variance_count': 0, 'effective_variance_min_std': 0.05}, 'label_defect': {'n': 222, 'zero_variance_count': 155, 'zero_variance_fraction': 0.6981981981981982, 'effective_variance_count': 67, 'effective_variance_fraction': 0.30180180180180183, 'micro_variance_count': 0, 'effective_variance_min_std': 0.05}}
+shaping: {'mean_shaped_score': 0.47900762476894637, 'zero_variance_scenario_count': 385, 'zero_variance_scenario_fraction': 0.711645101663586, 'scenarios_revived_by_shaping': 24, 'effective_variance_min_std': 0.05, 'effective_variance_scenario_count': 133, 'effective_variance_scenario_fraction': 0.24584103512014788, 'micro_variance_scenario_count': 23, 'variance_by_label_status': {'clean': {'n': 319, 'zero_variance_count': 251, 'zero_variance_fraction': 0.786833855799373, 'effective_variance_count': 66, 'effective_variance_fraction': 0.20689655172413793, 'micro_variance_count': 2, 'effective_variance_min_std': 0.05}, 'label_defect': {'n': 222, 'zero_variance_count': 134, 'zero_variance_fraction': 0.6036036036036037, 'effective_variance_count': 67, 'effective_variance_fraction': 0.30180180180180183, 'micro_variance_count': 21, 'effective_variance_min_std': 0.05}}}
+
+score histogram (reward() alone):
+   0.0    4034  46.6%  ############################################################
+   0.2     672   7.8%  ##########
+   1.0    3950  45.6%  ###########################################################
+
+### scorecard: per-cell yield x headroom, benchmark-weighted ###
+
+Scored 319 scenarios in 27 cells, on reward() + shaping.
+222 label-audit defects (/home/ec2-user/tau-forge/data/synthetic/label_audit.json) left out before scoring, as grpo_train drops them by default; --keep-label-defects to score them too.
+
+yield = group std >= 0.05; any = varied at all (the pre-effective-variance yield).
+
+cell                                                    n   mean  yield   any   head  signal  usable/cold/solved/stuck
+----------------------------------------------------------------------------------------------------------------------
+out_of_scope__apparel_footwear_exchanges                2  0.022   0.50  0.50   0.98   0.489  1/1/0/0
+out_of_scope__damaged_or_defective_item_narratives     18  0.100   0.50  0.56   0.90   0.450  10/7/0/1
+out_of_scope__electronics_returns_exchanges             6  0.225   0.33  0.33   0.78   0.258  2/2/1/1
+out_of_scope__identity_and_order_lookup                 4  0.016   0.25  0.25   0.98   0.246  1/3/0/0
+policy_violation__electronics_returns_exchanges        16  0.402   0.38  0.38   0.60   0.224  6/6/4/0
+ambiguous__electronics_returns_exchanges               17  0.460   0.35  0.35   0.54   0.191  6/6/5/0
+ambiguous__apparel_footwear_exchanges                  17  0.121   0.18  0.18   0.88   0.155  3/13/1/0  <- low yield
+requires_earlier_context__identity_and_order_lookup     3  0.771   0.67  0.67   0.23   0.153  2/0/1/0
+policy_violation__damaged_or_defective_item_narratives   18  0.434   0.22  0.22   0.57   0.126  4/8/6/0  <- low yield
+policy_violation__order_state_confusion                17  0.430   0.18  0.18   0.57   0.101  3/7/7/0  <- low yield
+ambiguous__order_state_confusion                       15  0.754   0.40  0.40   0.25   0.098  6/0/9/0
+policy_violation__address_payment_modification         18  0.581   0.22  0.22   0.42   0.093  4/5/7/2  <- low yield
+ambiguous__address_payment_modification                17  0.779   0.41  0.41   0.22   0.091  7/1/9/0
+policy_violation__identity_and_order_lookup            15  0.654   0.20  0.20   0.35   0.069  3/4/8/0  <- low yield
+ambiguous__identity_and_order_lookup                   17  0.706   0.18  0.18   0.29   0.052  3/4/10/0  <- low yield
+ambiguous__damaged_or_defective_item_narratives        18  0.413   0.06  0.06   0.59   0.033  1/10/7/0  <- low yield
+requires_earlier_context__order_state_confusion        12  0.854   0.17  0.17   0.15   0.024  2/1/9/0  <- low yield
+happy_path__damaged_or_defective_item_narratives        3  0.929   0.33  0.33   0.07   0.024  1/0/2/0
+happy_path__address_payment_modification                6  0.958   0.17  0.17   0.04   0.007  1/0/5/0  <- low yield
+happy_path__identity_and_order_lookup                   7  0.991   0.14  0.14   0.01   0.001  1/0/6/0  <- low yield
+happy_path__apparel_footwear_exchanges                 17  1.000   0.00  0.00   0.00   0.000  0/0/17/0  <- low yield
+happy_path__electronics_returns_exchanges               1  1.000   0.00  0.00   0.00   0.000  0/0/1/0  <- low yield
+happy_path__order_state_confusion                       6  1.000   0.00  0.00   0.00   0.000  0/0/6/0  <- low yield
+out_of_scope__address_payment_modification              6  0.018   0.00  0.17   0.98   0.000  1/4/0/1  <- low yield
+policy_violation__apparel_footwear_exchanges           15  0.547   0.00  0.00   0.45   0.000  0/5/8/2  <- low yield
+requires_earlier_context__address_payment_modification   16  0.938   0.00  0.00   0.06   0.000  0/1/15/0  <- low yield
+requires_earlier_context__electronics_returns_exchanges   12  1.000   0.00  0.00   0.00   0.000  0/0/12/0  <- low yield
+
+Overall yield: 66/319 (20.7%) effective, 68/319 (21.3%) varied at all.
+
+Clean vs label-defective scenarios (blocking labels recorded in the audit):
+  clean        n= 319  zero-variance  78.7%  effective  20.7%
+  label_defect n= 222  zero-variance  60.4%  effective  30.2%
+
+Per category:
+  category                      signal  relevance  recommended share
+  out_of_scope                   0.323       0.05             33.9%
+  policy_violation               0.104       0.15             32.7%
+  ambiguous                      0.103       0.08             17.2%
+  requires_earlier_context       0.017       0.36             13.2%
+  happy_path                     0.003       0.36              3.0%
+
+Recommended mixture:
+  --category-mix ambiguous=0.1725,happy_path=0.0298,out_of_scope=0.3389,policy_violation=0.327,requires_earlier_context=0.1319
+  over all 541 scored, label defects included (for comparison only):
+  ambiguous=8.0%, happy_path=25.1%, out_of_scope=13.4%, policy_violation=17.2%, requires_earlier_context=36.4%
+
+97 unsolved scenarios (30.4%) have group std < 0.05:
+no usable gradient at this temperature and group size, whatever value they sit at.
+Shaping is the first thing to try on them; what survives that needs prompting or an
+SFT warm-start, not more sampling.
+
+### scorecard: same table, unweighted ###
+
+Scored 319 scenarios in 27 cells, on reward() + shaping.
+222 label-audit defects (/home/ec2-user/tau-forge/data/synthetic/label_audit.json) left out before scoring, as grpo_train drops them by default; --keep-label-defects to score them too.
+
+yield = group std >= 0.05; any = varied at all (the pre-effective-variance yield).
+
+cell                                                    n   mean  yield   any   head  signal  usable/cold/solved/stuck
+----------------------------------------------------------------------------------------------------------------------
+out_of_scope__apparel_footwear_exchanges                2  0.022   0.50  0.50   0.98   0.489  1/1/0/0
+out_of_scope__damaged_or_defective_item_narratives     18  0.100   0.50  0.56   0.90   0.450  10/7/0/1
+out_of_scope__electronics_returns_exchanges             6  0.225   0.33  0.33   0.78   0.258  2/2/1/1
+out_of_scope__identity_and_order_lookup                 4  0.016   0.25  0.25   0.98   0.246  1/3/0/0
+policy_violation__electronics_returns_exchanges        16  0.402   0.38  0.38   0.60   0.224  6/6/4/0
+ambiguous__electronics_returns_exchanges               17  0.460   0.35  0.35   0.54   0.191  6/6/5/0
+ambiguous__apparel_footwear_exchanges                  17  0.121   0.18  0.18   0.88   0.155  3/13/1/0  <- low yield
+requires_earlier_context__identity_and_order_lookup     3  0.771   0.67  0.67   0.23   0.153  2/0/1/0
+policy_violation__damaged_or_defective_item_narratives   18  0.434   0.22  0.22   0.57   0.126  4/8/6/0  <- low yield
+policy_violation__order_state_confusion                17  0.430   0.18  0.18   0.57   0.101  3/7/7/0  <- low yield
+ambiguous__order_state_confusion                       15  0.754   0.40  0.40   0.25   0.098  6/0/9/0
+policy_violation__address_payment_modification         18  0.581   0.22  0.22   0.42   0.093  4/5/7/2  <- low yield
+ambiguous__address_payment_modification                17  0.779   0.41  0.41   0.22   0.091  7/1/9/0
+policy_violation__identity_and_order_lookup            15  0.654   0.20  0.20   0.35   0.069  3/4/8/0  <- low yield
+ambiguous__identity_and_order_lookup                   17  0.706   0.18  0.18   0.29   0.052  3/4/10/0  <- low yield
+ambiguous__damaged_or_defective_item_narratives        18  0.413   0.06  0.06   0.59   0.033  1/10/7/0  <- low yield
+requires_earlier_context__order_state_confusion        12  0.854   0.17  0.17   0.15   0.024  2/1/9/0  <- low yield
+happy_path__damaged_or_defective_item_narratives        3  0.929   0.33  0.33   0.07   0.024  1/0/2/0
+happy_path__address_payment_modification                6  0.958   0.17  0.17   0.04   0.007  1/0/5/0  <- low yield
+happy_path__identity_and_order_lookup                   7  0.991   0.14  0.14   0.01   0.001  1/0/6/0  <- low yield
+happy_path__apparel_footwear_exchanges                 17  1.000   0.00  0.00   0.00   0.000  0/0/17/0  <- low yield
+happy_path__electronics_returns_exchanges               1  1.000   0.00  0.00   0.00   0.000  0/0/1/0  <- low yield
+happy_path__order_state_confusion                       6  1.000   0.00  0.00   0.00   0.000  0/0/6/0  <- low yield
+out_of_scope__address_payment_modification              6  0.018   0.00  0.17   0.98   0.000  1/4/0/1  <- low yield
+policy_violation__apparel_footwear_exchanges           15  0.547   0.00  0.00   0.45   0.000  0/5/8/2  <- low yield
+requires_earlier_context__address_payment_modification   16  0.938   0.00  0.00   0.06   0.000  0/1/15/0  <- low yield
+requires_earlier_context__electronics_returns_exchanges   12  1.000   0.00  0.00   0.00   0.000  0/0/12/0  <- low yield
+
+Overall yield: 66/319 (20.7%) effective, 68/319 (21.3%) varied at all.
+
+Clean vs label-defective scenarios (blocking labels recorded in the audit):
+  clean        n= 319  zero-variance  78.7%  effective  20.7%
+  label_defect n= 222  zero-variance  60.4%  effective  30.2%
+
+Per category:
+  category                      signal  relevance  recommended share
+  out_of_scope                   0.323       1.00             57.3%
+  policy_violation               0.104       1.00             18.4%
+  ambiguous                      0.103       1.00             18.2%
+  requires_earlier_context       0.017       1.00              3.1%
+  happy_path                     0.003       1.00              2.9%
+
+Recommended mixture:
+  --category-mix ambiguous=0.1823,happy_path=0.0293,out_of_scope=0.5731,policy_violation=0.1843,requires_earlier_context=0.031
+  over all 541 scored, label defects included (for comparison only):
+  ambiguous=15.3%, happy_path=10.7%, out_of_scope=40.9%, policy_violation=17.5%, requires_earlier_context=15.5%
+
+97 unsolved scenarios (30.4%) have group std < 0.05:
+no usable gradient at this temperature and group size, whatever value they sit at.
+Shaping is the first thing to try on them; what survives that needs prompting or an
+SFT warm-start, not more sampling.
+
+### scorecard: reward() alone, no shaping ###
+
+Scored 319 scenarios in 27 cells, on reward() alone.
+222 label-audit defects (/home/ec2-user/tau-forge/data/synthetic/label_audit.json) left out before scoring, as grpo_train drops them by default; --keep-label-defects to score them too.
+
+yield = group std >= 0.05; any = varied at all (the pre-effective-variance yield).
+
+cell                                                    n   mean  yield   any   head  signal  usable/cold/solved/stuck
+----------------------------------------------------------------------------------------------------------------------
+out_of_scope__damaged_or_defective_item_narratives     18  0.087   0.50  0.50   0.91   0.457  9/9/0/0
+out_of_scope__electronics_returns_exchanges             6  0.208   0.33  0.33   0.79   0.264  2/3/1/0
+out_of_scope__identity_and_order_lookup                 4  0.016   0.25  0.25   0.98   0.246  1/3/0/0
+policy_violation__electronics_returns_exchanges        16  0.402   0.38  0.38   0.60   0.224  6/6/4/0
+ambiguous__electronics_returns_exchanges               17  0.460   0.35  0.35   0.54   0.191  6/6/5/0
+ambiguous__apparel_footwear_exchanges                  17  0.121   0.18  0.18   0.88   0.155  3/13/1/0  <- low yield
+requires_earlier_context__identity_and_order_lookup     3  0.771   0.67  0.67   0.23   0.153  2/0/1/0
+policy_violation__damaged_or_defective_item_narratives   18  0.434   0.22  0.22   0.57   0.126  4/8/6/0  <- low yield
+policy_violation__order_state_confusion                17  0.430   0.18  0.18   0.57   0.101  3/7/7/0  <- low yield
+ambiguous__order_state_confusion                       15  0.754   0.40  0.40   0.25   0.098  6/0/9/0
+policy_violation__address_payment_modification         18  0.569   0.22  0.22   0.43   0.096  4/7/7/0  <- low yield
+ambiguous__address_payment_modification                17  0.779   0.41  0.41   0.22   0.091  7/1/9/0
+policy_violation__identity_and_order_lookup            15  0.654   0.20  0.20   0.35   0.069  3/4/8/0  <- low yield
+ambiguous__identity_and_order_lookup                   17  0.706   0.18  0.18   0.29   0.052  3/4/10/0  <- low yield
+ambiguous__damaged_or_defective_item_narratives        18  0.413   0.06  0.06   0.59   0.033  1/10/7/0  <- low yield
+happy_path__damaged_or_defective_item_narratives        3  0.917   0.33  0.33   0.08   0.028  1/0/2/0
+requires_earlier_context__order_state_confusion        12  0.854   0.17  0.17   0.15   0.024  2/1/9/0  <- low yield
+happy_path__address_payment_modification                6  0.958   0.17  0.17   0.04   0.007  1/0/5/0  <- low yield
+happy_path__identity_and_order_lookup                   7  0.991   0.14  0.14   0.01   0.001  1/0/6/0  <- low yield
+happy_path__apparel_footwear_exchanges                 17  1.000   0.00  0.00   0.00   0.000  0/0/17/0  <- low yield
+happy_path__electronics_returns_exchanges               1  1.000   0.00  0.00   0.00   0.000  0/0/1/0  <- low yield
+happy_path__order_state_confusion                       6  1.000   0.00  0.00   0.00   0.000  0/0/6/0  <- low yield
+out_of_scope__address_payment_modification              6  0.000   0.00  0.00   1.00   0.000  0/6/0/0  <- low yield
+out_of_scope__apparel_footwear_exchanges                2  0.000   0.00  0.00   1.00   0.000  0/2/0/0  <- low yield
+policy_violation__apparel_footwear_exchanges           15  0.533   0.00  0.00   0.47   0.000  0/7/8/0  <- low yield
+requires_earlier_context__address_payment_modification   16  0.938   0.00  0.00   0.06   0.000  0/1/15/0  <- low yield
+requires_earlier_context__electronics_returns_exchanges   12  1.000   0.00  0.00   0.00   0.000  0/0/12/0  <- low yield
+
+Overall yield: 65/319 (20.4%) effective, 65/319 (20.4%) varied at all.
+
+Clean vs label-defective scenarios (blocking labels recorded in the audit):
+  clean        n= 319  zero-variance  79.6%  effective  20.4%
+  label_defect n= 222  zero-variance  69.8%  effective  30.2%
+
+Per category:
+  category                      signal  relevance  recommended share
+  policy_violation               0.104       0.15             33.6%
+  out_of_scope                   0.300       0.05             32.2%
+  ambiguous                      0.103       0.08             17.7%
+  requires_earlier_context       0.017       0.36             13.5%
+  happy_path                     0.003       0.36              3.0%
+
+Recommended mixture:
+  --category-mix ambiguous=0.1766,happy_path=0.0299,out_of_scope=0.3222,policy_violation=0.3363,requires_earlier_context=0.135
+  over all 541 scored, label defects included (for comparison only):
+  ambiguous=7.7%, happy_path=24.9%, out_of_scope=12.2%, policy_violation=16.8%, requires_earlier_context=38.4%
+
+98 unsolved scenarios (30.7%) have group std < 0.05:
+no usable gradient at this temperature and group size, whatever value they sit at.
+Shaping is the first thing to try on them; what survives that needs prompting or an
+SFT warm-start, not more sampling.
+
+### scorecard: label defects kept (secondary view; not what grpo_train trains on) ###
+
+Scored 541 scenarios in 30 cells, on reward() + shaping.
+
+yield = group std >= 0.05; any = varied at all (the pre-effective-variance yield).
+
+cell                                                    n   mean  yield   any   head  signal  usable/cold/solved/stuck
+----------------------------------------------------------------------------------------------------------------------
+out_of_scope__damaged_or_defective_item_narratives     18  0.100   0.50  0.56   0.90   0.450  10/7/0/1
+out_of_scope__electronics_returns_exchanges            18  0.104   0.44  0.56   0.90   0.398  10/6/1/1
+requires_earlier_context__identity_and_order_lookup    18  0.425   0.61  0.61   0.57   0.351  11/1/2/4
+out_of_scope__identity_and_order_lookup                18  0.101   0.33  0.33   0.90   0.300  6/11/1/0
+out_of_scope__order_state_confusion                    18  0.188   0.28  0.50   0.81   0.226  9/7/2/0
+policy_violation__electronics_returns_exchanges        18  0.362   0.33  0.39   0.64   0.213  7/7/4/0
+ambiguous__electronics_returns_exchanges               17  0.460   0.35  0.35   0.54   0.191  6/6/5/0
+out_of_scope__apparel_footwear_exchanges               17  0.033   0.18  0.59   0.97   0.171  10/7/0/0  <- low yield
+policy_violation__order_state_confusion                20  0.432   0.30  0.30   0.57   0.170  6/7/7/0
+requires_earlier_context__damaged_or_defective_item_narratives   18  0.403   0.28  0.28   0.60   0.166  5/0/5/8
+ambiguous__apparel_footwear_exchanges                  17  0.121   0.18  0.18   0.88   0.155  3/13/1/0  <- low yield
+happy_path__electronics_returns_exchanges              20  0.280   0.20  0.25   0.72   0.144  5/0/2/13  <- low yield
+policy_violation__damaged_or_defective_item_narratives   18  0.434   0.22  0.22   0.57   0.126  4/8/6/0  <- low yield
+happy_path__damaged_or_defective_item_narratives       18  0.642   0.33  0.33   0.36   0.119  6/2/9/1
+out_of_scope__address_payment_modification             18  0.028   0.11  0.39   0.97   0.108  7/10/0/1  <- low yield
+ambiguous__order_state_confusion                       18  0.736   0.39  0.39   0.26   0.103  7/1/10/0
+policy_violation__address_payment_modification         18  0.581   0.22  0.22   0.42   0.093  4/5/7/2  <- low yield
+ambiguous__address_payment_modification                17  0.779   0.41  0.41   0.22   0.091  7/1/9/0
+requires_earlier_context__order_state_confusion        18  0.681   0.28  0.28   0.32   0.089  5/3/10/0
+happy_path__identity_and_order_lookup                  18  0.778   0.39  0.39   0.22   0.086  7/1/10/0
+policy_violation__identity_and_order_lookup            20  0.681   0.25  0.25   0.32   0.080  5/4/11/0
+ambiguous__identity_and_order_lookup                   17  0.706   0.18  0.18   0.29   0.052  3/4/10/0  <- low yield
+happy_path__order_state_confusion                      18  0.726   0.17  0.17   0.27   0.046  3/4/11/0  <- low yield
+ambiguous__damaged_or_defective_item_narratives        18  0.413   0.06  0.06   0.59   0.033  1/10/7/0  <- low yield
+happy_path__address_payment_modification               18  0.865   0.22  0.22   0.14   0.030  4/1/13/0  <- low yield
+policy_violation__apparel_footwear_exchanges           18  0.501   0.06  0.11   0.50   0.028  2/5/8/3  <- low yield
+requires_earlier_context__electronics_returns_exchanges   18  0.772   0.06  0.06   0.23   0.013  1/0/13/4  <- low yield
+requires_earlier_context__address_payment_modification   18  0.837   0.06  0.06   0.16   0.009  1/2/15/0  <- low yield
+happy_path__apparel_footwear_exchanges                 18  0.956   0.00  0.00   0.04   0.000  0/0/17/1  <- low yield
+requires_earlier_context__apparel_footwear_exchanges   18  0.237   0.00  0.06   0.76   0.000  1/0/1/16  <- low yield
+
+Overall yield: 133/541 (24.6%) effective, 156/541 (28.8%) varied at all.
+
+Clean vs label-defective scenarios (blocking labels recorded in the audit):
+  clean        n= 319  zero-variance  78.7%  effective  20.7%
+  label_defect n= 222  zero-variance  60.4%  effective  30.2%
+
+Per category:
+  category                      signal  relevance  recommended share
+  requires_earlier_context       0.105       0.36             36.4%
+  happy_path                     0.072       0.36             25.1%
+  policy_violation               0.118       0.15             17.2%
+  out_of_scope                   0.276       0.05             13.4%
+  ambiguous                      0.103       0.08              8.0%
+
+Recommended mixture:
+  --category-mix ambiguous=0.0798,happy_path=0.2513,out_of_scope=0.1335,policy_violation=0.1717,requires_earlier_context=0.3637
+
+211 unsolved scenarios (39.0%) have group std < 0.05:
+no usable gradient at this temperature and group size, whatever value they sit at.
+Shaping is the first thing to try on them; what survives that needs prompting or an
+SFT warm-start, not more sampling.
+
+### buckets: flat vs varying, before and after shaping ###
+
+label-audit blocking labels from recorded in the audit: 222 of 541 scored scenarios defective
+
+=== reward() alone (of 541 scenarios) ===
+   197 (36.4%)  already_solved (1.0)
+             62  happy_path
+             46  requires_earlier_context
+             43  policy_violation
+             42  ambiguous
+              4  out_of_scope
+   178 (32.9%)  cold_start (0.0)
+             72  out_of_scope
+             43  policy_violation
+             35  ambiguous
+             15  happy_path
+             13  requires_earlier_context
+   132 (24.4%)  has_variance
+             31  out_of_scope
+             27  ambiguous
+             26  policy_violation
+             24  happy_path
+             24  requires_earlier_context
+    34 ( 6.3%)  stuck_partial (0.2)
+             25  requires_earlier_context
+              9  happy_path
+  effective variance (group std >= 0.05): 132 (24.4%); has_variance above also counts 0 micro-variance groups below that.
+    clean        n= 319  zero-variance  79.6%  effective  20.4%
+    label_defect n= 222  zero-variance  69.8%  effective  30.2%
+
+=== reward() + shaping -- what GRPO actually sees (of 541 scenarios) ===
+   197 (36.4%)  already_solved (1.0)
+             62  happy_path
+             46  requires_earlier_context
+             43  policy_violation
+             42  ambiguous
+              4  out_of_scope
+   156 (28.8%)  has_variance
+             52  out_of_scope
+             28  policy_violation
+             27  ambiguous
+             25  happy_path
+             24  requires_earlier_context
+   133 (24.6%)  cold_start (0.0)
+             48  out_of_scope
+             36  policy_violation
+             35  ambiguous
+              8  happy_path
+              6  requires_earlier_context
+    34 ( 6.3%)  stuck_partial (0.2)
+             25  requires_earlier_context
+              9  happy_path
+    11 ( 2.0%)  stuck_partial (0.1)
+              5  policy_violation
+              3  out_of_scope
+              3  requires_earlier_context
+     5 ( 0.9%)  stuck_partial (0.13)
+              3  happy_path
+              2  requires_earlier_context
+     3 ( 0.6%)  stuck_partial (0.15)
+              2  requires_earlier_context
+              1  happy_path
+     2 ( 0.4%)  stuck_partial (0.08)
+              2  happy_path
+  effective variance (group std >= 0.05): 133 (24.6%); has_variance above also counts 23 micro-variance groups below that.
+    clean        n= 319  zero-variance  78.7%  effective  20.7%
+    label_defect n= 222  zero-variance  60.4%  effective  30.2%
+
+  flat groups: 409 -> 385 (24 revived, 4.4% of the corpus)
+  effectively varying: 132 -> 133 (1 revived past std 0.05)
+
+=== Reward granularity (what is reachable at all) ===
+   257 (47.5%)  graded (partial credit reachable)
+   182 (33.6%)  binary (gold is silence: 0.0 or 1.0 only)
+   102 (18.9%)  coarse (READ tool: output match -> 1.0, else arg_match)
+
+  136 of the flat groups are structurally binary -- no completion could have scored between 0 and 1.
+  Temperature, group size and shaping cannot help these. Only --category-mix reduces their share of the run.
+
+=== Example completions ===
+
+--- has_variance (up to 3 scenarios) ---
+
+  ambiguous__address_payment_modification__004  scores=[0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    [score=0.0] <tool_call> | {"name": "get_order_details", "arguments": {"order_id": "#W6779827"}} | </tool_call>
+    [score=1.0] Could you please confirm the order ID for the order with the cycling helmet? Also, let me know if you'd like to proceed with switching to your gift card for the payment method.
+
+  ambiguous__address_payment_modification__005  scores=[1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0]
+    [score=1.0] Let's check the details of your most recent order to confirm the details before proceeding.   |  | Your most recent order is: **#W9409203**.   |  | Could you please confirm:   | 1. You want to modify the payment method of order **#W9409203** to your gift card (ID: gift_card_7219486, balance: $49.00).   | 2. You
+    [score=0.0] Your most recent order is #W9409203. Let me check its status to confirm if it's pending, as only pending orders can have their payment methods modified.  |  | I'll check the order details for you.  | <tool_call> | {"name": "get_order_details", "arguments": {"order_id": "#W9409203"}} | </tool_call>
+
+  ambiguous__address_payment_modification__009  scores=[0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    [score=0.0] <tool_call> | {"name": "modify_user_address", "arguments": {"user_id": "sofia_li_9219", "address1": "512 Birchwood Lane", "address2": "Suite 12", "city": "Denver", "state": "CO", "country": "USA", "zip": "80203"}} | </tool_call>
+    [score=1.0] I can update your default address. Here are the details: |  | - New address: 512 Birchwood Lane, Suite 12, Denver, CO, 80203 |  | Please confirm with a "yes" if you'd like me to proceed.
+
+--- cold_start (0.0) (up to 3 scenarios) ---
+
+  ambiguous__address_payment_modification__002  scores=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    [score=0.0] <tool_call> | {"name": "get_order_details", "arguments": {"order_id": "#W5918442"}} | </tool_call>
+
+  ambiguous__apparel_footwear_exchanges__001  scores=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    [score=0.0] <tool_call> | {"name": "get_order_details", "arguments": {"order_id": "#W7762997"}} | </tool_call>
+
+  ambiguous__apparel_footwear_exchanges__002  scores=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    [score=0.0] <tool_call> | {"name": "get_order_details", "arguments": {"order_id": "#W3502364"}} | </tool_call>
