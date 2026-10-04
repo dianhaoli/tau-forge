@@ -18,3 +18,4 @@ scratch/
 # the README instead of the artifacts.
 data/trained/
 data/simulations/
+.claude/worktrees/
