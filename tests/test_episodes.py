@@ -928,3 +928,32 @@ def test_ownership_denial_with_transfer_offer_is_accepted():
         "Would you like me to transfer you to a human agent?"
     )
     assert r.intent == "accept_denial"
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        "For privacy and security reasons, I can only assist the account holder. Your roommate will need to "
+        "contact us directly to cancel her order.",
+        "Unfortunately I can't help with that request, since the order isn't yours. The account owner has to "
+        "request the cancellation.",
+        "I'm sorry, but that's not your order, so I can't make changes to it.",
+    ],
+)
+def test_account_holder_and_not_yours_denials_are_accepted(tasks, line):
+    foreign = next(t for t in tasks if t.template == "foreign_order_refusal")
+    assert ScriptedUser(foreign).reply(line).intent == "accept_denial"
+
+
+def test_exchange_recap_may_say_change_and_an_all_items_question_is_not_a_recap(tasks):
+    t = next(t for t in tasks if t.template == "exchange" and not t.profile.get("correction"))
+    name = t.profile["recap_keys"][1]
+    r = ScriptedUser(t).reply(
+        f"I'll change the {name} in order {t.target_order} to the new option, with the difference going to "
+        "your card. Shall I proceed?"
+    )
+    assert r.is_yes
+    r = ScriptedUser(t).reply(
+        f"Before I proceed with the exchange for order {t.target_order}, is that all the items you want to exchange?"
+    )
+    assert r.intent == "all_items" and not r.is_yes

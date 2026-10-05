@@ -113,7 +113,10 @@ OWNERSHIP_DENY_RE = re.compile(
     r"(can(no|'|’)t|cannot|unable to|not able to|not allowed to|am not permitted to|won(no|'|’)t)[^.?!]{0,60}"
     r"(someone else|another (person|user|customer|account)|a different (person|user|customer|account)|"
     r"(other|another|different) (person|user|customer|account)('s|’s)?|third part\w+)|"
-    r"(someone else|another person|another user|another customer)('s|’s)? (order|account))\b",
+    r"(someone else|another person|another user|another customer)('s|’s)? (order|account)|"
+    r"(only|just) (help|assist|process|handle|manage|access|modify|cancel|return|discuss)\w*[^.?!]{0,60}"
+    r"(the )?account (holder|owner)|(the )?account (holder|owner) (has|have|must|needs?|will need|should) to|"
+    r"(isn't|is not|aren't|are not|wasn't|was not|'s not) (yours|your own)|not your (own )?(order|account))\b",
     re.I,
 )
 # A request in imperative form: "Please confirm with a "yes" ...", "reply yes",
@@ -158,7 +161,7 @@ CONSTRAINT_RE = re.compile(
 # "confirm" that names no action is a request, not a recap.
 ACTION_RE = {
     "cancel": re.compile(r"\bcancel\w*", re.I),
-    "exchange": re.compile(r"\b(exchang\w*|swap\w*|replac\w*)", re.I),
+    "exchange": re.compile(r"\b(exchang\w*|swap\w*|replac\w*|chang\w*|switch\w*)", re.I),
     "return_fallback": re.compile(r"\b(return\w*|refund\w*|send(ing)? back)", re.I),
     "modify_payment": re.compile(r"\b(chang\w*|switch\w*|updat\w*|modif\w*|mov(e|ing)|charg\w*)", re.I),
     "foreign_order_refusal": re.compile(r"\b(cancel\w*|return\w*|refund\w*)", re.I),
@@ -255,7 +258,11 @@ class ScriptedUser:
         action = ACTION_RE.get(self.task.template)
         if action is not None and not action.search(text):
             return False
-        return not INFO_ASK_RE.search(question_sentences(text))
+        asks = question_sentences(text)
+        # "Before I proceed with the exchange for order #W1, is that all the
+        # items?" names the target and the action, but asks about the item
+        # list: a yes to it is not a yes to a recap.
+        return not INFO_ASK_RE.search(asks) and not ALL_ITEMS_RE.search(asks)
 
     def _unrecognised(self, line: str) -> UserReply:
         self.n_unrecognised += 1

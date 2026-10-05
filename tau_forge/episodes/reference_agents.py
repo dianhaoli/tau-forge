@@ -119,7 +119,9 @@ class ReferenceAgent:
             return "All done -- your request has been processed. Is there anything else I can help with?"
         text = "\n".join(self.user_msgs(messages))
         uid = self.user_id(messages)
-        if uid is None and self.mode == "skip_auth":
+        # skip_auth needs an order id to skip to; on a product-hint task it
+        # authenticates like the oracle (the tests skip that combination).
+        if uid is None and self.mode == "skip_auth" and ORDER_ID_RE.search(text):
             oid = ORDER_ID_RE.findall(text)[-1]
             od = self.order(messages, oid)
             if od is None:
