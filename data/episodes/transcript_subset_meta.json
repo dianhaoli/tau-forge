@@ -1,0 +1,596 @@
+{
+ "ep_cancel_s0_00107": {
+  "group": "low",
+  "template": "cancel",
+  "k_of_8": 0,
+  "end_reasons": {
+   "max_turns": 3,
+   "user_stop": 5
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "email",
+   "late_correction": true,
+   "identity_upfront": false,
+   "reason_upfront": false
+  }
+ },
+ "ep_cancel_s0_00024": {
+  "group": "low",
+  "template": "cancel",
+  "k_of_8": 0,
+  "end_reasons": {
+   "user_stop": 7,
+   "max_turns": 1
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "late_correction": true,
+   "identity_upfront": false,
+   "reason_upfront": false
+  }
+ },
+ "ep_cancel_s0_00154": {
+  "group": "low",
+  "template": "cancel",
+  "k_of_8": 0,
+  "end_reasons": {
+   "user_stop": 4,
+   "max_turns": 4
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "late_correction": true,
+   "identity_upfront": false,
+   "reason_upfront": false
+  }
+ },
+ "ep_cancel_s0_00052": {
+  "group": "solved",
+  "template": "cancel",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "late_correction": false,
+   "identity_upfront": true,
+   "reason_upfront": true
+  }
+ },
+ "ep_cancel_s0_00066": {
+  "group": "solved",
+  "template": "cancel",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "late_correction": false,
+   "identity_upfront": false,
+   "reason_upfront": true
+  }
+ },
+ "ep_cancel_s0_00194": {
+  "group": "solved",
+  "template": "cancel",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "email",
+   "late_correction": false,
+   "identity_upfront": true,
+   "reason_upfront": true
+  }
+ },
+ "ep_cancel_s0_00035": {
+  "group": "mid_maxturns",
+  "template": "cancel",
+  "k_of_8": 4,
+  "end_reasons": {
+   "user_stop": 5,
+   "max_turns": 3
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "email",
+   "late_correction": true,
+   "identity_upfront": false,
+   "reason_upfront": false
+  }
+ },
+ "ep_cancel_s0_00120": {
+  "group": "mid_maxturns",
+  "template": "cancel",
+  "k_of_8": 3,
+  "end_reasons": {
+   "max_turns": 5,
+   "user_stop": 3
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "late_correction": false,
+   "identity_upfront": true,
+   "reason_upfront": true
+  }
+ },
+ "ep_exchange_s0_00121": {
+  "group": "low",
+  "template": "exchange",
+  "k_of_8": 0,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 1,
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "late_correction": true,
+   "identity_upfront": false,
+   "price_diff": -18.8
+  }
+ },
+ "ep_exchange_s0_00008": {
+  "group": "low",
+  "template": "exchange",
+  "k_of_8": 0,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": false,
+   "id_mode": "email",
+   "late_correction": true,
+   "identity_upfront": true,
+   "price_diff": 41.13
+  }
+ },
+ "ep_exchange_s0_00145": {
+  "group": "low",
+  "template": "exchange",
+  "k_of_8": 0,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 1,
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "late_correction": true,
+   "identity_upfront": false,
+   "price_diff": 8.17
+  }
+ },
+ "ep_exchange_s0_00141": {
+  "group": "solved",
+  "template": "exchange",
+  "k_of_8": 4,
+  "end_reasons": {
+   "user_stop": 7,
+   "max_turns": 1
+  },
+  "difficulty": {
+   "n_items": 3,
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "late_correction": false,
+   "identity_upfront": true,
+   "price_diff": 3.81
+  }
+ },
+ "ep_exchange_s0_00098": {
+  "group": "mid_maxturns",
+  "template": "exchange",
+  "k_of_8": 4,
+  "end_reasons": {
+   "max_turns": 2,
+   "user_stop": 6
+  },
+  "difficulty": {
+   "n_items": 1,
+   "give_order_id": false,
+   "id_mode": "email",
+   "late_correction": false,
+   "identity_upfront": true,
+   "price_diff": -0.69
+  }
+ },
+ "ep_exchange_s0_00139": {
+  "group": "solved",
+  "template": "exchange",
+  "k_of_8": 6,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 3,
+   "give_order_id": true,
+   "id_mode": "email",
+   "late_correction": false,
+   "identity_upfront": true,
+   "price_diff": 38.78
+  }
+ },
+ "ep_exchange_s0_00130": {
+  "group": "mid_maxturns",
+  "template": "exchange",
+  "k_of_8": 3,
+  "end_reasons": {
+   "max_turns": 1,
+   "user_stop": 7
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": true,
+   "id_mode": "email",
+   "late_correction": false,
+   "identity_upfront": false,
+   "price_diff": -51.99
+  }
+ },
+ "ep_foreign_order_refusal_s0_00021": {
+  "group": "low",
+  "template": "foreign_order_refusal",
+  "k_of_8": 1,
+  "end_reasons": {
+   "user_stop": 2,
+   "max_turns": 6
+  },
+  "difficulty": {
+   "request": "cancel",
+   "id_mode": "name_zip",
+   "identity_upfront": true
+  }
+ },
+ "ep_foreign_order_refusal_s0_00069": {
+  "group": "low",
+  "template": "foreign_order_refusal",
+  "k_of_8": 1,
+  "end_reasons": {
+   "user_stop": 1,
+   "max_turns": 7
+  },
+  "difficulty": {
+   "request": "cancel",
+   "id_mode": "name_zip",
+   "identity_upfront": true
+  }
+ },
+ "ep_foreign_order_refusal_s0_00095": {
+  "group": "solved",
+  "template": "foreign_order_refusal",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "request": "return",
+   "id_mode": "email",
+   "identity_upfront": false
+  }
+ },
+ "ep_foreign_order_refusal_s0_00164": {
+  "group": "solved",
+  "template": "foreign_order_refusal",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "request": "return",
+   "id_mode": "name_zip",
+   "identity_upfront": false
+  }
+ },
+ "ep_foreign_order_refusal_s0_00004": {
+  "group": "solved",
+  "template": "foreign_order_refusal",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "request": "return",
+   "id_mode": "email",
+   "identity_upfront": false
+  }
+ },
+ "ep_foreign_order_refusal_s0_00011": {
+  "group": "mid_maxturns",
+  "template": "foreign_order_refusal",
+  "k_of_8": 3,
+  "end_reasons": {
+   "user_stop": 5,
+   "max_turns": 3
+  },
+  "difficulty": {
+   "request": "cancel",
+   "id_mode": "name_zip",
+   "identity_upfront": true
+  }
+ },
+ "ep_foreign_order_refusal_s0_00109": {
+  "group": "mid_maxturns",
+  "template": "foreign_order_refusal",
+  "k_of_8": 3,
+  "end_reasons": {
+   "max_turns": 5,
+   "user_stop": 3
+  },
+  "difficulty": {
+   "request": "cancel",
+   "id_mode": "email",
+   "identity_upfront": true
+  }
+ },
+ "ep_modify_payment_s0_00014": {
+  "group": "low",
+  "template": "modify_payment",
+  "k_of_8": 2,
+  "end_reasons": {
+   "max_turns": 6,
+   "user_stop": 2
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "gift_card_short": false,
+   "identity_upfront": true,
+   "order_total": 2446.3,
+   "asked_source": "paypal"
+  }
+ },
+ "ep_modify_payment_s0_00009": {
+  "group": "low",
+  "template": "modify_payment",
+  "k_of_8": 2,
+  "end_reasons": {
+   "max_turns": 4,
+   "user_stop": 2,
+   "transfer": 2
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "gift_card_short": true,
+   "identity_upfront": false,
+   "order_total": 1484.51,
+   "asked_source": "gift_card"
+  }
+ },
+ "ep_modify_payment_s0_00029": {
+  "group": "low",
+  "template": "modify_payment",
+  "k_of_8": 2,
+  "end_reasons": {
+   "user_stop": 2,
+   "max_turns": 6
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "gift_card_short": false,
+   "identity_upfront": true,
+   "order_total": 813.68,
+   "asked_source": "paypal"
+  }
+ },
+ "ep_modify_payment_s0_00003": {
+  "group": "solved",
+  "template": "modify_payment",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "email",
+   "gift_card_short": true,
+   "identity_upfront": false,
+   "order_total": 663.85,
+   "asked_source": "gift_card"
+  }
+ },
+ "ep_modify_payment_s0_00040": {
+  "group": "solved",
+  "template": "modify_payment",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "give_order_id": false,
+   "id_mode": "email",
+   "gift_card_short": false,
+   "identity_upfront": true,
+   "order_total": 4034.3,
+   "asked_source": "credit_card"
+  }
+ },
+ "ep_modify_payment_s0_00025": {
+  "group": "solved",
+  "template": "modify_payment",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "gift_card_short": false,
+   "identity_upfront": false,
+   "order_total": 3298.16,
+   "asked_source": "credit_card"
+  }
+ },
+ "ep_modify_payment_s0_00008": {
+  "group": "mid_maxturns",
+  "template": "modify_payment",
+  "k_of_8": 5,
+  "end_reasons": {
+   "user_stop": 5,
+   "max_turns": 3
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "email",
+   "gift_card_short": false,
+   "identity_upfront": false,
+   "order_total": 1011.54,
+   "asked_source": "paypal"
+  }
+ },
+ "ep_modify_payment_s0_00011": {
+  "group": "mid_maxturns",
+  "template": "modify_payment",
+  "k_of_8": 6,
+  "end_reasons": {
+   "transfer": 1,
+   "user_stop": 6,
+   "max_turns": 1
+  },
+  "difficulty": {
+   "give_order_id": true,
+   "id_mode": "email",
+   "gift_card_short": false,
+   "identity_upfront": false,
+   "order_total": 4569.4,
+   "asked_source": "credit_card"
+  }
+ },
+ "ep_return_fallback_s0_00117": {
+  "group": "low",
+  "template": "return_fallback",
+  "k_of_8": 0,
+  "end_reasons": {
+   "max_turns": 8
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "identity_upfront": true,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00073": {
+  "group": "low",
+  "template": "return_fallback",
+  "k_of_8": 0,
+  "end_reasons": {
+   "user_stop": 4,
+   "max_turns": 4
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": false,
+   "id_mode": "email",
+   "identity_upfront": true,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00113": {
+  "group": "low",
+  "template": "return_fallback",
+  "k_of_8": 1,
+  "end_reasons": {
+   "user_stop": 5,
+   "max_turns": 3
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": false,
+   "id_mode": "email",
+   "identity_upfront": true,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00156": {
+  "group": "solved",
+  "template": "return_fallback",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "identity_upfront": false,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00071": {
+  "group": "solved",
+  "template": "return_fallback",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": true,
+   "id_mode": "name_zip",
+   "identity_upfront": false,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00168": {
+  "group": "solved",
+  "template": "return_fallback",
+  "k_of_8": 8,
+  "end_reasons": {
+   "user_stop": 8
+  },
+  "difficulty": {
+   "n_items": 1,
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "identity_upfront": true,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00139": {
+  "group": "mid_maxturns",
+  "template": "return_fallback",
+  "k_of_8": 6,
+  "end_reasons": {
+   "user_stop": 7,
+   "max_turns": 1
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": true,
+   "id_mode": "email",
+   "identity_upfront": true,
+   "has_gift_card": false
+  }
+ },
+ "ep_return_fallback_s0_00158": {
+  "group": "mid_maxturns",
+  "template": "return_fallback",
+  "k_of_8": 3,
+  "end_reasons": {
+   "user_stop": 4,
+   "max_turns": 4
+  },
+  "difficulty": {
+   "n_items": 2,
+   "give_order_id": false,
+   "id_mode": "name_zip",
+   "identity_upfront": true,
+   "has_gift_card": false
+  }
+ }
+}
