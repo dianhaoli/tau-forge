@@ -92,3 +92,5 @@ End reasons: {'user_stop': 1594, 'max_turns': 376, 'transfer': 29, 'context_budg
 | n_items | 2 | 27 | 0.57 | 93% | 42 |
 
 Note: effective variance and flat are computed on the episode *reward*, which has partial credit, not on binary success. That's why exchange shows 0% flat while 20 of its 50 tasks have k=0 successes: their rewards still differ within the group.
+
+**Caveat (transcript audit):** these p values are distorted by environment bugs, chiefly false-positive refusals in foreign_order_refusal and the literal-"?" recap rule. Read `episode_transcript_audit.md` before using them.
