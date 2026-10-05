@@ -345,7 +345,14 @@ def gen_exchange(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[E
             "I need to swap a few things from {o} -- I'd like {r} instead.",
             "Can I exchange items from {o}? I want {r} instead.",
         ])
-        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}"
+        # Several catalogue variants can match one named option; gold is the one
+        # that changes ONLY that option, so the user says so explicitly.
+        same = (
+            " Just that one option changed -- everything else the same as the item I have now."
+            if n == 1 else
+            " For each, only the option I named changes -- everything else the same as the item I have now."
+        )
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}{same}"
         names = [it.name for it, _ in picks]
         profile: dict[str, Any] = {
             "identity": ident_pool,
@@ -355,18 +362,20 @@ def gen_exchange(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[E
                       f"It's the order that had the {_join(names)} in it."]
             ),
             "payment": [f"Please use {phrase}.", f"Let's use {phrase} for any difference.", f"I'll go with {phrase}."],
-            "restate": f"I want to exchange {reqs} from {order_ref}.",
+            "restate": f"I want to exchange {reqs} from {order_ref}.{same}",
             "recap_keys": [order.order_id] + names,
         }
         if correction:
             it0, (vc, dc) = correction
             key, val = next(iter(dc.items()))
             profile["correction"] = [
-                f"Wait, sorry -- for the {it0.name}, I actually want it {change_phrase(key, val)}. Everything else is right.",
-                f"Hold on, I changed my mind on the {it0.name}: make it {change_phrase(key, val)} instead. The rest is fine.",
+                f"Wait, sorry -- for the {it0.name}, forget the change I asked for: I actually want it "
+                f"{change_phrase(key, val)} instead, with everything else the same as what I have now.",
+                f"Hold on, I changed my mind on the {it0.name}: drop my first change and make it "
+                f"{change_phrase(key, val)} instead, keeping every other option the same as the one I have now.",
             ]
             profile["restate_after_correction"] = (
-                f"I want to exchange {_join([req(it, d) for it, (v, d) in final])} from {order_ref}."
+                f"I want to exchange {_join([req(it, d) for it, (v, d) in final])} from {order_ref}.{same}"
             )
         gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
         gold += _order_reads(user, order.order_id, k["give_order_id"])

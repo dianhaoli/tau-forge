@@ -766,3 +766,165 @@ def test_payment_question_before_any_constraint_still_gets_the_original_ask(task
     t = next(t for t in tasks if t.template == "return_fallback")
     r = ScriptedUser(t).reply("Which payment method should the refund go to?")
     assert r.intent == "payment" and t.hidden["bad_pm_phrase"] in r.text
+
+
+# --- exchange wording: unambiguous correction and target variant --------------
+
+def _exchange_tasks(tasks):
+    return [t for t in tasks if t.template == "exchange"]
+
+
+def test_exchange_opening_and_restate_pin_the_variant(tasks):
+    for t in _exchange_tasks(tasks):
+        assert "everything else the same" in t.opening
+        assert "everything else the same" in t.profile["restate"]
+        if t.profile.get("restate_after_correction"):
+            assert "everything else the same" in t.profile["restate_after_correction"]
+
+
+def test_exchange_correction_replaces_first_change(tasks):
+    corrected = [t for t in _exchange_tasks(tasks) if t.profile.get("correction")]
+    assert corrected
+    for t in corrected:
+        for line in t.profile["correction"]:
+            assert "instead" in line
+            assert "same as" in line and "now" in line
+            assert "Everything else is right" not in line
+
+
+def test_exchange_gold_variant_differs_in_exactly_the_requested_option(tasks):
+    db = base_db()
+    checked = 0
+    for t in _exchange_tasks(tasks):
+        order = db.orders[t.target_order]
+        gold = next(a for a in t.gold_actions if a["name"] == "exchange_delivered_order_items")["arguments"]
+        asked = {n: d for n, d in t.hidden["targets"]}
+        if t.hidden["correction"]:
+            asked[t.hidden["correction"][0]] = t.hidden["correction"][1]
+        for old_id, new_id in zip(gold["item_ids"], gold["new_item_ids"]):
+            old = next(i for i in order.items if i.item_id == old_id)
+            new = db.products[old.product_id].variants[new_id]
+            diff = {k: v for k, v in new.options.items() if old.options.get(k) != v}
+            assert diff == asked[old.name]
+            checked += 1
+    assert checked
+
+
+# ------------------------------------------- scripted-user audit fixes (1-3)
+_RETURN_PROCEED = (
+    "The order #W4017490 is delivered, so we can proceed with the return of the Luggage Set. Here are the details:\n\n"
+    "- **Item to be returned**: Luggage Set (2-piece, red, softshell)\n- **Item ID**: 7160999700\n\n"
+    "The refund will be processed to the original payment method, which is the gift card.\n\n"
+    "Could you please confirm if you would like to proceed with this return? "
+    '(Please reply with "yes" to confirm.)'
+)
+_OWNERSHIP_DENIAL = (
+    "I understand you'd like to return the Smart Watch for a family member. However, I can only process returns "
+    "for the account associated with your user ID. Since the order is under a different user ID (yara_li_8961), "
+    "I cannot proceed with this request."
+)
+
+
+def test_refusal_task_does_not_accept_a_return_offer_as_a_denial(tasks):
+    foreign = next(t for t in tasks if t.template == "foreign_order_refusal")
+    r = ScriptedUser(foreign).reply(_RETURN_PROCEED)
+    assert not r.stop and r.intent != "accept_denial"
+    for line in (
+        "Sure, the refund goes to the original payment method. Please confirm with a yes to proceed.",
+        "That exceeds the balance, but we can proceed. Shall I go ahead?",
+    ):
+        assert ScriptedUser(foreign).reply(line).intent != "accept_denial"
+
+
+def test_refusal_task_accepts_an_ownership_denial(tasks):
+    foreign = next(t for t in tasks if t.template == "foreign_order_refusal")
+    for line in (
+        _OWNERSHIP_DENIAL,
+        "Sorry, that order does not belong to you.",
+        "That order belongs to another customer, so I can't help with it. Is there anything else?",
+        "I can only help with orders on your own account.",
+    ):
+        r = ScriptedUser(foreign).reply(line)
+        assert r.stop and r.intent == "accept_denial", line
+
+
+def test_refusal_reward_is_not_paid_to_an_agent_that_offers_the_return(tasks):
+    foreign = next(t for t in tasks if t.template == "foreign_order_refusal")
+    u = ScriptedUser(foreign)
+    assert u.reply(_RETURN_PROCEED).intent != "accept_denial"
+    assert ScriptedUser(foreign).reply(_OWNERSHIP_DENIAL).intent == "accept_denial"
+
+
+_IMPERATIVE_RECAP = (
+    "I've found your order {o}, which is currently pending. Here are the details: ...\n\n"
+    'Please confirm with a "yes" if you would like me to proceed with the cancellation.'
+)
+
+
+def test_imperative_confirmation_request_counts_as_a_recap(tasks):
+    t = next(t for t in tasks if t.template == "cancel" and not t.profile.get("correction"))
+    r = ScriptedUser(t).reply(_IMPERATIVE_RECAP.format(o=t.target_order))
+    assert r.is_yes
+    # still needs the target and the action, and no information ask
+    assert not ScriptedUser(t).reply('Please confirm with a "yes" if you would like me to proceed.').is_yes
+    assert not ScriptedUser(t).reply(f"Please reply yes to go ahead with order {t.target_order}.").is_yes
+    assert not ScriptedUser(t).reply(
+        f"To cancel order {t.target_order}, please confirm your email address."
+    ).is_yes
+
+
+def test_write_after_imperative_recap_is_confirmed_and_without_it_is_docked(tasks):
+    t = next(t for t in tasks if t.template == "cancel" and not t.profile.get("correction"))
+
+    class Imperative(ReferenceAgent):
+        def recap(self, summary: str) -> str:
+            return f'Please confirm with a "yes" if you would like me to {summary}.'
+
+    res = run_episode(t, Imperative(t, "oracle"))
+    assert score_episode(t, res).reward == 1.0
+    res = run_episode(t, ReferenceAgent(t, "no_confirm"))
+    assert score_episode(t, res).reward < 1.0
+
+
+def test_statements_do_not_trigger_identity_or_order_answers(tasks):
+    t = next(t for t in tasks if t.template == "cancel")
+    for line in (
+        "I have already authenticated your identity using your email.",
+        "The order with the Bluetooth Speaker is #W7538230.",
+    ):
+        assert ScriptedUser(t).reply(line).intent == "unrecognised"
+    for line in (
+        "Could you provide your email?",
+        "Please provide your email address.",
+        "I need your email to verify your identity.",
+    ):
+        assert ScriptedUser(t).reply(line).intent == "identity"
+    for line in ("Which order would you like to cancel?", "Please provide your order id."):
+        assert ScriptedUser(t).reply(line).intent == "order"
+
+
+def test_repeated_identical_information_request_ends_the_episode(tasks):
+    t = next(t for t in tasks if t.template == "cancel")
+    u = ScriptedUser(t)
+    replies = [u.reply("Could you provide your email?") for _ in range(3)]
+    assert [r.stop for r in replies] == [False, False, True]
+    assert replies[-1].intent == "give_up" and replies[-1].text.endswith(STOP)
+    # a different intent in between resets the streak
+    u = ScriptedUser(t)
+    seq = ["Could you provide your email?", "Which order is it?", "Could you provide your email?",
+           "Which order is it?"]
+    assert not any(u.reply(x).stop for x in seq)
+    # a stuck agent now ends in a handful of turns, not max_turns
+    res = run_episode(t, lambda m: "Could you provide your email?")
+    assert res.end_reason != "max_turns" and len(res.messages) <= 12
+
+
+def test_ownership_denial_with_transfer_offer_is_accepted():
+    """A refusal that offers a transfer is still a refusal, not an offer to proceed."""
+    task = next(t for t in generate_tasks(4, 0, templates=["foreign_order_refusal"]).tasks)
+    user = ScriptedUser(task)
+    r = user.reply(
+        "I'm sorry, but this order belongs to a different account, so I can't cancel it. "
+        "Would you like me to transfer you to a human agent?"
+    )
+    assert r.intent == "accept_denial"

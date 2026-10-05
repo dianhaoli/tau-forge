@@ -55,6 +55,7 @@ import re
 from dataclasses import dataclass
 from tau_forge.episodes.task import STOP, EpisodeTask
 
+MAX_SAME_ANSWER = 3  # consecutive identical information answers before giving up
 YES = ["Yes, please proceed.", "Yes, go ahead.", "Yes, that's right -- please do it.", "Yes, I confirm."]
 THANKS = ["Great, thank you! That's all I needed.", "Perfect, thanks for your help.", "Thanks, that's everything."]
 RESTATE = ["Sorry, to be clear: ", "Just to repeat what I need: ", "Let me say it again: "]
@@ -95,6 +96,53 @@ DENY_RE = re.compile(
     r"(does not|doesn't) belong|belongs to (someone|another|a different))\b",
     re.I,
 )
+# Ownership denial, for refusal (expect_no_write) tasks only. DENY_RE also
+# matches fallback/payment phrasing ("original payment method", "exceeds",
+# "can't") that a compliant agent uses while PROCEEDING with a return, so
+# using it to accept a refusal paid 1.0 to an agent that offered the return.
+OWNERSHIP_DENY_RE = re.compile(
+    r"\b((different|another|other|someone else'?s?|a third|separate) (user|account|customer|person|individual|profile)|"
+    r"(under|belongs? to|owned by|registered (to|under)|placed by|made by|associated with) (a |an |the )?"
+    r"(different|another|other|someone|a third|separate)|"
+    r"(not|isn't|aren't|wasn't) (associated|linked|tied|registered|connected|placed|made|part of|one of|under|on|in|listed)"
+    r"( with| to| under| on| in| by)? (your|you|this)|"
+    r"(does not|doesn't|do not|don't) (belong|appear|match|show up)( to| in| on| under)?( you| your)?|"
+    r"(only|just) (help|assist|process|handle|manage|access|modify|cancel|return|discuss)\w*[^.?!]{0,60}"
+    r"(your (own )?(account|orders?|user)|(account|orders?) (associated|linked|tied) (with|to) your|"
+    r"(the )?account (associated|linked|tied))|"
+    r"(can(no|'|’)t|cannot|unable to|not able to|not allowed to|am not permitted to|won(no|'|’)t)[^.?!]{0,60}"
+    r"(someone else|another (person|user|customer|account)|a different (person|user|customer|account)|"
+    r"(other|another|different) (person|user|customer|account)('s|’s)?|third part\w+)|"
+    r"(someone else|another person|another user|another customer)('s|’s)? (order|account))\b",
+    re.I,
+)
+# A request in imperative form: "Please confirm with a "yes" ...", "reply yes",
+# "let me know if you'd like me to proceed". Together with a "?" question
+# these are the turns that ask the user to confirm.
+IMPERATIVE_CONFIRM_RE = re.compile(
+    r"(\b(please|kindly)\s+(confirm|reply|respond|answer|say|type|let me know)\b|"
+    r"\bconfirm\b[^.?!]{0,40}\b(yes|proceed|go ahead)\b|"
+    r"\b(reply|respond|answer|type|say|send)\b[^.?!]{0,30}[\"'“”‘’(]?\byes\b|"
+    r"\blet me know (if|whether)\b[^.?!]{0,40}\b(proceed|go ahead|like me to|want me to)\b|"
+    r"\bconfirm (if|whether|that) you\b)",
+    re.I,
+)
+# A confirm-style question that only offers OTHER help ("Would you like me to
+# transfer you to a human agent?", "... help with one of your own orders?") is
+# not an offer to proceed with the refused request.
+OTHER_HELP_RE = re.compile(
+    r"\b(transfer|human|representative|anything else|something else|other orders?|your own|another order)\b",
+    re.I,
+)
+# Imperative / statement forms that still ASK the user for something (so
+# IDENT_RE / ORDER_ASK_RE only fire on requests, not on statements like "I
+# have already authenticated your identity using your email").
+REQUEST_RE = re.compile(
+    r"\b(please|kindly|provide|let me know|tell me|share|send me|give me|enter|"
+    r"i('d| would) need|i('ll| will) need|i need|i require|need (to know )?your|require)\b",
+    re.I,
+)
+
 # Statements of the constraint behind a fallback that need no denial word:
 # "your gift card has a balance of $40.00, but the order total is $120.50 ...
 # which payment method would you like?" or "refunds go to the method used
@@ -126,8 +174,18 @@ _SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|\n+")
 
 
 def question_sentences(text: str) -> str:
-    """The sentences of `text` that end in a question mark, joined."""
-    return " ".join(x for x in _SENTENCE_SPLIT_RE.split(text) if "?" in x)
+    """The sentences of `text` that ask the user something, joined: those
+    containing a question mark, plus imperative requests ("Please provide your
+    order id.", "I need your email to verify.")."""
+    return " ".join(x for x in _SENTENCE_SPLIT_RE.split(text) if "?" in x or REQUEST_RE.search(x))
+
+
+def asks_confirmation(text: str) -> bool:
+    """True when the turn asks the user to confirm / approve: a confirm word
+    in a question sentence, or an imperative confirmation request."""
+    return bool(CONFIRM_RE.search(" ".join(x for x in _SENTENCE_SPLIT_RE.split(text) if "?" in x))) or bool(
+        IMPERATIVE_CONFIRM_RE.search(text)
+    )
 
 
 @dataclass
@@ -151,6 +209,19 @@ class ScriptedUser:
         self.correction_used = False
         self.fallback_used = False
         self.n_unrecognised = 0
+        self._last_info_intent = ""
+        self._info_streak = 0
+
+    def _answer(self, intent: str, text: str) -> UserReply:
+        """An information answer (identity / order / reason / payment / all
+        items). The third consecutive answer of the same kind means the agent
+        is looping on one question: give up instead of repeating until
+        max_turns."""
+        self._info_streak = self._info_streak + 1 if intent == self._last_info_intent else 1
+        self._last_info_intent = intent
+        if self._info_streak >= MAX_SAME_ANSWER:
+            return UserReply(f"{self._pick(GIVE_UP)} {STOP}", True, "give_up")
+        return UserReply(text, False, intent)
 
     def _say(self, key: str) -> str:
         """A line from the task's pool for `key`; after the late correction
@@ -179,7 +250,7 @@ class ScriptedUser:
     def _is_recap(self, text: str) -> bool:
         """A confirmation request that names the target and the action and
         asks for nothing else -- the only thing "yes" answers."""
-        if not ("?" in text and CONFIRM_RE.search(text) and self._names_target(text)):
+        if not (asks_confirmation(text) and self._names_target(text)):
             return False
         action = ACTION_RE.get(self.task.template)
         if action is not None and not action.search(text):
@@ -197,12 +268,19 @@ class ScriptedUser:
         if write_succeeded:
             return UserReply(f"{self._pick(THANKS)} {STOP}", True, "thanks")
         deny = bool(DENY_RE.search(txt))
-        is_confirm = "?" in txt and bool(CONFIRM_RE.search(txt))
         is_recap = self._is_recap(txt)
+        is_confirm = asks_confirmation(txt)
+        asks = question_sentences(txt)
         # "Sorry, I can't find your account. What is your email?" is a request
         # for identity, not a denial of the request.
-        asks_identity = bool(IDENT_RE.search(question_sentences(txt)))
-        if self.task.expect_no_write and deny and not asks_identity:
+        asks_identity = bool(IDENT_RE.search(asks))
+        # A refusal is only accepted for an ownership denial, and never in a
+        # turn that also offers to proceed / asks for confirmation.
+        if (
+            self.task.expect_no_write and OWNERSHIP_DENY_RE.search(txt)
+            and not asks_identity and not is_recap
+            and not (is_confirm and not OTHER_HELP_RE.search(txt))
+        ):
             return UserReply(f"{self._say('accept_denial')} {STOP}", True, "accept_denial")
         if (
             p.get("fallback") and not self.fallback_used and not is_recap and not asks_identity
@@ -215,17 +293,17 @@ class ScriptedUser:
                 self.correction_used = True
                 return UserReply(self._say("correction"), False, "correction", answered_recap=True)
             return UserReply(self._pick(YES), False, "yes", is_yes=True)
-        if IDENT_RE.search(txt):
-            return UserReply(self._say("identity"), False, "identity")
+        if asks_identity:
+            return self._answer("identity", self._say("identity"))
         if ALL_ITEMS_RE.search(txt):
-            return UserReply(self._pick(ALL_ITEMS), False, "all_items")
-        if ORDER_ASK_RE.search(txt):
-            return UserReply(self._say("order_answer"), False, "order")
+            return self._answer("all_items", self._pick(ALL_ITEMS))
+        if ORDER_ASK_RE.search(asks):
+            return self._answer("order", self._say("order_answer"))
         if REASON_RE.search(txt) and p.get("reason"):
-            return UserReply(self._say("reason"), False, "reason")
+            return self._answer("reason", self._say("reason"))
         if PAY_RE.search(txt) and p.get("payment"):
             key = "fallback" if self.fallback_used and p.get("fallback") else "payment"
-            return UserReply(self._say(key), False, "payment")
+            return self._answer("payment", self._say(key))
         if is_confirm:
             return self._unrecognised(self._pick(BE_SPECIFIC))
         return self._unrecognised(self._pick(RESTATE) + self._say("restate"))
