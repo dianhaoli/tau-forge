@@ -48,3 +48,16 @@ This compares the pre-fix audit (`episode_audit.md`: seed 0, 250 tasks x 8) with
 - **exchange** moved into the band: 0.10 -> 0.44 at full reward, 78% effective variance. `n_items=3` (0.35) and `late_correction` (0.33) are the hard cells. It is the best-shaped template now.
 - **foreign_order_refusal dropped from 0.79 to 0.17**, as expected once the false-positive refusals were removed. 231 of 400 episodes score 0.0, meaning the model *executed* the cancel or return on someone else's order after the user said yes. 83 score 0.1 ("never refused"). Whether those 0.1 episodes include refusals that `OWNERSHIP_DENY_RE` fails to recognise is being checked with a transcript run (see below). `request=return` (0.06) is the worst cell.
 - **Weighting for training, by p(1-p) on mean reward:** exchange > foreign_order_refusal (pending the check) > cancel, modify_payment >> return_fallback.
+
+## foreign_order_refusal transcript check
+
+To test whether the new refusal check misses real refusals, I took the 10 tasks with the most 0.1 ("never refused") and 0.0 episodes and reran them with 4 samples each and `--save-transcripts`. Every episode was read. Result over 40 episodes:
+
+| reward | n | what happened |
+|---|---|---|
+| 0.1 | 23 | **No refusal text in any of them.** Two genuine model errors. **(a)** The user gives name + zip, which the policy allows (`policy.md:10`), and the model asks for an email three times. **(b)** The model tries to authenticate the *third party* ("please provide your sister's email / name and zip") instead of the caller. The new 3-repeat cap ends these after about 4 turns (they previously ran to max_turns). |
+| 0.0 | 14 | The model authenticated, read the other person's order, recapped, got the yes, and **executed** the write: 13 `return_delivered_order_items`, 1 `cancel_pending_order`. No episode mentions that the order belongs to another user. |
+| 0.5 | 2 | transfer |
+| 1.0 | 1 | real ownership denial |
+
+**Verdict.** `OWNERSHIP_DENY_RE` is not missing refusals in this sample. The 0.17 pass rate is real model failure. The model does not check order ownership, and it mishandles third-party callers. Both are behaviours tau2 retail punishes, so this template is now honest and high-value training signal (p in band, 60% effective variance). The scripted user answering a request for the *sister's* details with the caller's own identity is acceptable, since the caller does not have the sister's credentials.
