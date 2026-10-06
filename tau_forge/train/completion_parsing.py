@@ -1,4 +1,4 @@
-"""Parses a policy-model completion into a graded `Action`.
+"""Parses a policy-model completion into tool calls, exactly as eval does.
 
 Qwen's own tool-calling convention wraps a call in a `<tool_call>...</tool_call>`
 block containing a JSON object `{"name": ..., "arguments": {...}}` -- the format
@@ -10,15 +10,15 @@ A completion with no `<tool_call>` block is message-only -- the correct answer
 for `ambiguous`/`policy_violation`/most `out_of_scope` scenarios, per
 `reward.reward`'s `Action(tool_name=None)` convention.
 
-A `<tool_call>` block that's present but malformed (bad JSON, missing/non-string
-`name`) is deliberately **not** treated the same as no call at all: doing so
-would let a garbled tool-call attempt score a free `correct_no_call` 1.0 on a
+A `<tool_call>` block that's present but malformed is deliberately **not**
+treated the same as no call at all by the single-step grader: doing so would
+let a garbled tool-call attempt score a free `correct_no_call` 1.0 on a
 scenario where the right answer actually is silence -- a cheap reward-hacking
 path this project explicitly flagged as a risk to full-parameter RLVR (see
-docs/phase7_aws_setup.md, "Methodology risks"). Instead it's graded as an
-attempted call to a sentinel tool name that can't match any real gold tool,
-which `reward()` correctly scores 0 either way (wrong tool, or an unexpected
-call when none was expected).
+docs/phase7_aws_setup.md, "Methodology risks"). Instead `parse_completion`
+grades it as an attempted call to a sentinel tool name that can't match any
+real gold tool, which `reward()` correctly scores 0 either way (wrong tool, or
+an unexpected call when none was expected).
 
 The same holds for a *bare* tool-call object with no tags at all -- e.g.
 `{"name": "cancel_pending_order", "arguments": {...}}` as plain text, or inside
@@ -30,36 +30,47 @@ match gold.
 Parity with eval, deliberately over leniency
 --------------------------------------------
 Phase 8 serves the policy with vLLM's `--tool-call-parser hermes`
-(`tau_forge/eval/run_tau2.py`). That parser only looks inside `<tool_call>`
-tags, `json.loads` the whole body, and reads `name` and `arguments`; anything
-it cannot parse is passed through as plain assistant text with no call. So at
-eval a bare JSON object, a ```json fence inside the tags, trailing prose inside
-the tags, a `"parameters"` key, or a `{"function": {...}}` wrapper is *never* a
-tool call. This module mirrors that rather than "repairing" those formats into
+(`tau_forge/eval/run_tau2.py`), and tau2 executes every call it returns.
+`parse_all_completion` mirrors `Hermes2ProToolParser.extract_tool_calls`
+(vLLM v0.10.1 and main; `hermes_extract_tool_calls` below is that function's
+logic verbatim) plus the step tau2's `llm_utils.generate` adds on top:
+  * every `<tool_call>` block is parsed (regex
+    `<tool_call>(.*?)</tool_call>|<tool_call>(.*)`, so an unclosed final block
+    still counts), and each body must `json.loads` to an object with a string
+    `name` and an `arguments` key;
+  * if ANY block fails that, hermes returns the whole completion as plain
+    text -- no call at all, even for the blocks that were fine;
+  * `arguments` that is present but not a JSON object (null, a string, a
+    list) passes hermes but makes tau2's `ToolCall(arguments: dict)` raise and
+    end the simulation; here it makes the turn text, never a call with `{}`;
+  * the assistant content tau2 records is the text before the first block.
+So at eval a bare JSON object, a ```json fence inside the tags, trailing prose
+inside the tags, a `"parameters"` key, a missing `arguments` key or a
+`{"function": {...}}` wrapper is *never* a tool call, and two valid blocks are
+two calls. This module mirrors that rather than "repairing" those formats into
 valid calls: a parser more forgiving than eval's would train the policy to
 emit formats that silently stop working the moment it is evaluated, and the
-measured reward would overstate what eval will see. Concretely, a `"parameters"`
-key or a non-object `arguments` value still parses with empty arguments (and
-so fails schema validation in `reward()`), and none of the above formats is
-ever accepted as the call it resembles.
+measured reward would overstate what eval will see.
+
+`parse_completion` is the single-call view the single-step trainer grades:
+the first call `parse_all_completion` returns; `MALFORMED_TOOL_CALL` for
+anything hermes rejects and, stricter than hermes, for an empty name or a bare
+call object with no tags; else `(None, {})`.
 """
 
 from __future__ import annotations
 
 import json
 import re
+from dataclasses import dataclass, field
 from typing import Any, Optional
 
 MALFORMED_TOOL_CALL = "__malformed_tool_call__"
 
-# Matches through to end-of-string if the closing tag is missing (e.g. a
-# completion truncated by max_completion_length mid-call) rather than failing
-# to match at all -- a truncated tool-call attempt is still an attempt, not a
-# silent no-call. Body is whatever's between the tags, valid JSON or not; a
-# non-JSON or brace-less body (e.g. "not valid json", no braces at all) must
-# still be caught as an attempted call below, not fall through as if the tag
-# were never there.
-_TOOL_CALL_RE = re.compile(r"<tool_call>(.*?)(?:</tool_call>|\Z)", re.DOTALL)
+# vLLM Hermes2ProToolParser.tool_call_regex, verbatim. The second alternative
+# matches an unclosed final block through to end-of-string.
+HERMES_TOOL_CALL_RE = re.compile(r"<tool_call>(.*?)</tool_call>|<tool_call>(.*)", re.DOTALL)
+HERMES_START_TOKEN = "<tool_call>"
 
 # Keys that, next to a string `name`, mark a JSON object as a tool-call attempt.
 # `parameters` is the other common spelling models fall into; it is detected
@@ -96,20 +107,69 @@ def contains_bare_tool_call(text: str) -> bool:
     return False
 
 
-def parse_completion(text: str) -> tuple[Optional[str], dict[str, Any]]:
-    match = _TOOL_CALL_RE.search(text)
-    if not match:
-        if contains_bare_tool_call(text):
-            return MALFORMED_TOOL_CALL, {}
-        return None, {}
+def hermes_extract_tool_calls(model_output: str) -> tuple[bool, list[tuple[str, str]], Optional[str]]:
+    """`Hermes2ProToolParser.extract_tool_calls` (non-streaming), logic
+    verbatim: returns `(tools_called, [(name, arguments_json)], content)`.
+    vLLM builds `FunctionCall(name=...)`, a pydantic `str` field, so a
+    non-string name raises there; the explicit check reproduces that."""
+    if HERMES_START_TOKEN not in model_output:
+        return False, [], model_output
     try:
-        payload = json.loads(match.group(1).strip())
-    except json.JSONDecodeError:
+        function_call_tuples = HERMES_TOOL_CALL_RE.findall(model_output)
+        raw_function_calls = [json.loads(match[0] if match[0] else match[1]) for match in function_call_tuples]
+        tool_calls = []
+        for function_call in raw_function_calls:
+            name = function_call["name"]
+            arguments = json.dumps(function_call["arguments"], ensure_ascii=False)
+            if not isinstance(name, str):
+                raise TypeError("FunctionCall.name must be a string")
+            tool_calls.append((name, arguments))
+        content = model_output[: model_output.find(HERMES_START_TOKEN)]
+        return True, tool_calls, content if content else None
+    except Exception:  # noqa: BLE001 -- hermes catches everything and returns the text
+        return False, [], model_output
+
+
+@dataclass(frozen=True)
+class ParsedCompletion:
+    """What eval makes of one completion.
+
+    `calls` are the tool calls tau2 would execute, in order. `content` is the
+    assistant text tau2 records: the text before the first block for a tool
+    turn ("" when there is none; hermes says None), the whole completion for a
+    text turn. `malformed` marks a text turn that LOOKS like an attempted
+    call -- a `<tool_call>` tag eval rejected, or a bare call object without
+    tags -- so callers can count it; eval shows it to the user as text."""
+
+    content: str
+    calls: list[tuple[str, dict[str, Any]]] = field(default_factory=list)
+    malformed: bool = False
+
+
+def parse_all_completion(text: str) -> ParsedCompletion:
+    text = text or ""
+    called, raw_calls, content = hermes_extract_tool_calls(text)
+    if called:
+        calls = []
+        for name, arguments_json in raw_calls:
+            arguments = json.loads(arguments_json)
+            if not isinstance(arguments, dict):
+                # tau2 would crash building ToolCall(arguments=...): never a call.
+                return ParsedCompletion(text, [], True)
+            calls.append((name, arguments))
+        return ParsedCompletion(content or "", calls, False)
+    return ParsedCompletion(text, [], HERMES_START_TOKEN in text or contains_bare_tool_call(text))
+
+
+def parse_completion(text: str) -> tuple[Optional[str], dict[str, Any]]:
+    """Single-call view for the single-step trainer (see the module docstring).
+    With several valid blocks it returns the first; eval would run them all."""
+    parsed = parse_all_completion(text)
+    if parsed.calls:
+        name, arguments = parsed.calls[0]
+        if not name:
+            return MALFORMED_TOOL_CALL, {}
+        return name, arguments
+    if parsed.malformed:
         return MALFORMED_TOOL_CALL, {}
-    name = payload.get("name") if isinstance(payload, dict) else None
-    if not isinstance(name, str) or not name:
-        return MALFORMED_TOOL_CALL, {}
-    arguments = payload.get("arguments", {})
-    if not isinstance(arguments, dict):
-        arguments = {}
-    return name, arguments
+    return None, {}

@@ -42,7 +42,8 @@ N = 10
 EXPECTED = {
     ("exchange", "oracle"): 1.0,
     ("exchange", "no_confirm"): 0.7,
-    ("exchange", "no_confirm|corr"): 0.2,  # wrote before the correction: wrong variant
+    # wrote before the correction: wrong variant; the unconfirmed attempt earns no shaping
+    ("exchange", "no_confirm|corr"): 0.1,
     ("exchange", "wrong_variant"): 0.2,
     ("exchange", "halluc_pm"): 0.2,
     ("exchange", "skip_auth"): 0.7,
@@ -213,7 +214,7 @@ def test_near_miss_agents_land_on_the_design_reward_levels(episodes):
         assert r.reward == pytest.approx(EXPECTED[(t.template, behaviour)]), (t.id, behaviour, r.reasons)
         seen.add((t.template, behaviour))
     assert seen == set(EXPECTED), set(EXPECTED) - seen
-    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.2, 0.5, 0.7, 1.0}
+    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.1, 0.2, 0.5, 0.7, 1.0}
 
 
 def test_gates_stack_on_success_and_never_go_negative(tasks):
@@ -330,8 +331,9 @@ def test_runner_termination_rules(tasks):
     assert ep.done and ep.end_reason == "transfer" and ep.log.transfer
 
     ep = Episode(t)
-    ep.step(call("cancel_pending_order", {"order_id": t.target_order, "reason": "no longer needed"}), "length")
-    assert ep.end_reason == "truncated" and not ep.log.writes  # a cut-off turn is never executed
+    half = call("cancel_pending_order", {"order_id": t.target_order, "reason": "no longer needed"})[:-20]
+    ep.step(half, "length")
+    assert ep.end_reason == "truncated" and not ep.log.writes  # a half-written call is never executed
 
     ep = Episode(t)
     ep.step('<tool_call>{"name": oops</tool_call>')

@@ -1,24 +1,42 @@
 """The episode loop: policy <-> scripted user <-> a live, private RetailEnv.
 
 The policy is any `callable(messages) -> assistant text`. Its text is parsed
-with the same `completion_parsing.parse_completion` the single-step reward
-uses, so a tool call means one `<tool_call>{json}</tool_call>` block (Qwen's
-native convention; only the first block is executed -- tau2's policy allows
-one call per turn). A call is executed and fed back as an assistant
-`tool_calls` message plus a `role: "tool"` result, the exact shape
+with `completion_parsing.parse_all_completion`, a mirror of what eval does
+(vLLM's hermes tool parser, then tau2 executing every call it returns): every
+`<tool_call>{json}</tool_call>` block is a call, and a turn with any block
+hermes rejects is text. The calls of one turn are recorded as tau2 records
+them -- ONE assistant message carrying N `tool_calls` (content = the text
+before the first block), followed by N `role: "tool"` results -- and executed
+in order, each with its own bookkeeping. That is the exact shape
 `tau_forge.train.grounding` renders and tau2 feeds its agent at eval time.
-A text turn goes to the scripted user, whose reply is appended as a user
-message.
+Every assistant message also keeps the sampled completion verbatim under
+`"raw"`: re-rendering `content` + `tool_calls` with the chat template does not
+reproduce non-canonical samples (trailing text, compact JSON), so a trainer
+must take the sampled tokens from there. A text turn goes to the scripted
+user, whose reply is appended as a user message.
 
 The conversation starts the way tau2's orchestrator starts every task: an
 assistant greeting ("Hi! How can I help you today?", tau2's
 DEFAULT_FIRST_AGENT_MESSAGE), then the task's opening user message.
 
+Consent. Each write the task expects is a slot (`EpisodeTask.slots`). The
+runner keeps the set of slots the user has said yes to: a write is
+`confirmed` iff the slot it maps to (tool + record) holds a yes at call time;
+a successful write consumes that yes; a failed one suspends it until the user
+confirms that slot again or gives a fallback; a reply with `revokes` (the
+plan changed) clears every slot, suspended ones included. A write that maps
+to no slot is never confirmed.
+
 Termination: user STOP (done, gave up after 3 unrecognised turns, or accepted
-a denial); a `transfer_to_human_agents` call; `max_turns` assistant messages
-(30, the design's budget); `max_calls` tool calls; a truncated completion
-(`finish_reason="length"`, ended without executing a half-written call, to be
-masked by the trainer); or an over-budget prompt (`"context"`).
+a denial); a `transfer_to_human_agents` call (after the rest of its turn's
+calls ran, as tau2 runs them all); `max_turns` assistant messages (30, the
+design's budget) or `max_calls` tool calls, per task when the task sets them
+(both checked after a whole turn, so a multi-call turn may overshoot
+`max_calls`); a truncated completion (`finish_reason="length"`) that hermes
+reads as text, which ends the episode as "truncated" for the trainer to mask
+-- a truncated completion that still parses into calls is executed, as eval
+executes it, and the message is flagged `"truncated": True`; or an over-budget
+prompt (`"context"`).
 
 Cost. A full `RetailDB.model_copy(deep=True)` of the 2.8MB db measured
 0.094 s, more than everything else in an episode (env 0.02 s, end-state hash
@@ -29,12 +47,20 @@ that tool can write. An episode that never attempts a write copies nothing,
 and its end-state hash is the cached base hash. `tests/test_episodes.py`
 checks that the shared db is unchanged after write-heavy episodes and that
 copy-on-write end states equal a full-deep-copy replay.
+
+Threads. All episodes of a process share one `RetailEnv` that is re-pointed
+at each episode's db per call, so isolate + bind + execute run under one
+module lock (`_ENV_LOCK`). Without it, a thread switch between binding and
+the tool body ran one episode's write against another episode's view, where
+the record was never privately copied -- it wrote into `base_db()` itself and
+every later write episode in that process scored as a failure. The lock costs
+nothing measurable: tool calls are pure Python and GIL-bound anyway.
 """
 
 from __future__ import annotations
 
 import json
-import re
+import threading
 from dataclasses import dataclass, field
 from typing import Any, Callable, Optional
 
@@ -51,12 +77,12 @@ from tau_forge.episodes.task import (
     EpisodeTask,
     base_db,
     base_db_hash,
+    write_record,
 )
-from tau_forge.episodes.user import ScriptedUser, UserReply
-from tau_forge.train.completion_parsing import MALFORMED_TOOL_CALL, parse_completion
+from tau_forge.episodes.user import ScriptedUser, TurnContext, UserReply
+from tau_forge.train.completion_parsing import ParsedCompletion, parse_all_completion
 
 GREETING = "Hi! How can I help you today?"
-_TOOL_BLOCK_RE = re.compile(r"<tool_call>.*?(?:</tool_call>|\Z)", re.DOTALL)
 
 
 @dataclass
@@ -68,6 +94,8 @@ class WriteRecord:
     confirmed: bool
     authed_user: Optional[str]
     error: Optional[str] = None
+    # The consent slot the call maps to (by tool + record); None if none.
+    slot: Optional[str] = None
 
 
 @dataclass
@@ -84,7 +112,14 @@ class EpisodeLog:
     n_calls: int = 0
     n_assistant_turns: int = 0
     n_malformed_calls: int = 0
+    # Assistant turns that carried more than one tool call.
+    n_multi_call_turns: int = 0
+    # Primary intent of every user reply, one per user turn.
     user_intents: list[str] = field(default_factory=list)
+    # One entry per user reply that accepted a denial: whether, at that
+    # moment, the agent had earned auth of the task's user AND read the
+    # target order (the refusal reward's verification condition).
+    accepted_denials: list[bool] = field(default_factory=list)
     # Set when the audit loop caught an exception from `step` (a harness bug,
     # not a policy error): "<type>: <message>".
     runner_error: Optional[str] = None
@@ -107,6 +142,10 @@ def cow_view(db: RetailDB) -> RetailDB:
 
 
 _SHARED_ENV: Optional[RetailEnv] = None
+# Guards _SHARED_ENV's creation and every isolate + bind + execute (see the
+# module docstring, "Threads"). Re-entrant so `_shared_env()` can be called
+# while it is held.
+_ENV_LOCK = threading.RLock()
 
 
 def _shared_env() -> RetailEnv:
@@ -116,12 +155,12 @@ def _shared_env() -> RetailEnv:
     pydantic argument model per tool -- identical for every episode. The
     tools are bound methods that read `toolkit.db` at call time (tau2's own
     `update_db` reassigns it the same way), so swapping the db is enough.
-    Calls are synchronous; do not share one process's episodes across
-    threads."""
+    Callers that bind it must hold `_ENV_LOCK` until the call returns."""
     global _SHARED_ENV
-    if _SHARED_ENV is None:
-        _SHARED_ENV = RetailEnv(db=cow_view(base_db()))
-    return _SHARED_ENV
+    with _ENV_LOCK:
+        if _SHARED_ENV is None:
+            _SHARED_ENV = RetailEnv(db=cow_view(base_db()))
+        return _SHARED_ENV
 
 
 class CowEnv:
@@ -131,7 +170,8 @@ class CowEnv:
     the order named by `order_id`, that order's owner (payment-method gift
     card balances live on the user), and the user named by `user_id`. That
     covers every retail write -- cancel, exchange, return, the three order
-    modifications, modify_user_address -- none of which writes a product."""
+    modifications, modify_user_address -- none of which writes a product.
+    Thread-safe: see the module docstring."""
 
     def __init__(self, base: RetailDB, base_hash: Optional[str] = None):
         self.base = base
@@ -170,15 +210,16 @@ class CowEnv:
         (every episode of every task, results only written at the end). tau2's
         own environment answers any tool exception with "Error: ..." and lets
         the agent carry on; so does this."""
-        if name not in READ_TOOLS and name != TRANSFER_TOOL:
-            self._isolate(arguments)
-        try:
-            return self._bound().execute(name, arguments)
-        except Exception as e:  # noqa: BLE001 -- any tool failure is the policy's error, not the runner's
-            return ToolResult(
-                ok=False, tool_name=name, arguments=arguments, error=f"{type(e).__name__}: {e}",
-                error_type=type(e).__name__,
-            )
+        with _ENV_LOCK:
+            try:
+                if name not in READ_TOOLS and name != TRANSFER_TOOL:
+                    self._isolate(arguments)
+                return self._bound().execute(name, arguments)
+            except Exception as e:  # noqa: BLE001 -- any tool failure is the policy's error, not the runner's
+                return ToolResult(
+                    ok=False, tool_name=name, arguments=arguments, error=f"{type(e).__name__}: {e}",
+                    error_type=type(e).__name__,
+                )
 
     def tool_mutates_state(self, name: str) -> bool:
         return _shared_env().tool_mutates_state(name)
@@ -217,8 +258,8 @@ class Episode:
         self.task = task
         self.env = CowEnv(db, None) if db is not None else CowEnv(base_db(), base_db_hash())
         self.user = ScriptedUser(task, seed=user_seed)
-        self.max_turns = max_turns
-        self.max_calls = max_calls
+        self.max_turns = task.max_turns if task.max_turns is not None else max_turns
+        self.max_calls = task.max_calls if task.max_calls is not None else max_calls
         self.messages: list[dict[str, Any]] = []
         if system_message is not None:
             self.messages.append(dict(system_message))
@@ -227,7 +268,12 @@ class Episode:
         self.log = EpisodeLog()
         self.done = False
         self.end_reason: Optional[str] = None
-        self._yes = False
+        # Consent state (see the module docstring).
+        self._slot_ids = {s["id"] for s in task.slots}
+        self._slot_by_key = {(s["tool"], s["record"]): s["id"] for s in task.slots}
+        self._yes_slots: set[str] = set()
+        self._suspended_slots: set[str] = set()
+        self._writes_reported = 0  # writes already shown to the user in a TurnContext
 
     def final_db_hash(self) -> str:
         return self.env.db_hash()
@@ -251,20 +297,21 @@ class Episode:
             self._finish("context_budget")
             return
         completion = completion or ""
-        if finish_reason == "length":
-            # Never execute a half-written call; the trainer masks these.
-            self.messages.append({"role": "assistant", "content": completion})
-            self.log.n_assistant_turns += 1
+        self.log.n_assistant_turns += 1
+        parsed = parse_all_completion(completion)
+        truncated = finish_reason == "length"
+        if parsed.calls:
+            # Eval executes whatever hermes parses, cut off or not.
+            self._tool_turn(completion, parsed, truncated)
+        elif truncated:
+            # A cut-off text turn (or half-written call) ends the episode; the
+            # trainer masks it. Nothing reaches the user.
+            self.messages.append({"role": "assistant", "content": completion, "raw": completion, "truncated": True})
             self._finish("truncated")
             return
-        self.log.n_assistant_turns += 1
-        name, arguments = parse_completion(completion)
-        if name is not None and name != MALFORMED_TOOL_CALL:
-            self._tool_turn(completion, name, arguments)
         else:
-            if name == MALFORMED_TOOL_CALL:
-                # No parsable name means no tool message to attach a result
-                # to; it reaches the user as text, who will not recognise it.
+            if parsed.malformed:
+                # Eval shows a rejected call to the user as text; so does this.
                 self.log.n_malformed_calls += 1
             self._text_turn(completion)
         if not self.done and self.log.n_assistant_turns >= self.max_turns:
@@ -272,18 +319,46 @@ class Episode:
         if not self.done and self.log.n_calls >= self.max_calls:
             self._finish("max_calls")
 
-    def _tool_turn(self, completion: str, name: str, arguments: dict[str, Any]) -> None:
-        self.log.n_calls += 1
-        call_id = f"call_{self.log.n_calls}"
-        self.messages.append(
-            {
-                "role": "assistant",
-                "content": _TOOL_BLOCK_RE.sub("", completion).strip(),
-                "tool_calls": [
-                    {"id": call_id, "type": "function", "function": {"name": name, "arguments": json.dumps(arguments)}}
-                ],
-            }
-        )
+    # ---- consent ----------------------------------------------------------
+
+    def _slot_for(self, name: str, arguments: dict[str, Any]) -> Optional[str]:
+        return self._slot_by_key.get((name, write_record(name, arguments)))
+
+    def _apply_consent(self, reply: UserReply) -> None:
+        intents = reply.intents or [reply.intent]
+        if reply.revokes:
+            self._yes_slots.clear()
+            self._suspended_slots.clear()
+        if "fallback" in intents and self._suspended_slots:
+            self._yes_slots |= self._suspended_slots
+            self._suspended_slots.clear()
+        for slot in reply.confirms:
+            if slot in self._slot_ids:
+                self._yes_slots.add(slot)
+                self._suspended_slots.discard(slot)
+
+    # ---- turns ------------------------------------------------------------
+
+    def _tool_turn(self, completion: str, parsed: ParsedCompletion, truncated: bool = False) -> None:
+        tool_calls = []
+        for name, arguments in parsed.calls:
+            self.log.n_calls += 1
+            tool_calls.append(
+                {"id": f"call_{self.log.n_calls}", "type": "function",
+                 "function": {"name": name, "arguments": json.dumps(arguments)}}
+            )
+        msg: dict[str, Any] = {"role": "assistant", "content": parsed.content, "tool_calls": tool_calls, "raw": completion}
+        if truncated:
+            msg["truncated"] = True
+        self.messages.append(msg)
+        if len(tool_calls) > 1:
+            self.log.n_multi_call_turns += 1
+        for tc, (name, arguments) in zip(tool_calls, parsed.calls):
+            self._execute(tc["id"], name, arguments)
+        if self.log.transfer:
+            self._finish("transfer")
+
+    def _execute(self, call_id: str, name: str, arguments: dict[str, Any]) -> None:
         result = self.env.execute(name, arguments)
         self.messages.append({"role": "tool", "tool_call_id": call_id, "name": name, "content": _tool_content(result)})
 
@@ -295,14 +370,22 @@ class Episode:
         if result.ok and name == "get_order_details":
             self.log.read_orders.append(arguments.get("order_id"))
         if name in WRITE_TOOLS:
+            slot = self._slot_for(name, arguments)
+            confirmed = slot is not None and slot in self._yes_slots
             self.log.writes.append(
-                WriteRecord(name, dict(arguments), result.ok, self._yes, self.log.authed_user, result.error)
+                WriteRecord(name, dict(arguments), result.ok, confirmed, self.log.authed_user, result.error, slot)
             )
-            if result.ok:
-                self._yes = False  # one yes buys one write
+            if slot is not None:
+                if result.ok:
+                    # one yes buys one successful write
+                    self._yes_slots.discard(slot)
+                    self._suspended_slots.discard(slot)
+                elif confirmed:
+                    # a failed write may not be silently retried on the same yes
+                    self._yes_slots.discard(slot)
+                    self._suspended_slots.add(slot)
         if name == TRANSFER_TOOL:
             self.log.transfer = True
-            self._finish("transfer")
 
     def _earned_auth(self, name: str, arguments: dict[str, Any]) -> bool:
         """Whether an auth lookup's identifying values came from the user.
@@ -326,15 +409,25 @@ class Episode:
         values = [arguments.get(k) for k in keys]
         return all(isinstance(v, str) and v.strip() and v.strip().lower() in said for v in values)
 
+    def _turn_context(self) -> TurnContext:
+        ctx = TurnContext(
+            new_writes=list(self.log.writes[self._writes_reported:]),
+            authed_user=self.log.authed_user,
+            read_orders=list(self.log.read_orders),
+            any_write_ok=any(w.ok for w in self.log.writes),
+        )
+        self._writes_reported = len(self.log.writes)
+        return ctx
+
     def _text_turn(self, completion: str) -> None:
-        self.messages.append({"role": "assistant", "content": completion})
-        wrote = any(w.ok for w in self.log.writes)
-        reply: UserReply = self.user.reply(completion, write_succeeded=wrote)
+        self.messages.append({"role": "assistant", "content": completion, "raw": completion})
+        reply: UserReply = self.user.reply(completion, self._turn_context())
         self.log.user_intents.append(reply.intent)
-        if reply.is_yes:
-            self._yes = True
-        elif reply.answered_recap:
-            self._yes = False
+        if "accept_denial" in (reply.intents or [reply.intent]):
+            self.log.accepted_denials.append(
+                self.log.authed_user == self.task.user_id and self.task.target_order in self.log.read_orders
+            )
+        self._apply_consent(reply)
         self.messages.append({"role": "user", "content": reply.text})
         if reply.stop:
             self._finish("user_stop")
@@ -363,4 +456,7 @@ def run_episode(
     return ep.result()
 
 
-__all__ = ["CowEnv", "Episode", "EpisodeLog", "EpisodeResult", "GREETING", "STOP", "WriteRecord", "cow_view", "run_episode"]
+__all__ = [
+    "CowEnv", "Episode", "EpisodeLog", "EpisodeResult", "GREETING", "STOP", "TurnContext", "WriteRecord", "cow_view",
+    "run_episode",
+]

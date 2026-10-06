@@ -1020,43 +1020,66 @@ user, and tau2's own end-state reward.
   fallback fires on a denial or on the constraint itself (the gift-card
   balance, the original/purchase method, "another payment method"); after a
   correction or fallback the user restates the corrected request. Lines come
-  from paraphrase pools seeded per task.
+  from paraphrase pools seeded per task. Consent is structured: a yes returns
+  `confirms` (slot ids), a correction or fallback returns `revokes`; the
+  runner passes a `TurnContext` (writes since the last user turn, earned
+  auth, orders read).
 * `runner.py` -- `run_episode(task, policy)` with `policy(messages) -> text`,
-  parsed by `completion_parsing.parse_completion`; calls are fed back in the
-  `grounding.py` message shape (assistant `tool_calls` + `role: tool`), after
-  tau2's greeting. Ends on user STOP, transfer, 30 assistant turns, 30 calls, a
-  truncated turn or an over-budget prompt. A tool that raises (e.g.
+  parsed by `completion_parsing.parse_all_completion`, a mirror of eval's
+  vLLM hermes parser + tau2: every `<tool_call>` block is a call and all of
+  them run, in order, under one assistant message with N `tool_calls` (content
+  = the text before the first block); a turn with any block hermes rejects
+  (bad JSON, missing or non-object `arguments`) is text. Every assistant
+  message keeps the sampled completion under `"raw"`. Calls are fed back in
+  the `grounding.py` message shape (assistant `tool_calls` + `role: tool`),
+  after tau2's greeting. Ends on user STOP, transfer, 30 assistant turns, 30
+  calls (per task when the task sets `max_turns` / `max_calls`), a truncated
+  turn that hermes reads as text (a truncated turn that parses into calls is
+  executed, as at eval) or an over-budget prompt. A tool that raises (e.g.
   `calculate("(1 - 2")`, `find_user_id_by_email(email=None)`) returns a tool
   error instead of ending the run. Copy-on-write db: no full deep copy per
-  episode; 0.03 s CPU per reference-agent episode (prototype: 0.3 s).
+  episode; 0.03 s CPU per reference-agent episode (prototype: 0.3 s). Safe
+  to step from threads: the shared tool env is bound and run under a lock.
+  Consent is per write slot (`EpisodeTask.slots`, derived as one "main" slot
+  for the gold write of a legacy task): a write is confirmed iff its slot
+  holds a yes; a successful write consumes it, a failed one suspends it until
+  the user confirms again (or gives a fallback that does not revoke), and a
+  correction or fallback revokes every yes.
 * `reward.py` -- R = 1[final db hash == gold hash]; -0.3 per policy gate on
-  success (write without a yes since the last recap; write before
+  success (a write without a standing yes for its slot; write before
   authenticating the task's user with an email / name+zip the *user* said --
   looking up the db's copy of the owner's email does not count); failure
-  shaping capped at 0.2 and withdrawn if a write touched another record;
-  refusals 1.0 only for an unchanged db plus a denial the user accepted, 0.5
-  if transferred, 0.1 for an unchanged db without a denial (gibberish, empty,
-  truncated, out of turns -- these used to score 1.0).
+  shaping capped at 0.2 (+0.1 for a gold-write attempt only when it was
+  confirmed and made by the authenticated task user) and withdrawn if a write
+  touched another record; refusals 1.0 only for an unchanged db plus an
+  accepted denial made after earned auth AND reading the target order, 0.4
+  for an accepted but unchecked denial, 0.5 if transferred, 0.1 for an
+  unchanged db without a denial (gibberish, empty, truncated, out of turns).
+  `EpisodeReward.masked` flags episodes that ended truncated, over the
+  context budget or on a harness error.
   Reference agents (`reference_agents.py`) land on separate levels, asserted
-  in `tests/test_episodes.py`:
+  in `tests/test_episodes.py` and `tests/test_episode_env_core.py`:
 
   | behaviour | exchange | cancel | return_fallback | modify_payment | refusal |
   |---|---|---|---|---|---|
   | oracle | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
   | no confirmation | 0.7 | 0.7 | 0.7 | 0.7 | -- |
-  | no confirmation, late-correction task | 0.2 | 0.0 | -- | -- | -- |
+  | no confirmation, late-correction task | 0.1 | 0.0 | -- | -- | -- |
   | wrong variant / made-up payment id | 0.2 | -- | -- | 0.2 | -- |
-  | skip authentication | 0.7 | 0.7 | -- | 0.7 | -- |
+  | skip authentication | 0.7 | 0.7 | 0.7 | 0.7 | 0.4 |
   | comply with a forbidden request | -- | -- | 0.2 | -- | 0.0 |
   | gift card unasked (owns one / doesn't) | -- | -- | 0.2 / 1.0 | -- | -- |
   | transfer | 0.0 | 0.0 | 0.0 | 0.0 | 0.5 |
+  | denial without auth + order read | -- | -- | -- | -- | 0.4 |
   | no denial, db unchanged (gibberish, empty, ...) | -- | -- | -- | -- | 0.1 |
 
-  The table holds on all 3,852 reference episodes of the 885 tasks generated
-  at `--per-template 200`. Also pinned by tests: an early "could you confirm
-  your email for order #W...?" does not buy a no-confirm agent a yes (0.7, not
-  1.0), and a skip-auth agent that "authenticates" with the email it read
-  from `get_user_details` stays at 0.7.
+  The table holds on all reference episodes of the 885 seed-1 tasks
+  (`data/episodes/episodes_s1.jsonl`, `--per-template 200`), 8 modes x 885.
+  Also pinned by tests: an early "could you confirm your email for order
+  #W...?" does not buy a no-confirm agent a yes (0.7, not 1.0); a skip-auth
+  agent that "authenticates" with the email it read from `get_user_details`
+  stays at 0.7; a yes to the forbidden refund method does not carry over the
+  failed write and the fallback to the original-method write (0.7).
 * `tau_forge/decontam/real_tasks.py` -- the only episode code that reads
   tasks.json. It returns two opaque sets: the user ids the 114 real tasks'
   gold actions touch (52) and their gold end-state hashes (99 distinct). The

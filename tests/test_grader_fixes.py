@@ -323,16 +323,19 @@ def test_other_wire_formats_inside_tags_are_not_repaired():
     # A ```json fence inside the tags: hermes' json.loads fails -> no call.
     fenced = "<tool_call>\n```json\n" + BARE + "\n```\n</tool_call>"
     assert parse_completion(fenced) == (MALFORMED_TOOL_CALL, {})
-    # 'parameters' instead of 'arguments': arguments are never read from it.
+    # 'parameters' instead of 'arguments': hermes reads fc["arguments"], gets a
+    # KeyError and returns the whole turn as text -> an attempted call, never
+    # the call it resembles.
     params = _call("get_order_details", {"order_id": PENDING_ORDER}, key="parameters")
-    assert parse_completion(params) == ("get_order_details", {})
-    # Arguments as a JSON-encoded string are never decoded.
+    assert parse_completion(params) == (MALFORMED_TOOL_CALL, {})
+    # Arguments as a JSON-encoded string pass hermes but crash tau2's
+    # ToolCall(arguments: dict): never a call either.
     as_string = (
         '<tool_call>\n{"name": "get_order_details", "arguments": '
         + json.dumps(json.dumps({"order_id": PENDING_ORDER}))
         + "}\n</tool_call>"
     )
-    assert parse_completion(as_string) == ("get_order_details", {})
+    assert parse_completion(as_string) == (MALFORMED_TOOL_CALL, {})
 
 
 # --------------------------------------------------------------------------

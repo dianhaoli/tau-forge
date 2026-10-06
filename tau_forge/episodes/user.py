@@ -29,6 +29,14 @@ priority order -- first match wins:
 Rules 10 and 11 count as unrecognised; the third unrecognised turn ends the
 episode with STOP.
 
+Consent is structured, not textual (the runner's side is `runner.Episode`):
+a yes returns `confirms` = the slot ids it consents to (`EpisodeTask.slots`;
+for now every slot of the task), and the late correction and the fallback
+return `revokes=True` -- the plan changed, so every pending yes is cleared,
+including one a failed write had suspended. The runner passes a
+`TurnContext` (writes since the last user turn, earned auth, orders read);
+this user only reads `any_write_ok` from it.
+
 Anti-exploit rules:
   * "yes" only answers a recap: a confirmation request that names the current
     target (an order id or product name from `profile["recap_keys"]`) and the
@@ -52,8 +60,13 @@ from __future__ import annotations
 
 import random
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Optional
+
 from tau_forge.episodes.task import STOP, EpisodeTask
+
+if TYPE_CHECKING:
+    from tau_forge.episodes.runner import WriteRecord
 
 MAX_SAME_ANSWER = 3  # consecutive identical information answers before giving up
 YES = ["Yes, please proceed.", "Yes, go ahead.", "Yes, that's right -- please do it.", "Yes, I confirm."]
@@ -192,16 +205,44 @@ def asks_confirmation(text: str) -> bool:
 
 
 @dataclass
+class TurnContext:
+    """What the runner tells the user about the episode before a text turn.
+    The user never sees tool calls; this is the state a real customer would
+    know or be told about (and what the runner's own gates use)."""
+
+    # Write-tool calls since the previous user turn, succeeded or failed.
+    new_writes: list["WriteRecord"] = field(default_factory=list)
+    # Earned auth so far (runner log); None before any.
+    authed_user: Optional[str] = None
+    read_orders: list[str] = field(default_factory=list)
+    # Some write has succeeded in this episode.
+    any_write_ok: bool = False
+
+
+@dataclass
 class UserReply:
     text: str
     stop: bool
+    # Primary intent, for logs and back-compat.
     intent: str
-    # True only for a "yes" to a recap that named the target -- the runner's
-    # confirmation gate keys off this, not off the text.
+    # Every intent answered this turn (multi-answer replies); defaults to [intent].
+    intents: list[str] = field(default_factory=list)
+    # Consent slot ids (`EpisodeTask.slots`) this reply says yes to -- the
+    # runner's confirmation gate keys off this, not off the text.
+    confirms: list[str] = field(default_factory=list)
+    # The plan changed (late correction, fallback): clear all pending consent.
+    revokes: bool = False
+    # Back-compat: True iff `confirms` is non-empty.
     is_yes: bool = False
-    # True when this reply answered a target-naming confirmation request
-    # without a yes (the late correction): it revokes any earlier yes.
+    # Back-compat: this reply answered a target-naming confirmation request
+    # without a yes (the late correction).
     answered_recap: bool = False
+
+    def __post_init__(self) -> None:
+        if not self.intents:
+            self.intents = [self.intent]
+        if self.confirms:
+            self.is_yes = True
 
 
 class ScriptedUser:
@@ -270,8 +311,17 @@ class ScriptedUser:
             return UserReply(f"{self._pick(GIVE_UP)} {STOP}", True, "give_up")
         return UserReply(line, False, "unrecognised")
 
-    def reply(self, agent_text: str, write_succeeded: bool = False) -> UserReply:
+    def _yes(self) -> UserReply:
+        """A yes to a recap. Interim (stage A): it confirms every slot of the
+        task -- "main" on every single-write task, nothing on a refusal task;
+        binding a yes to the slots its recap actually describes is the NLU's
+        job."""
+        return UserReply(self._pick(YES), False, "yes", confirms=[s["id"] for s in self.task.slots])
+
+    def reply(self, agent_text: str, ctx: Optional[TurnContext] = None, write_succeeded: bool = False) -> UserReply:
         p, txt = self.p, agent_text or ""
+        if ctx is not None and ctx.any_write_ok:
+            write_succeeded = True
         if write_succeeded:
             return UserReply(f"{self._pick(THANKS)} {STOP}", True, "thanks")
         deny = bool(DENY_RE.search(txt))
@@ -294,12 +344,14 @@ class ScriptedUser:
             and (deny or CONSTRAINT_RE.search(txt))
         ):
             self.fallback_used = True
-            return UserReply(self._say("fallback"), False, "fallback")
+            # The plan changed: a yes given to the old plan (e.g. a refund to
+            # the forbidden card, whose write then failed) no longer stands.
+            return UserReply(self._say("fallback"), False, "fallback", revokes=True)
         if is_recap:
             if p.get("correction") and not self.correction_used:
                 self.correction_used = True
-                return UserReply(self._say("correction"), False, "correction", answered_recap=True)
-            return UserReply(self._pick(YES), False, "yes", is_yes=True)
+                return UserReply(self._say("correction"), False, "correction", revokes=True, answered_recap=True)
+            return self._yes()
         if asks_identity:
             return self._answer("identity", self._say("identity"))
         if ALL_ITEMS_RE.search(txt):

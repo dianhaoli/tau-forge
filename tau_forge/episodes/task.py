@@ -14,7 +14,7 @@ from __future__ import annotations
 import functools
 import re
 from dataclasses import asdict, dataclass, field, fields
-from typing import Any
+from typing import Any, Optional
 
 from tau2.domains.retail.data_model import RetailDB
 from tau2.domains.retail.utils import RETAIL_DB_PATH
@@ -98,6 +98,29 @@ class EpisodeTask:
     # Users whose records the task touches (the requester, plus the owner of a
     # foreign order) -- what decontamination checks against.
     involved_users: list[str] = field(default_factory=list)
+    # Every write the task expects, as a consent slot:
+    # {"id": str, "tool": <write tool>, "record": "order:#W..." | "user:<id>"}.
+    # The runner's confirmation gate is per slot (see `runner.Episode`). None
+    # (old JSONL) derives the default: one slot "main" for the gold write --
+    # on the target order, or on the user record for modify_user_address --
+    # and no slot at all for a refusal task.
+    slots: Optional[list[dict[str, str]]] = None
+    # Per-task episode budgets; None uses the `Episode` arguments.
+    max_turns: Optional[int] = None
+    max_calls: Optional[int] = None
+
+    def __post_init__(self) -> None:
+        if self.slots is None:
+            self.slots = self.default_slots()
+
+    def default_slots(self) -> list[dict[str, str]]:
+        if self.expect_no_write:
+            return []
+        tool = next((a["name"] for a in self.gold_actions if a["name"] in WRITE_TOOLS), None)
+        if tool is None:
+            return []
+        record = f"user:{self.user_id}" if tool == "modify_user_address" else f"order:{self.target_order}"
+        return [{"id": "main", "tool": tool, "record": record}]
 
     @property
     def dedupe_key(self) -> tuple:
@@ -105,9 +128,29 @@ class EpisodeTask:
         return (self.template, self.user_id, self.target_order, items)
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        """Fields at their derived / unset default are left out, so a task
+        written before slots and budgets existed serialises byte-identically."""
+        d = asdict(self)
+        if d["slots"] == self.default_slots():
+            del d["slots"]
+        for k in ("max_turns", "max_calls"):
+            if d[k] is None:
+                del d[k]
+        return d
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> "EpisodeTask":
         names = {f.name for f in fields(cls)}
         return cls(**{k: v for k, v in d.items() if k in names})
+
+
+def write_record(name: str, arguments: dict[str, Any]) -> Optional[str]:
+    """The record a write tool call acts on, in slot notation: the order for
+    every order tool, the user for modify_user_address."""
+    oid = arguments.get("order_id")
+    if isinstance(oid, str):
+        return f"order:{oid}"
+    uid = arguments.get("user_id")
+    if name == "modify_user_address" and isinstance(uid, str):
+        return f"user:{uid}"
+    return None
