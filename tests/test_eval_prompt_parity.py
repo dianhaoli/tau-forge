@@ -79,3 +79,21 @@ def test_run_config_holds_the_comparison_fixed():
     assert config.llm_args_agent["temperature"] == 0.0
     assert config.llm_args_agent["api_base"].endswith("/v1")
     assert "baseline" in config.save_to
+
+
+def test_user_stop_rule_patch_adds_rule_once():
+    pytest.importorskip("tau2")
+    from tau2.user import user_simulator
+
+    from tau_forge.eval.run_tau2 import USER_STOP_RULE, patch_user_stop_rule
+
+    saved = user_simulator.get_global_user_sim_guidelines
+    try:
+        patch_user_stop_rule()
+        patch_user_stop_rule()
+        for use_tools in (False, True):
+            text = user_simulator.get_global_user_sim_guidelines(use_tools=use_tools)
+            assert text.count(USER_STOP_RULE) == 1
+            assert text.index("###STOP###") < text.index(USER_STOP_RULE)
+    finally:
+        user_simulator.get_global_user_sim_guidelines = saved

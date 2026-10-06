@@ -131,8 +131,43 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "Valid only if the training corpus was also built without TOOL_CALL_FORMAT_INSTRUCTION "
         "-- and, either way, only if the baseline used the same setting.",
     )
+    p.add_argument(
+        "--user-stop-rule",
+        action="store_true",
+        help="Add one rule to tau2's user-simulator guidelines: never emit ###STOP### in the "
+        "same message that confirms a pending action. Some simulators (gpt-6-luna) otherwise "
+        "say 'yes, go ahead ###STOP###' and end the episode before the agent can act. Changes "
+        "the user side of the harness, so baseline and final evals must both use it or neither.",
+    )
     p.add_argument("--dry-run", action="store_true", help="Print the resolved config and exit.")
     return p.parse_args(argv)
+
+
+USER_STOP_RULE = (
+    "- Never generate '###STOP###' in the same message in which you agree to, confirm, or "
+    "answer a question about an action. After you confirm, wait for the agent's reply; end the "
+    "conversation only once the agent has said your request is done or cannot be done, and you "
+    "have nothing else to ask."
+)
+_STOP_LINE = "generate the '###STOP###' token to end the conversation."
+
+
+def patch_user_stop_rule() -> None:
+    """Insert `USER_STOP_RULE` after the STOP line of tau2's user-simulator
+    guidelines, in place and idempotently. `UserSimulator` looks the loader up
+    as a module global at call time, so patching before `run_domain` suffices."""
+    from tau2.user import user_simulator
+
+    original = getattr(user_simulator.get_global_user_sim_guidelines, "__wrapped__", None)
+    original = original or user_simulator.get_global_user_sim_guidelines
+
+    def patched(use_tools: bool = False) -> str:
+        text = original(use_tools=use_tools)
+        assert _STOP_LINE in text, "tau2 user guidelines changed; update USER_STOP_RULE anchor"
+        return text.replace(_STOP_LINE, _STOP_LINE + "\n" + USER_STOP_RULE, 1)
+
+    patched.__wrapped__ = original
+    user_simulator.get_global_user_sim_guidelines = patched
 
 
 def build_run_config(args: argparse.Namespace):
@@ -177,6 +212,10 @@ def main() -> None:
         patch_agent_instruction()
         assert_prompts_match()
         print("[run_tau2] prompt parity: training and eval system prompts are byte-identical.")
+
+    if args.user_stop_rule:
+        patch_user_stop_rule()
+        print("[run_tau2] --user-stop-rule: user simulator may not confirm and STOP in one message.")
 
     config = build_run_config(args)
     print(f"[run_tau2] {config.model_dump_json(indent=2)}")
