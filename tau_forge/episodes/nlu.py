@@ -1371,7 +1371,8 @@ def _proposed_action(full: str, sents: list[str], req_sents: list[str], facts: T
     items_named = [n for n in dict.fromkeys(item_names) if n.lower() in low and not all(
         re.search(r"\b(?:remain(?:s)? unchanged|unchanged|remain the same|stay(?:s)? the same|keep(?:ing)? (?:the )?current|"
                   r"not be (?:exchanged|returned)|no change|keeping it|(?:is|are) (?:currently )?(?:not |un)available|"
-                  r"unavailable|cannot be (?:exchanged|returned))\b", full[a:min(b, a + 120)], re.I)
+                  r"unavailable|(?:cannot|can't|can not) be (?:exchanged|returned|modified|changed|fulfilled|processed|completed|done)|no (?:actual )?change|"
+                  r"(?:not|isn't) (?:possible|available) to (?:exchange|modify|change))\b", full[a:min(b, a + 120)], re.I)
         or re.search(r"\b(?:not (?:exchanging|returning|exchange|return)|without (?:exchanging|returning)|except(?: for)?|excluding|"
                      r"(?:cannot|can't|unable to) (?:proceed with )?(?:the )?(?:exchange|return)(?: (?:for|of))?|drop(?:ping)?|"
                      r"keep(?:ing)?|instead of)\W+(?:the |your |current )*\W*$", full[max(0, a - 60):a], re.I)

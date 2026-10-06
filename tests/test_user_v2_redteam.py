@@ -172,3 +172,18 @@ def test_recap_of_the_post_correction_order_before_the_correction_is_wrong_order
     r = u.reply("I found the order with the E-Reader: #W8883368 (E-Reader, Smart Watch), pending. Shall I cancel it "
                 "because you no longer need it?", _ctx(t, read=["#W8883368", "#W1430028"]))
     assert not r.confirms and r.intent != "correction"
+
+
+def test_recap_that_drops_an_item_as_impossible_is_objected_to():
+    """Smoke-test transcript ep_exchange_s11_00110: the model declared one of three items impossible and recapped
+    a 'partial exchange' of the other two; the user must not consent to dropping an item it asked for."""
+    rows = {json.loads(l)["id"]: json.loads(l) for l in
+            (Path(__file__).resolve().parents[1] / "data/episodes/pool_v2/smoke_subset.jsonl").read_text().splitlines()}
+    t = EpisodeTask.from_dict(rows["ep_exchange_s11_00110"])
+    text = ("I understand your request, but I must clarify that the vacuum cleaner cannot be modified because there is "
+            "no available variant with a different option.\n\nAs a result, the exchange request for the vacuum cleaner "
+            "cannot be fulfilled.\n\nHowever, I can proceed with the exchange of:\n- Tea Kettle (1.5L → 2L)\n"
+            "- Electric Toothbrush (blue → white)\n\nThis will be applied to your Mastercard ending in 2231.\n\n"
+            'Would you like to proceed with this partial exchange? If so, please confirm with "yes."')
+    r = ScriptedUser(t).reply(text, _ctx(t))
+    assert not r.confirms and r.intent == "objection"
