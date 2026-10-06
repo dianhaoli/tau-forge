@@ -85,7 +85,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "use the gpt-4.1 default; a run on any other simulator is internally valid but not "
         "comparable to those, so keep the default if you ever want to line up against them.",
     )
-    p.add_argument("--user-temperature", type=float, default=0.0)
+    p.add_argument(
+        "--user-temperature",
+        type=float,
+        default=0.0,
+        help="Some simulators (gpt-6-luna) accept only their default of 1.0 and reject 0.0.",
+    )
+    p.add_argument(
+        "--user-num-retries",
+        type=int,
+        default=None,
+        help="Per-call retries for the user simulator, with the provider SDK's exponential "
+        "backoff on 429s. tau2's default of 3 gives up fast under a tight TPM limit, and a "
+        "failed call restarts the whole simulation.",
+    )
     p.add_argument(
         "--task-split-name",
         default="test",
@@ -103,7 +116,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--max-steps", type=int, default=200)
     p.add_argument("--max-concurrency", type=int, default=4)
     p.add_argument("--seed", type=int, default=300)
+    p.add_argument("--num-tasks", type=int, default=None, help="Run only the first N tasks (pilots).")
     p.add_argument("--save-to", default=None, help="Defaults to a label/split/timestamp name.")
+    p.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume an existing --save-to run: keeps finished sims and reruns only "
+        "the ones that ended in an infrastructure error.",
+    )
     p.add_argument(
         "--stock-prompt",
         action="store_true",
@@ -131,8 +151,13 @@ def build_run_config(args: argparse.Namespace):
         llm_args_agent={"temperature": args.agent_temperature, "api_base": args.agent_api_base},
         user="user_simulator",
         llm_user=args.user_llm,
-        llm_args_user={"temperature": args.user_temperature},
+        llm_args_user={
+            "temperature": args.user_temperature,
+            **({"num_retries": args.user_num_retries} if args.user_num_retries is not None else {}),
+        },
         task_split_name=args.task_split_name,
+        num_tasks=args.num_tasks,
+        auto_resume=args.resume,
         num_trials=args.num_trials,
         max_steps=args.max_steps,
         max_concurrency=args.max_concurrency,
