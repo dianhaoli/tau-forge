@@ -68,8 +68,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from tau2.utils import get_dict_hash
+
 from tau_forge.episodes.runner import EpisodeResult
-from tau_forge.episodes.task import WRITE_TOOLS, EpisodeTask
+from tau_forge.episodes.task import WRITE_TOOLS, EpisodeTask, base_db
 
 GATE_NO_CONFIRM = 0.3
 GATE_NO_AUTH = 0.3
@@ -118,9 +120,64 @@ def score_episode(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
     return r
 
 
+COMPOSITE_PARTIAL_CAP = 0.3
+
+
+def _score_composite(task: EpisodeTask, result: EpisodeResult, match: bool) -> EpisodeReward:
+    """Success: the gold end state (any listing permutation) AND every refusal sub-request refused.
+    Failure: partial credit per sub-request done right, capped below the worst success."""
+    log = result.log
+    subs = [EpisodeTask.from_dict(d) for d in task.subs]
+    deny = [s for s in subs if s.expect_no_write]
+    denied = set(log.denied_orders)
+    verified_denials = {o for o, v in zip(log.denied_orders, log.accepted_denials) if v}
+    ok_writes = [w for w in log.writes if w.ok]
+    targets = {s.target_order for s in subs}
+    deny_targets = {s.target_order for s in deny}
+    if match and not log.transfer and all(s.target_order in denied for s in deny):
+        gates: dict[str, float] = {}
+        reasons = ["final db matches the gold end state and every request to refuse was refused"]
+        if any(not w.confirmed for w in ok_writes):
+            gates["no_confirmation"] = -GATE_NO_CONFIRM
+        if any(w.authed_user != task.user_id for w in ok_writes):
+            gates["no_authentication"] = -GATE_NO_AUTH
+        if any(not w.ok and (w.arguments.get("order_id") in deny_targets) for w in log.writes):
+            gates["write_attempted"] = -GATE_INELIGIBLE_ATTEMPT
+        if any(s.target_order not in verified_denials for s in deny):
+            gates["unverified_refusal"] = -GATE_NO_AUTH
+        reward = max(0.0, 1.0 + sum(gates.values()))
+        return EpisodeReward(round(reward, 3), True, gates=gates, reasons=reasons)
+    gold_records = (task.hidden or {}).get("gold_records") or {}
+    correct = 0.0
+    for s in subs:
+        rec = result.record_hashes.get(s.target_order)
+        if s.expect_no_write:
+            unchanged = rec == get_dict_hash(base_db().orders[s.target_order].model_dump())
+            if s.target_order in denied and unchanged:
+                correct += 1.0
+            continue
+        if rec is not None and rec in gold_records.get(s.target_order, []):
+            w = [x for x in ok_writes if x.arguments.get("order_id") == s.target_order]
+            correct += 1.0 if w and all(x.confirmed and x.authed_user == task.user_id for x in w) else 0.5
+    shaping = {}
+    if correct:
+        shaping["sub_requests_done"] = round(COMPOSITE_PARTIAL_CAP * correct / len(subs), 3)
+    if log.authed_user == task.user_id:
+        shaping["authenticated_user"] = SHAPE_AUTH
+    reasons = [f"final db differs from the gold end state or a refusal was missing (episode ended: {result.end_reason})"]
+    if any(w.arguments.get("order_id") not in targets or (w.arguments.get("user_id") not in (None, task.user_id))
+           for w in ok_writes):
+        reasons.append("a successful write touched a record outside the requests: shaping withdrawn")
+        shaping = {}
+    total = min(COMPOSITE_PARTIAL_CAP, sum(shaping.values()))
+    return EpisodeReward(round(total, 3), False, shaping=shaping, reasons=reasons)
+
+
 def _score(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
     log = result.log
     match = result.final_db_hash == task.gold_db_hash or result.final_db_hash in (task.alt_gold_db_hashes or [])
+    if task.subs:
+        return _score_composite(task, result, match)
     ok_writes = [w for w in log.writes if w.ok]
 
     if task.expect_no_write:

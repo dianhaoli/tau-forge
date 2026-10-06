@@ -1035,9 +1035,23 @@ def main(argv: Optional[list[str]] = None) -> None:
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--templates", default=",".join(TEMPLATES))
     p.add_argument("--out", default=str(REPO_ROOT / "data" / "episodes" / "episodes_s0.jsonl"))
+    p.add_argument("--composites", type=int, default=0,
+                   help="Also compose this many multi-request tasks from the generated pool (composite.py). A larger "
+                        "--per-template gives more same-user pairs to compose from.")
     args = p.parse_args(argv)
-    report = generate_tasks(args.per_template, args.seed, templates=tuple(args.templates.split(",")))
-    write_jsonl(report.tasks, args.out)
+    from tau_forge.decontam.real_tasks import load_real_task_exclusions
+
+    exclusions = load_real_task_exclusions()
+    report = generate_tasks(args.per_template, args.seed, templates=tuple(args.templates.split(",")),
+                            exclusions=exclusions)
+    tasks = list(report.tasks)
+    if args.composites:
+        from tau_forge.episodes.composite import compose_tasks
+
+        tasks += compose_tasks(report.tasks, args.composites, args.seed, exclusions=exclusions,
+                               log=lambda m: print(m, file=sys.stderr))
+    write_jsonl(tasks, args.out)
+    report = GenerationReport(tasks, report.stats)
     print(f"[episodes.generate] wrote {len(report.tasks)} tasks to {args.out}")
 
 

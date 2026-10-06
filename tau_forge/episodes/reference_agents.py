@@ -67,9 +67,10 @@ class ReferenceAgent:
 
     # ---- conversation helpers ---------------------------------------------
 
-    @staticmethod
-    def user_msgs(messages) -> list[str]:
-        return [m["content"] for m in messages if m["role"] == "user"]
+    def user_msgs(self, messages) -> list[str]:
+        """The user's messages since this agent's request started (`user_from`: how many to skip; a
+        composite task's later sub-requests start mid-conversation)."""
+        return [m["content"] for m in messages if m["role"] == "user"][getattr(self, "user_from", 0):]
 
     def said(self, messages, key: str) -> Optional[str]:
         """The user line from profile pool `key` the user has said, if any."""

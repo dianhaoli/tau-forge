@@ -112,6 +112,9 @@ class EpisodeTask:
     # (tools.py), so the end state depends on the order the agent lists items
     # in; every permutation's hash is accepted.
     alt_gold_db_hashes: list[str] = field(default_factory=list)
+    # A composite task: 2-3 single-request sub-tasks (EpisodeTask dicts) of the same user on different
+    # orders, revealed one at a time (`composite.py`). None for a single-request task.
+    subs: Optional[list[dict[str, Any]]] = None
     # Per-task episode budgets; None uses the `Episode` arguments.
     max_turns: Optional[int] = None
     max_calls: Optional[int] = None
@@ -121,6 +124,13 @@ class EpisodeTask:
             self.slots = self.default_slots()
 
     def default_slots(self) -> list[dict[str, str]]:
+        if self.subs:
+            out = []
+            for i, d in enumerate(self.subs):
+                sub = EpisodeTask.from_dict(d)
+                for s in sub.slots:
+                    out.append({**s, "id": f"s{i}"})
+            return out
         if self.expect_no_write:
             return []
         tool = next((a["name"] for a in self.gold_actions if a["name"] in WRITE_TOOLS), None)
@@ -145,6 +155,8 @@ class EpisodeTask:
                 del d[k]
         if not d["alt_gold_db_hashes"]:
             del d["alt_gold_db_hashes"]
+        if d["subs"] is None:
+            del d["subs"]
         return d
 
     @classmethod

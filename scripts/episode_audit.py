@@ -182,7 +182,14 @@ def fake_policy(mode: str) -> Callable[[list[EpisodeRequest]], list[Generation]]
     def generate(requests: list[EpisodeRequest]) -> list[Generation]:
         out = []
         for r in requests:
-            agent = agents.setdefault(r.key, ReferenceAgent(r.task, mode))
+            if r.key not in agents:
+                if r.task.subs:
+                    from tau_forge.episodes.composite import CompositeAgent
+
+                    agents[r.key] = CompositeAgent(r.task, mode)
+                else:
+                    agents[r.key] = ReferenceAgent(r.task, mode)
+            agent = agents[r.key]
             out.append(Generation(agent(r.messages)))
         return out
 

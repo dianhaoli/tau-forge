@@ -182,6 +182,8 @@ class UserReply:
     # Back-compat: this reply answered a target-naming confirmation request
     # without a yes (the late correction).
     answered_recap: bool = False
+    # The order a refusal was accepted for (composite tasks; None = the task's target order).
+    denied_order: Optional[str] = None
 
     def __post_init__(self) -> None:
         if not self.intents:

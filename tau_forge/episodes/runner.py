@@ -120,6 +120,8 @@ class EpisodeLog:
     # moment, the agent had earned auth of the task's user AND read the
     # target order (the refusal reward's verification condition).
     accepted_denials: list[bool] = field(default_factory=list)
+    # The order each accepted refusal was about (parallel to accepted_denials).
+    denied_orders: list[str] = field(default_factory=list)
     # Set when the audit loop caught an exception from `step` (a harness bug,
     # not a policy error): "<type>: <message>".
     runner_error: Optional[str] = None
@@ -132,6 +134,8 @@ class EpisodeResult:
     end_reason: str
     log: EpisodeLog
     messages: list[dict[str, Any]]
+    # Composite tasks: final hash of each sub-request's target order record.
+    record_hashes: dict[str, str] = field(default_factory=dict)
 
 
 def cow_view(db: RetailDB) -> RetailDB:
@@ -257,7 +261,12 @@ class Episode:
     ):
         self.task = task
         self.env = CowEnv(db, None) if db is not None else CowEnv(base_db(), base_db_hash())
-        self.user = ScriptedUser(task, seed=user_seed)
+        if task.subs:
+            from tau_forge.episodes.composite import CompositeUser
+
+            self.user = CompositeUser(task, seed=user_seed)
+        else:
+            self.user = ScriptedUser(task, seed=user_seed)
         self.max_turns = task.max_turns if task.max_turns is not None else max_turns
         self.max_calls = task.max_calls if task.max_calls is not None else max_calls
         self.messages: list[dict[str, Any]] = []
@@ -424,21 +433,35 @@ class Episode:
         reply: UserReply = self.user.reply(completion, self._turn_context())
         self.log.user_intents.append(reply.intent)
         if "accept_denial" in (reply.intents or [reply.intent]):
+            denied = reply.denied_order or self.task.target_order
             self.log.accepted_denials.append(
-                self.log.authed_user == self.task.user_id and self.task.target_order in self.log.read_orders
+                self.log.authed_user == self.task.user_id and denied in self.log.read_orders
             )
+            self.log.denied_orders.append(denied)
         self._apply_consent(reply)
         self.messages.append({"role": "user", "content": reply.text})
         if reply.stop:
             self._finish("user_stop")
 
+    def record_hashes(self, order_ids: list[str]) -> dict[str, str]:
+        """Hash of each named order record in the episode's db (composite partial credit)."""
+        out = {}
+        for oid in order_ids:
+            rec = self.env.db.orders.get(oid)
+            out[oid] = get_dict_hash(rec.model_dump()) if rec is not None else ""
+        return out
+
     def result(self) -> EpisodeResult:
+        records = {}
+        if self.task.subs:
+            records = self.record_hashes([d["target_order"] for d in self.task.subs])
         return EpisodeResult(
             task_id=self.task.id,
             final_db_hash=self.final_db_hash(),
             end_reason=self.end_reason or "running",
             log=self.log,
             messages=self.messages,
+            record_hashes=records,
         )
 
 
