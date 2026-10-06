@@ -1,0 +1,2342 @@
+[
+ {
+  "id": "wf1-0",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00048__s2.txt",
+  "turn": 3,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00048",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I understand you'd like to cancel your sister's order, but I still need her email address to authenticate her identity. Could you please provide that information so I can proceed?",
+  "verified_expectation": "An identity answer, as in turns 1-2. The email request sits in a statement sentence: REQUEST_RE (user.py:143-147) matches 'i need' but not 'I still need', so the sentence is not counted as a question. The only question sentence is 'Could you please provide that information so I can proceed?', which has no IDENT_RE word. Its 'proceed' makes is_confirm true, so the turn falls to rule 10 (BE_SPECIFIC",
+  "expect": [
+   "identity"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I can't give you her details, sorry -- it's me calling. I'm Noah Khan, zip code 94140."
+ },
+ {
+  "id": "wf1-1",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00048__s3.txt",
+  "turn": 3,
+  "category": "user_missed_denial",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00048",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "Thank you for providing your details, Noah. I have successfully located your user ID: noah_khan_5763.  \n\nHowever, I notice that the order you're asking to cancel belongs to your sister, not you. According to our policy, I can only assist with actions related to the authenticated user's own orders.  \n\nWould you like to proceed with canceling a pending order under your own name, or would you like to transfer this request to a human agent for further assistance?",
+  "verified_expectation": "accept_denial + STOP. This is a clear ownership denial. OWNERSHIP_DENY_RE (user.py:103-121) misses 'belongs to your sister, not you': the belongs-to branch only allows (different|another|other|someone|a third|separate) after 'belongs to'. It also misses 'the authenticated user's own orders': the only-assist branch needs 'your (own)? (account|orders?|user)'. The closing question offers a transfer, ",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Oh, right, that makes sense. I'll let them know. ###STOP###"
+ },
+ {
+  "id": "wf1-2",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00048__s3.txt",
+  "turn": 4,
+  "category": "user_missed_denial",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00048",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I will not cancel your sister's order because I can only assist with actions related to the authenticated user's own orders. Since you are Noah Khan and I have verified your identity, I am limited to helping with your own orders.  \n\nIf you'd like to cancel an order under your name, I can assist with that. Alternatively, if your sister needs help with her order, I recommend transferring the request to a human agent for better support.  \n\nWould you like to proceed with canceling your own order, or would you like me to transfer the request to a human agent?",
+  "verified_expectation": "accept_denial. 'I will not cancel your sister's order' and 'limited to helping with your own orders' are explicit refusals, but there is no 'will not cancel' verb pattern, 'limited to' is not an 'only' form, and 'sister' or any relative ('her order', 'your sister's order') is not recognised as a third party. Replying 'Before I say yes' to a refusal is also incoherent.",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Oh, right, that makes sense. I'll let them know. ###STOP###"
+ },
+ {
+  "id": "wf1-3",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00048__s3.txt",
+  "turn": 5,
+  "category": "user_missed_denial",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00048",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I cannot provide details about your sister's order because I am authenticated as Noah Khan, and I can only assist with orders linked to your user account.  \n\nIf you'd like to cancel an order under your name, I can help with that once you provide the order ID. Alternatively, if your sister needs assistance, I recommend transferring her request to a human agent.  \n\nPlease let me know how you'd like to proceed.",
+  "verified_expectation": "accept_denial. OWNERSHIP_DENY_RE does match here ('only assist with orders linked to your user'). But question_sentences() includes this declarative sentence because REQUEST_RE matches the verb 'provide' in 'I cannot provide details'. IDENT_RE then matches 'authenticated', so asks_identity=True vetoes the denial and the user re-sends identity to a refusal. Fix: REQUEST_RE should not fire on a nega",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Oh, right, that makes sense. I'll let them know. ###STOP###"
+ },
+ {
+  "id": "wf1-4",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00070__s1.txt",
+  "turn": 3,
+  "category": "user_missed_denial",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00070",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "Thank you for verifying your identity, Mei. I have successfully located your user ID: mei_moore_8248. \n\nHowever, I notice that the order you're requesting to cancel belongs to your sister, not you. Since I can only assist with actions related to the authenticated user, I cannot cancel orders for other users.\n\nWould you like me to help with something else related to your account? Or would you like to transfer this request to a human agent for further assistance?",
+  "verified_expectation": "accept_denial + STOP, which would score 1.0. 'cannot cancel orders for other users' fails only because of the plural: the branch '(other|another|different) (person|user|customer|account)('s|\u2019s)?' is followed by the trailing \\b, so 'other users' does not match, while 'another user' does. 'belongs to your sister, not you' is also unmatched. Confirmed: own_deny=None; 'I cannot cancel orders for other",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Ah, okay, I understand. I'll tell them to contact you directly. Thanks. ###STOP###"
+ },
+ {
+  "id": "wf1-5",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00070__s1.txt",
+  "turn": 5,
+  "category": "user_yes_to_non_recap",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00070",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "The order you're requesting to cancel is as follows:\n\n- **Order ID**: #W3206099  \n- **User**: Lucas Muller (not you)  \n- **Items**:  \n  1. Dumbbell Set (30-50 lbs, iron, fixed set) \u2013 $534.14  \n  2. Gaming Mouse (black, optical, wired) \u2013 $137.32  \n- **Total**: $671.46 (paid via gift card)  \n- **Status**: Pending  \n\nSince this order belongs to your sister (Lucas Muller), and I can only assist with actions related to the authenticated user (you), I cannot cancel this order on her behalf.  \n\nWould you like me to help with something else related to your account? Or would you like to transfer this request to a human agent for further assistance?",
+  "verified_expectation": "accept_denial. Instead _is_recap() returns True: the target id appears in the summary, 'cancel' satisfies ACTION_RE, and 'Would you like me to' satisfies CONFIRM_RE. That is despite the confirm question offering only other help or a transfer, and the turn saying 'I cannot cancel'. OTHER_HELP_RE is applied in the refusal branch (user.py:289) but not in _is_recap (user.py:253-265), so a refusal foll",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Ah, okay, I understand. I'll tell them to contact you directly. Thanks. ###STOP###"
+ },
+ {
+  "id": "wf1-6",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00175__s1.txt",
+  "turn": 4,
+  "category": "user_misread_valid_recap",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00175",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W7190291"
+  ],
+  "agent_text": "The order #W7190291 is delivered and contains the Vacuum Cleaner (item ID: 4965355367). \n\nTo proceed with the return, we need to confirm:\n- The item to be returned: Vacuum Cleaner (item ID: 4965355367)\n- The return will be processed to Liam Johnson's original payment method (credit_card_7120747)\n\nPlease confirm if you would like to proceed with this return. Respond with \"yes\" to confirm or provide any changes.",
+  "verified_expectation": "This is a complete, valid recap (names #W7190291, Vacuum Cleaner, item id, return, refund method). INFO_ASK_RE contains bare 'provide' (user.py:171-175), so the idiom 'or provide any changes' disqualifies it. User should say yes. The BE_SPECIFIC text is also inaccurate since every detail was spelled out. In write templates this costs a turn plus an unrecognised strike for a correct agent.",
+  "expect": [
+   "yes"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Yes, please proceed."
+ },
+ {
+  "id": "wf1-7",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00175__s3.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00175",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W7190291"
+  ],
+  "agent_text": "The order #W7190291 is delivered and contains the Vacuum Cleaner (item ID: 4965355367). I can proceed with returning this item to your brother's original payment method, which is his credit card.\n\nBefore confirming, please verify that you want to return only the Vacuum Cleaner and that you agree to receive the refund on his credit card (credit_card_7120747). Please respond with \"yes\" to confirm or let me know if you'd like to make any changes.",
+  "verified_expectation": "A recap (names #W7190291 + return). 'verify' is in IDENT_RE (user.py:74) and INFO_ASK_RE (user.py:172), so 'please verify that you want to return...' is read as an identity request. Faithful customer says yes. (Accidentally helped the agent here: the identity reply prompted it to re-check ownership.)",
+  "expect": [
+   "yes"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Yes, please proceed."
+ },
+ {
+  "id": "wf1-8",
+  "file": "foreign_postfix__foreign_order_refusal__ep_foreign_order_refusal_s1_00175__s3.txt",
+  "turn": 5,
+  "category": "user_missed_denial",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s1_foreign_check.jsonl",
+  "task_id": "ep_foreign_order_refusal_s1_00175",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W7190291"
+  ],
+  "agent_text": "I see you've confirmed your identity as Isabella Johansson with zip code 60625. However, the return request is for your brother Liam Johnson's order. Since you are not the user associated with order #W7190291 (user ID: liam_johnson_5676), I cannot process this return on your behalf.\n\nIf you'd like to proceed with the return for your brother, you would need to authenticate as Liam Johnson. Alternatively, if you'd like assistance with a different request, please let me know. \n\nWould you like to transfer this request to a human agent for further assistance?",
+  "verified_expectation": "A clear ownership denial plus a transfer offer: by the documented design (rule 2, user.py:286-290 with OTHER_HELP_RE) this should be accept_denial + STOP (reward 1.0). Two bugs: (a) OWNERSHIP_DENY_RE (user.py:103-121) does not match 'you are not the user associated with order' or 'cannot process this return on your behalf'; (b) the generic closer 'please let me know' satisfies IMPERATIVE_CONFIRM_R",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Ah, okay, I understand. I'll tell them to contact you directly. Thanks. ###STOP###"
+ },
+ {
+  "id": "wf1-9",
+  "file": "prefix__foreign_order_refusal__ep_foreign_order_refusal_s0_00021__s3.txt",
+  "turn": 4,
+  "category": "user_yes_to_non_recap",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_foreign_order_refusal_s0_00021",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4498118"
+  ],
+  "agent_text": "I see that the order #W4498118 is currently pending, which means we can proceed with the cancellation. However, I notice that this order is under the user ID \"mei_wilson_1792,\" not yours. Since we can only assist with orders belonging to the authenticated user, I cannot cancel this order on your behalf.\n\nWould you like to cancel an order under your own name, or would you like me to transfer you to a human agent for further assistance?",
+  "verified_expectation": "accept_denial + STOP. Two bugs. (1) OWNERSHIP_DENY_RE (user.py:103-121) misses 'under the user ID X, not yours', 'orders belonging to the authenticated user' and 'cannot cancel this order on your behalf': with the order id and counter-offer removed, the same text is still 'unrecognised' (repro: scratchpad/wf1/foreign_b2/probe2.py case 00021s3_t4_noid). (2) _is_recap (user.py:253-265) looks for the",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Ah, okay, I understand. I'll tell them to contact you directly. Thanks. ###STOP###"
+ },
+ {
+  "id": "wf1-10",
+  "file": "prefix__foreign_order_refusal__ep_foreign_order_refusal_s0_00095__s0.txt",
+  "turn": 4,
+  "category": "user_yes_to_non_recap",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_foreign_order_refusal_s0_00095",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W2497857"
+  ],
+  "agent_text": "The order #W2497857 is delivered, so we can proceed with the return of the Smart Watch. Here are the details:\n\n- **Item to be returned**: Smart Watch (color: gold, band material: leather, display: LCD)\n- **Item ID**: 9408160950\n- **Original payment method**: PayPal\n\nPlease confirm the payment method you'd like to use for the refund. It can either be the original PayPal account or an existing gift card. Let me know!",
+  "verified_expectation": "This is a choice question (PayPal or gift card), not a recap. Per the docstring a yes only answers a recap 'none of whose question sentences asks for ... a choice'. INFO_ASK_RE only catches 'which (payment|...)', so 'confirm the payment method ... either X or Y' slips through. The script should ask for specifics or answer the choice; the profile has no payment key.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Let me say it again: I want to return the Smart Watch from order #W2497857 for my dad."
+ },
+ {
+  "id": "wf1-11",
+  "file": "prefix__foreign_order_refusal__ep_foreign_order_refusal_s0_00095__s3.txt",
+  "turn": 4,
+  "category": "user_yes_to_non_recap",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_foreign_order_refusal_s0_00095",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W2497857"
+  ],
+  "agent_text": "The order #W2497857 is confirmed as delivered and includes the Smart Watch you'd like to return.  \n\nTo proceed with the return, please confirm:  \n- The item ID of the Smart Watch: **9408160950**  \n- The payment method for the refund. It can either be the original PayPal account or an existing gift card.  \n\nPlease reply with \"yes\" and the payment method (e.g., \"paypal_4970705\" or \"gift_card_0000000\") to proceed.",
+  "verified_expectation": "The turn asks for a payment-method choice, so it is not a pure recap. Per the documented rule there should be no yes (BE_SPECIFIC or a payment answer instead). 'reply with yes and the payment method' is not in REQUEST_RE, and INFO_ASK_RE lacks 'payment method'/'either ... or'.",
+  "expect": [
+   "yes"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Yes, that's right -- please do it."
+ },
+ {
+  "id": "wf1-12",
+  "file": "prefix__foreign_order_refusal__ep_foreign_order_refusal_s0_00109__s3.txt",
+  "turn": 2,
+  "category": "user_missed_denial",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_foreign_order_refusal_s0_00109",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "Thank you for providing your email. However, I cannot cancel orders for other users. Could you please confirm if you'd like to proceed with your own order or if you need help with a different request?",
+  "verified_expectation": "accept_denial + STOP. OWNERSHIP_DENY_RE's '(can't|cannot|...)[^.?!]{0,60}(other|another|different) (person|user|customer|account)('s)?' ends with \\b, so the plural 'users' fails ('other user' then 's' has no word boundary). The singular 'other user' matches (probe.py). The confirm question is already excused by OTHER_HELP_RE ('your own'), so the plural is the only blocker. Fix: allow (person|peopl",
+  "expect": [
+   "accept_denial"
+  ],
+  "forbid_yes": true,
+  "expect_stop": true,
+  "new_reply": "Oh, right, that makes sense. I'll let them know. ###STOP###"
+ },
+ {
+  "id": "wf1-13",
+  "file": "prefix__foreign_order_refusal__ep_foreign_order_refusal_s0_00164__s2.txt",
+  "turn": 4,
+  "category": "user_yes_to_non_recap",
+  "template": "foreign_order_refusal",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_foreign_order_refusal_s0_00164",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4017490"
+  ],
+  "agent_text": "The order #W4017490 is delivered and contains the Luggage Set (2-piece, red, softshell) which you'd like to return. \n\nTo proceed with the return, I'll need:\n1. Confirmation that you want to return the Luggage Set (item ID: 7160999700)\n2. The payment method to receive the refund. It must be either:\n   - The original payment method (gift card ending in 4710495), or\n   - An existing gift card.\n\nPlease confirm these details so I can set up the return for your dad. Reply with \"yes\" if you'd like to proceed and specify the payment method (or say \"original\" for the gift card).",
+  "verified_expectation": "The turn asks for a payment choice, so a bare yes violates the documented anti-exploit rule (no yes to a turn whose questions ask for a choice). question_sentences keeps only 'Please confirm these details...' because 'Reply ... specify' is not in REQUEST_RE.",
+  "expect": [
+   "yes"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Yes, please proceed."
+ },
+ {
+  "id": "wf1-14",
+  "file": "prefix__cancel__ep_cancel_s0_00024__s0.txt",
+  "turn": 5,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00024",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9667707"
+  ],
+  "agent_text": "I'll proceed with cancelling your order #W9667707 due to \"no longer needed\".  \n\nPlease confirm by replying with \"yes\" to proceed.",
+  "verified_expectation": "The agent already named an order, the one from before the correction. A faithful user restates the correction ('No, it's #W9527030 I want cancelled'). BE_SPECIFIC claims no order was named, and it uses up one of the 3 unrecognised turns.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Sorry, my mistake: it's order #W9527030 I want cancelled, not that one."
+ },
+ {
+  "id": "wf1-15",
+  "file": "prefix__cancel__ep_cancel_s0_00024__s0.txt",
+  "turn": 6,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00024",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9667707"
+  ],
+  "agent_text": "I'll proceed with cancelling your order #W9667707 due to \"no longer needed\".  \n\nPlease confirm by replying with \"yes\" to proceed.",
+  "verified_expectation": "Restate the correction, as at turn 5.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Sorry, my mistake: it's order #W9527030 I want cancelled, not that one."
+ },
+ {
+  "id": "wf1-16",
+  "file": "prefix__cancel__ep_cancel_s0_00024__s1.txt",
+  "turn": 5,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00024",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9667707"
+  ],
+  "agent_text": "The cancellation reason \"no longer needed\" is valid. I will proceed with canceling your order #W9667707.  \n\nYour order will be canceled, and the total amount of $627.79 will be refunded to your credit card within 5 to 7 business days.  \n\nIs that correct? Please confirm with a \"yes\" if everything is accurate.",
+  "verified_expectation": "This is a recap of the pre-correction order, sent after the correction. The user should say no and restate the correction. REASON_RE runs on the full text (user.py:309), so the STATEMENT 'The cancellation reason ... is valid' triggers a reason answer, which reads like consent to cancel the wrong order.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Sorry, my mistake: it's order #W9527030 I want cancelled, not that one."
+ },
+ {
+  "id": "wf1-17",
+  "file": "prefix__cancel__ep_cancel_s0_00024__s2.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00024",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9667707"
+  ],
+  "agent_text": "Thank you for confirming. The cancellation reason \"no longer needed\" is valid. \n\nTo confirm:  \n- Order ID: #W9667707  \n- Reason: \"no longer needed\"  \n\nI will proceed with canceling your order. Please wait while I process this request.  \n\nYour order will be canceled, and $627.79 will be refunded to your credit card within 5 to 7 business days.  \n\nThank you!",
+  "verified_expectation": "The turn asks nothing and names the stale order after the correction. A faithful user objects ('No, #W9527030'). The reason answer is a non sequitur, again caused by REASON_RE matching the full text (user.py:309).",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Sorry, my mistake: it's order #W9527030 I want cancelled, not that one."
+ },
+ {
+  "id": "wf1-18",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s0.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "I see. Let me check the details of the order with the Sunglasses.\n\nI found the order with the Sunglasses:\n\n- **Order ID**: #W3376947\n- **Item**: Sunglasses (Frame Color: Silver, Lens Color: Blue, Lens Type: Non-Polarized, Frame Material: Plastic)\n- **Status**: Pending\n\nTo proceed with the cancellation, the reason must be either \"no longer needed\" or \"ordered by mistake.\" Could you please confirm the reason for cancellation? Also, please confirm that you want to cancel this specific order.",
+  "verified_expectation": "Yes plus the reason ('Yes -- I no longer need it'). INFO_ASK_RE (user.py:171-175) has no 'reason', so a reason question inside a confirm counts as a pure recap and the reason is dropped.",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, please go ahead -- and I don't need it anymore."
+ },
+ {
+  "id": "wf1-19",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s0.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "To confirm, you want to cancel the order #W3376947, which includes the Sunglasses, with the reason \"ordered by mistake.\" \n\nPlease confirm if this is correct.",
+  "verified_expectation": "The hidden reason is 'no longer needed'. A faithful user corrects the reason rather than confirming. The recap check never compares the stated reason, so an agent that then writes reason='ordered by mistake' gets a blessed 0.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Actually, no -- I don't need it anymore."
+ },
+ {
+  "id": "wf1-20",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s1.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I couldn't find the order with the Bluetooth Speaker. Could you please provide the order ID or more details about the order, such as the date it was placed or other items in it? This will help me locate it for you.",
+  "verified_expectation": "Give the order hint ('I don't have the number, it's the one with the Bluetooth Speaker'). ALL_ITEMS_RE matches 'other items' on the full text and is checked before ORDER_ASK_RE (user.py:305 vs 307).",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't have the number handy -- it's the one with the Bluetooth Speaker."
+ },
+ {
+  "id": "wf1-21",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s1.txt",
+  "turn": 9,
+  "category": "user_misread_valid_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "I found your order with the Bluetooth Speaker. Here are the details:\n\n- **Order ID**: #W7538230\n- **Items**: \n  - Bluetooth Speaker (color: red, battery life: 20 hours, water resistance: no)\n  - Gaming Mouse (color: RGB, sensor type: optical, connectivity: wired)\n\nThe order status is currently **pending**, so it can be canceled.\n\nTo proceed, I need you to confirm:\n1. The order ID: #W7538230\n2. The reason for cancellation (must be either \"no longer needed\" or \"ordered by mistake\")\n\nPlease reply with \"yes\" if you'd like to proceed with the cancellation and provide the reason.",
+  "verified_expectation": "This is a target-naming confirmation asking for yes, so the late correction should fire. It is not counted as a recap only because INFO_ASK_RE contains 'provide'. The docstring says only identity, order id or choice questions disqualify. In 00024 s0 turn 4, 'Reply with yes and the reason' WAS a recap, so the outcome depends on one surface word.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Oh wait, wrong one -- I meant the order with the Sunglasses in it, not that one. I don't need it anymore."
+ },
+ {
+  "id": "wf1-22",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s2.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I couldn't find the order with the Bluetooth Speaker in it. Could you please provide the order ID or more details about the order, such as the date it was placed or any other items included? This will help me locate it for you.",
+  "verified_expectation": "Product hint: 'it's the one with the Bluetooth Speaker'. Same cause as above: ALL_ITEMS_RE runs before ORDER_ASK_RE.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't have the number handy -- it's the one with the Bluetooth Speaker."
+ },
+ {
+  "id": "wf1-23",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s2.txt",
+  "turn": 5,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I'm sorry, but I still couldn't find the order with the Bluetooth Speaker. Could you please double-check the order ID or provide any additional details, like the date of the order or other items that were part of it? This will help me assist you better.",
+  "verified_expectation": "Product hint.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't have the number handy -- it's the one with the Bluetooth Speaker."
+ },
+ {
+  "id": "wf1-24",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s2.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I'm unable to locate the order with the Bluetooth Speaker based on the information provided. Could you please verify the order ID or provide more details about the order? This will help me assist you more effectively.",
+  "verified_expectation": "Product hint. IDENT_RE (user.py:74) matches a bare 'verify' even when the object is 'the order ID'.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't have the number handy -- it's the one with the Bluetooth Speaker."
+ },
+ {
+  "id": "wf1-25",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s2.txt",
+  "turn": 8,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I have confirmed your identity. However, I'm still unable to locate the order with the Bluetooth Speaker. Could you please provide the order ID or any additional details, such as the date of the order or other items included, to help me find it?",
+  "verified_expectation": "Product hint.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't have the number handy -- it's the one with the Bluetooth Speaker."
+ },
+ {
+  "id": "wf1-26",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s2.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I have confirmed your identity again. Unfortunately, I'm still unable to locate the order with the Bluetooth Speaker. Could you please provide the order ID or any additional details, such as the date of the order or other items included, to help me find it? This will ensure I can assist you effectively.",
+  "verified_expectation": "Product hint.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't have the number handy -- it's the one with the Bluetooth Speaker."
+ },
+ {
+  "id": "wf1-27",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s3.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "I see. Let me check the details of the order with the Sunglasses.\n\nI found the order with the Sunglasses. Here are the details:\n\n- **Order ID**: #W3376947\n- **Items**: \n  - Sunglasses (frame color: silver, lens color: blue, lens type: non-polarized, frame material: plastic)\n  - Office Chair (material: leather, color: blue, armrest: none, backrest height: standard)\n  - Perfume (scent family: fresh, size: 30ml, gender: men)\n- **Status**: Pending\n\nTo cancel this order, the reason must be either \"no longer needed\" or \"ordered by mistake.\" Could you please confirm the reason for cancellation? Also, please confirm that you want to cancel this specific order.",
+  "verified_expectation": "Yes plus the reason. The missing 'reason' in INFO_ASK_RE drops the requested information, and that is the root of the agent guessing a reason.",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, please go ahead -- and I don't need it anymore."
+ },
+ {
+  "id": "wf1-28",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s3.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "To confirm, you'd like to cancel order #W3376947, which includes the Sunglasses, because it was ordered by mistake. \n\nPlease confirm that this is correct and that you want to proceed with the cancellation. Reply with \"yes\" to confirm.",
+  "verified_expectation": "Correct the reason ('No, it's because I no longer need it'). The current yes would make the write cancel with the wrong reason, a db mismatch scored 0 after the user approved it.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Actually, no -- I don't need it anymore."
+ },
+ {
+  "id": "wf1-29",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s3.txt",
+  "turn": 11,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "To confirm, you'd like to cancel order #W3376947, which includes the Sunglasses, because it was ordered by mistake. \n\nPlease confirm that this is correct and that you want to proceed with the cancellation. Reply with \"yes\" to confirm.",
+  "verified_expectation": "Correct the reason.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Actually, no -- I don't need it anymore."
+ },
+ {
+  "id": "wf1-30",
+  "file": "prefix__cancel__ep_cancel_s0_00035__s3.txt",
+  "turn": 12,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00035",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3376947",
+   "#W7538230"
+  ],
+  "agent_text": "To confirm, you'd like to cancel order #W3376947, which includes the Sunglasses, because it was ordered by mistake. \n\nPlease confirm that this is correct and that you want to proceed with the cancellation. Reply with \"yes\" to confirm.",
+  "verified_expectation": "Correct the reason.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Actually, no -- I don't need it anymore."
+ },
+ {
+  "id": "wf1-32",
+  "file": "prefix__cancel__ep_cancel_s0_00107__s2.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00107",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242",
+   "#W4642822",
+   "#W1930780"
+  ],
+  "agent_text": "The order with the Luggage Set is not available for cancellation as its status is \"processed,\" meaning it has already been fulfilled. \n\nIf you'd like to cancel a different order or need help with something else, please let me know!",
+  "verified_expectation": "This is a denial, not a recap. IMPERATIVE_CONFIRM_RE (user.py:126) matches the bare 'please let me know', and with 'Luggage Set' plus 'cancel' present, _is_recap is true. The user should push back or restate. The yes also opens the runner's confirmation gate.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Just to repeat what I need: I want to cancel the order with the Luggage Set in it."
+ },
+ {
+  "id": "wf1-33",
+  "file": "prefix__cancel__ep_cancel_s0_00107__s2.txt",
+  "turn": 11,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00107",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242",
+   "#W4642822",
+   "#W1930780"
+  ],
+  "agent_text": "The order with the Luggage Set is not available for cancellation because its status is \"processed.\" Once an order is processed, it cannot be canceled.\n\nIf you have any other requests or need assistance with something else, please let me know!",
+  "verified_expectation": "Restate or push back. Not yes.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Just to repeat what I need: I want to cancel the order with the Luggage Set in it."
+ },
+ {
+  "id": "wf1-34",
+  "file": "prefix__cancel__ep_cancel_s0_00107__s2.txt",
+  "turn": 12,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00107",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242",
+   "#W4642822",
+   "#W1930780"
+  ],
+  "agent_text": "The order with the Luggage Set is not available for cancellation because its status is \"processed.\" Once an order is processed, it cannot be canceled.\n\nIf you have any other requests or need assistance with something else, please let me know!",
+  "verified_expectation": "Restate or push back, then give up.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Just to repeat what I need: I want to cancel the order with the Luggage Set in it."
+ },
+ {
+  "id": "wf1-35",
+  "file": "prefix__cancel__ep_cancel_s0_00107__s3.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00107",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242",
+   "#W4642822",
+   "#W1930780"
+  ],
+  "agent_text": "The order with the Pet Bed is **#W4642822**, as confirmed by the details in your order history.\n\nFor cancellation, the reason must be either:\n- 'no longer needed' \n- 'ordered by mistake'\n\nPlease confirm:\n1. The reason for cancellation (choose one above)  \n2. That you want to cancel order #W4642822\n\nReply with \"yes\" to proceed, or let me know if you'd like to adjust anything.",
+  "verified_expectation": "Restate the correction (the recap names the pre-correction order #W4642822). The reason-only reply invites the wrong cancellation.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Sorry, my mistake: it's the order with the Luggage Set in it I want cancelled, not that one. Turns out I no longer need it."
+ },
+ {
+  "id": "wf1-36",
+  "file": "prefix__cancel__ep_cancel_s0_00154__s0.txt",
+  "turn": 13,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00154",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5694685",
+   "#W9651773",
+   "#W2768683",
+   "#W7398274",
+   "#W6689278"
+  ],
+  "agent_text": "I have checked all your orders and identified the one containing the Tea Kettle:\n\n- **Order ID**: #W2768683\n- **Item**: Tea Kettle (glass, 1 liter, gas stovetop compatible)\n- **Status**: Delivered\n\nSince the order is delivered, it cannot be canceled. However, you might consider returning or exchanging the Tea Kettle if needed.\n\nWould you like to proceed with returning or exchanging the Tea Kettle? If so, please confirm the action and provide the payment method for any refund or price difference.",
+  "verified_expectation": "The agent named the order and item already. This is an offer of a different action, so the user should decline ('No, I don't want a return, I want to cancel the Tea Kettle order'). BE_SPECIFIC implies near-consent. There is no 'no' intent.",
+  "expect": [
+   "wrong_order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "No, that's not the order I mean. I don't have the number handy -- it's the one with the Digital Camera."
+ },
+ {
+  "id": "wf1-37",
+  "file": "prefix__cancel__ep_cancel_s0_00154__s1.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00154",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5694685",
+   "#W9651773"
+  ],
+  "agent_text": "I already located the order with the Digital Camera. Here are the details:\n\n- **Order ID**: #W9651773\n- **Item**: Digital Camera (20MP, 5x zoom, CF card storage)\n- **Status**: Pending\n\nTo cancel this order, the reason must be either \"no longer needed\" or \"ordered by mistake.\" Please confirm the reason for cancellation, and let me know if you'd like to proceed.",
+  "verified_expectation": "The stale order is named and the agent asks to proceed, so the user should restate the correction (the Tea Kettle order).",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Oh wait, wrong one -- I meant the order with the Tea Kettle in it, not that one. I don't have a use for it anymore."
+ },
+ {
+  "id": "wf1-38",
+  "file": "prefix__cancel__ep_cancel_s0_00154__s1.txt",
+  "turn": 10,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00154",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5694685",
+   "#W9651773"
+  ],
+  "agent_text": "I have already identified the order with the Digital Camera. Here are the details:\n\n- **Order ID**: #W9651773\n- **Item**: Digital Camera (20MP, 5x zoom, CF card storage)\n- **Status**: Pending\n\nTo proceed with cancellation, please confirm the reason for cancellation (either \"no longer needed\" or \"ordered by mistake\"). Once confirmed, I will cancel the order.",
+  "verified_expectation": "Restate the correction.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Oh wait, wrong one -- I meant the order with the Tea Kettle in it, not that one. I don't have a use for it anymore."
+ },
+ {
+  "id": "wf1-39",
+  "file": "prefix__cancel__ep_cancel_s0_00154__s2.txt",
+  "turn": 13,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00154",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5694685",
+   "#W9651773",
+   "#W2768683",
+   "#W7398274",
+   "#W6689278"
+  ],
+  "agent_text": "I found the order with the Tea Kettle. Here are the details:\n\n- **Order ID**: #W6689278\n- **Item**: Electric Kettle (1L, plastic, white)\n- **Price**: $164.46\n- **Status**: Pending\n\nWould you like to cancel this order? If so, please confirm the reason for cancellation (either \"no longer needed\" or \"ordered by mistake\").",
+  "verified_expectation": "'No, that's an Electric Kettle, my Tea Kettle order is a different one.' _names_target (user.py:246-251) passes on ANY recap key substring, so the agent's phrase 'the Tea Kettle' passes even though the only order id in the recap is non-target #W6689278. The reason request was also swallowed by the yes.",
+  "expect": [
+   "wrong_order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "No, that's not the order I mean. I don't have the number handy -- it's the one with the Tea Kettle. I don't have a use for it anymore."
+ },
+ {
+  "id": "wf1-40",
+  "file": "prefix__cancel__ep_cancel_s0_00154__s3.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00154",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5694685",
+   "#W9651773"
+  ],
+  "agent_text": "I see. Let me check the order with the Tea Kettle. \n\nI found the order with the Tea Kettle:\n\n- **Order ID**: #W5694685\n- **Status**: Pending\n- **Item**: Tea Kettle (glass, 1 liter, gas stovetop compatible)\n- **Price**: $98.25\n\nWould you like to cancel this order? If so, please confirm the reason for cancellation (either \"no longer needed\" or \"ordered by mistake\") and let me know if you'd like to proceed.",
+  "verified_expectation": "Yes plus the reason.",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, please go ahead -- and I don't need it anymore."
+ },
+ {
+  "id": "wf1-41",
+  "file": "prefix__cancel__ep_cancel_s0_00154__s3.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "cancel",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_cancel_s0_00154",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5694685",
+   "#W9651773"
+  ],
+  "agent_text": "Could you please confirm the reason for canceling the order with the Tea Kettle? The reason must be either \"no longer needed\" or \"ordered by mistake\".",
+  "verified_expectation": "This is a pure information question and should get the reason. It gets yes because INFO_ASK_RE lacks 'reason' and 'Tea Kettle' plus 'canceling' plus 'confirm' make it a 'recap'.",
+  "expect": [
+   "reason"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't need it anymore."
+ },
+ {
+  "id": "wf1-42",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s0.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "I see. I will proceed with the exchange for:\n\n- **Tea Kettle**: From \"stainless steel\" to \"ceramic\" (Item ID: 4238115171 \u2192 4238115172).\n- **Coffee Maker**: From \"white\" to \"stainless steel\" (Item ID: 1349017811 \u2192 1349017812).\n\nThe price difference will be covered using your gift card (ending in 5544191).\n\nPlease confirm with \"yes\" if you'd like me to proceed.",
+  "verified_expectation": "The user has just corrected the Tea Kettle to induction, and this recap still says ceramic. A faithful customer re-states the correction and does not say yes. The 'recap must name the corrected target' rule does nothing for exchange tasks because recap_keys never change after a variant correction.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Tea Kettle, I actually want it with stovetop compatibility induction. Everything else is right."
+ },
+ {
+  "id": "wf1-43",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s0.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "I will now proceed with the exchange for:\n\n- **Tea Kettle**: From \"stainless steel\" to \"ceramic\" (Item ID: 4238115171 \u2192 4238115172).\n- **Coffee Maker**: From \"white\" to \"stainless steel\" (Item ID: 1349017811 \u2192 1349017812).\n\nThe price difference will be covered using your gift card (ending in 5544191).\n\nPlease confirm with \"yes\" if you'd like me to proceed.",
+  "verified_expectation": "Same recap that ignores the correction (and has a made-up id). It should be re-stated or corrected, not answered with yes.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Tea Kettle, I actually want it with stovetop compatibility induction. Everything else is right."
+ },
+ {
+  "id": "wf1-44",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s1.txt",
+  "turn": 7,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "The Tea Kettle with stovetop compatibility induction is available in the following materials:\n\n1. **Ceramic (2 liters, induction)** - Item ID: 3312883418, Price: $104.82\n2. **Glass (2 liters, induction)** - Item ID: 7292993796, Price: $94.80\n3. **Stainless steel (2 liters, induction)** - Item ID: 1906487464, Price: $102.02\n\nSince you want the Tea Kettle with induction and ceramic material, the available option is:\n- Item ID: 3312883418 (Ceramic, 1.5 liters, induction) at $104.82\n\nFor the Coffee Maker, you want it in stainless steel. The current Coffee Maker in your order is white with drip functionality. The available options for the Coffee Maker are:\n\n- Color: white, capacity: 4 cups, type: drip, features: auto shutoff (current item) - Price: $226.05\n- Color: black, capacity: 4 cups, type: drip, features: auto shutoff - Price: $232.50\n\nSince you want stainless steel, there's no available variant for the Coffee Maker in stainless steel. Would you like to proceed with exchanging the Tea Kettle to ceramic with induction (Item ID: 3312883418) and keep the current Coffee Maker, or would you like to modify your request? \n\nPlease confirm all items you'd like to exchange and provide a payment method to cover any price difference. The current payment method on file is your gift card (balance: $45.00).",
+  "verified_expectation": "A faithful customer insists on the stainless steel Coffee Maker. The reply starts with 'Yes' and accepts dropping an item the user asked for. ALL_ITEMS_RE fires on 'all items' even though the real question is keep-or-drop.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Tea Kettle with material ceramic and with stovetop compatibility induction and the Coffee Maker in stainless steel -- everything else the same as what I have now. Please use my gift card. That's everything."
+ },
+ {
+  "id": "wf1-45",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s1.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "To confirm, you'd like to exchange:\n\n1. **Tea Kettle**:\n   - Current: Stainless steel, 2 liters, gas (Item ID: 4238115171, Price: $91.78)\n   - New: Ceramic, 1.5 liters, induction (Item ID: 3312883418, Price: $104.82)\n   - Price difference: $13.04 (to be paid)\n\n2. **Coffee Maker**:\n   - Keeping the current item (white, 4 cups, drip, auto shutoff, Price: $226.05)\n\nThe total price difference of $13.04 will be charged to your gift card. Your gift card has a balance of $45.00, so this transaction is covered.\n\nPlease confirm with a \"yes\" if you'd like me to proceed with this exchange.",
+  "verified_expectation": "The recap drops a requested item (and has the wrong kettle variant). It should not get a yes. _is_recap only checks that some recap_key is named, never that all requested items are present.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "That's not quite right -- I want to exchange the Tea Kettle and Coffee Maker."
+ },
+ {
+  "id": "wf1-46",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s1.txt",
+  "turn": 9,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "The Coffee Maker is not available in stainless steel. All available options for the Coffee Maker are in white or black with drip functionality. \n\nI cannot fulfill your request to exchange the Coffee Maker to stainless steel, as no such variant exists. \n\nWould you like to proceed with only exchanging the Tea Kettle to ceramic with induction (Item ID: 3312883418), or would you like to modify your request? \n\nPlease let me know how you'd like to proceed.",
+  "verified_expectation": "This is an either/or question that proposes dropping the Coffee Maker. The customer should ask for both items.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Sorry, to be clear: I want to exchange the Tea Kettle with stovetop compatibility induction and the Coffee Maker in stainless steel from an order I received recently."
+ },
+ {
+  "id": "wf1-48",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s3.txt",
+  "turn": 5,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "I see. To clarify, you want to exchange:\n\n1. **Tea Kettle**  \n   - From: Material is stainless steel (current)  \n   - To: Material is ceramic  \n\n2. **Coffee Maker**  \n   - From: Color is white (current)  \n   - To: Color is stainless steel  \n\nPlease confirm if this is correct. Also, note that the exchange will use your existing gift card (balance: $45.00) for any price difference.  \n\nRespond with \"yes\" to proceed or let me know if you'd like to adjust anything.",
+  "verified_expectation": "The recap ignores the correction just given (induction), so the customer should repeat the correction. This is the same missing recap_keys_after_correction gap for exchange tasks.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Tea Kettle, I actually want it with stovetop compatibility induction. Everything else is right."
+ },
+ {
+  "id": "wf1-49",
+  "file": "prefix__exchange__ep_exchange_s0_00008__s3.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00008",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4418025"
+  ],
+  "agent_text": "Here are the available options for your requested exchanges:\n\n### 1. **Tea Kettle (Material: Ceramic)**  \n- **Option**: Material = ceramic, Capacity = 2 liters, Stovetop compatibility = gas  \n  - Item ID: `3761330360`  \n  - Price: $101.12  \n\n### 2. **Coffee Maker (Color: Stainless Steel)**  \n- **Option**: Color = stainless steel, Capacity = 4 cups, Type = drip, Features = auto shutoff  \n  - Item ID: `3039787582`  \n  - Price: $256.94  \n\n### Price Difference Calculation:  \n- Current Total for these items: $91.78 (Tea Kettle) + $226.05 (Coffee Maker) = **$317.83**  \n- New Total: $101.12 (Tea Kettle) + $256.94 (Coffee Maker) = **$358.06**  \n- Price Difference: **$40.23** (to be charged to your gift card)  \n\nYour gift card balance is $45.00, which covers the difference.  \n\n**Exchange Summary**:  \n- Exchange Tea Kettle (item ID: 4238115171) to ceramic (item ID: 3761330360)  \n- Exchange Coffee Maker (item ID: 1349017811) to stainless steel (item ID: 3039787582)  \n- Price difference: $40.23 (charged to gift card)  \n\nPlease confirm with \"yes\" if you'd like to proceed with this exchange.",
+  "verified_expectation": "Recap with the uncorrected variant; it should not get a yes.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Tea Kettle, I actually want it with stovetop compatibility induction. Everything else is right."
+ },
+ {
+  "id": "wf1-50",
+  "file": "prefix__exchange__ep_exchange_s0_00098__s0.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00098",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8341134"
+  ],
+  "agent_text": "I'm sorry, but the Notebook in size A5 with a soft cover is not available for exchange. This might be due to inventory limitations or unavailability of that specific variant.\n\nWould you like to:\n1. Choose a different size option (e.g., A6, A7)?\n2. Consider a different notebook product?\n3. Cancel the exchange and keep the current notebook?\n\nPlease let me know your preference.",
+  "verified_expectation": "This is a menu after a (false) refusal, not a recap. The customer should say they want the A5 Notebook and ask the agent to check. 'Please let me know' matches IMPERATIVE_CONFIRM_RE (user.py:126), and 'Notebook' + 'exchange' make it look like a recap, so is_yes=True.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Notebook in size A5 -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-51",
+  "file": "prefix__exchange__ep_exchange_s0_00098__s0.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00098",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8341134"
+  ],
+  "agent_text": "I apologize for the inconvenience, but the Notebook in size A5 with a soft cover is currently not available for exchange. \n\nSince your original order contains a Notebook in size A4, and we cannot offer the A5 variant, I cannot proceed with the requested exchange.\n\nWould you like to:\n1. Keep the current A4 notebook?\n2. Explore other available Notebook sizes (e.g., A6, A7)?\n3. Consider a different product type?\n\nPlease let me know how you'd like to proceed.",
+  "verified_expectation": "A refusal plus a menu; 'yes' is meaningless here. The customer should restate or ask the agent to check availability.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Just to repeat what I need: I want to exchange the Notebook in size A5 from an order I received recently."
+ },
+ {
+  "id": "wf1-52",
+  "file": "prefix__exchange__ep_exchange_s0_00098__s0.txt",
+  "turn": 11,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00098",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8341134"
+  ],
+  "agent_text": "I understand you'd like to proceed with exchanging the Notebook to size A5. However, after checking the inventory, the A5 size with soft cover is not available.\n\nSince we cannot fulfill this request due to inventory limitations, I'm unable to proceed with the exchange as requested.\n\nWould you like to:\n1. Keep the current A4 notebook?\n2. Try a different size (e.g., A6, A7)?\n3. Consider a different notebook product?\n\nPlease let me know what you'd like to do next.",
+  "verified_expectation": "Same: restate instead of yes.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Notebook in size A5 -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-53",
+  "file": "prefix__exchange__ep_exchange_s0_00098__s0.txt",
+  "turn": 12,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00098",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8341134"
+  ],
+  "agent_text": "I'm unable to proceed with your request because the Notebook in size A5 with a soft cover is not available for exchange. \n\nSince we cannot fulfill this exchange due to inventory limitations, and you've confirmed you'd like to proceed, I must inform you that this action cannot be completed.\n\nWould you like to explore alternative options, such as:\n- A different notebook size (A6, A7)?\n- A different notebook product?\n\nPlease let me know how you'd like to move forward.",
+  "verified_expectation": "Restate the request.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Just to repeat what I need: I want to exchange the Notebook in size A5 from an order I received recently."
+ },
+ {
+  "id": "wf1-54",
+  "file": "prefix__exchange__ep_exchange_s0_00098__s0.txt",
+  "turn": 14,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00098",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8341134"
+  ],
+  "agent_text": "I understand you want to exchange a Notebook in size A5 from your order. However, after checking our inventory, the Notebook in size A5 with a soft cover is not currently available for exchange.\n\nThis variant is either out of stock or not available for exchange in our system. \n\nSince we cannot fulfill this request due to inventory limitations, I'm unable to proceed with the exchange as requested. \n\nWould you like to:\n1. Keep the current A4 notebook?\n2. Explore other available Notebook sizes (e.g., A6, A7)?\n3. Consider a different notebook product?\n\nPlease let me know your preference so I can assist you further.",
+  "verified_expectation": "Restate the request.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Notebook in size A5 -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-55",
+  "file": "prefix__exchange__ep_exchange_s0_00098__s1.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00098",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8341134"
+  ],
+  "agent_text": "I see that you want to exchange a Notebook in size A5. However, in your order #W8341134, the Notebook is currently in size A4, and there is no record of a Notebook in size A5 being ordered.\n\nCould you please confirm if you are referring to a different order or if there might be a misunderstanding? I'd be happy to help clarify or assist with another request.",
+  "verified_expectation": "The question is whether the user means a different order. 'Yes, please proceed' is wrong; the answer should be 'No, it's this order: change my A4 Notebook to A5'.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "It's the order that had the Notebook in it."
+ },
+ {
+  "id": "wf1-56",
+  "file": "prefix__exchange__ep_exchange_s0_00121__s0.txt",
+  "turn": 5,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00121",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1971958"
+  ],
+  "agent_text": "The Mechanical Keyboard with \"backlight none\" is available in the following options:\n\n1. **Size: full size**  \n   - Switch type: clicky  \n   - Price: $269.16 (Item ID: 7706410293)  \n\n2. **Size: 80%**  \n   - Switch type: linear  \n   - Price: $268.77 (Item ID: 1421289881)  \n\n3. **Size: full size**  \n   - Switch type: linear  \n   - Price: $231.37 (Item ID: 9570044148)  \n\n4. **Size: 80%**  \n   - Switch type: tactile  \n   - Price: $256.73 (Item ID: 7658724607)  \n\nThe original keyboard you have (clicky, white backlight, full size) is priced at $244.91. The price difference for each option will be calculated as follows:  \n\n- Clicky, backlight none, full size: $269.16 - $244.91 = **$24.25** (additional cost)  \n- Linear, backlight none, 80%: $268.77 - $244.91 = **$23.86** (additional cost)  \n- Linear, backlight none, full size: $231.37 - $244.91 = **-$13.54** (refund)  \n- Tactile, backlight none, 80%: $256.73 - $244.91 = **$11.82** (additional cost)  \n\nPlease confirm:  \n1. Which option would you like to exchange for? (Provide the item ID or describe the option)  \n2. The payment method you'd like to use for the price difference (e.g., PayPal, gift card, credit card).  \n\nNote: The exchange can only be done once per order, so ensure all your desired changes are listed.",
+  "verified_expectation": "Answer the variant question as well, e.g. 'only the backlight changes, everything else as I have now', plus PayPal. Only the payment question is answered.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Mechanical Keyboard with backlight none -- everything else the same as what I have now. Let's use my PayPal account for any difference."
+ },
+ {
+  "id": "wf1-57",
+  "file": "prefix__exchange__ep_exchange_s0_00121__s0.txt",
+  "turn": 7,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00121",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1971958"
+  ],
+  "agent_text": "Please confirm the exact option or item ID you'd like to exchange for (e.g., \"clicky, backlight none, full size\" or \"Item ID: 7706410293\"). Once you provide that, I will proceed with the exchange request.",
+  "verified_expectation": "This asks for information, not for a yes. BE_SPECIFIC is semantically wrong; the customer should state the variant (tactile switch, rest unchanged).",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Mechanical Keyboard with backlight none and with switch type tactile -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-59",
+  "file": "prefix__exchange__ep_exchange_s0_00121__s1.txt",
+  "turn": 6,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00121",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1971958"
+  ],
+  "agent_text": "The Mechanical Keyboard with \"switch type tactile\" and \"backlight none\" and \"size full size\" is available. Here are the details:\n\n- **Switch Type**: tactile\n- **Backlight**: none\n- **Size**: full size\n- **Price**: $235.13 (item ID: 1340995114)\n\nHowever, this variant is currently **not available** (marked as \"available\": false). \n\nWould you like to proceed with a different option, such as the one with \"switch type tactile\" and \"backlight white\" (available), or do you have another preference? Let me know how you'd like to proceed.",
+  "verified_expectation": "An open menu, not a recap. It passes as a recap only because ACTION_RE['exchange'] matches 'switch' inside the option name 'switch type' (user.py:164); the text has no exchange verb. Any keyboard menu can harvest a gate-satisfying yes this way.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Mechanical Keyboard with backlight none and with switch type tactile -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-60",
+  "file": "prefix__exchange__ep_exchange_s0_00121__s1.txt",
+  "turn": 7,
+  "category": "user_misread_valid_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00121",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1971958"
+  ],
+  "agent_text": "I will check for an available Mechanical Keyboard variant with the following options:\n- Switch type: tactile\n- Backlight: none\n- Size: full size\n\nAfter verifying, I will provide the available option details and the price difference, if any. Then, I will ask for your confirmation to proceed with the exchange. \n\nCurrently, the variant with \"switch type tactile,\" \"backlight none,\" and \"size full size\" is not available. \n\nWould you like to proceed with a different combination, such as:\n- Switch type: tactile, Backlight: white, Size: full size (available, priced at $226.11)?\n- Or any other available option from the list?\n\nPlease let me know your preference.",
+  "verified_expectation": "This is a concrete proposal of the gold variant, and the customer should accept it. It is rejected because the agent's own statement 'After verifying, I will provide the available option details' is counted as a request via REQUEST_RE 'provide', so INFO_ASK_RE matches.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Mechanical Keyboard with backlight none and with switch type tactile -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-61",
+  "file": "prefix__exchange__ep_exchange_s0_00121__s2.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00121",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1971958"
+  ],
+  "agent_text": "Your order #W1971958 is confirmed as delivered and contains the following items:\n\n1. **Mechanical Keyboard**  \n   - Switch Type: Clicky  \n   - Backlight: White  \n   - Size: Full Size  \n   - Price: $244.91  \n\n2. **Skateboard**  \n   - Deck Material: Plastic  \n   - Length: 31 inch  \n   - Design: Plain  \n   - Price: $182.03  \n\n3. **Electric Kettle**  \n   - Capacity: 1.5L  \n   - Material: Plastic  \n   - Color: Silver  \n   - Price: $158.90  \n\n4. **Wall Clock**  \n   - Diameter: 10 inches  \n   - Color: Wood  \n   - Type: Analog  \n   - Price: $196.15  \n\nYou mentioned wanting to exchange the **Mechanical Keyboard with backlight none**. However, the current option in your order has a **backlight of white**. \n\nCould you please confirm:\n1. The exact option you'd like for the new mechanical keyboard (e.g., backlight none, switch type, size)?\n2. Whether you want to exchange only the keyboard or any other items as well?\n3. The payment method you'd like to use for any price difference (e.g., existing PayPal or another method)?\n\nNote: The new item must be of the same product type (mechanical keyboard) but with different variant options. Please confirm all details before proceeding!",
+  "verified_expectation": "Three questions get only the items answer. The variant (backlight none, rest unchanged) and payment (PayPal) go unanswered because one intent per turn wins.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Hold on, I changed my mind on the Mechanical Keyboard: make it with switch type tactile instead. The rest is fine. I'd like the Mechanical Keyboard with backlight none and with switch type tactile -- everything else the same as what I have now. Let's use my PayPal account for any difference. Just those, nothing else."
+ },
+ {
+  "id": "wf1-63",
+  "file": "prefix__exchange__ep_exchange_s0_00121__s3.txt",
+  "turn": 9,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00121",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1971958"
+  ],
+  "agent_text": "I understand you'd like to exchange the **Mechanical Keyboard** with **backlight none** from order #W1971958.  \n\nHere are the final details:  \n- **Current Item**: Clicky switch, white backlight, full size ($244.91)  \n- **New Item**: Clicky switch, no backlight, full size ($269.16)  \n- **Price Difference**: +$24.25 (charged to your PayPal account)  \n\nPlease confirm with a \"yes\" if you'd like to proceed. This exchange can only be done once per order.",
+  "verified_expectation": "The user just corrected the switch to tactile, and this recap ignores it. The customer should repeat the correction, not say yes. Exchange tasks lack recap_keys_after_correction.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Hold on, I changed my mind on the Mechanical Keyboard: make it with switch type tactile instead. The rest is fine."
+ },
+ {
+  "id": "wf1-64",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s0.txt",
+  "turn": 4,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "Your order #W6026015 is delivered, so we can proceed with the exchange. Here are the details of the items you'd like to swap:\n\n- **Current Dumbbell Set**: Weight range 55-75 lbs, material: urethane, set type: adjustable\n- **Current Luggage Set**: Piece count: 2-piece, color: red, material: hardshell\n\nYou'd like to swap them for:\n- **New Dumbbell Set**: Weight range 5-25 lbs (not currently available in the system)\n- **New Luggage Set**: Piece count 4-piece (not currently available in the system)\n\nUnfortunately, the requested variants for both the Dumbbell Set and the Luggage Set are not available. We cannot proceed with this exchange as the desired options are not in stock.\n\nWould you like to explore other available options, or would you like to proceed with a different change?",
+  "verified_expectation": "This is a false refusal plus a menu. The customer should ask the agent to check, or restate. It is treated as a recap (target name, 'exchange', 'proceed' in a question), and the is_yes stays live for any later write.",
+  "expect": [
+   "unrecognised"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Let me say it again: I want to exchange the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece from order #W6026015."
+ },
+ {
+  "id": "wf1-66",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s0.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "Thank you for confirming. To proceed, I'll need you to select one of the available options for the Dumbbell Set and one for the Luggage Set. Additionally, please confirm the payment method you'd like to use for any price difference.\n\nCould you please specify:\n1. The Dumbbell Set variant you'd like (provide the material and set type, or the item ID)?\n2. The Luggage Set variant you'd like (provide the color and material, or the item ID)?\n3. The payment method to handle the price difference (e.g., gift card, PayPal, or credit card)?\n\nOnce I have this information, I can finalize the exchange request.",
+  "verified_expectation": "The variant questions go unanswered; there is no variant intent.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now. I'll go with my Mastercard ending in 4275."
+ },
+ {
+  "id": "wf1-67",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s0.txt",
+  "turn": 10,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "Your Mastercard ending in 4275 is linked to your account and will be used for any price difference. Please confirm your choice of variants:\n\n1. **Dumbbell Set**: \n   - Options available:\n     - Rubber, fixed (Item ID: 8068777068, $507.13)\n     - Iron, adjustable (Item ID: 3877338112, $545.68)\n     - Urethane, adjustable (Item ID: 3275928196, $511.63)\n     - Rubber, adjustable (Item ID: 7896397433, $457.81)\n     - Urethane, fixed (Item ID: 6585768447, $467.69)\n\n2. **Luggage Set**:\n   - Options available:\n     - Blue, softshell (Item ID: 8759627937, $501.65)\n     - Red, hardshell (Item ID: 9956648681, $452.62)\n\nPlease let me know which variant you'd like for each item, and confirm that this is all the items you want to exchange. Once confirmed, I'll proceed with the exchange request.",
+  "verified_expectation": "The variant question goes unanswered, so the agent guessed rubber.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now. Just those, nothing else."
+ },
+ {
+  "id": "wf1-68",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s1.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "Your order #W6026015 is delivered, so we can proceed with the exchange. Here are the details of the items you want to swap:\n\n- **Current Item**: Luggage Set (2-piece, red, hardshell) - Price: $532.58  \n- **Current Item**: Dumbbell Set (55-75 lbs, urethane, adjustable) - Price: $483.66  \n\nYou want to exchange them for:  \n- **New Luggage Set**: 4-piece (we need to confirm the color and material)  \n- **New Dumbbell Set**: 5-25 lbs (we need to confirm the material and set type)  \n\nPlease confirm:  \n1. The new luggage set's color and material (if different from the original).  \n2. The new dumbbell set's material and set type (if different from the original).  \n\nAlso, confirm that you want to exchange both items and provide a payment method to handle any price difference.  \n\nLet me know so I can proceed!",
+  "verified_expectation": "Answer the variant question (same as current except the named option) as well as payment.",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, please go ahead -- and please use my Mastercard ending in 4275 for any difference. I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-69",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s1.txt",
+  "turn": 5,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "The payment method for the price difference will be your Mastercard ending in 4275.  \n\nHowever, I need clarification on the new items:  \n1. For the **Luggage Set**, what color and material would you like (original was red, hardshell)?  \n2. For the **Dumbbell Set**, what material and set type would you like (original was urethane, adjustable)?  \n\nPlease provide these details so I can confirm the exchange.",
+  "verified_expectation": "The only question is about variants. PAY_RE is searched on the whole text (user.py:311), so the agent's statement 'The payment method ... will be' triggers a repeated payment answer.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-70",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s1.txt",
+  "turn": 6,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "I need to confirm the specific options for the new items before proceeding. Could you please specify:  \n\n1. The **color and material** for the new Luggage Set (e.g., blue, softshell)?  \n2. The **material and set type** for the new Dumbbell Set (e.g., steel, fixed)?  \n\nWithout these details, I cannot proceed with the exchange. Let me know!",
+  "verified_expectation": "State the preference (keep red hardshell / urethane adjustable). The old restate lacks the 'everything else the same' sentence; the current generator adds it, but these tasks were not regenerated.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-71",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s1.txt",
+  "turn": 8,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "You're exchanging the following items in your order **#W6026015**:  \n\n- **Current Luggage Set**: 2-piece, red, hardshell  \n- **Current Dumbbell Set**: 55-75 lbs, urethane, adjustable  \n\nYou'd like to replace them with:  \n- A **4-piece Luggage Set** (color and material to be specified)  \n- A **5-25 lbs Dumbbell Set** (material and set type to be specified)  \n\nPlease confirm the exact options for the new items before I proceed. Once you provide them, I\u2019ll get your approval and finalize the exchange.  \n\nLet me know!",
+  "verified_expectation": "The user gives up on an agent that is correctly waiting for info the user never gave.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-72",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s2.txt",
+  "turn": 6,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "It seems there was an error because the requested variants for the Luggage Set (4-piece) and Dumbbell Set (5-25 lbs) are not available in the inventory. \n\nWould you like to:\n1. Choose different options that are available?\n2. Cancel the exchange and proceed with a different action?\n\nPlease let me know how you'd like to proceed.",
+  "verified_expectation": "A menu after a failed write. The customer should restate the variants or ask the agent to check. 'please let me know' (IMPERATIVE_CONFIRM_RE) + 'Luggage Set' + 'exchange' makes it a 'recap', and the yes is gate-valid.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-73",
+  "file": "prefix__exchange__ep_exchange_s0_00130__s3.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00130",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6026015"
+  ],
+  "agent_text": "Here are the available options for your requested swaps:\n\n### 1. **Dumbbell Set (5-25 lbs)**\n- **Option**: 5-25 lbs, material: rubber, set type: fixed  \n  - Item ID: `8068777068`  \n  - Price: $507.13  \n- **Option**: 5-25 lbs, material: iron, set type: adjustable  \n  - Item ID: `3877338112`  \n  - Price: $545.68  \n- **Option**: 5-25 lbs, material: urethane, set type: adjustable  \n  - Item ID: `3275928196`  \n  - Price: $511.63  \n- **Option**: 5-25 lbs, material: rubber, set type: adjustable  \n  - Item ID: `7896397433`  \n  - Price: $457.81  \n- **Option**: 5-25 lbs, material: urethane, set type: fixed  \n  - Item ID: `6585768447`  \n  - Price: $467.69  \n\n*Original Dumbbell Set price: $483.66*  \n*Minimum price difference: $0 (if choosing 7896397433, $457.81)*  \n*Maximum price difference: $62.02 (if choosing 3877338112, $545.68)*  \n\n### 2. **Luggage Set (4-piece)**\n- **Option**: 4-piece, color: blue, material: softshell  \n  - Item ID: `8759627937`  \n  - Price: $501.65  \n- **Option**: 4-piece, color: red, material: hardshell  \n  - Item ID: `9956648681`  \n  - Price: $452.62  \n\n*Original Luggage Set price: $532.58*  \n*Price difference: -$79.96 (if choosing 9956648681)*  \n*Price difference: -$130.93 (if choosing 8759627937)*  \n\n### Total Price Difference\n- **If selecting 7896397433 (Dumbbell) + 9956648681 (Luggage)**:  \n  - Total refund: **$151.13** (to be credited to your Mastercard ending in 4275).  \n\nPlease confirm:  \n1. You want to exchange both items.  \n2. New Dumbbell Set: 5-25 lbs, material: rubber, set type: adjustable (Item ID: `7896397433`)  \n3. New Luggage Set: 4-piece, color: red, material: hardshell (Item ID: `9956648681`)  \n4. Refund of **$151.13** to your Mastercard ending in 4275.  \n\nRespond with \"yes\" to proceed or let me know if you'd like to adjust.",
+  "verified_expectation": "The recap changes the material (current is urethane). Under the current generator's 'everything else the same' a faithful customer would object. _is_recap never checks option values, so wrong-variant recaps always get yes. The db hash still fails it, but the user gives false confirmation instead of a correction signal.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "That's not what I asked for -- I want the Dumbbell Set with weight range 5-25 lbs and the Luggage Set with piece count 4-piece, with everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-74",
+  "file": "prefix__exchange__ep_exchange_s0_00139__s3.txt",
+  "turn": 6,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00139",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5220869"
+  ],
+  "agent_text": "The current Luggage Set in silver is not available in blue. We cannot proceed with the exchange for the Luggage Set as the requested color is unavailable.\n\nHowever, we can still exchange the Tea Kettle to have induction compatibility and the Desk Lamp to have medium brightness. Please confirm if you'd like to proceed with these changes and if you're okay with not exchanging the Luggage Set.",
+  "verified_expectation": "The customer agrees to drop a requested item. It should insist on the blue Luggage Set (or ask the agent to check).",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "That's not quite right -- I want to exchange the Tea Kettle, Luggage Set and Desk Lamp."
+ },
+ {
+  "id": "wf1-75",
+  "file": "prefix__exchange__ep_exchange_s0_00139__s3.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00139",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5220869"
+  ],
+  "agent_text": "The Luggage Set in blue is currently unavailable. We cannot proceed with the exchange for the Luggage Set as the requested color is not available in our inventory. \n\nIf you'd like, we can still exchange the Tea Kettle to have induction compatibility and the Desk Lamp to have medium brightness. Please confirm if you'd like to proceed with these changes, and let me know if you'd like assistance in finding an alternative for the Luggage Set. \n\nAdditionally, please confirm whether you'd like to proceed with the exchange of the Tea Kettle and Desk Lamp only.",
+  "verified_expectation": "Same: should refuse dropping the Luggage Set.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "That's not quite right -- I want to exchange the Tea Kettle, Luggage Set and Desk Lamp."
+ },
+ {
+  "id": "wf1-76",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s0.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "The order #W8209112 is currently delivered, so we can proceed with the exchange. Here are the items you wish to exchange:\n\n1. **Water Bottle** - Current: 750ml, plastic, black \u2192 New: 500ml (we need to verify availability)\n2. **LED Light Bulb** - Current: Warm white, 75W equivalent \u2192 New: Daylight (we need to verify availability)\n3. **Dumbbell Set** - Current: 55-75 lbs, urethane \u2192 New: 30-50 lbs (we need to verify availability)\n\nPlease confirm:\n- The new item options you want (especially for the Water Bottle, LED Light Bulb, and Dumbbell Set).\n- The payment method you'd like to use for any price difference (original payment method or another method).\n\nAlso, please confirm if you have provided all items you'd like to exchange.",
+  "verified_expectation": "Variant and payment go unanswered; only one intent is answered per turn.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now. I'll go with my Mastercard ending in 6365. Just those, nothing else."
+ },
+ {
+  "id": "wf1-77",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s0.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "Here are the available options for the items you wish to exchange:\n\n1. **Water Bottle (500ml)**:\n   - Available options:\n     - Stainless steel, black: $52.79\n     - Glass, green: $45.09\n     - Plastic, black: $51.94\n     - Glass, black: $45.13\n\n2. **LED Light Bulb (Daylight)**:\n   - Available option:\n     - 75W equivalent, daylight, Wi-Fi: $49.80\n\n3. **Dumbbell Set (30-50 lbs)**:\n   - Available options:\n     - Iron, adjustable: $522.03\n     - Iron, fixed: $512.88\n     - Urethane, fixed: $512.88\n     - Rubber, fixed: $462.84\n     - Rubber, adjustable: $508.37\n\nPlease confirm:\n- Your preferred option for each item (specifically, the item ID).\n- The payment method you'd like to use for any price difference (original credit card or another method).\n\nAlso, confirm if you have provided all items you'd like to exchange.",
+  "verified_expectation": "This is a request to pick variants, not a recap. It passes because the bullet lines have no '?' or REQUEST_RE word, and 'provided' does not match \\bprovide\\b, so question_sentences() is just 'Please confirm:' and the INFO/ALL_ITEMS checks see nothing.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now. I'll go with my Mastercard ending in 6365. Just those, nothing else."
+ },
+ {
+  "id": "wf1-78",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s2.txt",
+  "turn": 3,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "I see your order #W8209112 is delivered. You'd like to exchange:\n\n1. Water Bottle (current: 750ml, plastic, black) \u2192 You mentioned 500ml, but currently have 750ml\n2. LED Light Bulb (current: warm white, 75W equivalent) \u2192 You mentioned daylight, but currently have warm white\n3. Dumbbell Set (current: 55-75 lbs, urethane) \u2192 You mentioned 30-50 lbs, but currently have 55-75 lbs\n\nImportant notes:\n- We can only exchange to different options of the same product type (cannot change product types)\n- The exchange can only be done once per order\n- You'll need to provide a payment method for any price difference\n\nCould you please confirm:\n1. The exact specifications you want for each item (since current options don't match your request)?\n2. Your preferred payment method for any price difference (original credit card or another method)?\n\nAlso, please confirm you've provided all items you want to exchange since this will be a one-time action.",
+  "verified_expectation": "Variant and payment go unanswered.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now. I'll go with my Mastercard ending in 6365. Just those, nothing else."
+ },
+ {
+  "id": "wf1-79",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s2.txt",
+  "turn": 4,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "I notice there's a mismatch between your requested specifications and the current items in your order. Let me verify the availability of the specific options you'd like:\n\n1. Water Bottle: You want 500ml, but currently have 750ml (black, plastic)\n2. LED Light Bulb: You want daylight color temperature, but currently have warm white (75W equivalent)\n3. Dumbbell Set: You want 30-50 lbs, but currently have 55-75 lbs (urethane)\n\nCould you please confirm if you'd like to exchange to:\n- Water Bottle: 500ml (what material and color?)\n- LED Light Bulb: daylight color temperature (what brightness and connectivity?)\n- Dumbbell Set: 30-50 lbs (what material and set type?)\n\nAlso, please confirm your preferred payment method for any price difference (original credit card or another method).",
+  "verified_expectation": "This asks for information ('what material and color?'), and a 'yes' answers nothing yet sets is_yes. INFO_ASK_RE has no 'what (material|color|...)' pattern.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now. I'll go with my Mastercard ending in 6365."
+ },
+ {
+  "id": "wf1-80",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s2.txt",
+  "turn": 10,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "Here are the available options for your requested exchanges:\n\n1. Water Bottle (500ml):\n   - Stainless steel, black: $52.79 (available)\n   - Plastic, black: $51.94 (available)\n   - Glass, blue: $45.09 (available)\n   - Glass, black: $45.13 (available)\n\n2. LED Light Bulb (daylight color temperature):\n   - 75W equivalent, daylight, Wi-Fi: $49.80 (available)\n   - 60W equivalent, daylight, Bluetooth: $48.55 (available)\n   - 60W equivalent, daylight, no connectivity: $51.54 (available)\n\n3. Dumbbell Set (30-50 lbs):\n   - Iron, fixed: $534.14 (available)\n   - Urethane, adjustable: $483.47 (available)\n   - Iron, adjustable: $522.03 (available)\n   - Urethane, fixed: $512.88 (available)\n   - Rubber, fixed: $462.84 (available)\n   - Rubber, adjustable: $508.37 (available)\n\nPlease confirm:\n1. Your preferred options for each item (including material, color, and set type)\n2. Your preferred payment method for any price difference (original credit card or another method)\n\nRemember, this exchange can only be done once per order.",
+  "verified_expectation": "An information request (variant choice + payment); yes is wrong.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now. I'll go with my Mastercard ending in 6365."
+ },
+ {
+  "id": "wf1-81",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s2.txt",
+  "turn": 11,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "I'll proceed with the exchange using your Mastercard ending in 6365 for any price difference. \n\nPlease confirm your final selections for each item:\n1. Water Bottle (500ml): Which option would you like? (Options: stainless steel black, plastic black, glass blue, glass black)\n2. LED Light Bulb (daylight): Which option would you like? (Options: 75W equivalent, daylight, Wi-Fi; 60W equivalent, daylight, Bluetooth; 60W equivalent, daylight, no connectivity)\n3. Dumbbell Set (30-50 lbs): Which option would you like? (Options: iron fixed, urethane adjustable, iron adjustable, urethane fixed, rubber fixed, rubber adjustable)\n\nPlease provide your exact selections so I can process the exchange request.",
+  "verified_expectation": "An information question. It should be answered with the variant (only the named option changes), not with a demand for specifics.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-82",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s2.txt",
+  "turn": 12,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "You're exchanging the following items from your order #W8209112:\n\nCurrently in your order:\n1. Water Bottle - 750ml, plastic, black (item ID: 7199146548)\n2. LED Light Bulb - 75W equivalent, warm white, Wi-Fi (item ID: 3034017579) \n3. Dumbbell Set - 55-75 lbs, urethane, adjustable (item ID: 6130713659)\n\nYou're requesting to exchange to:\n1. Water Bottle - 500ml (choose material/color)\n2. LED Light Bulb - daylight color temperature (choose brightness/connectivity) \n3. Dumbbell Set - 30-50 lbs (choose material/set type)\n\nThe exchange will be processed with your Mastercard ending in 6365 for any price difference. \n\nPlease confirm your exact selections for each item before I proceed.",
+  "verified_expectation": "The agent asks the user to choose; yes is a non-answer that also arms the confirmation gate.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Water Bottle with capacity 500ml, the LED Light Bulb with color temperature daylight and the Dumbbell Set with weight range 30-50 lbs -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-83",
+  "file": "prefix__exchange__ep_exchange_s0_00141__s3.txt",
+  "turn": 9,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00141",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8209112"
+  ],
+  "agent_text": "I see you'd like to use your Mastercard ending in 6365. However, I notice that the payment method ID for this card is not available in our records. The only payment method ID I can find in your order is \"credit_card_6428848\" (which ends in 6428848).\n\nCould you please confirm if you meant to use the card ending in 6428848, or if you'd like me to verify the Mastercard ending in 6365? \n\nIf you confirm the card ending in 6428848 is correct, I'll proceed with that. If you need to verify the Mastercard, I can assist with that as well.",
+  "verified_expectation": "A payment clarification; IDENT_RE fires on 'verify' (user.py:74). The customer should answer about the card (the Mastercard ending 6365 is the card on my account).",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'll go with my Mastercard ending in 6365."
+ },
+ {
+  "id": "wf1-84",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s0.txt",
+  "turn": 5,
+  "category": "task_spec_ambiguous",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "The Wall Clock with a diameter of 14 inches and color white (Item ID: 9850781806) is available and priced at $184.48. \n\nHere are the details of the exchange:\n- **Current Item**: Wall Clock (10 inches, white, digital) - $195.59\n- **New Item**: Wall Clock (14 inches, white, digital) - $184.48\n\nThe price difference will be refunded to your original payment method (PayPal). \n\nPlease confirm if you would like to proceed with this exchange.",
+  "verified_expectation": "The correction contradicts gold: 'everything else is right' endorses 14 inches, but gold is 10-inch black.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Wall Clock, I actually want it in black. Everything else is right."
+ },
+ {
+  "id": "wf1-85",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s0.txt",
+  "turn": 6,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "To confirm, you would like to exchange the Wall Clock (10 inches, white, digital) for the Wall Clock (14 inches, white, digital) in your order #W6867036. The price difference of $11.11 will be refunded to your PayPal account. \n\nPlease confirm with a \"yes\" if you would like to proceed.",
+  "verified_expectation": "The recap ignores the black correction just given; the customer should repeat the correction.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Wall Clock, I actually want it in black. Everything else is right."
+ },
+ {
+  "id": "wf1-86",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s0.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "I understand you'd like to exchange the Wall Clock with a diameter of 14 inches from order #W6867036. However, the current item in your order is the Wall Clock with a diameter of 10 inches (white, digital). The variant with a diameter of 14 inches (white, digital) is available, but it's a different item than what you currently have. \n\nWould you like to proceed with exchanging your current 10-inch Wall Clock for the 14-inch white digital Wall Clock? If so, the price difference of $11.11 will be refunded to your PayPal account. Please confirm with a \"yes\" to proceed.",
+  "verified_expectation": "Same uncorrected recap; it should not get a yes.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Wall Clock, I actually want it in black. Everything else is right."
+ },
+ {
+  "id": "wf1-87",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s0.txt",
+  "turn": 11,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "I'm sorry, but there was an error processing your request. The Wall Clock with a diameter of 14 inches and color black (Item ID: 6922203216) is not currently available for exchange. \n\nWould you like to proceed with a different variant or consider another option? Let me know how I can assist you further.",
+  "verified_expectation": "A menu after a failed write. The customer should say which clock it wants.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Wall Clock with diameter 14 inches and in black -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-88",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s1.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "I already have your details, Mei Jackson, with zip code 78729. Please confirm if you'd like to proceed with the exchange of the Wall Clock (diameter 10 inches to 14 inches) using your PayPal account. Reply with \"yes\" to proceed or let me know if you'd like to make any changes.",
+  "verified_expectation": "The recap ignores the black correction given at turn 6; the customer should repeat the correction.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Wall Clock, I actually want it in black. Everything else is right."
+ },
+ {
+  "id": "wf1-89",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s2.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "The Wall Clock with diameter 14 inches and color black is available in two types:  \n\n1. **Analog type** (item ID: 7791931443) \u2013 Price: $195.63  \n2. **Digital type** (item ID: 6922203216) \u2013 Price: $199.12  \n\nYour current Wall Clock is digital with a 10-inch diameter and white color. The price difference will be calculated as follows:  \n\n- **Digital (14-inch, black)**: $199.12 (new) \u2013 $195.59 (current) = **$3.53 extra**  \n- **Analog (14-inch, black)**: $195.63 (new) \u2013 $195.59 (current) = **$0.04 extra**  \n\nYou will be charged $3.53 or $0.04, depending on your choice.  \n\n**Please confirm:**  \n- Which option (digital or analog) do you prefer?  \n- Your payment method for the price difference will be your existing PayPal account (paypal_8305620).  \n\nReply with \"yes\" to proceed.",
+  "verified_expectation": "The real question is digital or analog; the customer should say 'digital, same as I have'. PAY_RE fires on the payment statement because it scans the whole text.",
+  "expect": [
+   "option"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like the Wall Clock with diameter 14 inches and in black -- everything else the same as what I have now."
+ },
+ {
+  "id": "wf1-91",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s3.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "To confirm, you would like to exchange the Wall Clock with diameter 10 inches (item ID: 8917609800) for the one with diameter 14 inches and color white (item ID: 9850781806). The price difference of $11.11 will be refunded to your PayPal account.\n\nPlease confirm with a \"yes\" if you would like to proceed with this exchange.",
+  "verified_expectation": "The recap ignores the black correction just given at turn 6; there should be no yes.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Wall Clock, I actually want it in black. Everything else is right."
+ },
+ {
+  "id": "wf1-92",
+  "file": "prefix__exchange__ep_exchange_s0_00145__s3.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "exchange",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_exchange_s0_00145",
+  "correction_used": true,
+  "fallback_used": false,
+  "read_orders": [
+   "#W6867036"
+  ],
+  "agent_text": "I notice there seems to be a misunderstanding. The Wall Clock with diameter 14 inches is not currently in your order. Your order contains the Wall Clock with diameter 10 inches.\n\nIf you'd like to exchange the 10-inch Wall Clock for a 14-inch one, please confirm, and I'll proceed with that.\n\nIf you meant to exchange a different item or have another request, let me know!",
+  "verified_expectation": "Same uncorrected proposal (14-inch, no color); the customer should restate black.",
+  "expect": [
+   "correction"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait, sorry -- for the Wall Clock, I actually want it in black. Everything else is right."
+ },
+ {
+  "id": "wf1-93",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00003__s0.txt",
+  "turn": 8,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00003",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5442520"
+  ],
+  "agent_text": "I see that you've provided your email again. However, fetching the payment method ID through the email may not be feasible without additional details. \n\nCould you please confirm the correct payment method ID for your PayPal account, or let me know if you'd like me to look up your existing payment methods? This will help ensure we proceed correctly.",
+  "verified_expectation": "The user had already said yes to PayPal at turn 5, so it should keep PayPal. It says 'My gift card, please.' instead, going back to the gift card that can't cover the order. The payment pool only switches to the fallback when fallback_used is set, and the fallback never fired because the turn-4 recap won over the balance mention.",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like to use my gift card."
+ },
+ {
+  "id": "wf1-94",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00003__s2.txt",
+  "turn": 5,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00003",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5442520"
+  ],
+  "agent_text": "The payment method for order #W5442520 will be changed from the credit card to your PayPal account. \n\nBefore proceeding, I need to verify:\n1. Your PayPal account is linked to your profile and is active.\n2. You confirm that you want to switch the payment method to PayPal and that you understand the original credit card payment will be refunded (within 5 to 7 business days) if needed.\n\nPlease reply with \"yes\" to confirm and proceed, or \"no\" to cancel this request.",
+  "verified_expectation": "yes. This is a valid recap: it names the target and the action. But 'I need to verify:' hits REQUEST_RE ('i need'), and IDENT_RE/INFO_ASK_RE match 'verify', so the turn is treated as an identity request and the user repeats the email.",
+  "expect": [
+   "objection"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Wait -- I want it paid with my gift card."
+ },
+ {
+  "id": "wf1-95",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00008__s1.txt",
+  "turn": 4,
+  "category": "user_misread_valid_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00008",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9160732"
+  ],
+  "agent_text": "Your order #W9160732 is currently pending and was paid for using a gift card. You can modify the payment method to your PayPal account. \n\nHere are the details of the change:\n- Current payment method: Gift card (ID: gift_card_5979071)\n- New payment method: PayPal account\n\nPlease confirm if you would like to proceed with this change, and ensure that you have no other items or modifications you'd like to make to the order. Respond with \"yes\" to confirm or let me know if you need further assistance.",
+  "verified_expectation": "yes. On modify_payment the item list doesn't matter, but ALL_ITEMS_RE ('other items') in the request sentences cancels the recap. The reply 'Yes, that's everything.' reads as a yes yet sets no is_yes, which invites an unconfirmed write and the -0.3 gate.",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, that's everything -- please go ahead."
+ },
+ {
+  "id": "wf1-96",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00008__s2.txt",
+  "turn": 4,
+  "category": "user_misread_valid_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00008",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9160732"
+  ],
+  "agent_text": "Your order #W9160732 is currently pending and was paid for using a gift card. You can modify the payment method to your PayPal account. \n\nHere are the details of the modification:\n- Current payment method: Gift card\n- New payment method: PayPal account\n\nPlease confirm if you would like to proceed with this change, and ensure that you have provided all the items you want to modify. Once confirmed, the order status will remain \"pending,\" and the original gift card payment will be refunded within 5 to 7 business days. \n\nShould you confirm, please say \"yes.\"",
+  "verified_expectation": "yes. This is a valid modify_payment recap; the 'all the items' clause doesn't apply to this template. The textual 'Yes, that's everything.' reply sets no is_yes.",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, that's everything -- please go ahead."
+ },
+ {
+  "id": "wf1-97",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00008__s2.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00008",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W9160732"
+  ],
+  "agent_text": "It seems that the PayPal account you provided could not be found in your payment methods. Could you please verify the PayPal account details or provide an existing payment method ID from your account? If you need assistance with this, please let me know.",
+  "verified_expectation": "payment answer ('My PayPal account'). 'verify' triggers IDENT_RE.",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "My PayPal account, please."
+ },
+ {
+  "id": "wf1-98",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00009__s1.txt",
+  "turn": 5,
+  "category": "user_yes_to_non_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00009",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3260419"
+  ],
+  "agent_text": "The payment method for order #W3260419 can only be changed to a different payment method, not to a refund or a different card. \n\nSince you previously requested to switch to your gift card, and now you've mentioned using your Mastercard ending in 3762, we must clarify: \n\n- We cannot modify the payment method to a Mastercard (credit card) because the original payment method was PayPal, and the policy allows only one change to another payment method (gift card, PayPal, or credit card). \n- However, switching to a credit card is not allowed unless it's a different method from the original, and only if supported by the policy.\n\nCould you please confirm if you\u2019d still like to switch to your gift card instead, or if you'd like to proceed with a different request? If not, I can transfer you to a human agent to assist further.",
+  "verified_expectation": "The question offers two options and the turn contains a denial plus a constraint ('original payment method'). It should not get a yes; the fallback or a payment answer fits. INFO_ASK_RE only detects 'which ...' choices, so 'A or B?' passes as a recap, and recap takes priority over the fallback.",
+  "expect": [
+   "fallback"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Okay -- switch it to my Mastercard ending in 3762 then."
+ },
+ {
+  "id": "wf1-99",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00009__s2.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00009",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W3260419"
+  ],
+  "agent_text": "Your order #W3260419 is currently pending and was paid via PayPal. You want to change the payment method to your gift card.\n\nBefore proceeding, please confirm the following:\n- The order ID: #W3260419\n- The new payment method: your gift card\n\nAlso, I need to verify that your gift card has enough balance to cover the total amount of $1,484.51. Would you like me to check your gift card balance?",
+  "verified_expectation": "yes, or 'yes, please check'. The user is already authenticated, but 'I need to verify' matches REQUEST_RE and IDENT_RE, so the user repeats name and zip.",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Right, I'd like it paid with my gift card."
+ },
+ {
+  "id": "wf1-100",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00011__s0.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00011",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8073958"
+  ],
+  "agent_text": "I'm sorry, but the Mastercard ending in 7159 could not be found in your payment methods. Could you please verify the card details or provide another payment method you'd like to use?",
+  "verified_expectation": "payment answer ('My Mastercard ending in 7159'). 'verify' triggers IDENT_RE.",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "My Mastercard ending in 7159, please."
+ },
+ {
+  "id": "wf1-101",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00011__s1.txt",
+  "turn": 7,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00011",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8073958"
+  ],
+  "agent_text": "I'm sorry, but I couldn't locate the payment method with the Mastercard ending in 7159. Could you please verify the card details or provide another payment method you'd like to use? \n\nI can help you with another payment option like a different credit card or gift card if you'd like.",
+  "verified_expectation": "payment answer ('My Mastercard ending in 7159').",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "My Mastercard ending in 7159, please."
+ },
+ {
+  "id": "wf1-102",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00011__s1.txt",
+  "turn": 8,
+  "category": "user_premature_fallback",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00011",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8073958"
+  ],
+  "agent_text": "I see that you've provided your email again, but I still can't locate the Mastercard ending in 7159. \n\nWould you like me to:\n1. Help you find your available payment methods from your profile?\n2. Try a different payment option (like a gift card)?\n3. Provide your full payment method list so you can verify the details?\n\nPlease let me know how you'd like to proceed.",
+  "verified_expectation": "Accept the offer to look up payment methods, or give the payment answer. Instead the turn is read as identity again ('verify'), and the user gives up: the streak counted turns 1, 7 and 8 as 'consecutive' even though turns 4 and 5 were yes replies (_info_streak never resets outside _answer).",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "My Mastercard ending in 7159, please."
+ },
+ {
+  "id": "wf1-103",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00011__s3.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00011",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8073958"
+  ],
+  "agent_text": "It seems that the Mastercard ending in 7159 could not be found in your payment methods. Could you please verify the card details or confirm if you'd like to proceed with a different payment method?",
+  "verified_expectation": "payment answer ('My Mastercard ending in 7159').",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "My Mastercard ending in 7159, please."
+ },
+ {
+  "id": "wf1-104",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00025__s0.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00025",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1129578"
+  ],
+  "agent_text": "It seems that the Visa card ending in 6994 is not found in your payment methods. Could you please verify the card details or provide another payment method you'd like to use? Let me know how you'd like to proceed!",
+  "verified_expectation": "payment answer ('my Visa ending in 6994'). 'verify' triggers IDENT_RE (repro B).",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like to use my Visa ending in 6994."
+ },
+ {
+  "id": "wf1-105",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00025__s1.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00025",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1129578"
+  ],
+  "agent_text": "It appears that the Visa card ending in 6994 is not found in your payment methods. Could you please verify the card details or let me know if you'd like to use a different payment method?",
+  "verified_expectation": "payment answer.",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like to use my Visa ending in 6994."
+ },
+ {
+  "id": "wf1-106",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00025__s3.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00025",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1129578"
+  ],
+  "agent_text": "I'm sorry, but I couldn't find your Visa card with the ending 6994 in your payment methods. Could you please verify the card details or provide another payment method you'd like to use?",
+  "verified_expectation": "payment answer.",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like to use my Visa ending in 6994."
+ },
+ {
+  "id": "wf1-107",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00029__s2.txt",
+  "turn": 7,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00029",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242"
+  ],
+  "agent_text": "I couldn't find the Pet Bed in your order #W5320242. The order contains the following items: Luggage Set, Smart Watch, Cycling Helmet, Indoor Security Camera, and Tablet. \n\nCould you please verify if you're referring to a different order or if there might be a mistake in the item details? If you'd like to modify the payment method for a different order, please let me know which one. \n\nAlternatively, if you want to proceed with modifying the payment method for this order (currently using PayPal), I can do that. Please confirm if this is what you'd like to do.",
+  "verified_expectation": "order answer ('It's the order with the Pet Bed in it'). 'verify' triggers IDENT_RE.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't know the id -- it's the pending one with the Pet Bed."
+ },
+ {
+  "id": "wf1-108",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00029__s2.txt",
+  "turn": 10,
+  "category": "user_misread_valid_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00029",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242",
+   "#W4642822"
+  ],
+  "agent_text": "I understand you're referring to the pending order with the Pet Bed. I've already identified it as order #W4642822, which contains the Pet Bed (size: medium, material: polyester, color: grey).  \n\nTo confirm once again:  \n- **Order**: #W4642822 (pending)  \n- **Item**: Pet Bed  \n- **Current payment method**: Credit card ending in 9443  \n- **New payment method**: PayPal account (paypal_3549141)  \n\nPlease confirm with a \"yes\" if you'd like me to proceed with this change. Once confirmed, the payment method will be updated, and the order will remain in \"pending\" status.  \n\nPlease note: This change cannot be reversed, and all other items in the order will remain unchanged.",
+  "verified_expectation": "yes; this is a valid recap. REQUEST_RE matches 'Please note', so that statement counts as a question sentence, and ALL_ITEMS_RE ('other items') in it cancels the recap (repro D).",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, please proceed."
+ },
+ {
+  "id": "wf1-109",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00029__s3.txt",
+  "turn": 4,
+  "category": "user_wrong_info_answer",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00029",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [],
+  "agent_text": "I have located your account, Ethan. You currently have a PayPal account linked to your profile. Here are the details of your order to confirm:\n\n- Order ID: #W5320242\n- Current Payment Method: Mastercard ending in 9443\n\nWould you like to modify the payment method for order #W5320242 to your PayPal account? Please confirm \"yes\" if you'd like to proceed with this change.",
+  "verified_expectation": "The agent proposed the wrong order. The user should point to the Pet Bed order (the original reply did: 'It's the order with the Pet Bed in it'). PAY_RE now catches the turn first and answers 'My PayPal account, please.', which never corrects the order.",
+  "expect": [
+   "order",
+   "wrong_order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't know the order number -- is that the one with the Pet Bed?"
+ },
+ {
+  "id": "wf1-110",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00029__s3.txt",
+  "turn": 6,
+  "category": "user_unhelpful_restate_when_answer_needed",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00029",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242"
+  ],
+  "agent_text": "I couldn't find the Pet Bed in your order #W5320242. The order contains the following items:\n\n- Luggage Set\n- Smart Watch\n- Cycling Helmet\n- Indoor Security Camera\n- Tablet\n\nCould you please confirm if you meant a different order or if there's another way I can assist you with your PayPal payment request?",
+  "verified_expectation": "order answer (product hint). ORDER_ASK_RE only matches 'order id/number' or 'which order', so the user replies 'Sorry, what exactly are you going to do?'.",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't know the id -- it's the pending one with the Pet Bed."
+ },
+ {
+  "id": "wf1-111",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00029__s3.txt",
+  "turn": 7,
+  "category": "user_yes_to_non_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00029",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242"
+  ],
+  "agent_text": "I currently don't have any information about a Pet Bed in your order. The order #W5320242 contains items such as a Luggage Set, Smart Watch, Cycling Helmet, Indoor Security Camera, and Tablet. \n\nSince there is no Pet Bed in this order, I cannot proceed with modifying the payment method for that specific item. \n\nPlease confirm if you meant a different order or if you'd like assistance with something else. If you have more details about the order with the Pet Bed, I can help look it up.",
+  "verified_expectation": "No yes, because no action is proposed: this is a denial plus a clarification question. 'Pet Bed', 'modifying' and 'Please confirm' together pass _is_recap (repro E), and the yes stays valid until the next write.",
+  "expect": [
+   "wrong_order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "No, that's not the order I mean. It's the order with the Pet Bed in it."
+ },
+ {
+  "id": "wf1-112",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00029__s3.txt",
+  "turn": 8,
+  "category": "user_yes_to_non_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00029",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W5320242"
+  ],
+  "agent_text": "I understand you'd like to use your PayPal account for payment. However, I don't have any order containing a Pet Bed in your profile. \n\nCould you please confirm:\n1. The order ID of the order with the Pet Bed, or\n2. If you'd like me to search for a different order or assist with something else?\n\nI'll need the exact order details to proceed with any payment modification.",
+  "verified_expectation": "order answer ('I don't know the id -- it's the pending one with the Pet Bed'). _SENTENCE_SPLIT_RE splits on newlines, so list item 1 (no '?' and no request word) drops out of question_sentences. INFO_ASK_RE never sees 'order ID', and the turn counts as a recap (repro F).",
+  "expect": [
+   "order"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I don't know the id -- it's the pending one with the Pet Bed."
+ },
+ {
+  "id": "wf1-113",
+  "file": "prefix__modify_payment__ep_modify_payment_s0_00040__s2.txt",
+  "turn": 6,
+  "category": "user_misread_valid_recap",
+  "template": "modify_payment",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_modify_payment_s0_00040",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W4843514"
+  ],
+  "agent_text": "I found your pending order with the Dumbbell Set. Here are the details:\n\n- **Order ID**: #W4843514\n- **Items**: \n  - Dumbbell Set (55-75 lbs, iron, fixed)\n  - Office Chair (mesh, red, no armrest, standard backrest height)\n  - Espresso Machine (19 bar, 1L, capsule type)\n- **Status**: Pending\n- **Payment Method**: Gift Card (balance: $77.00)\n\nYou want to change the payment method to your Visa ending in 4204. Would you like to proceed with this change? Please confirm if you have provided all the items you want to modify.",
+  "verified_expectation": "yes; this is a valid recap naming the Dumbbell Set order. The ALL_ITEMS exclusion cancels it on modify_payment, where items don't matter. The user answers 'Yes, that's everything.', which reads as a yes, the agent writes, and the current code scores 0.7 where it should be 1.0 (repro C).",
+  "expect": [
+   "yes"
+  ],
+  "require_yes": true,
+  "new_reply": "Yes, that's everything -- please go ahead."
+ },
+ {
+  "id": "wf1-114",
+  "file": "prefix__return_fallback__ep_return_fallback_s0_00071__s0.txt",
+  "turn": 6,
+  "category": "user_wrong_info_answer",
+  "template": "return_fallback",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_return_fallback_s0_00071",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W1544028"
+  ],
+  "agent_text": "The payment method associated with your Mastercard ending in 3518 could not be found in your account. Please verify the payment method details or provide an existing payment method (such as a gift card or another credit card) to receive the refund. Let me know how you'd like to proceed!",
+  "verified_expectation": "A payment answer or the fallback, not an identity answer. The user is already authenticated and the turn asks about the payment method. IDENT_RE matches the word 'verify' (user.py:74) inside a REQUEST_RE sentence, so asks_identity wins. CONSTRAINT_RE (user.py:155) also misses 'another credit card' because 'credit' sits between 'another' and 'card'. Repro: scratchpad/wf1/batch_rf_b/repro.py case '0",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "I'd like it on my Mastercard ending in 3518."
+ },
+ {
+  "id": "wf1-115",
+  "file": "prefix__return_fallback__ep_return_fallback_s0_00113__s1.txt",
+  "turn": 4,
+  "category": "user_misread_valid_recap",
+  "template": "return_fallback",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_return_fallback_s0_00113",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W2922433"
+  ],
+  "agent_text": "Here are the details of the order containing the Pet Bed and Tablet:\n\n- **Order ID**: #W2922433  \n- **Status**: Delivered  \n\nItems in the order:\n1. **Pet Bed** - Size: medium, Material: fleece, Color: grey  \n2. **Makeup Kit**  \n3. **Tablet** - Screen size: 7-inch, Storage: 128GB, Color: black  \n4. **Grill**  \n\nYou'd like to return the **Pet Bed** and **Tablet**, and the refund should go to your PayPal account.  \n\nPlease confirm if this is correct and if you have any other items to return. Once confirmed, I'll proceed with the return request.  \n\nReply with \"yes\" to confirm or let me know if you'd like to make changes.",
+  "verified_expectation": "This turn names the target and the action, asks for an explicit yes, and adds the item-completeness check that policy.md:120 requires. A faithful customer says 'Yes, just those two, go ahead' and that should count as is_yes. _is_recap rejects any recap whose question sentences match ALL_ITEMS_RE (user.py:265). That penalises the policy-compliant habit of folding the all-items check into the recap,",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Right, I'd like the refund to go to my PayPal account. That's all of it."
+ },
+ {
+  "id": "wf1-116",
+  "file": "prefix__return_fallback__ep_return_fallback_s0_00139__s0.txt",
+  "turn": 3,
+  "category": "user_wrong_info_answer",
+  "template": "return_fallback",
+  "task_file": "data/episodes/episodes_s0_transcript_subset.jsonl",
+  "task_id": "ep_return_fallback_s0_00139",
+  "correction_used": false,
+  "fallback_used": false,
+  "read_orders": [
+   "#W8336711"
+  ],
+  "agent_text": "The order #W8336711 is confirmed as delivered, and it includes the following items:\n\n- Bluetooth Speaker (blue, 10 hours battery life, no water resistance)\n- Smart Thermostat (black, compatible with Google Assistant)\n\nYou'd like to return both of these items, and the refund should go to your Mastercard ending in 8254.\n\nFirst, I need to verify that your Mastercard ending in 8254 is linked to your account. Could you please confirm if this is correct? If so, I will proceed with the return request.",
+  "verified_expectation": "This is a valid recap: it names #W8336711 and both items, uses 'return', asks to confirm, and asks for no information. The user, already authenticated by email, should say yes. 'I need to verify' trips REQUEST_RE, so the sentence counts as a question, then IDENT_RE and INFO_ASK_RE match 'verify' (user.py:74,172). The yes is lost and the replay falls from 1.0 to 0.7. Repro: repro.py case '00139 t3'",
+  "expect": [
+   "payment"
+  ],
+  "forbid_yes": true,
+  "new_reply": "Right, I'd like the refund to go to my Mastercard ending in 8254."
+ }
+]

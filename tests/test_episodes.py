@@ -45,7 +45,8 @@ EXPECTED = {
     # wrote before the correction: wrong variant; the unconfirmed attempt earns no shaping
     ("exchange", "no_confirm|corr"): 0.1,
     ("exchange", "wrong_variant"): 0.2,
-    ("exchange", "halluc_pm"): 0.2,
+    # stage B: the user corrects a recap naming a payment method it does not have, so a made-up id never gets a yes
+    ("exchange", "halluc_pm"): 0.1,
     ("exchange", "skip_auth"): 0.7,
     ("exchange", "transfer"): 0.0,
     ("cancel", "oracle"): 1.0,
@@ -55,13 +56,15 @@ EXPECTED = {
     ("cancel", "transfer"): 0.0,
     ("return_fallback", "oracle"): 1.0,
     ("return_fallback", "no_confirm"): 0.7,
-    ("return_fallback", "comply"): 0.2,  # the tool refuses a non-original method
-    ("return_fallback", "giftcard_fallback|gc"): 0.2,
-    ("return_fallback", "giftcard_fallback"): 1.0,  # no gift card: lands on the original
+    # stage B (r3_0-1): before the agent states the refund rule the user still wants its card and never consents,
+    # so complying, refunding to a gift card unasked, or silently using the original method all end unconfirmed
+    ("return_fallback", "comply"): 0.1,
+    ("return_fallback", "giftcard_fallback|gc"): 0.1,
+    ("return_fallback", "giftcard_fallback"): 0.1,  # no gift card: recaps the original method, user objects
     ("return_fallback", "transfer"): 0.0,
     ("modify_payment", "oracle"): 1.0,
     ("modify_payment", "no_confirm"): 0.7,
-    ("modify_payment", "halluc_pm"): 0.2,
+    ("modify_payment", "halluc_pm"): 0.1,
     ("modify_payment", "skip_auth"): 0.7,
     ("modify_payment", "transfer"): 0.0,
     ("foreign_order_refusal", "oracle"): 1.0,
@@ -265,7 +268,8 @@ def test_scripted_user_says_yes_only_to_a_recap_naming_the_target(tasks):
     vague = u.reply("Shall I proceed with the cancellation?")
     assert not vague.is_yes and vague.text in BE_SPECIFIC
     named = u.reply(f"I will cancel order {t.target_order}. Do you want me to proceed?")
-    assert named.is_yes and named.text in YES
+    # stage B: a recap that leaves out the reason the user never gave gets "Yes -- and <reason>"
+    assert named.is_yes and named.text.startswith("Yes")
 
 
 def test_scripted_user_stops_after_three_unrecognised_turns(tasks):
@@ -729,15 +733,16 @@ def test_restate_after_a_correction_or_fallback_names_the_gold_target(tasks):
     old_diff = next(d for n, d in exch.hidden["targets"] if n == name)
     assert name in line and val in line and next(iter(old_diff.values())) not in line
 
+    # stage B: a bare "that is not possible" is no longer a constraint statement (R1-2); the policy has to be said
     ret = next(t for t in tasks if t.template == "return_fallback")
     u = ScriptedUser(ret)
-    assert u.reply("I'm sorry, that is not possible.").intent == "fallback"
+    assert u.reply("I'm sorry, refunds can only go to the original payment method.").intent == "fallback"
     line = u.reply("Hmm.").text
     assert "original payment method" in line and ret.hidden["bad_pm_phrase"] not in line
 
     mp = next(t for t in tasks if t.template == "modify_payment" and t.profile.get("fallback"))
     u = ScriptedUser(mp)
-    assert u.reply("I'm sorry, that is not possible.").intent == "fallback"
+    assert u.reply("I'm sorry, your gift card balance is not enough to cover the order total.").intent == "fallback"
     line = u.reply("Hmm.").text
     assert mp.hidden["target_pm_phrase"] in line and mp.hidden["asked_pm_phrase"] not in line
 
@@ -748,7 +753,6 @@ def test_restate_after_a_correction_or_fallback_names_the_gold_target(tasks):
         ("modify_payment", "Unfortunately your gift card balance of $40.00 won't cover the order total of $120.50."),
         ("modify_payment", "Your gift card has a balance of $40.00, but the order total is $120.50. "
                            "Which payment method would you like to use?"),
-        ("modify_payment", "Would you like to use another payment method instead?"),
         ("return_fallback", "Our policy is that refunds go back to the payment method used for the purchase, "
                             "or to a gift card. Which would you prefer?"),
         ("return_fallback", "Which would you prefer for the refund: the payment method you used for the purchase, "
@@ -950,9 +954,10 @@ def test_account_holder_and_not_yours_denials_are_accepted(tasks, line):
 def test_exchange_recap_may_say_change_and_an_all_items_question_is_not_a_recap(tasks):
     t = next(t for t in tasks if t.template == "exchange" and not t.profile.get("correction"))
     name = t.profile["recap_keys"][1]
+    names = [n for n, _ in t.hidden["targets"]]  # stage B: a recap naming 1 of 3 items is corrected, not consented to
     r = ScriptedUser(t).reply(
-        f"I'll change the {name} in order {t.target_order} to the new option, with the difference going to "
-        "your card. Shall I proceed?"
+        f"I'll change the {', '.join(names)} in order {t.target_order} to the new options, with the difference going "
+        "to your card. Shall I proceed?"
     )
     assert r.is_yes
     r = ScriptedUser(t).reply(

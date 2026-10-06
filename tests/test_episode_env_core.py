@@ -408,9 +408,11 @@ def test_a_failed_write_suspends_its_yes_so_a_silent_retry_is_unconfirmed():
         _return_call(t, bad),   # the tool refuses a non-original method
         _return_call(t, orig),  # retried with no word to the user
     ])
-    assert "yes" in ep.log.user_intents
+    # stage B: before the fallback the user still wants the forbidden card and never consents (r3_0-1),
+    # so neither write is confirmed; the retry is still docked
+    assert "yes" not in ep.log.user_intents and ep.log.user_intents[-1] == "payment"
     first, second = ep.log.writes
-    assert first.confirmed and not first.ok and second.ok and not second.confirmed
+    assert not first.confirmed and not first.ok and second.ok and not second.confirmed
     assert score_episode(t, ep.result()).reward == pytest.approx(0.7)
 
 
@@ -427,7 +429,7 @@ def test_a_yes_to_the_old_plan_does_not_survive_the_fallback():
         "I'm sorry, refunds can only go to the original payment method or a gift card. How should I proceed?",
     ]
     ep = _drive(Episode(t), head + [_return_call(t, orig)])
-    assert ep.log.user_intents[-2:] == ["yes", "fallback"]
+    assert ep.log.user_intents[-2:] == ["payment", "fallback"]  # stage B: no yes to the forbidden card
     assert not ep.log.writes[-1].confirmed and ep.log.writes[-1].ok
     assert score_episode(t, ep.result()).reward == pytest.approx(0.7)
     ep = _drive(Episode(t), head + [_recap(t, f"return the items, refunding {orig}, from"), _return_call(t, orig)])

@@ -55,7 +55,8 @@ the budget, not the policy, and the trainer should drop it.
 
 Measured on the 885 seed-1 tasks with the reference agents (see the README
 table and `tests/test_episodes.py`): oracle 1.0; no-confirm 0.7; no-confirm
-into a late correction 0.0-0.1; wrong variant / made-up payment method 0.2;
+into a late correction 0.0-0.1; wrong variant 0.2; made-up payment method 0.1 (the user
+corrects the recap, so it never gets a yes); complying with a forbidden refund 0.1;
 skip auth 0.7 (also when it "authenticates" with the db's copy of the email;
 0.4 on a refusal task, whose denial it never verifies); transfer 0.0 (0.5 on
 a refusal task); complying with a foreign order 0.0; no denial on a refusal

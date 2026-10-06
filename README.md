@@ -1010,20 +1010,36 @@ user, and tau2's own end-state reward.
   Mean gold calls: exchange 6.4, cancel 4.5, modify_payment 4.4,
   return_fallback 4.2, refusal 2.0; gold tool output ~2.4k tokens median for
   exchange, ~0.9k for the others.
-* `user.py` -- the scripted user: intent matching in a fixed priority order
-  (write done -> thanks+STOP; refusal denied -> accept+STOP; denial -> fallback;
-  recap naming the target -> correction once, else yes; identity; all items;
-  order id; reason; payment; otherwise restate, STOP on the third unrecognised
-  turn). "Yes" only answers a recap: a confirmation request that names the
-  target order or product *and* the action, and asks for no information
-  ("confirm your email for order #W...?" gets the identity answer). The
-  fallback fires on a denial or on the constraint itself (the gift-card
-  balance, the original/purchase method, "another payment method"); after a
-  correction or fallback the user restates the corrected request. Lines come
-  from paraphrase pools seeded per task. Consent is structured: a yes returns
-  `confirms` (slot ids), a correction or fallback returns `revokes`; the
-  runner passes a `TurnContext` (writes since the last user turn, earned
-  auth, orders read).
+* `nlu.py` -- what an agent turn DOES (stage B): `analyze(text, task, state)`
+  returns `Semantics` with exactly the fields of the gold labels in
+  `data/episodes/nlu_gold/` (info requests, identity target, consent request,
+  proposed action with details and `details_match_task`, refusal kind,
+  constraint statement, other-help offer, done-claim, narration). Deterministic
+  sentence/clause rules: requests only in question / imperative sentences
+  (negation- and sign-off-aware), consent only when asked to act now, refusals
+  by meaning, details extracted against the task's known values (reason enum,
+  catalogue option values, the user's payment methods, item names). An
+  `LLMAnalyzer` (OpenAI-compatible endpoint, JSON schema, temperature 0, disk
+  cache) is selectable via `make_analyzer({"backend": "llm", ...})` for drift
+  checks; tests and training never use it. `scripts/nlu_eval.py` scores the
+  rules against the 806 gold turns (every 5th turn held out).
+* `user.py` -- the scripted user, a reply policy over those semantics: every
+  information request in a turn is answered in one reply (identity, order,
+  item, option, reason, payment, all items); consent (`confirms` = slot ids)
+  only to a consent request whose proposal names the order the user means and
+  the template action, after the agent read that order, with details that do
+  not contradict the task -- a missing detail the user never gave comes with
+  the yes ("Yes -- and I ordered it by mistake."), wrong details (reason,
+  variant, payment, items, a retracted order or option) get a correction line
+  and revoke consent; a product-hint user does not recognise bare order ids;
+  before a fallback is earned the user keeps asking for its original payment
+  method and never consents; the fallback fires only on a refusal / statement
+  of the payment constraint after the order was read; refusal tasks accept an
+  ownership refusal unless the same turn offers to proceed. Give-up: three
+  consecutive identical answers (or objections) without progress, or three
+  consecutive unrecognised turns. Lines come from paraphrase pools seeded per
+  task. The runner passes a `TurnContext` (writes since the last user turn,
+  earned auth, orders read).
 * `runner.py` -- `run_episode(task, policy)` with `policy(messages) -> text`,
   parsed by `completion_parsing.parse_all_completion`, a mirror of eval's
   vLLM hermes parser + tau2: every `<tool_call>` block is a call and all of
@@ -1065,10 +1081,11 @@ user, and tau2's own end-state reward.
   | oracle | 1.0 | 1.0 | 1.0 | 1.0 | 1.0 |
   | no confirmation | 0.7 | 0.7 | 0.7 | 0.7 | -- |
   | no confirmation, late-correction task | 0.1 | 0.0 | -- | -- | -- |
-  | wrong variant / made-up payment id | 0.2 | -- | -- | 0.2 | -- |
+  | wrong variant | 0.2 | -- | -- | -- | -- |
+  | made-up payment id (the user corrects it) | 0.1 | -- | -- | 0.1 | -- |
   | skip authentication | 0.7 | 0.7 | 0.7 | 0.7 | 0.4 |
-  | comply with a forbidden request | -- | -- | 0.2 | -- | 0.0 |
-  | gift card unasked (owns one / doesn't) | -- | -- | 0.2 / 1.0 | -- | -- |
+  | comply with a forbidden request | -- | -- | 0.1 | -- | 0.0 |
+  | gift card unasked (owns one / doesn't) | -- | -- | 0.1 / 0.1 | -- | -- |
   | transfer | 0.0 | 0.0 | 0.0 | 0.0 | 0.5 |
   | denial without auth + order read | -- | -- | -- | -- | 0.4 |
   | no denial, db unchanged (gibberish, empty, ...) | -- | -- | -- | -- | 0.1 |

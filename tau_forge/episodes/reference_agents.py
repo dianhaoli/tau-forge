@@ -96,6 +96,11 @@ class ReferenceAgent:
     def product(self, messages, pid: str) -> Optional[dict[str, Any]]:
         return next((p for a, p in tool_outputs(messages, "get_product_details") if a.get("product_id") == pid), None)
 
+    def item_names(self, messages, oid: str) -> str:
+        """The order's item names, as a recap names them: a product-hint user
+        recognises its order by a product, not by an id it never heard."""
+        return ", ".join(dict.fromkeys(i["name"] for i in self.order(messages, oid)["items"]))
+
     def recap(self, summary: str) -> str:
         return f"To confirm, I will {summary}. Do you want me to proceed? (yes/no)"
 
@@ -176,7 +181,8 @@ class ReferenceAgent:
         else:
             return "May I ask the reason for the cancellation?"
         if not self.ready(messages):
-            return self.recap(f"cancel order {oid} (status {self.order(messages, oid)['status']}) with reason '{reason}'")
+            return self.recap(f"cancel order {oid} ({self.item_names(messages, oid)}; status "
+                              f"{self.order(messages, oid)['status']}) with reason '{reason}'")
         return self.write("cancel_pending_order", {"order_id": oid, "reason": reason})
 
     def exchange(self, messages, text: str, oid: str) -> str:
@@ -225,7 +231,7 @@ class ReferenceAgent:
                         "gift card. How would you like to proceed?")
             pm = orig
         if not self.ready(messages):
-            return self.recap(f"return items {items} from order {oid}, refunding {pm}")
+            return self.recap(f"return items {items} ({', '.join(self.t.hidden['item_names'])}) from order {oid}, refunding {pm}")
         return self.write("return_delivered_order_items", {"order_id": oid, "item_ids": items, "payment_method_id": pm})
 
     def modify_payment(self, messages, text: str, oid: str) -> str:
@@ -240,7 +246,7 @@ class ReferenceAgent:
                     f"total (${amount}). Is there another payment method you'd like to use?")
         pm = "credit_card_1234567" if self.mode == "halluc_pm" else target["id"]
         if not self.ready(messages):
-            return self.recap(f"change the payment method of order {oid} to {pm}")
+            return self.recap(f"change the payment method of order {oid} ({self.item_names(messages, oid)}) to {pm}")
         return self.write("modify_pending_order_payment", {"order_id": oid, "payment_method_id": pm})
 
     def foreign(self, messages, text: str) -> str:
