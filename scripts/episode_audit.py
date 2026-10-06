@@ -8,14 +8,25 @@ sat near p=0 or p=1 (72.5% zero-variance at n=16); this is the measurement
 that says whether the episode templates and knobs actually land in between,
 and which cells (template x knob value) to weight.
 
-Multi-turn, batched: each turn every active episode's conversation is
-rendered with the tokenizer's chat template -- the same system message
-`tau_forge.train.dataset._system_message` builds for training and the 16 tau2
-tool schemas -- and all of them go through one vLLM `generate`. Tool calls
+Multi-turn, batched: each round every active episode contributes one request
+-- the same system message `tau_forge.train.dataset._system_message` builds
+for training and the 16 tau2 tool schemas, through the tokenizer's chat
+template -- and all of them go through one vLLM `generate`. Tool calls
 execute against each episode's private copy-on-write db; text turns go to
 the scripted user. The loop itself is `tau_forge.episodes.audit.run_audit`
-and is unit-tested with fake generators (tests/test_episodes.py); nothing at
-module level imports torch, transformers or vLLM.
+and is unit-tested with fake generators (tests/test_episodes.py,
+tests/test_episode_rollout.py); nothing at module level imports torch,
+transformers or vLLM.
+
+Speed (wf1_train_eff.md, bottleneck 1). `--max-inflight` (default 64) caps the
+active episodes and refills from the queue as episodes end, so each episode's
+history stays in vLLM's prefix cache between its turns instead of being
+evicted and re-prefilled by 2,000 lockstep histories. With the built-in vLLM
+engine, prompts are token ids built by APPENDING each turn's sampled ids and
+the tokenized environment reply (`--prompt-mode tokens`, the default there),
+exactly as GRPO training builds them; `--prompt-mode text` re-renders every
+turn's full conversation as before. `--max-inflight 0` restores lockstep. The
+output JSON has the same format either way.
 
 Usage (GPU box, `uv sync --extra train`):
     # 64 tasks per template generated on the fly (seed 0), 16 samples each
@@ -40,7 +51,7 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Optional
 
-from tau_forge.episodes.audit import ChatTemplatePolicy, EpisodeRequest, Generation, run_audit
+from tau_forge.episodes.audit import ChatTemplatePolicy, EpisodeRequest, Generation, TokenAppendPolicy, run_audit
 from tau_forge.episodes.task import TEMPLATES
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -70,6 +81,21 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     p.add_argument("--max-turns", type=int, default=30, help="Assistant messages per episode (tool calls included).")
     p.add_argument("--max-calls", type=int, default=30)
     p.add_argument("--gpu-memory-utilization", type=float, default=0.85)
+    p.add_argument(
+        "--max-inflight",
+        type=int,
+        default=64,
+        help="Episodes in flight at once; a finished one is replaced from the queue. Keep it within what the "
+        "KV cache holds (~6k shared prefix + ~1.8k per episode: ~38 on an A10G at 0.85, ~64 on an H100 at 0.35). "
+        "0 = every episode at once (the old lockstep).",
+    )
+    p.add_argument(
+        "--prompt-mode",
+        choices=("auto", "tokens", "text"),
+        default="auto",
+        help="tokens: append sampled ids + tokenized env replies (training's construction); text: re-render the "
+        "chat template every turn. auto = tokens with the built-in vLLM engine, text with an injected engine.",
+    )
     p.add_argument("--save-transcripts", action="store_true", help="Store every episode's messages and reward breakdown (large).")
     p.add_argument(
         "--fake-policy",
@@ -118,6 +144,36 @@ def make_vllm_engine(args: argparse.Namespace) -> Callable[[list[str]], list[tup
     return engine
 
 
+def make_vllm_token_engine(args: argparse.Namespace) -> Callable[[list[list[int]]], list[tuple]]:
+    """`make_vllm_engine` over token ids: (token_ids, text, None, finish)."""
+    from vllm import LLM, SamplingParams
+
+    llm = LLM(
+        model=args.model,
+        dtype="bfloat16",
+        gpu_memory_utilization=args.gpu_memory_utilization,
+        max_model_len=args.max_model_len,
+        enable_prefix_caching=True,
+        seed=args.seed,
+    )
+    params = SamplingParams(
+        n=1,
+        temperature=args.temperature,
+        top_p=args.top_p,
+        top_k=args.top_k if args.top_k > 0 else -1,
+        max_tokens=args.max_new_tokens,
+    )
+
+    def engine(prompt_ids: list[list[int]]) -> list[tuple]:
+        outputs = llm.generate([{"prompt_token_ids": ids} for ids in prompt_ids], params, use_tqdm=False)
+        return [
+            (list(o.outputs[0].token_ids), o.outputs[0].text, None, o.outputs[0].finish_reason or "stop")
+            for o in outputs
+        ]
+
+    return engine
+
+
 def fake_policy(mode: str) -> Callable[[list[EpisodeRequest]], list[Generation]]:
     from tau_forge.episodes.reference_agents import ReferenceAgent
 
@@ -146,6 +202,16 @@ def build_policy(args: argparse.Namespace, tokenizer=None, engine=None) -> tuple
 
         tokenizer = AutoTokenizer.from_pretrained(args.model)
     tools = RetailEnv().all_openai_schemas()
+    mode = args.prompt_mode if args.prompt_mode != "auto" else ("text" if engine is not None else "tokens")
+    if mode == "tokens":
+        token_policy = TokenAppendPolicy(
+            engine=engine if engine is not None else make_vllm_token_engine(args),
+            tokenizer=tokenizer,
+            tools=tools,
+            max_new_tokens=args.max_new_tokens,
+            max_model_len=args.max_model_len,
+        )
+        return token_policy, {"n_tools": len(tools), "prompt_mode": "tokens"}
     policy = ChatTemplatePolicy(
         engine=engine if engine is not None else make_vllm_engine(args),
         apply_chat_template=functools.partial(tokenizer.apply_chat_template, tokenize=False, add_generation_prompt=True),
@@ -154,7 +220,7 @@ def build_policy(args: argparse.Namespace, tokenizer=None, engine=None) -> tuple
         max_new_tokens=args.max_new_tokens,
         max_model_len=args.max_model_len,
     )
-    return policy, {"n_tools": len(tools)}
+    return policy, {"n_tools": len(tools), "prompt_mode": "text"}
 
 
 def system_message() -> dict[str, str]:
@@ -184,7 +250,10 @@ def main(argv: Optional[list[str]] = None, *, tokenizer=None, engine=None) -> di
     if not tasks:
         raise ValueError("no tasks to audit -- check --tasks/--templates")
     policy, facts = build_policy(args, tokenizer=tokenizer, engine=engine)
-    print(f"[episode_audit] {len(tasks)} tasks x {args.samples_per_task} samples")
+    print(
+        f"[episode_audit] {len(tasks)} tasks x {args.samples_per_task} samples, "
+        f"max_inflight={args.max_inflight or 'all'}"
+    )
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     # Per-task checkpoint: each task's record is appended the moment its last
@@ -207,8 +276,9 @@ def main(argv: Optional[list[str]] = None, *, tokenizer=None, engine=None) -> di
         keep_transcripts=args.save_transcripts,
         progress=lambda turn, n: print(f"[episode_audit] turn {turn}: {n} active episodes", file=sys.stderr),
         on_task_done=checkpoint,
+        max_inflight=args.max_inflight if args.max_inflight > 0 else None,
     )
-    if isinstance(policy, ChatTemplatePolicy):
+    if isinstance(policy, (ChatTemplatePolicy, TokenAppendPolicy)):
         facts.update(max_prompt_tokens=policy.max_prompt_tokens, context_overflows=policy.n_context_overflows)
     result["config"] = {
         **vars(args),

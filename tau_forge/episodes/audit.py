@@ -6,11 +6,18 @@ assistant turn" and "here are the per-task reward lists" lives here, so the
 part that cannot run without a GPU is reduced to one call:
 `engine(prompts) -> [(text, finish_reason)]`.
 
-Batching. Each turn, every still-active episode (n_samples per task, all
-tasks) contributes one request, and the generator answers the whole batch in
-one call -- for vLLM one `LLM.generate`, with prefix caching absorbing the
-~6k-token system prompt + tool schemas every request shares. Episodes end at
-different turns, so batches shrink as the audit proceeds.
+Batching. Each round, every active episode contributes one request, and the
+generator answers the whole batch in one call -- for vLLM one `LLM.generate`,
+with prefix caching absorbing the ~6k-token system prompt + tool schemas every
+request shares. `max_inflight` caps the active episodes (None = all of them,
+the old lockstep); a finished episode is replaced from the queue (task-major
+order) before the next call. The cap keeps each episode's own history in
+vLLM's prefix cache between turns: 2,000 histories in lockstep overflow a
+75k-token KV cache, and every turn re-prefilled them (wf1_train_eff.md,
+bottleneck 1). The scheduler is `tau_forge.train.episode_rollout.drive_episodes`,
+the same one the GRPO rollout uses; `TokenAppendPolicy` is the token-id
+generator that pairs with it on vLLM (history appended as ids, never
+re-rendered, so every request extends the previous one exactly).
 
 All samples of a task share scripted-user seed 0: the user then answers
 identical agent text identically, so the spread of a task's rewards is the
@@ -31,6 +38,7 @@ from typing import Any, Callable, Optional, Sequence
 from tau_forge.episodes.reward import score_episode
 from tau_forge.episodes.runner import Episode
 from tau_forge.episodes.task import EpisodeTask
+from tau_forge.train.episode_rollout import TokenAppender, TokenTrace, drive_episodes
 
 EFFECTIVE_STD = 0.05
 
@@ -88,6 +96,59 @@ class ChatTemplatePolicy:
         return [Generation(*next(outs)) if ok else Generation("", "context") for ok in fits]
 
 
+class TokenAppendPolicy:
+    """The token-id counterpart of `ChatTemplatePolicy`: each episode's
+    opening prompt is rendered once, then every turn appends the sampled ids
+    and the tokenized environment reply (`episode_rollout.TokenAppender`), so
+    each request is a strict extension of the episode's previous one and hits
+    vLLM's prefix cache for its whole history. `engine(list of prompt token
+    ids) -> [(token_ids, text, logprobs_or_None, finish_reason)]`. Requests
+    whose ids + `max_new_tokens` exceed `max_model_len` are not sent and get
+    finish reason "context", as in `ChatTemplatePolicy`."""
+
+    def __init__(
+        self,
+        engine: Callable[[list[list[int]]], list[tuple]],
+        tokenizer: Any,
+        tools: list[dict[str, Any]],
+        max_new_tokens: int,
+        max_model_len: int,
+    ):
+        self.engine = engine
+        self.appender = TokenAppender(tokenizer, tools, max_new_tokens=max_new_tokens, max_model_len=max_model_len)
+        self.traces: dict[Any, TokenTrace] = {}
+        self.max_prompt_tokens = 0
+        self.n_context_overflows = 0
+
+    def release(self, key: Any) -> None:
+        """Drop a finished episode's ids (run_audit calls this)."""
+        self.traces.pop(key, None)
+
+    def __call__(self, requests: list[EpisodeRequest]) -> list[Generation]:
+        traces = []
+        for r in requests:
+            trace = self.traces.get(r.key)
+            if trace is None:
+                trace = self.traces[r.key] = self.appender.start(r.messages)
+            else:
+                self.appender.extend(trace, r.messages)
+            traces.append(trace)
+        fits = [self.appender.fits(t) for t in traces]
+        self.max_prompt_tokens = max([self.max_prompt_tokens, *(t.total_len() for t in traces)])
+        self.n_context_overflows += fits.count(False)
+        send = [t for t, ok in zip(traces, fits) if ok]
+        results = iter(self.engine([t.request_ids() for t in send]) if send else [])
+        out = []
+        for t, ok in zip(traces, fits):
+            if not ok:
+                out.append(Generation("", "context"))
+                continue
+            ids, text, lps, finish = next(results)
+            self.appender.record(t, ids, lps, finish)
+            out.append(Generation(text, finish if finish in ("stop", "length") else "length"))
+        return out
+
+
 def run_audit(
     tasks: Sequence[EpisodeTask],
     generate: BatchGenerator,
@@ -99,6 +160,7 @@ def run_audit(
     keep_transcripts: bool = False,
     progress: Optional[Callable[[int, int], None]] = None,
     on_task_done: Optional[Callable[[dict[str, Any]], None]] = None,
+    max_inflight: Optional[int] = None,
 ) -> dict[str, Any]:
     """Run every task's n_samples episodes to the end, one batched generate
     per turn.
@@ -110,37 +172,41 @@ def run_audit(
     errors), and (b) `on_task_done(record)` is called with each task's record
     as soon as all its samples have ended, so the caller can checkpoint
     (`scripts/episode_audit.py` appends it to `<output>.partial.jsonl`)."""
-    episodes = {
-        (i, s): Episode(task, system_message=system_message, max_turns=max_turns, max_calls=max_calls)
-        for i, task in enumerate(tasks)
-        for s in range(n_samples)
-    }
+    keys = [(i, s) for i, _ in enumerate(tasks) for s in range(n_samples)]
+    episodes: dict[tuple[int, int], Episode] = {}
     records: dict[int, dict[str, Any]] = {}
+    release = getattr(generate, "release", None)
 
-    def finish_tasks(indices) -> None:
-        for i in sorted(set(indices)):
-            if i not in records and all(episodes[(i, s)].done for s in range(n_samples)):
-                records[i] = _task_record(tasks[i], [episodes[(i, s)] for s in range(n_samples)], keep_transcripts)
-                if on_task_done:
-                    on_task_done(records[i])
+    def make_episode(j: int) -> Episode:
+        i, _ = keys[j]
+        ep = Episode(tasks[i], system_message=system_message, max_turns=max_turns, max_calls=max_calls)
+        episodes[keys[j]] = ep
+        return ep
 
-    turn = 0
-    while active := [k for k, ep in episodes.items() if not ep.done]:
-        requests = [EpisodeRequest(k, episodes[k].task, episodes[k].messages) for k in active]
+    def generate_batch(batch: list[tuple[int, Episode]]) -> list[tuple[str, str]]:
+        requests = [EpisodeRequest(keys[j], ep.task, ep.messages) for j, ep in batch]
         generations = generate(requests)
         if len(generations) != len(requests):
             raise RuntimeError(f"generator returned {len(generations)} turns for {len(requests)} requests")
-        for k, g in zip(active, generations):
-            try:
-                episodes[k].step(g.text, g.finish_reason)
-            except Exception as e:  # noqa: BLE001 -- isolate the failure to this episode
-                episodes[k].abort(f"{type(e).__name__}: {e}")
-        turn += 1
-        if progress:
-            progress(turn, len(active))
-        finish_tasks(i for i, _ in active)
+        return [(g.text, g.finish_reason) for g in generations]
 
-    finish_tasks(range(len(tasks)))  # tasks with no turns at all (n_samples=0)
+    def on_done(j: int, ep: Episode) -> None:
+        i, _ = keys[j]
+        if release is not None:
+            release(keys[j])
+        if i not in records and all((i, s) in episodes and episodes[(i, s)].done for s in range(n_samples)):
+            records[i] = _task_record(tasks[i], [episodes[(i, s)] for s in range(n_samples)], keep_transcripts)
+            if on_task_done:
+                on_task_done(records[i])
+
+    _, turn = drive_episodes(
+        len(keys), make_episode, generate_batch, max_inflight=max_inflight, on_done=on_done, on_round=progress
+    )
+    for i, task in enumerate(tasks):  # tasks with no episodes at all (n_samples=0)
+        if i not in records:
+            records[i] = _task_record(task, [], keep_transcripts)
+            if on_task_done:
+                on_task_done(records[i])
     per_task = [records[i] for i in range(len(tasks))]
     return {"n_turns": turn, "per_task": per_task, "summary": summarize(per_task)}
 
