@@ -64,7 +64,9 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     p.add_argument("--tasks", default=None, help="JSONL from `python -m tau_forge.episodes.generate`. Default: generate now.")
     p.add_argument("--per-template", type=int, default=64, help="Tasks per template when generating (ignored with --tasks).")
     p.add_argument("--seed", type=int, default=0, help="Generation seed, and vLLM's sampling seed.")
-    p.add_argument("--templates", default=",".join(TEMPLATES))
+    p.add_argument("--templates", default=None,
+                   help="Comma-separated templates to keep (incl. 'composite'). Default: every task in --tasks, or all "
+                        "single-request templates when generating.")
     p.add_argument("--samples-per-task", type=int, default=16, help="The GRPO group size this audit predicts for.")
     p.add_argument("--temperature", type=float, default=1.0)
     p.add_argument("--top-p", type=float, default=1.0, help="MUST match grpo_train's, or this measures a different sampler.")
@@ -110,9 +112,13 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
 def load_tasks(args: argparse.Namespace) -> list:
     from tau_forge.episodes.generate import generate_tasks, read_jsonl
 
-    templates = tuple(args.templates.split(","))
     if args.tasks:
-        return [t for t in read_jsonl(args.tasks) if t.template in templates]
+        tasks = read_jsonl(args.tasks)
+        if args.templates:
+            keep = set(args.templates.split(","))
+            tasks = [t for t in tasks if t.template in keep]
+        return tasks
+    templates = tuple(args.templates.split(",")) if args.templates else TEMPLATES
     return generate_tasks(args.per_template, args.seed, templates=templates).tasks
 
 

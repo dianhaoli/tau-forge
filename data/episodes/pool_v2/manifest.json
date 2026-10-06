@@ -1,0 +1,62 @@
+{
+ "seed": 11,
+ "generator_commit": "bc652dd",
+ "per_template": 400,
+ "mixture": {
+  "composite": 0.4,
+  "exchange": 0.15,
+  "modify_items": 0.13,
+  "status_refusal": 0.08,
+  "cancel": 0.07,
+  "foreign_order_refusal": 0.07,
+  "return_fallback": 0.07,
+  "modify_payment": 0.03
+ },
+ "available_train": {
+  "cancel": 301,
+  "exchange": 359,
+  "return_fallback": 267,
+  "modify_payment": 73,
+  "foreign_order_refusal": 304,
+  "modify_items": 349,
+  "status_refusal": 357,
+  "composite": 517
+ },
+ "train": {
+  "modify_items": 260,
+  "status_refusal": 160,
+  "return_fallback": 140,
+  "exchange": 300,
+  "composite": 517,
+  "cancel": 140,
+  "foreign_order_refusal": 140,
+  "modify_payment": 60
+ },
+ "val": {
+  "composite": 64,
+  "status_refusal": 13,
+  "return_fallback": 11,
+  "modify_items": 21,
+  "exchange": 24,
+  "cancel": 11,
+  "foreign_order_refusal": 11,
+  "modify_payment": 5
+ },
+ "train_composite_combos": {
+  "cancel+modify_items": 15,
+  "cancel+exchange": 69,
+  "modify_items+return_fallback": 55,
+  "cancel+return_fallback+exchange": 7,
+  "return_fallback+status_refusal": 29,
+  "cancel+return_fallback": 71,
+  "cancel+status_refusal": 39,
+  "exchange+modify_items": 62,
+  "exchange+exchange": 26,
+  "exchange+foreign_order_refusal": 34,
+  "return_fallback+return_fallback": 35,
+  "cancel+cancel": 21,
+  "exchange+return_fallback": 20,
+  "cancel+cancel+return_fallback": 34
+ },
+ "val_user_frac": 0.15
+}

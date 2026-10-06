@@ -90,6 +90,33 @@ On the existing `data/trained/episode_audit_s1_sub50_n8.json`, the flat share go
 
 These counts are from that audit's environment version. Re-audit after any env, reward or user change.
 
+## Start here (order of operations)
+
+The task pool is `data/episodes/pool_v2/`, built by `scripts/build_training_pool.py`:
+- `train.jsonl` holds 1,717 tasks, about 30% of them multi-request composites.
+- `val.jsonl` holds 160 tasks from users who never appear in training.
+- `manifest.json` records the mixture and counts.
+- The oracle scores 1.0 on every task in both files.
+
+1. **Verify the box** (below): the token-append check, the CPU tests and a 2-step dry run.
+2. **Baseline tau2 eval.** Run all 114 retail tasks × 4 trials with the gpt-4.1 user (runbook Step 5). This is the number to beat. Compare against your own harness's baseline, not Qwen's model card (40.4%) or Tau2-RL-Pipeline's (16%), because both used different harnesses.
+3. **Pool audit.** 8 samples per task on the base model, with transcripts saved for a subset:
+   ```bash
+   uv run --extra train python scripts/episode_audit.py --tasks data/episodes/pool_v2/train.jsonl \
+       --samples-per-task 8 --temperature 1.0 --top-p 1.0 --top-k 0 --max-inflight 64 \
+       --output data/trained/pool_v2_audit_n8.json
+   ```
+   This is about 13.7k episodes: roughly 1-2 h on an H100, or roughly 6-10 h on an A10G (estimates). Before training, also run about 40 tasks with `--save-transcripts` and read them, the way the post-fix audit was read.
+4. **Smoke run, 30 steps.** LoRA on one H100 is the recommended default:
+   ```bash
+   uv run --extra train accelerate launch --num_processes 1 -m tau_forge.train.grpo_episodes \
+       --tasks data/episodes/pool_v2/train.jsonl --val-tasks data/episodes/pool_v2/val.jsonl \
+       --prefilter-audit data/trained/pool_v2_audit_n8.json --lora --smoke --wandb --run-name ep-smoke
+   ```
+   Go on to the main run only if `reward` and `val/mean_reward` rise and the health metrics below are fine.
+5. **Main run, 150-200 steps**: the same command with `--max-steps 200` and without `--smoke`. Select the checkpoint by `val/mean_reward`.
+6. **Final tau2 eval** of the selected checkpoint: 114 × 4 trials, compared task by task against the baseline.
+
 ## GPU-box verification (before any paid run)
 
 Run these on the training box after `uv sync --extra train`.
@@ -105,12 +132,12 @@ Run these on the training box after `uv sync --extra train`.
 2. **CPU tests**: `uv run pytest -q tests/test_episode_rollout.py tests/test_episodes.py`.
 3. **Config and data dry run**, without torch:
    ```bash
-   uv run python -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_s1.jsonl --num-processes 2 --dry-run
+   uv run python -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_v2/train.jsonl --num-processes 2 --dry-run
    ```
 4. **Two-step GPU run.** Use small batches and run val every step:
    ```bash
    uv run --extra train accelerate launch --config_file infra/accelerate_zero2.yaml --num_processes 2 \
-       -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_s1.jsonl \
+       -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_v2/train.jsonl \
        --max-steps 2 --prompts-per-step 4 --val-holdout 8 --val-every 1 --output-dir data/trained/grpo_episodes_dry
    ```
    Check each of these in the log:
@@ -125,13 +152,13 @@ Run these on the training box after `uv sync --extra train`.
 Smoke run, 30 steps with 128 episodes per step, on 2x H100:
 ```bash
 uv run --extra train accelerate launch --config_file infra/accelerate_zero2.yaml --num_processes 2 \
-    -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_s1.jsonl --smoke --wandb --run-name ep-smoke
+    -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_v2/train.jsonl --smoke --wandb --run-name ep-smoke
 ```
 
 Main run, 200 steps (or LoRA: add `--lora`, which also suits 1x L40S):
 ```bash
 uv run --extra train accelerate launch --config_file infra/accelerate_zero2.yaml --num_processes 2 \
-    -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_s1.jsonl --max-steps 200 --wandb --run-name ep-main
+    -m tau_forge.train.grpo_episodes --tasks data/episodes/pool_v2/train.jsonl --max-steps 200 --wandb --run-name ep-main
 ```
 
 Outputs go to `data/trained/grpo_episodes[_smoke]/`:

@@ -51,7 +51,7 @@ from typing import Any, Callable, Optional, Sequence
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MODEL = "Qwen/Qwen3-4B-Instruct-2507"
-DEFAULT_TASKS = REPO_ROOT / "data" / "episodes" / "episodes_s1.jsonl"
+DEFAULT_TASKS = REPO_ROOT / "data" / "episodes" / "pool_v2" / "train.jsonl"
 DEFAULT_OUTPUT_DIR = REPO_ROOT / "data" / "trained" / "grpo_episodes"
 SMOKE_STEPS = 30
 MAIN_STEPS = 200
