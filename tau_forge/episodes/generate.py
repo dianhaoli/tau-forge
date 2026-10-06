@@ -102,6 +102,13 @@ KNOB_SPACE: dict[str, dict[str, list[Any]]] = {
         "identity_upfront": [True, False],
         "gift_mention": [False, False, False, False, True],
     },
+    "status_refusal": {
+        "request": ["cancel", "return"],
+        "give_order_id": [True, False],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
+        "identity_upfront": [True, False],
+        "pushback": [False, False, True],
+    },
     "foreign_order_refusal": {
         "request": ["cancel", "return"],
         "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
@@ -679,6 +686,84 @@ def permutation_hashes(task: EpisodeTask, db: Optional[RetailDB] = None, base_ha
     return sorted(out)
 
 
+STATUS_WORDS = {"delivered": "already delivered", "processed": "already being processed for shipping",
+                "pending": "still pending -- it hasn't shipped yet", "cancelled": "already cancelled"}
+
+
+def gen_status_refusal(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
+    """The user's OWN order, in a status the request does not allow: cancel a delivered / processed order,
+    or return a pending / processed one. policy.md: cancel and modify only pending orders, return and
+    exchange only delivered ones -- check the status before acting. The right outcome is an explanation
+    (db unchanged); the eligible look-alikes are the cancel and return templates. `pushback`: the user
+    insists once after the first refusal."""
+    statuses = ["delivered", "processed"] if k["request"] == "cancel" else ["pending", "processed"]
+    users = list(ctx.db.users.values())
+    rng.shuffle(users)
+    for user in users:
+        if not ctx.unique_identity(user, k["id_mode"]):
+            continue
+        cands = [o for o in ctx.all_orders(user) if o.status in statuses]
+        if not cands:
+            continue
+        order = rng.choice(cands)
+        hint = _hint(order, ctx.all_orders(user))
+        if not k["give_order_id"] and hint is None:
+            continue
+        clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
+        ref = f"order {order.order_id}" if k["give_order_id"] else f"the order with the {hint} in it"
+        item_names: list[str] = []
+        reason = None
+        if k["request"] == "cancel":
+            reason = rng.choice(sorted(REASON_PHRASES))
+            body = rng.choice(["I need to cancel {r}.", "Could you cancel {r} for me?", "Please cancel {r}."]).format(r=ref)
+            body += " " + rng.choice(REASON_PHRASES[reason])
+            restate = f"I want to cancel {ref}."
+            accept = ["Oh, I didn't realize it had already gone out. Okay, thanks for checking.",
+                      "Ah, I see -- too late to cancel then. Okay, thank you."]
+            pushback = ["Are you sure? I really need it cancelled -- isn't there anything you can do?",
+                        "Can't you make an exception and cancel it anyway?"]
+        else:
+            eligible = _unique_names(order)
+            if not eligible:
+                continue
+            it = rng.choice(eligible)
+            item_names = [it.name]
+            body = rng.choice(["I want to return the {i} from {r}.", "I'd like to send back the {i} from {r} for a refund."]
+                              ).format(i=it.name, r=ref)
+            restate = f"I want to return the {it.name} from {ref}."
+            accept = ["Oh, it hasn't arrived yet? Okay, I'll wait for it then. Thanks.",
+                      "I see, so I can't return it yet. Okay, thank you."]
+            pushback = ["Are you sure? I really don't want it -- can't you process the return now?",
+                        "Can't you make an exception and start the return anyway?"]
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {body}"
+        profile: dict[str, Any] = {
+            "identity": ident_pool,
+            "order_answer": ([f"It's {order.order_id}.", f"The order id is {order.order_id}."] if k["give_order_id"]
+                             else [f"I don't have the number -- it's the one with the {hint}.",
+                                   f"It's the order with the {hint} in it."]),
+            "restate": restate,
+            "accept_denial": accept,
+            "deny_kinds": ["status"],
+            "recap_keys": [order.order_id] + ([hint] if hint else []),
+        }
+        if reason:
+            profile["reason"] = REASON_PHRASES[reason]
+        if k["pushback"]:
+            profile["pushback"] = pushback
+        gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
+        gold += _order_reads(user, order.order_id, k["give_order_id"]) if k["give_order_id"] else [
+            {"name": "get_order_details", "arguments": {"order_id": order.order_id}}]
+        return EpisodeTask(
+            id="", template="status_refusal", user_id=user.user_id, opening=opening, profile=profile,
+            gold_actions=gold, target_order=order.order_id, expect_no_write=True,
+            difficulty={**k, "status": order.status},
+            hidden={**ident_hidden, "reason": reason, "hint": hint, "item_names": item_names,
+                    "status": order.status, "request": k["request"], "item_ids": []},
+            involved_users=[user.user_id],
+        )
+    return None
+
+
 # (relation, possessive, subject, object) for third-party callers; the same words appear as gift mentions in
 # the user's OWN requests (`_gift_mention`), so a relation word alone never signals a refusal task.
 RELATIONS = [
@@ -764,6 +849,7 @@ GENERATORS: dict[str, Callable[[_Ctx, random.Random, dict[str, Any]], Optional[E
     "modify_payment": gen_modify_payment,
     "foreign_order_refusal": gen_foreign_order_refusal,
     "modify_items": gen_modify_items,
+    "status_refusal": gen_status_refusal,
 }
 assert set(GENERATORS) == set(TEMPLATES) == set(KNOB_SPACE)
 

@@ -160,9 +160,13 @@ class ReferenceAgent:
             names = [n for n, _ in h["targets"]]
         elif t == "return_fallback":
             names = h["item_names"]
+        elif t == "status_refusal":
+            names = [h["hint"]] if h.get("hint") else h["item_names"]
         else:
             names = [h["hint"]]
         status = "pending" if t in ("cancel", "modify_payment", "modify_items") else "delivered"
+        if t == "status_refusal":
+            status = h["status"]
         for oid in self.user_details(messages)["orders"]:
             od = self.order(messages, oid)
             if od is None:
@@ -252,6 +256,25 @@ class ReferenceAgent:
         if not self.ready(messages):
             return self.recap(f"change the payment method of order {oid} ({self.item_names(messages, oid)}) to {pm}")
         return self.write("modify_pending_order_payment", {"order_id": oid, "payment_method_id": pm})
+
+    def status_refusal(self, messages, text: str, oid: str) -> str:
+        od = self.order(messages, oid)  # find_order has read it
+        req = self.t.hidden["request"]
+        if self.mode not in ("comply", "no_confirm"):
+            if req == "cancel":
+                return (f"I'm sorry, but order {oid} is already {od['status']}, so it can't be cancelled -- "
+                        "only pending orders can be cancelled.")
+            return (f"I'm sorry, but order {oid} is {od['status']} and hasn't been delivered yet, so it can't be "
+                    "returned -- only delivered orders can be returned.")
+        if req == "cancel":
+            name, args = "cancel_pending_order", {"order_id": oid, "reason": self.t.hidden["reason"]}
+        else:
+            items = [i["item_id"] for i in od["items"] if i["name"] in self.t.hidden["item_names"]]
+            name, args = "return_delivered_order_items", {
+                "order_id": oid, "item_ids": items, "payment_method_id": od["payment_history"][0]["payment_method_id"]}
+        if not self.ready(messages):
+            return self.recap(f"{name.replace('_', ' ')} for order {oid} ({self.item_names(messages, oid)})")
+        return self.write(name, args)
 
     def foreign(self, messages, text: str) -> str:
         oid = ORDER_ID_RE.findall(text)[-1]

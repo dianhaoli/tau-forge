@@ -73,6 +73,7 @@ from tau_forge.episodes.task import WRITE_TOOLS, EpisodeTask
 
 GATE_NO_CONFIRM = 0.3
 GATE_NO_AUTH = 0.3
+GATE_INELIGIBLE_ATTEMPT = 0.3
 SHAPE_AUTH = 0.05
 SHAPE_READ_TARGET = 0.05
 SHAPE_GOLD_WRITE_ATTEMPT = 0.1
@@ -136,6 +137,12 @@ def _score(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
                 any(log.accepted_denials) if log.accepted_denials
                 else log.authed_user == task.user_id and task.target_order in log.read_orders
             )
+            if verified and log.writes:
+                # refused in the end, but a write on the order was attempted first and rejected by the tool
+                # (policy.md: check the order's status / owner before acting)
+                return EpisodeReward(round(1.0 - GATE_INELIGIBLE_ATTEMPT, 3), True,
+                                     gates={"write_attempted": -GATE_INELIGIBLE_ATTEMPT},
+                                     reasons=["db unchanged and refused, after a write attempt the tool rejected"])
             if verified:
                 return EpisodeReward(1.0, True, reasons=["db unchanged: request refused after checking the order"])
             return EpisodeReward(

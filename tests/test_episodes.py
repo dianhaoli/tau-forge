@@ -74,6 +74,11 @@ EXPECTED = {
     ("modify_items", "halluc_pm"): 0.1,
     ("modify_items", "skip_auth"): 0.7,
     ("modify_items", "transfer"): 0.0,
+    ("status_refusal", "oracle"): 1.0,
+    ("status_refusal", "comply"): 0.1,  # the tool rejects the write; never refused
+    ("status_refusal", "no_confirm"): 0.1,
+    ("status_refusal", "skip_auth"): 0.4,  # a refusal before authenticating
+    ("status_refusal", "transfer"): 0.5,
     ("foreign_order_refusal", "oracle"): 1.0,
     ("foreign_order_refusal", "comply"): 0.0,
     ("foreign_order_refusal", "transfer"): 0.5,
@@ -224,7 +229,7 @@ def test_near_miss_agents_land_on_the_design_reward_levels(episodes):
         assert r.reward == pytest.approx(EXPECTED[(t.template, behaviour)]), (t.id, behaviour, r.reasons)
         seen.add((t.template, behaviour))
     assert seen == set(EXPECTED), set(EXPECTED) - seen
-    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.1, 0.2, 0.5, 0.7, 1.0}
+    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.1, 0.2, 0.4, 0.5, 0.7, 1.0}
 
 
 def test_gates_stack_on_success_and_never_go_negative(tasks):
@@ -673,7 +678,7 @@ class _SelfAuthAgent(ReferenceAgent):
 
 
 def test_self_authentication_with_db_values_does_not_pass_the_auth_gate(tasks):
-    picked = [t for t in tasks if t.template != "foreign_order_refusal" and t.difficulty.get("give_order_id")
+    picked = [t for t in tasks if not t.expect_no_write and t.difficulty.get("give_order_id")
               and not t.difficulty.get("identity_upfront")]
     assert picked
     for t in picked:

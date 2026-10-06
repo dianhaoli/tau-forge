@@ -86,6 +86,7 @@ from tau_forge.episodes.nlu import (
     facts_from,
     make_analyzer,
     sentences,
+    STATUS_OBJ_RE,
 )
 from tau_forge.episodes.task import ORDER_ID_RE, STOP, EpisodeTask
 
@@ -230,6 +231,7 @@ class ScriptedUser:
         self._no_email_said = False
         self._known_ids: set[str] = set()  # order ids the agent tied to a product the user knows
         self._correction_repeated = False
+        self._pushback_used = False
         hidden = task.hidden or {}
         mode = task.difficulty.get("id_mode")
         if mode is None:
@@ -373,7 +375,14 @@ class ScriptedUser:
 
         # 2. refusal tasks
         if f.expect_no_write:
-            if sem.refusal == "ownership" and not self._offers_refused_action(sem, txt):
+            kinds = self.p.get("deny_kinds") or ["ownership"]
+            refused = sem.refusal in kinds or ("status" in kinds and sem.refusal in ("constraint", "other")
+                                                and STATUS_OBJ_RE.search(txt) is not None)
+            if refused and not self._offers_refused_action(sem, txt):
+                if self.p.get("pushback") and not self._pushback_used:
+                    # the user insists once; only a second refusal is accepted
+                    self._pushback_used = True
+                    return self._reply(self._pick(self.p["pushback"]), ["pushback"], progress=True)
                 return UserReply(f"{self._say('accept_denial')} {STOP}", True, "accept_denial")
 
         # 3. the fallback

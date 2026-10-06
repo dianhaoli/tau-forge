@@ -56,7 +56,9 @@ ID_RE = re.compile(
 )
 ORDER_ID_RE = re.compile(r"#W\d{7}")
 
-TEMPLATES = ("cancel", "exchange", "return_fallback", "modify_payment", "foreign_order_refusal", "modify_items")
+TEMPLATES = (
+    "cancel", "exchange", "return_fallback", "modify_payment", "foreign_order_refusal", "modify_items", "status_refusal",
+)
 
 
 @functools.lru_cache(maxsize=1)

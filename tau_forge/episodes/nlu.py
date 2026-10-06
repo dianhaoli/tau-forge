@@ -283,6 +283,10 @@ def facts_from(task: Any) -> TaskFacts:
         # modify_items is an exchange of item variants on a pending order: same request shape (items, new
         # options, a payment method for the difference), so the NLU reads it as an exchange
         template = "exchange" if task.template == "modify_items" else task.template
+        if template == "status_refusal":
+            # the user's own order in the wrong status: read as the request it is (cancel / return); the
+            # task's expect_no_write and deny_kinds make the refusal the right outcome
+            template = "cancel" if (task.hidden or {}).get("request") == "cancel" else "return_fallback"
         target = task.target_order
         opening = task.opening
         expect_no_write = task.expect_no_write
@@ -1184,7 +1188,19 @@ def _analyze(text: str, facts: TaskFacts, state: NLUState) -> Semantics:
             status_hit = True
             continue
         if re.search(r"\b(?:not|cannot|can't|unable|no longer)\b[^.?!]{0,30}\b(?:be )?(?:cancel\w*|modif\w*)\b[^.?!]{0,60}\b(?:delivered|processed|shipped|status)\b", sl) or \
-                re.search(r"\b(?:delivered|processed|shipped)\b[^.?!]{0,60}\b(?:cannot|can't|not|unable)\b[^.?!]{0,20}\b(?:be )?(?:cancel\w*|modif\w*)", sl):
+                re.search(r"\b(?:delivered|processed|shipped)\b[^.?!]{0,60}\b(?:cannot|can't|not|unable|no longer)\b[^.?!]{0,20}\b(?:be )?(?:cancel\w*|modif\w*)", sl):
+            status_hit = True
+            continue
+        # returns / exchanges need a delivered order; cancels / modifications a pending one
+        neg = re.search(r"\b(?:not|cannot|can't|unable|no longer|isn't|hasn't|only)\b", sl)
+        if neg and re.search(r"\b(?:return\w*|exchang\w*)\b", sl) and (
+                re.search(r"\b(?:only|just)\b[^.?!]{0,40}\bdelivered\b", sl) or re.search(
+                    r"\b(?:pending|processed|not (?:yet )?(?:been )?delivered|hasn't (?:yet )?(?:been )?delivered|"
+                    r"hasn't (?:arrived|shipped)|not (?:yet )?arrived)\b", sl)):
+            status_hit = True
+            continue
+        if neg and re.search(r"\b(?:cancel\w*|modif\w*)\b", sl) and re.search(r"\b(?:only|just)\b[^.?!]{0,40}\bpending\b", sl) \
+                and re.search(r"\b(?:delivered|processed|shipped|cancelled|canceled|not pending|isn't pending)\b", low):
             status_hit = True
             continue
         if payish and (inab or re.search(r"\b(?:insufficient|not enough|not sufficient|(?:doesn't|does not|don't|do not) have (?:enough|sufficient)|less than|lower than|only has|only have|exceeds?|"
