@@ -79,6 +79,18 @@ EXPECTED = {
     ("status_refusal", "no_confirm"): 0.1,
     ("status_refusal", "skip_auth"): 0.4,  # a refusal before authenticating
     ("status_refusal", "transfer"): 0.5,
+    ("modify_address", "oracle"): 1.0,
+    ("modify_address", "no_confirm"): 0.7,
+    ("modify_address", "wrong_variant"): 0.1,  # a zip typo: the user objects and never consents
+    ("modify_address", "skip_auth"): 0.7,
+    ("modify_address", "transfer"): 0.0,
+    ("modify_user_address", "oracle"): 1.0,
+    ("modify_user_address", "no_confirm"): 0.7,
+    ("modify_user_address", "wrong_variant"): 0.05,
+    ("modify_user_address", "transfer"): 0.0,
+    ("info", "oracle"): 1.0,
+    ("info", "wrong_variant"): 0.0,  # states a wrong amount
+    ("info", "transfer"): 0.1,
     ("foreign_order_refusal", "oracle"): 1.0,
     ("foreign_order_refusal", "comply"): 0.0,
     ("foreign_order_refusal", "transfer"): 0.5,
@@ -229,7 +241,7 @@ def test_near_miss_agents_land_on_the_design_reward_levels(episodes):
         assert r.reward == pytest.approx(EXPECTED[(t.template, behaviour)]), (t.id, behaviour, r.reasons)
         seen.add((t.template, behaviour))
     assert seen == set(EXPECTED), set(EXPECTED) - seen
-    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.1, 0.2, 0.4, 0.5, 0.7, 1.0}
+    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.05, 0.1, 0.2, 0.4, 0.5, 0.7, 1.0}
 
 
 def test_gates_stack_on_success_and_never_go_negative(tasks):

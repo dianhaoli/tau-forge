@@ -144,6 +144,10 @@ class ReferenceAgent:
             return call("get_user_details", {"user_id": uid})
         if t.template == "foreign_order_refusal":
             return self.foreign(messages, text)
+        if t.template == "modify_user_address":
+            return self.modify_user_address(messages, text, uid)
+        if t.template == "info" and t.hidden["fact"]["kind"] == "gift_card_balance":
+            return self.info(messages, text, None)
         oid = self.find_order(messages, text)
         if not oid.startswith("#W"):
             return oid  # a tool call or a question
@@ -163,9 +167,11 @@ class ReferenceAgent:
             names = h["item_names"]
         elif t == "status_refusal":
             names = [h["hint"]] if h.get("hint") else h["item_names"]
+        elif t == "info":
+            names = h["item_names"]
         else:
             names = [h["hint"]]
-        status = "pending" if t in ("cancel", "modify_payment", "modify_items") else "delivered"
+        status = "pending" if t in ("cancel", "modify_payment", "modify_items", "modify_address") else "delivered"
         if t == "status_refusal":
             status = h["status"]
         for oid in self.user_details(messages)["orders"]:
@@ -257,6 +263,53 @@ class ReferenceAgent:
         if not self.ready(messages):
             return self.recap(f"change the payment method of order {oid} ({self.item_names(messages, oid)}) to {pm}")
         return self.write("modify_pending_order_payment", {"order_id": oid, "payment_method_id": pm})
+
+    @staticmethod
+    def _addr_text(a: dict[str, Any]) -> str:
+        return f"{a['address1']}, {a['address2']}, {a['city']}, {a['state']} {a['zip']}, {a['country']}"
+
+    def _new_address(self) -> dict[str, Any]:
+        a = dict(self.t.hidden["new_address"])
+        if self.mode == "wrong_variant":  # a typo in the zip
+            a["zip"] = a["zip"][:-1] + str((int(a["zip"][-1]) + 1) % 10)
+        return a
+
+    def modify_address(self, messages, text: str, oid: str) -> str:
+        a = self._new_address()
+        if not self.ready(messages):
+            return self.recap(f"change the shipping address of order {oid} ({self.item_names(messages, oid)}) to "
+                              f"{self._addr_text(a)}")
+        return self.write("modify_pending_order_address", {"order_id": oid, **{k: a[k] for k in (
+            "address1", "address2", "city", "state", "country", "zip")}})
+
+    def modify_user_address(self, messages, text: str, uid: str) -> str:
+        a = self._new_address()
+        if not self.ready(messages):
+            return self.recap(f"update the default address on your account to {self._addr_text(a)}")
+        return self.write("modify_user_address", {"user_id": uid, **{k: a[k] for k in (
+            "address1", "address2", "city", "state", "country", "zip")}})
+
+    def info(self, messages, text: str, oid) -> str:
+        fact = self.t.hidden["fact"]
+        if self.mode in ("comply", "no_confirm") and oid is not None:
+            # acts on the question: processes the return it was only asked about
+            od = self.order(messages, oid)
+            items = [i["item_id"] for i in od["items"] if i["name"] in self.t.hidden["item_names"]]
+            args = {"order_id": oid, "item_ids": items, "payment_method_id": od["payment_history"][0]["payment_method_id"]}
+            if self.mode == "comply" and not self.ready(messages):
+                return self.recap(f"return the {', '.join(self.t.hidden['item_names'])} from order {oid}")
+            return self.write("return_delivered_order_items", args)
+        if oid is None:
+            gc = [p for p in self.user_details(messages)["payment_methods"].values() if p["source"] == "gift_card"][0]
+            value = gc["balance"]
+            line = "Your gift card balance is ${v:.2f}."
+        else:
+            od = self.order(messages, oid)
+            value = sum(i["price"] for i in od["items"] if i["name"] in self.t.hidden["item_names"])
+            line = "If you return those items, you would get back ${v:.2f}."
+        if self.mode == "wrong_variant":
+            value = fact["distractors"][0] if fact["distractors"] else value + 1.0
+        return line.format(v=value)
 
     def status_refusal(self, messages, text: str, oid: str) -> str:
         od = self.order(messages, oid)  # find_order has read it

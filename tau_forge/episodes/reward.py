@@ -180,6 +180,23 @@ def _score(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
         return _score_composite(task, result, match)
     ok_writes = [w for w in log.writes if w.ok]
 
+    if task.template == "info":
+        if not match:
+            return EpisodeReward(0.0, False, reasons=["db changed on a question that needed only an answer"])
+        intents = set(log.user_intents)
+        if "answered" in intents:
+            verified = log.authed_user == task.user_id and (not task.target_order or task.target_order in log.read_orders)
+            if not verified:
+                return EpisodeReward(REFUSAL_UNVERIFIED, True, reasons=["correct answer, but before authenticating / reading"])
+            if log.writes:
+                return EpisodeReward(round(1.0 - GATE_INELIGIBLE_ATTEMPT, 3), True,
+                                     gates={"write_attempted": -GATE_INELIGIBLE_ATTEMPT},
+                                     reasons=["correct answer after a rejected write attempt"])
+            return EpisodeReward(1.0, True, reasons=["stated the exact answer"])
+        if "answered_wrong" in intents:
+            return EpisodeReward(0.0, False, reasons=["stated a wrong amount"])
+        return EpisodeReward(REFUSAL_NO_DENIAL, False, reasons=[f"never answered (episode ended: {result.end_reason})"])
+
     if task.expect_no_write:
         if not match:
             return EpisodeReward(0.0, False, reasons=["db changed on a task whose only correct outcome is a refusal"])

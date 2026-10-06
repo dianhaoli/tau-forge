@@ -109,6 +109,23 @@ KNOB_SPACE: dict[str, dict[str, list[Any]]] = {
         "identity_upfront": [True, False],
         "pushback": [False, False, True],
     },
+    "modify_address": {
+        "give_order_id": [True, False],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
+        "identity_upfront": [True, False],
+        "addr_source": ["dictated", "dictated", "profile"],
+    },
+    "modify_user_address": {
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
+        "identity_upfront": [True, False],
+    },
+    "info": {
+        "kind": ["refund_total", "refund_total", "refund_total", "gift_card_balance"],
+        "n_items": [1, 2, 3],
+        "give_order_id": [True, False],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
+        "identity_upfront": [True, False],
+    },
     "foreign_order_refusal": {
         "request": ["cancel", "return"],
         "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
@@ -764,6 +781,178 @@ def gen_status_refusal(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Opti
     return None
 
 
+STREETS = ["Maple", "Oak", "Cedar", "Pine", "Elm", "Willow", "Birch", "Lakeview", "Hillcrest", "Sunset", "River",
+           "Park", "Highland", "Chestnut", "Spruce", "Walnut", "Laurel", "Main", "Broadway", "Ridge"]
+SUFFIXES = ["Street", "Avenue", "Lane", "Drive", "Road", "Boulevard", "Court", "Way"]
+
+
+def _synth_address(ctx: _Ctx, rng: random.Random, avoid_zip: str) -> dict[str, str]:
+    """A plausible new US address in the db's own format (city/state pairs taken from the db)."""
+    pairs = sorted({(u.address.city, u.address.state) for u in ctx.db.users.values()})
+    city, state = rng.choice(pairs)
+    zip_ = avoid_zip
+    while zip_ == avoid_zip:
+        zip_ = f"{rng.randint(10000, 99999)}"
+    return {"address1": f"{rng.randint(100, 9999)} {rng.choice(STREETS)} {rng.choice(SUFFIXES)}",
+            "address2": f"Suite {rng.randint(100, 999)}", "city": city, "state": state, "country": "USA", "zip": zip_}
+
+
+def address_text(a: dict[str, str]) -> str:
+    return f"{a['address1']}, {a['address2']}, {a['city']}, {a['state']} {a['zip']}, USA"
+
+
+def _addr_args(a: dict[str, Any]) -> dict[str, str]:
+    return {k: a[k] for k in ("address1", "address2", "city", "state", "country", "zip")}
+
+
+def gen_modify_address(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
+    """Change the shipping address of a pending order (`modify_pending_order_address`): to a new address the
+    user dictates, or to the default address on the user's profile (the agent copies it from
+    get_user_details). The db stores the strings exactly, so the agent has to copy them exactly."""
+    for user, orders in ctx.users_with("pending", rng):
+        if not ctx.unique_identity(user, k["id_mode"]):
+            continue
+        order = rng.choice(orders)
+        hint = _hint(order, ctx.all_orders(user))
+        if not k["give_order_id"] and hint is None:
+            continue
+        default = user.address.model_dump()
+        if k["addr_source"] == "profile":
+            if _addr_args(order.address.model_dump()) == _addr_args(default):
+                continue
+            new = _addr_args(default)
+            want = "my default address -- the one on my account"
+        else:
+            new = _synth_address(ctx, rng, user.address.zip)
+            want = address_text(new)
+        clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
+        ref = f"order {order.order_id}" if k["give_order_id"] else f"my order with the {hint}"
+        verb = rng.choice([
+            "I need to change the shipping address on {o} to {a}.",
+            "Can you update the delivery address for {o}? Please send it to {a}.",
+            "I'd like {o} shipped to a different address: {a}.",
+        ])
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=ref, a=want)}"
+        profile: dict[str, Any] = {
+            "identity": ident_pool,
+            "order_answer": ([f"It's {order.order_id}.", f"The order id is {order.order_id}."] if k["give_order_id"]
+                             else [f"I don't know the id -- it's the pending one with the {hint}.",
+                                   f"It's the order with the {hint} in it."]),
+            "address": [f"The new address is {address_text(new)}.", f"Please use {address_text(new)}."],
+            "restate": f"I want the shipping address on {ref} changed to {address_text(new)}.",
+            "recap_keys": [order.order_id] + ([hint] if hint else []),
+        }
+        gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
+        gold += _order_reads(user, order.order_id, k["give_order_id"])
+        gold.append({"name": "modify_pending_order_address", "arguments": {"order_id": order.order_id, **new}})
+        return EpisodeTask(
+            id="", template="modify_address", user_id=user.user_id, opening=opening, profile=profile,
+            gold_actions=gold, target_order=order.order_id, difficulty=dict(k),
+            hidden={**ident_hidden, "hint": hint, "new_address": new, "item_ids": []},
+            involved_users=[user.user_id],
+        )
+    return None
+
+
+def gen_modify_user_address(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
+    """Change the default address on the user's account (`modify_user_address`)."""
+    users = list(ctx.db.users.values())
+    rng.shuffle(users)
+    for user in users:
+        if not ctx.unique_identity(user, k["id_mode"]):
+            continue
+        new = _synth_address(ctx, rng, user.address.zip)
+        clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
+        verb = rng.choice([
+            "I moved -- please update the default address on my account to {a}.",
+            "Can you change the address on my profile to {a}?",
+            "I'd like my account's default address changed to {a}.",
+        ])
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(a=address_text(new))}"
+        profile: dict[str, Any] = {
+            "identity": ident_pool,
+            "order_answer": ["It's not about an order -- I just want my account's address updated."],
+            "address": [f"The new address is {address_text(new)}.", f"Please use {address_text(new)}."],
+            "restate": f"I want the default address on my account changed to {address_text(new)}.",
+            "recap_keys": [],
+        }
+        gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}},
+                {"name": "modify_user_address", "arguments": {"user_id": user.user_id, **new}}]
+        return EpisodeTask(
+            id="", template="modify_user_address", user_id=user.user_id, opening=opening, profile=profile,
+            gold_actions=gold, target_order="", difficulty=dict(k),
+            hidden={**ident_hidden, "new_address": new, "item_ids": []},
+            involved_users=[user.user_id],
+        )
+    return None
+
+
+def gen_info(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
+    """A question whose correct outcome is an exact fact, stated (tau2's communicate_info): how much a
+    return of named items would refund (n>=2 sums prices -- the `calculate` tool's job), or the gift card
+    balance. Nothing should be written; acting on the question (e.g. processing the return) fails."""
+    users = list(ctx.db.users.values())
+    rng.shuffle(users)
+    for user in users:
+        if not ctx.unique_identity(user, k["id_mode"]):
+            continue
+        clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
+        gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
+        if k["kind"] == "gift_card_balance":
+            gcs = [p for p in user.payment_methods.values() if p.source == "gift_card"]
+            if len(gcs) != 1:
+                continue
+            value = round(gcs[0].balance, 2)
+            body = rng.choice(["Could you tell me the current balance on my gift card?",
+                               "How much is left on my gift card?"])
+            target, hint, items, distractors = "", None, [], []
+            order_answer = ["It's not about an order -- I just want my gift card balance."]
+        else:
+            orders = ctx.orders_of(user, "delivered")
+            if not orders:
+                continue
+            order = rng.choice(orders)
+            eligible = _unique_names(order)
+            n = k["n_items"]
+            if len(eligible) < n:
+                continue
+            chosen = rng.sample(eligible, n)
+            items = [it.name for it in chosen]
+            if not k["give_order_id"] and not _only_in(order, ctx.all_orders(user), items):
+                continue
+            value = round(sum(it.price for it in chosen), 2)
+            total = round(sum(it.price for it in order.items), 2)
+            distractors = [total] if abs(total - value) > 0.005 else []
+            target, hint = order.order_id, items[0]
+            ref = f"order {order.order_id}" if k["give_order_id"] else "an order I received recently"
+            body = rng.choice([
+                "If I return the {i} from {r}, how much would I get back?",
+                "I'm thinking about returning the {i} from {r}. What would the refund come to?",
+            ]).format(i=_join(items), r=ref)
+            order_answer = ([f"It's {order.order_id}.", f"The order id is {order.order_id}."] if k["give_order_id"]
+                            else [f"I don't have the number -- it's the one with the {_join(items)}."])
+            gold += _order_reads(user, order.order_id, k["give_order_id"])
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {body}"
+        profile: dict[str, Any] = {
+            "identity": ident_pool,
+            "order_answer": order_answer,
+            "restate": "I just want to know: " + body[0].lower() + body[1:],
+            "accept_answer": ["Got it, thanks! That's all I needed.", "Okay, that's helpful -- thank you."],
+            "not_now": ["No need to do anything yet -- I just want to know the amount for now.",
+                        "Not yet, thanks -- I'm only asking for the amount."],
+            "recap_keys": [target] + items if target else [],
+        }
+        return EpisodeTask(
+            id="", template="info", user_id=user.user_id, opening=opening, profile=profile,
+            gold_actions=gold, target_order=target, expect_no_write=True,
+            difficulty={**k, "n_items": len(items)},
+            hidden={**ident_hidden, "hint": hint, "item_names": items, "item_ids": [],
+                    "fact": {"value": value, "distractors": distractors, "kind": k["kind"]}},
+            involved_users=[user.user_id],
+        )
+    return None
+
+
 # (relation, possessive, subject, object) for third-party callers; the same words appear as gift mentions in
 # the user's OWN requests (`_gift_mention`), so a relation word alone never signals a refusal task.
 RELATIONS = [
@@ -850,6 +1039,9 @@ GENERATORS: dict[str, Callable[[_Ctx, random.Random, dict[str, Any]], Optional[E
     "foreign_order_refusal": gen_foreign_order_refusal,
     "modify_items": gen_modify_items,
     "status_refusal": gen_status_refusal,
+    "modify_address": gen_modify_address,
+    "modify_user_address": gen_modify_user_address,
+    "info": gen_info,
 }
 assert set(GENERATORS) == set(TEMPLATES) == set(KNOB_SPACE)
 

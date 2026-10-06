@@ -56,6 +56,8 @@ COMBOS: list[tuple[tuple[str, ...], int]] = [
     (("cancel", "status_refusal"), 4),
     (("return_fallback", "status_refusal"), 4),
     (("exchange", "foreign_order_refusal"), 2),
+    (("cancel", "modify_address"), 4),
+    (("modify_address", "return_fallback"), 3),
     (("cancel", "return_fallback", "exchange"), 3),
     (("cancel", "cancel", "return_fallback"), 3),
 ]

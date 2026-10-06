@@ -93,11 +93,18 @@ These counts are from that audit's environment version. Re-audit after any env, 
 ## Start here (order of operations)
 
 The task pool is `data/episodes/pool_v2/`, built by `scripts/build_training_pool.py`:
-- `train.jsonl` holds 1,717 tasks, about 30% of them multi-request composites.
-- `val.jsonl` holds 160 tasks from users who never appear in training.
+- `train.jsonl` holds 1,807 tasks across 11 task types, about 29% of them multi-request composites.
+- `val.jsonl` holds 163 tasks from users who never appear in training.
 - `manifest.json` records the mixture and counts.
 - The oracle scores 1.0 on every task in both files.
 
+0. **Script smoke test on real model output (do this first).** Run 58 tasks covering every template, 4 samples each, with transcripts saved:
+   ```bash
+   uv run --extra train python scripts/episode_audit.py --tasks data/episodes/pool_v2/smoke_subset.jsonl \
+       --samples-per-task 4 --temperature 1.0 --top-p 1.0 --top-k 0 --save-transcripts \
+       --output data/trained/smoke_subset_transcripts.json
+   ```
+   This takes about 15-30 min on an A10G. Push the output JSON so the scripted customer's replies can be checked turn by turn against the real model output. Train only after that check passes.
 1. **Verify the box** (below): the token-append check, the CPU tests and a 2-step dry run.
 2. **Baseline tau2 eval.** Run all 114 retail tasks × 4 trials with the gpt-4.1 user (runbook Step 5). This is the number to beat. Compare against your own harness's baseline, not Qwen's model card (40.4%) or Tau2-RL-Pipeline's (16%), because both used different harnesses.
 3. **Pool audit.** 8 samples per task on the base model, with transcripts saved for a subset:

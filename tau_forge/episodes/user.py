@@ -374,6 +374,10 @@ class ScriptedUser:
         f = self.facts
         sem = self.analyzer.analyze(txt, self.task, self._state())
         self._learn_ids(txt)
+        if self.task.template in ("modify_address", "modify_user_address"):
+            return self._reply_address(txt, sem, ctx)
+        if self.task.template == "info":
+            return self._reply_info(txt, sem, ctx)
 
         # 2. refusal tasks
         if f.expect_no_write:
@@ -477,6 +481,72 @@ class ScriptedUser:
         if sem.narration_only and re.search(r"\b(?:let me|one moment|just a moment|i(?:'ll| will| am going to|'m going to) "
                                             r"(?:check|look|pull|verify|review|see))\b", txt, re.I):
             return self._unrecognised(self._pick(ACK))
+        return self._restate()
+
+    # ------------------------------------------------------------ address / info templates
+
+    def _common_answers(self, txt: str, sem: Semantics) -> tuple[list[str], list[str]]:
+        parts, intents = [], []
+        for kind in ("identity", "order_id", "order_choice"):
+            if kind in sem.info_requests:
+                ans = self._answer(kind, txt, sem)
+                if ans and ans[0] not in parts:
+                    parts.append(ans[0])
+                    intents.append(ans[1])
+        return parts, intents
+
+    def _reply_address(self, txt: str, sem: Semantics, ctx: Optional[TurnContext]) -> UserReply:
+        """Address changes: consent only to a recap that states the new address (its zip and street number)
+        and names the order (order address); a recap with another address gets the right one back."""
+        new = self.task.hidden["new_address"]
+        addr = f"{new['address1']}, {new['address2']}, {new['city']}, {new['state']} {new['zip']}, USA"
+        low = txt.lower()
+        zips = set(re.findall(r"\b\d{5}\b", txt))
+        street_no = new["address1"].split()[0]
+        is_order = self.task.template == "modify_address"
+        hint = (self.task.hidden or {}).get("hint")
+        names_order = (not is_order) or self.task.target_order in txt or bool(hint and hint.lower() in low)
+        parts, intents = self._common_answers(txt, sem)
+        if sem.confirmation_request:
+            if zips and new["zip"] not in zips:
+                return self._reply(f"No -- the new address is {addr}.", ["objection"], revokes=True)
+            if new["zip"] in zips and re.search(rf"\b{re.escape(street_no)}\b", txt) and names_order and (
+                    not is_order or self._grounded(ctx)):
+                return self._reply(self._pick(YES), ["yes"], confirms=self._yes_confirms(), progress=True)
+            if not zips:
+                parts.append(f"Before I say yes -- the new address should be {addr}.")
+                intents.append("address")
+            elif not names_order:
+                parts.append(self._order_answer())
+                intents.append("order")
+        elif re.search(r"\baddress\b", " ".join(s for s in sentences(txt) if "?" in s), re.I) and "address" not in intents:
+            parts.append(self._say("address"))
+            intents.append("address")
+        if parts:
+            return self._reply(" ".join(parts), intents, key=tuple(intents))
+        return self._restate()
+
+    _MONEY_RE = re.compile(r"\$\s?(\d[\d,]*(?:\.\d{1,2})?)|\b(\d[\d,]*\.\d{2})\b")
+
+    def _reply_info(self, txt: str, sem: Semantics, ctx: Optional[TurnContext]) -> UserReply:
+        """A question with an exact answer: the first turn that states an amount decides it."""
+        fact = self.task.hidden["fact"]
+        amounts = []
+        for m in self._MONEY_RE.finditer(txt):
+            try:
+                amounts.append(float((m.group(1) or m.group(2)).replace(",", "")))
+            except ValueError:
+                pass
+        has = lambda v: any(abs(a - v) < 0.005 for a in amounts)  # noqa: E731
+        if has(fact["value"]):
+            return UserReply(f"{self._say('accept_answer')} {STOP}", True, "answered")
+        if amounts and not sem.info_requests and not sem.confirmation_request:
+            return UserReply(f"Okay, thanks. {STOP}", True, "answered_wrong")
+        parts, intents = self._common_answers(txt, sem)
+        if sem.confirmation_request and not parts:
+            return self._reply(self._say("not_now"), ["not_now"], key=("not_now",))
+        if parts:
+            return self._reply(" ".join(parts), intents, key=tuple(intents))
         return self._restate()
 
     # ------------------------------------------------------------ pieces

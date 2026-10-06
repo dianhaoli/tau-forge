@@ -35,14 +35,17 @@ sys.path.insert(0, str(REPO_ROOT))
 
 # Share of the training pool per template (normalised over what is available).
 MIXTURE = {
-    "composite": 0.40,
-    "exchange": 0.15,
-    "modify_items": 0.13,
-    "status_refusal": 0.08,
-    "cancel": 0.07,
-    "foreign_order_refusal": 0.07,
-    "return_fallback": 0.07,
-    "modify_payment": 0.03,
+    "composite": 0.36,
+    "exchange": 0.13,
+    "modify_items": 0.11,
+    "info": 0.07,
+    "status_refusal": 0.07,
+    "cancel": 0.06,
+    "foreign_order_refusal": 0.06,
+    "return_fallback": 0.06,
+    "modify_address": 0.05,
+    "modify_user_address": 0.02,
+    "modify_payment": 0.02,
 }
 
 

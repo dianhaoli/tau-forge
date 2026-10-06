@@ -58,6 +58,7 @@ ORDER_ID_RE = re.compile(r"#W\d{7}")
 
 TEMPLATES = (
     "cancel", "exchange", "return_fallback", "modify_payment", "foreign_order_refusal", "modify_items", "status_refusal",
+    "modify_address", "modify_user_address", "info",
 )
 
 
