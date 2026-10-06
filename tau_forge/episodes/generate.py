@@ -67,28 +67,32 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 KNOB_SPACE: dict[str, dict[str, list[Any]]] = {
     "cancel": {
         "give_order_id": [True, False],
-        "id_mode": ["email", "name_zip"],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
         "late_correction": [False, True],
         "identity_upfront": [True, False],
+        "gift_mention": [False, False, False, False, True],
     },
     "exchange": {
         "n_items": [1, 2, 3],
         "give_order_id": [True, False],
-        "id_mode": ["email", "name_zip"],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
         "late_correction": [False, True],
         "identity_upfront": [True, False],
+        "gift_mention": [False, False, False, False, True],
     },
     "return_fallback": {
         "n_items": [1, 2],
         "give_order_id": [True, False],
-        "id_mode": ["email", "name_zip"],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
         "identity_upfront": [True, False],
+        "gift_mention": [False, False, False, False, True],
     },
     "modify_payment": {
         "give_order_id": [True, False],
-        "id_mode": ["email", "name_zip"],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
         "gift_card_short": [True, False],
         "identity_upfront": [True, False],
+        "gift_mention": [False, False, False, False, True],
     },
     "modify_items": {
         "n_items": [1, 1, 2, 2, 3],
@@ -96,10 +100,11 @@ KNOB_SPACE: dict[str, dict[str, list[Any]]] = {
         "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
         "late_correction": [False, False, True],
         "identity_upfront": [True, False],
+        "gift_mention": [False, False, False, False, True],
     },
     "foreign_order_refusal": {
         "request": ["cancel", "return"],
-        "id_mode": ["email", "name_zip"],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
         "identity_upfront": [True, False],
     },
 }
@@ -161,6 +166,11 @@ class _Ctx:
 
     def orders_of(self, user, status: str) -> list:
         return [self.db.orders[o] for o in user.orders if o in self.db.orders and self.db.orders[o].status == status]
+
+    def all_orders(self, user) -> list:
+        """Every order of the user, any status: a product hint must pick out one order among all of them
+        (an agent reading the orders cannot tell which status the user means)."""
+        return [self.db.orders[o] for o in user.orders if o in self.db.orders]
 
     def users_with(self, status: str, rng: random.Random) -> list:
         cands = [(u, os_) for u in self.db.users.values() if (os_ := self.orders_of(u, status))]
@@ -244,18 +254,18 @@ def gen_cancel(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[Epi
             continue
         picks = rng.sample(orders, 2 if k["late_correction"] else 1)
         first, target = picks[0], picks[-1]  # with a correction the user first names the wrong one
-        h_first, h_target = _hint(first, orders), _hint(target, orders)
+        h_first, h_target = _hint(first, ctx.all_orders(user)), _hint(target, ctx.all_orders(user))
         if not k["give_order_id"] and (h_first is None or h_target is None):
             continue
         reason = rng.choice(sorted(REASON_PHRASES))
-        reason_upfront = rng.random() < 0.5
+        reason_upfront = rng.random() < 0.3
         clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
 
         def ref(o, h):
             return f"order {o.order_id}" if k["give_order_id"] else f"the order with the {h} in it"
 
         verb = rng.choice(["I need to cancel {r}.", "Could you cancel {r} for me?", "I'd like to cancel {r}."])
-        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(r=ref(first, h_first))}"
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(r=ref(first, h_first))}" + _gift_mention(rng, k.get("gift_mention", False))
         if reason_upfront:
             opening += " " + rng.choice(REASON_PHRASES[reason])
 
@@ -320,7 +330,7 @@ def gen_exchange(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[E
         if len(plans) < n:
             continue
         chosen = rng.sample(plans, n)
-        if not k["give_order_id"] and not _only_in(order, orders, [it.name for it, _ in chosen]):
+        if not k["give_order_id"] and not _only_in(order, ctx.all_orders(user), [it.name for it, _ in chosen]):
             continue
         picks = [(it, rng.choice(opts)) for it, opts in chosen]
         correction = None
@@ -359,7 +369,7 @@ def gen_exchange(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[E
             if n == 1 else
             " For each, only the option I named changes -- everything else the same as the item I have now."
         )
-        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}{same}"
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}{same}" + _gift_mention(rng, k.get("gift_mention", False))
         names = [it.name for it, _ in picks]
         profile: dict[str, Any] = {
             "identity": ident_pool,
@@ -423,7 +433,7 @@ def gen_return_fallback(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Opt
             continue
         items = rng.sample(eligible, n)
         names = [it.name for it in items]
-        if not k["give_order_id"] and not _only_in(order, orders, names):
+        if not k["give_order_id"] and not _only_in(order, ctx.all_orders(user), names):
             continue
         badpm = pm_phrase(rng.choice(bad).model_dump())
         clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
@@ -434,7 +444,7 @@ def gen_return_fallback(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Opt
             "I'd like to send back {w} from {o}. Please refund {p}.",
             "Can I return {w} from {o}? The refund should go to {p}.",
         ])
-        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(w=what, o=ref, p=badpm)}"
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(w=what, o=ref, p=badpm)}" + _gift_mention(rng, k.get("gift_mention", False))
         profile = {
             "identity": ident_pool,
             "order_answer": (
@@ -484,7 +494,7 @@ def gen_modify_payment(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Opti
             if len(order.payment_history) != 1 or order.payment_history[0].transaction_type != "payment":
                 continue
             orig, amount = order.payment_history[0].payment_method_id, order.payment_history[0].amount
-            hint = _hint(order, orders)
+            hint = _hint(order, ctx.all_orders(user))
             if not k["give_order_id"] and hint is None:
                 continue
             others = [p for p in user.payment_methods.values() if p.id != orig and _pm_unique(user, p)]
@@ -513,7 +523,7 @@ def _modify_payment_task(user, order, hint, asked, target_pm, amount, rng, k) ->
         "Can you switch {o} over to {p}?",
         "I want to pay for {o} with {p} rather than the card I used.",
     ])
-    opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=ref, p=asked_phrase)}"
+    opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=ref, p=asked_phrase)}" + _gift_mention(rng, k.get("gift_mention", False))
     profile: dict[str, Any] = {
         "identity": ident_pool,
         "order_answer": (
@@ -559,7 +569,7 @@ def gen_modify_items(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Option
         if len(plans) < n:
             continue
         chosen = rng.sample(plans, n)
-        if not k["give_order_id"] and not _only_in(order, orders, [it.name for it, _ in chosen]):
+        if not k["give_order_id"] and not _only_in(order, ctx.all_orders(user), [it.name for it, _ in chosen]):
             continue
         picks = [(it, rng.choice(opts)) for it, opts in chosen]
         correction = None
@@ -596,7 +606,7 @@ def gen_modify_items(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Option
             if n == 1 else
             " For each, only the option I named changes -- everything else the same as the item I ordered."
         )
-        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}{same}"
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}{same}" + _gift_mention(rng, k.get("gift_mention", False))
         names = [it.name for it, _ in picks]
         profile: dict[str, Any] = {
             "identity": ident_pool,
@@ -669,6 +679,26 @@ def permutation_hashes(task: EpisodeTask, db: Optional[RetailDB] = None, base_ha
     return sorted(out)
 
 
+# (relation, possessive, subject, object) for third-party callers; the same words appear as gift mentions in
+# the user's OWN requests (`_gift_mention`), so a relation word alone never signals a refusal task.
+RELATIONS = [
+    ("sister", "her", "she", "her"), ("brother", "his", "he", "him"), ("roommate", "her", "she", "her"),
+    ("roommate", "his", "he", "him"), ("dad", "his", "he", "him"), ("mom", "her", "she", "her"),
+    ("husband", "his", "he", "him"), ("wife", "her", "she", "her"), ("friend", "their", "they", "them"),
+]
+
+
+def _gift_mention(rng: random.Random, on: bool) -> str:
+    if not on:
+        return ""
+    rel = rng.choice(RELATIONS)[0]
+    return " " + rng.choice([
+        f"I bought it as a gift for my {rel}, but it's on my account.",
+        f"It was meant for my {rel}, but I placed the order myself.",
+        f"My {rel} was going to use it -- it's my order, though.",
+    ])
+
+
 def gen_foreign_order_refusal(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
     status = "pending" if k["request"] == "cancel" else "delivered"
     pool = [o for o in ctx.db.orders.values() if o.status == status]
@@ -683,12 +713,18 @@ def gen_foreign_order_refusal(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) 
         clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
         greet = _greet(rng, clause if k["identity_upfront"] else None)
         item_ids: list[str] = []
+        rel, pos, subj, obj = rng.choice(RELATIONS)
+        reason_pool = ["They don't need it anymore.", "It was ordered by mistake."]
         if k["request"] == "cancel":
-            body = rng.choice([
-                "My roommate asked me to cancel her order {o} -- she doesn't need it anymore. Can you do that?",
-                "I'm calling for my sister: please cancel her order {o}, she ordered it by mistake.",
-            ]).format(o=other.order_id)
-            restate = f"I want order {other.order_id} cancelled for my roommate."
+            body, reason_line = rng.choice([
+                ("My {rel} asked me to cancel {pos} order {o} -- {subj} doesn't need it anymore. Can you do that?",
+                 "They don't need it anymore."),
+                ("I'm calling for my {rel}: please cancel {pos} order {o}, {subj} ordered it by mistake.",
+                 "It was ordered by mistake."),
+            ])
+            body = body.format(rel=rel, pos=pos, subj=subj, o=other.order_id)
+            reason_pool = [reason_line]
+            restate = f"I want order {other.order_id} cancelled for my {rel}."
         else:
             eligible = _unique_names(other)
             if not eligible:
@@ -696,14 +732,14 @@ def gen_foreign_order_refusal(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) 
             it = rng.choice(eligible)
             item_ids = [it.item_id]
             body = rng.choice([
-                "I'm handling a return for my brother: please return the {i} from his order {o} to his original payment method.",
-                "My dad wants to send back the {i} from his order {o}. Can you set up the return for him?",
-            ]).format(i=it.name, o=other.order_id)
-            restate = f"I want to return the {it.name} from order {other.order_id} for a family member."
+                "I'm handling a return for my {rel}: please return the {i} from {pos} order {o} to {pos} original payment method.",
+                "My {rel} wants to send back the {i} from {pos} order {o}. Can you set up the return for {obj}?",
+            ]).format(rel=rel, pos=pos, obj=obj, i=it.name, o=other.order_id)
+            restate = f"I want to return the {it.name} from order {other.order_id} for my {rel}."
         profile = {
             "identity": ident_pool,
             "order_answer": [f"It's {other.order_id}.", f"The order id is {other.order_id}."],
-            "reason": ["They don't need it anymore.", "It was ordered by mistake."],
+            "reason": reason_pool,
             "accept_denial": [
                 "Ah, okay, I understand. I'll tell them to contact you directly. Thanks.",
                 "Oh, right, that makes sense. I'll let them know.",
