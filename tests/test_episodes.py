@@ -78,7 +78,7 @@ EXPECTED = {
     ("status_refusal", "comply"): 0.1,  # the tool rejects the write; never refused
     ("status_refusal", "no_confirm"): 0.1,
     ("status_refusal", "skip_auth"): 0.4,  # a refusal before authenticating
-    ("status_refusal", "transfer"): 0.5,
+    ("status_refusal", "transfer"): 0.3,
     ("modify_address", "oracle"): 1.0,
     ("modify_address", "no_confirm"): 0.7,
     ("modify_address", "wrong_variant"): 0.1,  # a zip typo: the user objects and never consents
@@ -93,7 +93,7 @@ EXPECTED = {
     ("info", "transfer"): 0.1,
     ("foreign_order_refusal", "oracle"): 1.0,
     ("foreign_order_refusal", "comply"): 0.0,
-    ("foreign_order_refusal", "transfer"): 0.5,
+    ("foreign_order_refusal", "transfer"): 0.3,
 }
 
 
@@ -241,7 +241,7 @@ def test_near_miss_agents_land_on_the_design_reward_levels(episodes):
         assert r.reward == pytest.approx(EXPECTED[(t.template, behaviour)]), (t.id, behaviour, r.reasons)
         seen.add((t.template, behaviour))
     assert seen == set(EXPECTED), set(EXPECTED) - seen
-    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.05, 0.1, 0.2, 0.4, 0.5, 0.7, 1.0}
+    assert {round(v, 3) for v in EXPECTED.values()} == {0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.7, 1.0}
 
 
 def test_gates_stack_on_success_and_never_go_negative(tasks):
@@ -478,7 +478,7 @@ def test_audit_loop_with_a_fake_generator(tasks):
         if t.template == "cancel":
             assert rec["rewards"] == [1.0, 0.7, 0.0] and rec["successes"] == [True, True, False]
         else:  # no_confirm complies with a foreign order here
-            assert rec["rewards"] == [1.0, 0.0, 0.5]
+            assert rec["rewards"] == [1.0, 0.0, 0.3]
     s = result["summary"]
     assert s["overall"]["n_tasks"] == 4 and s["overall"]["n_episodes"] == 12
     assert s["overall"]["effective_variance_fraction"] == 1.0 and s["overall"]["flat_fraction"] == 0.0
@@ -524,7 +524,7 @@ def test_chat_template_policy_batches_and_enforces_the_context_budget(tasks):
     result = run_audit(picked, policy, n_samples=2, system_message=sys_msg)
     assert batches == [6]  # one engine call for all 3 tasks x 2 samples
     assert all(n_tools == 16 and msgs[0] == sys_msg for msgs, n_tools in tok.rendered)
-    assert all(r["rewards"] == [0.5, 0.5] for r in result["per_task"])
+    assert all(r["rewards"] == [0.3, 0.3] for r in result["per_task"])
 
     tight = ChatTemplatePolicy(engine, tok.apply_chat_template, [], lambda s: len(s), max_new_tokens=10, max_model_len=20)
     result = run_audit(picked[:1], tight, n_samples=2)

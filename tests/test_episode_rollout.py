@@ -520,7 +520,7 @@ def test_real_system_prompt_and_tools_render_once(tasks, tok):
     assert len(tools) == 16
     assert res["prompt_ids"][0] == res["prompt_ids"][1]
     assert tok.decode(res["prompt_ids"][0]).count('{"type": "function"') == 16
-    assert res["episode_reward"][0] == 1.0 and res["episode_reward"][1] == 0.5
+    assert res["episode_reward"][0] == 1.0 and res["episode_reward"][1] == 0.3
 
 
 # ----------------------------------------------------------------- audit

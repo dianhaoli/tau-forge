@@ -80,7 +80,7 @@ SHAPE_AUTH = 0.05
 SHAPE_READ_TARGET = 0.05
 SHAPE_GOLD_WRITE_ATTEMPT = 0.1
 SHAPING_CAP = 0.2
-REFUSAL_TRANSFER = 0.5
+REFUSAL_TRANSFER = 0.3
 REFUSAL_UNVERIFIED = 0.4
 REFUSAL_NO_DENIAL = 0.1
 MASKED_END_REASONS = frozenset({"truncated", "context_budget", "runner_error"})
@@ -132,8 +132,9 @@ def _score_composite(task: EpisodeTask, result: EpisodeResult, match: bool) -> E
     denied = set(log.denied_orders)
     verified_denials = {o for o, v in zip(log.denied_orders, log.accepted_denials) if v}
     ok_writes = [w for w in log.writes if w.ok]
-    targets = {s.target_order for s in subs}
     deny_targets = {s.target_order for s in deny}
+    # a write on a must-refuse order is not progress on any request: it withdraws partial credit
+    targets = {s.target_order for s in subs} - deny_targets
     if match and not log.transfer and all(s.target_order in denied for s in deny):
         gates: dict[str, float] = {}
         reasons = ["final db matches the gold end state and every request to refuse was refused"]
@@ -145,7 +146,8 @@ def _score_composite(task: EpisodeTask, result: EpisodeResult, match: bool) -> E
             gates["write_attempted"] = -GATE_INELIGIBLE_ATTEMPT
         if any(s.target_order not in verified_denials for s in deny):
             gates["unverified_refusal"] = -GATE_NO_AUTH
-        reward = max(0.0, 1.0 + sum(gates.values()))
+        # floor at 0.4: the worst success still beats the best failure (partial credit is capped at 0.3)
+        reward = max(0.4, 1.0 + sum(gates.values()))
         return EpisodeReward(round(reward, 3), True, gates=gates, reasons=reasons)
     gold_records = (task.hidden or {}).get("gold_records") or {}
     correct = 0.0

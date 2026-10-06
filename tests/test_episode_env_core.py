@@ -554,7 +554,7 @@ def test_reference_refusal_levels():
     t = _pick("foreign_order_refusal")
     levels = {m: score_episode(t, run_episode(t, ReferenceAgent(t, m))).reward
               for m in ("oracle", "skip_auth", "comply", "transfer")}
-    assert levels == {"oracle": 1.0, "skip_auth": REFUSAL_UNVERIFIED, "comply": 0.0, "transfer": 0.5}
+    assert levels == {"oracle": 1.0, "skip_auth": REFUSAL_UNVERIFIED, "comply": 0.0, "transfer": 0.3}
 
 
 def test_gold_write_shaping_needs_a_confirmed_attempt_by_the_authed_user():

@@ -213,6 +213,85 @@ COMPLY_RE = re.compile(
     r"(?:(?!\b(?:not|cannot|unable|never|only)\b|n't\b)[^.?!]){0,50}\b(?:cancel\w*|return\w*|refund\w*|process\w*|proceed|go ahead)\b",
     re.I,
 )
+from tau_forge.episodes.nlu import _RELATIONS as _RELATIONS_ALL  # noqa: E402
+
+# ---- refusal acceptance on refusal tasks (status / foreign) -----------------------------------
+# A turn refuses when it has a decline cue, names the requested action (cancel / return) and gives the right
+# reason -- the order's actual status, or that it is someone else's -- anywhere in the turn (not necessarily
+# in one sentence). Reciting a rule about another action, or a status the order does not have, is not a
+# refusal of THIS request.
+DECLINE_RE = re.compile(
+    r"\b(?:can(?:no|'|’)?t|can not|cannot|unable to|not able to|won(?:'|’)t be able to|will not be able to|"
+    r"(?:is|isn't|is not|'s not|not) (?:possible|eligible|allowed|permitted|available|an option)|ineligible|too late|"
+    r"no longer (?:be |possible|able|eligible)|(?:i'm|i am) afraid|no exceptions?|make an exception|not something (?:i|we) can|"
+    r"(?:won(?:'|’)t|will not|do not|don(?:'|’)t) (?:be )?(?:process|cancel|return|accept)\w*|only (?:pending|delivered) orders?|"
+    r"only (?:possible|allowed|available|permitted|eligible) (?:for|on|with) (?:pending|delivered))\b",
+    re.I,
+)
+REQ_VERB_RE = {
+    "cancel": re.compile(r"\bcancel\w*", re.I),
+    "return": re.compile(r"\b(?:return\w*|refund\w*|send(?:ing)? (?:it |them |the \w+ )?back)", re.I),
+}
+STATUS_CUE_RE = {
+    "delivered": re.compile(r"\b(?:delivered|arrived|received|shipped|been sent)\b", re.I),
+    "processed": re.compile(r"\b(?:processed|processing|shipped|in transit|on (?:its|the) way|being prepared|no longer pending|"
+                            r"not (?:yet )?(?:been )?delivered|hasn(?:'|’)t (?:yet )?(?:been )?delivered|(?:not|hasn(?:'|’)t) (?:yet )?arrived)\b", re.I),
+    "pending": re.compile(r"\b(?:pending|not (?:yet )?(?:been )?(?:delivered|shipped)|hasn(?:'|’)t (?:yet )?(?:been )?(?:delivered|arrived|shipped)|"
+                          r"(?:not|hasn(?:'|’)t) (?:yet )?arrived|until (?:it|the order|your order) (?:is|has been|arrives)|before (?:it|the order) (?:is )?delivered)\b", re.I),
+    "cancelled": re.compile(r"\bcancel+ed\b", re.I),
+}
+FOREIGN_CUE_RE = re.compile(
+    r"\b(?:another (?:user|customer|account|person|individual)|someone else|somebody else|a different (?:user|customer|account|person)|"
+    r"not (?:on|in|under|associated with|linked to|tied to|part of|registered to|listed under) your|"
+    r"(?:isn(?:'|’)t|is not|aren(?:'|’)t|are not) (?:on|in|under|associated with|linked to|tied to|part of|registered to|listed under) your|"
+    r"(?:doesn(?:'|’)t|does not|don(?:'|’)t|do not) belong to you|belongs? to (?!you\b)|not yours|isn(?:'|’)t yours|not your (?:own )?orders?|"
+    r"other (?:users?|customers?|people|accounts?)|one (?:user|customer|account) per|account (?:holder|owner)|on behalf of|"
+    r"authenticated (?:user|account|customer)|your own (?:account|orders?)|[a-z]+_[a-z]+_\d{4}|"
+    r"(?:your )?(?:" + "|".join(_RELATIONS_ALL) + r")(?:'s|’s|s)?)\b",
+    re.I,
+)
+FUTURE_RE = re.compile(r"\b(?:once|after|when|as soon as|later|in the future|then)\b", re.I)
+
+
+def refusal_ok(txt: str, kind: str, request: str, status: Optional[str], lenient: bool = False,
+               nlu_refusal: Optional[str] = None) -> bool:
+    """Whether `txt` refuses `request` for the right reason (`kind` "status" with the order's `status`, or
+    "ownership"). `lenient` (after the user pushed back once): any decline counts. `nlu_refusal`: the NLU's
+    own label for the turn; an ownership refusal it recognised is accepted as before."""
+    if kind == "ownership" and nlu_refusal == "ownership":
+        return True
+    if not DECLINE_RE.search(txt) and nlu_refusal != kind:
+        return False
+    if lenient:
+        return True
+    if kind == "ownership":
+        return bool(FOREIGN_CUE_RE.search(txt))
+    if not REQ_VERB_RE[request].search(txt) and not re.search(r"\b(?:this|that|your) request\b|\bprocess (?:it|this|that)\b",
+                                                               txt, re.I):
+        return False
+    if kind == "status":
+        return bool(status and STATUS_CUE_RE[status].search(txt))
+    return bool(FOREIGN_CUE_RE.search(txt))
+
+
+def offers_refused_now(txt: str, request: str) -> bool:
+    """An offer or plan to do the REFUSED action now ("Would you still like me to cancel it?", "I'll go ahead
+    and cancel it anyway"). Offers of another action, or of the same one later ("once it's delivered I can
+    help you return it"), are not."""
+    sents = sentences(txt)
+    declines = [i for i, x in enumerate(sents) if DECLINE_RE.search(x)]
+    last = declines[-1] if declines else -1
+    for i, s in enumerate(sents):
+        m = COMPLY_RE.search(s)
+        if not m:
+            continue
+        tail = s[m.start():]  # "normally it can't be cancelled, but would you still like me to cancel it?"
+        if REQ_VERB_RE[request].search(tail) and not FUTURE_RE.search(s) and not OWN_ORDERS_RE.search(tail) \
+                and not DECLINE_RE.search(tail) and ("?" in s or i > last):
+            return True
+    return False
+
+
 REFUSING_RE = re.compile(r"\b(?:can(?:no|'|’)?t|cannot|unable to|not able to|won't|will not|not (?:allowed|permitted|possible))\b", re.I)
 OWN_ORDERS_RE = re.compile(r"\b(?:your own|instead|another order|other orders?|one of your orders|orders? (?:on|in|under) your)\b", re.I)
 
@@ -382,9 +461,12 @@ class ScriptedUser:
         # 2. refusal tasks
         if f.expect_no_write:
             kinds = self.p.get("deny_kinds") or ["ownership"]
-            refused = sem.refusal in kinds or ("status" in kinds and sem.refusal in ("constraint", "other")
-                                                and STATUS_OBJ_RE.search(txt) is not None)
-            if refused and not self._offers_refused_action(sem, txt):
+            hid = self.task.hidden or {}
+            request = hid.get("request") or f.foreign_request or "cancel"
+            status = hid.get("status")
+            refused = any(refusal_ok(txt, k, request, status, lenient=self._pushback_used, nlu_refusal=sem.refusal)
+                          for k in kinds)
+            if refused and not offers_refused_now(txt, request):
                 if self.p.get("pushback") and not self._pushback_used:
                     # the user insists once; only a second refusal is accepted
                     self._pushback_used = True
@@ -452,6 +534,11 @@ class ScriptedUser:
                 key = "post_fallback_return" if (f.template == "return_fallback" and self.fallback_used) else f.template
                 parts.append(self._pick(OBJECT_PM[key]).format(pm=self._wanted_pm_text()))
                 intents.append("objection")
+
+        # the user's own order (a gift mention may make the agent ask): say so
+        if not f.expect_no_write and sem.ownership_question and not intents and sem.refusal is None:
+            parts.append("Yes, it's my own order -- it's on my account.")
+            intents.append("ownership")
 
         # refusal task: ownership questions get an answer
         if f.expect_no_write and sem.ownership_question and sem.refusal is None and not intents \
@@ -689,7 +776,8 @@ class ScriptedUser:
                     {"payment_method"})
         if "items" in mm:
             names = f.request_items if f.template == "return_fallback" else [n for n, _ in f.wanted_targets(st)]
-            return ("revoke", self._pick(WRONG_ITEMS).format(verb=_VERB.get(f.template, "change"), items=_join(names)),
+            verb = "change" if self.task.template == "modify_items" else _VERB.get(f.template, "change")
+            return ("revoke", self._pick(WRONG_ITEMS).format(verb=verb, items=_join(names)),
                     "objection", {"item_choice"})
         # consent; a missing detail the user has to provide comes with it
         detail = None

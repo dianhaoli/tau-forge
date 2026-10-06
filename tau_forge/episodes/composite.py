@@ -38,7 +38,8 @@ from tau_forge.episodes.task import ORDER_ID_RE, STOP, EpisodeTask, base_db
 
 THANKS = ["Great, thank you! That's all I needed.", "Perfect, thanks for your help.", "Thanks, that's everything."]
 NEXT = ["Thanks! One more thing: ", "Great, thank you. I also need something else: ", "Perfect. There's one more thing: "]
-_GREETING_RE = re.compile(r"^(?:Hi|Hello|Hey there)(?:!|,[^.!?]*[.!?])\s*")
+_GREETING_RE = re.compile(
+    r"^(?:Hi|Hello|Hey there)(?:!|, (?:my email is \S+@\S+?|I'm [^.!?]*? and my zip code is \d{5})\.)\s*")
 
 # Combos (sub-request templates in reveal order) and weights, after the write-type combinations of tau2
 # retail's train split (aggregate counts only): repeated cancels / returns / exchanges on different orders,
@@ -130,6 +131,8 @@ class CompositeUser:
             ids = set(ORDER_ID_RE.findall(s))
             if ids and ids <= done and not ids & cur:
                 continue
+            for oid in ids & done - cur:  # "Now that #W1 is done, I'll modify #W2": keep it about #W2
+                s = s.replace(oid, "the earlier order")
             keep.append(s)
         return " ".join(keep) if keep else txt
 

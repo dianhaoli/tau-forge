@@ -34,7 +34,9 @@ def _ctx(t):
 @pytest.mark.parametrize("text", [
     "Unfortunately, since order {o} has already been delivered, it cannot be cancelled.",
     "I'm sorry, but order {o} has already been delivered, so I'm unable to cancel it. Only pending orders can be cancelled.",
-    "Order {o} is already being processed, which means it can no longer be cancelled.",
+    "Order {o} has already shipped, which means it can no longer be cancelled.",
+    "I apologize, but I can't cancel this order. It has already been delivered.",
+    "Order {o} is not eligible for cancellation because it was already delivered.",
 ])
 def test_cancel_status_refusals_are_accepted(tasks, text):
     t = next(t for t in tasks if t.hidden["request"] == "cancel" and t.hidden["status"] == "delivered"
@@ -80,3 +82,34 @@ def test_attempting_the_write_before_refusing_costs_the_gate(tasks):
     t = next(t for t in tasks if not t.profile.get("pushback"))
     r = score_episode(t, run_episode(t, TryThenRefuse(t, "no_confirm")))
     assert r.reward == pytest.approx(0.7) and "write_attempted" in r.gates, r.reasons
+
+
+def test_wrong_rule_recital_is_not_a_refusal(tasks):
+    """C1: a rule about another action, or a status the order does not have, does not refuse this request."""
+    t = next(t for t in tasks if t.hidden["request"] == "cancel" and t.hidden["status"] == "delivered"
+             and not t.profile.get("pushback"))
+    for text in ("Please note that only delivered orders can be returned.",
+                 f"I'm sorry, order {t.target_order} is still pending, so it can't be cancelled."):
+        assert ScriptedUser(t).reply(text, _ctx(t)).intent != "accept_denial", text
+
+
+def test_refusal_with_an_alternative_offer_is_accepted(tasks):
+    """C3/F1: offering a different or later action does not veto the refusal, and the user never consents to it."""
+    t = next(t for t in tasks if t.hidden["request"] == "cancel" and t.hidden["status"] == "delivered"
+             and not t.profile.get("pushback"))
+    r = ScriptedUser(t).reply(f"Order {t.target_order} has already been delivered, so I can't cancel it. "
+                              "Would you like me to start a return instead?", _ctx(t))
+    assert r.intent == "accept_denial" and not r.confirms
+    t = next(t for t in tasks if t.hidden["request"] == "return" and t.hidden["status"] == "pending"
+             and not t.profile.get("pushback"))
+    r = ScriptedUser(t).reply(f"Order {t.target_order} hasn't been delivered yet, so I can't return it. Once it's "
+                              "delivered, I can help you return it.", _ctx(t))
+    assert r.intent == "accept_denial"
+
+
+def test_offering_the_refused_action_now_vetoes(tasks):
+    t = next(t for t in tasks if t.hidden["request"] == "cancel" and t.hidden["status"] == "delivered"
+             and not t.profile.get("pushback"))
+    r = ScriptedUser(t).reply(f"Order {t.target_order} has been delivered, so normally it can't be cancelled, but "
+                              "would you still like me to cancel it?", _ctx(t))
+    assert r.intent != "accept_denial"
