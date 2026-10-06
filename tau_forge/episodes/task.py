@@ -56,7 +56,7 @@ ID_RE = re.compile(
 )
 ORDER_ID_RE = re.compile(r"#W\d{7}")
 
-TEMPLATES = ("cancel", "exchange", "return_fallback", "modify_payment", "foreign_order_refusal")
+TEMPLATES = ("cancel", "exchange", "return_fallback", "modify_payment", "foreign_order_refusal", "modify_items")
 
 
 @functools.lru_cache(maxsize=1)
@@ -105,6 +105,11 @@ class EpisodeTask:
     # on the target order, or on the user record for modify_user_address --
     # and no slot at all for a refusal task.
     slots: Optional[list[dict[str, str]]] = None
+    # Other end states that are equally correct. tau2's modify_pending_order_items
+    # writes every modified item's price/options from the LAST (old, new) pair
+    # (tools.py), so the end state depends on the order the agent lists items
+    # in; every permutation's hash is accepted.
+    alt_gold_db_hashes: list[str] = field(default_factory=list)
     # Per-task episode budgets; None uses the `Episode` arguments.
     max_turns: Optional[int] = None
     max_calls: Optional[int] = None
@@ -136,6 +141,8 @@ class EpisodeTask:
         for k in ("max_turns", "max_calls"):
             if d[k] is None:
                 del d[k]
+        if not d["alt_gold_db_hashes"]:
+            del d["alt_gold_db_hashes"]
         return d
 
     @classmethod

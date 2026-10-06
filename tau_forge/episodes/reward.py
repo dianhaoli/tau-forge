@@ -119,7 +119,7 @@ def score_episode(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
 
 def _score(task: EpisodeTask, result: EpisodeResult) -> EpisodeReward:
     log = result.log
-    match = result.final_db_hash == task.gold_db_hash
+    match = result.final_db_hash == task.gold_db_hash or result.final_db_hash in (task.alt_gold_db_hashes or [])
     ok_writes = [w for w in log.writes if w.ok]
 
     if task.expect_no_write:

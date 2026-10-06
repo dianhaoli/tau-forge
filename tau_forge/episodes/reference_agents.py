@@ -156,13 +156,13 @@ class ReferenceAgent:
         h, t = self.t.hidden, self.t.template
         if t == "cancel":
             names = [h["target_hint"] if self.said(messages, "correction") else h["first_hint"]]
-        elif t == "exchange":
+        elif t in ("exchange", "modify_items"):
             names = [n for n, _ in h["targets"]]
         elif t == "return_fallback":
             names = h["item_names"]
         else:
             names = [h["hint"]]
-        status = "pending" if t in ("cancel", "modify_payment") else "delivered"
+        status = "pending" if t in ("cancel", "modify_payment", "modify_items") else "delivered"
         for oid in self.user_details(messages)["orders"]:
             od = self.order(messages, oid)
             if od is None:
@@ -185,7 +185,11 @@ class ReferenceAgent:
                               f"{self.order(messages, oid)['status']}) with reason '{reason}'")
         return self.write("cancel_pending_order", {"order_id": oid, "reason": reason})
 
-    def exchange(self, messages, text: str, oid: str) -> str:
+    def modify_items(self, messages, text: str, oid: str) -> str:
+        return self.exchange(messages, text, oid, tool="modify_pending_order_items", verb="modify")
+
+    def exchange(self, messages, text: str, oid: str, tool: str = "exchange_delivered_order_items",
+                 verb: str = "exchange") -> str:
         od = self.order(messages, oid)
         targets = [tuple(x) for x in self.t.hidden["targets"]]
         if self.t.hidden.get("correction") and self.said(messages, "correction"):
@@ -211,8 +215,8 @@ class ReferenceAgent:
         if self.mode == "halluc_pm":
             pm = "credit_card_1234567"
         if not self.ready(messages):
-            return self.recap(f"exchange items {item_ids} in order {oid} ({', '.join(n for n, _ in targets)}) for {new_ids}, using {pm}")
-        return self.write("exchange_delivered_order_items",
+            return self.recap(f"{verb} items {item_ids} in order {oid} ({', '.join(n for n, _ in targets)}) for {new_ids}, using {pm}")
+        return self.write(tool,
                           {"order_id": oid, "item_ids": item_ids, "new_item_ids": new_ids, "payment_method_id": pm})
 
     def return_fallback(self, messages, text: str, oid: str) -> str:

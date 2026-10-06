@@ -90,6 +90,13 @@ KNOB_SPACE: dict[str, dict[str, list[Any]]] = {
         "gift_card_short": [True, False],
         "identity_upfront": [True, False],
     },
+    "modify_items": {
+        "n_items": [1, 1, 2, 2, 3],
+        "give_order_id": [True, False],
+        "id_mode": ["name_zip", "name_zip", "name_zip", "email"],
+        "late_correction": [False, False, True],
+        "identity_upfront": [True, False],
+    },
     "foreign_order_refusal": {
         "request": ["cancel", "return"],
         "id_mode": ["email", "name_zip"],
@@ -535,6 +542,133 @@ def _modify_payment_task(user, order, hint, asked, target_pm, amount, rng, k) ->
     )
 
 
+def gen_modify_items(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
+    """Change item options on a PENDING order: `modify_pending_order_items`.
+    Same shape as an exchange (item names + one option change each + a
+    payment method for the difference), but the tool is single-use per order
+    -- policy.md: collect every item before calling it -- and the order is
+    still pending, so the right tool is modify, not exchange."""
+    n = k["n_items"]
+    if k["late_correction"] and n >= 3:
+        return None
+    for user, orders in ctx.users_with("pending", rng):
+        if not ctx.unique_identity(user, k["id_mode"]):
+            continue
+        order = rng.choice(orders)
+        plans = [(it, t) for it in _unique_names(order) if (t := _variant_targets(ctx.db, it))]
+        if len(plans) < n:
+            continue
+        chosen = rng.sample(plans, n)
+        if not k["give_order_id"] and not _only_in(order, orders, [it.name for it, _ in chosen]):
+            continue
+        picks = [(it, rng.choice(opts)) for it, opts in chosen]
+        correction = None
+        if k["late_correction"]:
+            alts = [(v, d) for v, d in chosen[0][1] if v.item_id != picks[0][1][0].item_id]
+            if not alts:
+                continue
+            correction = (picks[0][0], rng.choice(alts))
+        final = [correction] + picks[1:] if correction else list(picks)
+        diff_price = round(sum(v.price - it.price for it, (v, _) in final), 2)
+        pms = [
+            p for p in user.payment_methods.values()
+            if _pm_unique(user, p) and not (p.source == "gift_card" and p.balance < max(diff_price, 0))
+        ]
+        if not pms:
+            continue
+        pm = rng.choice(pms).model_dump()
+        phrase = pm_phrase(pm)
+        clause, ident_pool, auth, ident_hidden = _identity(user, k["id_mode"])
+
+        def req(it, d):
+            key, val = next(iter(d.items()))
+            return f"the {it.name} {change_phrase(key, val)}"
+
+        reqs = _join([req(it, d) for it, (v, d) in picks])
+        order_ref = f"order {order.order_id}" if k["give_order_id"] else "an order I placed that hasn't shipped yet"
+        verb = rng.choice([
+            "I'd like to change some items on {o}: I want {r} instead.",
+            "Can I modify {o}? I'd like {r} instead.",
+            "I need to update the items in {o} -- I want {r} instead.",
+        ])
+        same = (
+            " Just that one option changed -- everything else the same as the item I ordered."
+            if n == 1 else
+            " For each, only the option I named changes -- everything else the same as the item I ordered."
+        )
+        opening = f"{_greet(rng, clause if k['identity_upfront'] else None)} {verb.format(o=order_ref, r=reqs)}{same}"
+        names = [it.name for it, _ in picks]
+        profile: dict[str, Any] = {
+            "identity": ident_pool,
+            "order_answer": (
+                [f"It's {order.order_id}.", f"The order number is {order.order_id}."] if k["give_order_id"]
+                else [f"I don't remember the number -- it's the pending one with the {names[0]}.",
+                      f"It's the order that has the {_join(names)} in it."]
+            ),
+            "payment": [f"Please use {phrase}.", f"Let's use {phrase} for any difference.", f"I'll go with {phrase}."],
+            "restate": f"I want to change {reqs} on {order_ref}.{same}",
+            "recap_keys": [order.order_id] + names,
+        }
+        if correction:
+            it0, (vc, dc) = correction
+            key, val = next(iter(dc.items()))
+            profile["correction"] = [
+                f"Wait, sorry -- for the {it0.name}, forget the change I asked for: I actually want it "
+                f"{change_phrase(key, val)} instead, with everything else the same as what I ordered.",
+                f"Hold on, I changed my mind on the {it0.name}: drop my first change and make it "
+                f"{change_phrase(key, val)} instead, keeping every other option the same as the one I ordered.",
+            ]
+            profile["restate_after_correction"] = (
+                f"I want to change {_join([req(it, d) for it, (v, d) in final])} on {order_ref}.{same}"
+            )
+        gold = [auth, {"name": "get_user_details", "arguments": {"user_id": user.user_id}}]
+        gold += _order_reads(user, order.order_id, k["give_order_id"])
+        for pid in dict.fromkeys(it.product_id for it, _ in final):
+            gold.append({"name": "get_product_details", "arguments": {"product_id": pid}})
+        gold.append({"name": "modify_pending_order_items", "arguments": {
+            "order_id": order.order_id,
+            "item_ids": [it.item_id for it, _ in final],
+            "new_item_ids": [v.item_id for _, (v, _) in final],
+            "payment_method_id": pm["id"],
+        }})
+        return EpisodeTask(
+            id="", template="modify_items", user_id=user.user_id, opening=opening, profile=profile,
+            gold_actions=gold, target_order=order.order_id,
+            difficulty={**k, "price_diff": diff_price},
+            hidden={**ident_hidden, "pm_phrase": phrase,
+                    "targets": [[it.name, d] for it, (v, d) in picks],
+                    "correction": [correction[0].name, correction[1][1]] if correction else None,
+                    "item_ids": [it.item_id for it, _ in final]},
+            involved_users=[user.user_id],
+        )
+    return None
+
+
+def permutation_hashes(task: EpisodeTask, db: Optional[RetailDB] = None, base_hash: Optional[str] = None) -> list[str]:
+    """End-state hashes of the gold chain with the (old, new) pairs of every
+    multi-item modify_pending_order_items call permuted (see
+    `EpisodeTask.alt_gold_db_hashes`). Empty when no write is order-dependent."""
+    import itertools
+
+    idx = [i for i, a in enumerate(task.gold_actions)
+           if a["name"] == "modify_pending_order_items" and len(a["arguments"]["item_ids"]) > 1]
+    if not idx:
+        return []
+    out: set[str] = set()
+    i = idx[-1]
+    args = task.gold_actions[i]["arguments"]
+    pairs = list(zip(args["item_ids"], args["new_item_ids"]))
+    for perm in itertools.permutations(pairs):
+        env = CowEnv(db if db is not None else base_db(), base_hash)
+        for j, a in enumerate(task.gold_actions):
+            a_args = a["arguments"]
+            if j == i:
+                a_args = {**a_args, "item_ids": [p[0] for p in perm], "new_item_ids": [p[1] for p in perm]}
+            env.execute(a["name"], a_args)
+        out.add(env.db_hash())
+    return sorted(out)
+
+
 def gen_foreign_order_refusal(ctx: _Ctx, rng: random.Random, k: dict[str, Any]) -> Optional[EpisodeTask]:
     status = "pending" if k["request"] == "cancel" else "delivered"
     pool = [o for o in ctx.db.orders.values() if o.status == status]
@@ -593,6 +727,7 @@ GENERATORS: dict[str, Callable[[_Ctx, random.Random, dict[str, Any]], Optional[E
     "return_fallback": gen_return_fallback,
     "modify_payment": gen_modify_payment,
     "foreign_order_refusal": gen_foreign_order_refusal,
+    "modify_items": gen_modify_items,
 }
 assert set(GENERATORS) == set(TEMPLATES) == set(KNOB_SPACE)
 
@@ -741,6 +876,11 @@ def generate_tasks(
                 st["decontam_gold_hash"] += 1
                 continue
             task.gold_db_hash = report.gold_db_hash
+            alts = [h for h in permutation_hashes(task, db, base_hash) if h != report.gold_db_hash]
+            if any(h in real_hashes for h in alts):
+                st["decontam_gold_hash"] += 1
+                continue
+            task.alt_gold_db_hashes = alts
             task.id = f"ep_{template}_s{seed}_{produced:05d}"
             tasks.append(task)
             produced += 1

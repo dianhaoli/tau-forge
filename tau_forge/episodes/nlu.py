@@ -191,6 +191,9 @@ class TaskFacts:
     # Old (s0) correction wording "Everything else is right" adds the option change to the first one;
     # the current wording ("forget the change I asked for ... instead") replaces it.
     correction_additive: bool = False
+    # modify_items: the "exchange" is a modification of a pending order's items, so "modify / change /
+    # update the items" names the action too
+    pending_item_change: bool = False
 
     def wanted_targets(self, state: Optional[NLUState]) -> list[tuple[str, dict[str, str]]]:
         targets = [tuple(t) for t in self.exchange_targets]
@@ -277,7 +280,9 @@ def facts_from(task: Any) -> TaskFacts:
             template = "foreign_order_refusal" if expect_no_write else ""
     else:
         hidden = task.hidden
-        template = task.template
+        # modify_items is an exchange of item variants on a pending order: same request shape (items, new
+        # options, a payment method for the difference), so the NLU reads it as an exchange
+        template = "exchange" if task.template == "modify_items" else task.template
         target = task.target_order
         opening = task.opening
         expect_no_write = task.expect_no_write
@@ -373,6 +378,7 @@ def facts_from(task: Any) -> TaskFacts:
         original_pm=original_pm, gold_pm=gold_pm, asked_pm=asked_pm, fallback_pm=fallback_pm,
         request_items=request_items, relation=relation, foreign_request=foreign_request,
         product_options=product_options,
+        pending_item_change=(not isinstance(task, dict) and task.template == "modify_items"),
         correction_additive=bool(profile.get("correction")) and not any(
             re.search(r"\b(?:forget|drop)\b", c) for c in profile.get("correction") or []),
     )
@@ -1289,6 +1295,10 @@ def _analyze(text: str, facts: TaskFacts, state: NLUState) -> Semantics:
 def _detect_action(full: str, facts: TaskFacts) -> Optional[str]:
     hits = {a: len(rx.findall(full)) for a, rx in ACTION_WORDS.items()}
     hits = {a: n for a, n in hits.items() if n}
+    if facts.pending_item_change:
+        mods = len(re.findall(r"\b(?:modif\w*|chang\w*|updat\w*|switch\w*)\b", full, re.I))
+        if mods and any(n.lower() in full.lower() for n, _ in facts.exchange_targets):
+            hits["exchange"] = hits.get("exchange", 0) + mods
     if facts.template == "exchange" and not hits.get("exchange") and re.search(r"(?:->|\u2192|=>)", full) and any(
             n.lower() in full.lower() for n, _ in facts.exchange_targets):
         hits["exchange"] = 1
