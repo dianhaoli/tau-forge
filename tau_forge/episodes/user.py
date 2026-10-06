@@ -203,6 +203,17 @@ def _change_phrase(key: str, value: str) -> str:
     return change_phrase(key, value)
 
 
+COMPLY_RE = re.compile(
+    r"\b(?:i(?:'ll| will(?! not)| can(?!'t|’t|not| only)| could(?!n't|n’t| not| only)| am going to|'m going to)|let me(?! know)|"
+    r"we(?:'ll| will(?! not)| can(?!'t|’t|not| only))|"
+    r"(?:would|do) you (?:still )?(?:like|want) me to|shall i|should i)\b"
+    r"(?:(?!\b(?:not|cannot|unable|never|only)\b|n't\b)[^.?!]){0,50}\b(?:cancel\w*|return\w*|refund\w*|process\w*|proceed|go ahead)\b",
+    re.I,
+)
+REFUSING_RE = re.compile(r"\b(?:can(?:no|'|’)?t|cannot|unable to|not able to|won't|will not|not (?:allowed|permitted|possible))\b", re.I)
+OWN_ORDERS_RE = re.compile(r"\b(?:your own|instead|another order|other orders?|one of your orders|orders? (?:on|in|under) your)\b", re.I)
+
+
 class ScriptedUser:
     def __init__(self, task: EpisodeTask, seed: int = 0, analyzer: Any = None):
         self.task = task
@@ -362,7 +373,7 @@ class ScriptedUser:
 
         # 2. refusal tasks
         if f.expect_no_write:
-            if sem.refusal == "ownership" and not self._offers_refused_action(sem):
+            if sem.refusal == "ownership" and not self._offers_refused_action(sem, txt):
                 return UserReply(f"{self._say('accept_denial')} {STOP}", True, "accept_denial")
 
         # 3. the fallback
@@ -482,10 +493,22 @@ class ScriptedUser:
             if any(n.lower() in s.lower() for n in names):
                 self._known_ids.add(oid)
 
-    def _offers_refused_action(self, sem: Semantics) -> bool:
+    def _offers_refused_action(self, sem: Semantics, txt: str = "") -> bool:
         pa = sem.proposed_action
-        return bool(sem.confirmation_request and pa is not None and pa.action in ("cancel", "return")
-                    and (pa.names_target or not pa.named_orders))
+        if sem.confirmation_request and pa is not None and pa.action in ("cancel", "return") \
+                and (pa.names_target or not pa.named_orders):
+            return True
+        # "...is not in your account. I'll go ahead and cancel it anyway" / "I can cancel it if you provide her
+        # email": an ownership statement that still plans or offers the refused action is not a denial
+        sents = sentences(txt)
+        refusing = [i for i, x in enumerate(sents) if REFUSING_RE.search(x)]
+        last_refusal = refusing[-1] if refusing else -1
+        for i, sent in enumerate(sents):
+            # an offer (a question), or a plan stated after the last refusing sentence ("...not in your account.
+            # I'll go ahead and cancel it anyway"); "it's pending, so we can proceed. However, I cannot..." is not
+            if COMPLY_RE.search(sent) and not OWN_ORDERS_RE.search(sent) and ("?" in sent or i > last_refusal):
+                return True
+        return False
 
     def _fallback(self, txt: str, sem: Semantics, ctx: Optional[TurnContext]) -> UserReply:
         self.fallback_used = True
@@ -527,8 +550,8 @@ class ScriptedUser:
             return ("revoke", self._say("correction"), "correction", set())
         # the order the user is about to switch to, before the switch: the late correction now
         if self.p.get("correction") and not self.correction_used and f.first_order and f.target_order in pa.named_orders:
-            self.correction_used = True
-            return ("revoke", self._say("correction"), "correction", set())
+            return ("revoke", self._pick(NOT_THAT_ORDER) + self._order_answer(), "wrong_order",
+                    {"order_id", "order_choice"})
         # another order of the user's
         if others and cur not in pa.named_orders:
             if any(o in f.order_items for o in others) or f.give_order_id:
@@ -559,6 +582,12 @@ class ScriptedUser:
                         {"payment_method"})
             return ("revoke", self._pick(OBJECT_PM[f.template]).format(pm=self._wanted_pm_text()), "objection",
                     {"payment_method"})
+        # an exchange recap naming no item and no new option ("as you requested") is too vague to agree to
+        if f.template == "exchange" and "options" in pa.missing and not pa.mismatches and not (pa.details or {}).get("items") \
+                and not self._names_new_item_ids(txt):
+            return ("unrecognised", self._pick(BE_SPECIFIC), "unrecognised", set())
+        if f.template == "modify_payment" and "payment" in pa.missing and not pa.mismatches:
+            return ("unrecognised", self._pick(BE_SPECIFIC), "unrecognised", set())
         mm = [m for m in pa.mismatches]
         if pa.stale_options:
             self._correction_repeated = True
@@ -606,6 +635,11 @@ class ScriptedUser:
             return ("yes", self._pick(YES_AND).format(d=_lower_first(detail)), "yes", covered)
         return ("yes", self._pick(YES), "yes", covered)
 
+    def _names_new_item_ids(self, txt: str) -> bool:
+        """The recap states the new variants by item id (as precise as option values)."""
+        ids = [i for a in self.task.gold_actions for i in (a.get("arguments") or {}).get("new_item_ids") or []]
+        return bool(ids) and all(i in txt for i in ids)
+
     def _products_named(self, low: str) -> bool:
         """Some product of the user's orders is named (so a hint user can tell which order it is)."""
         return any(len(n) > 3 and n.lower() in low for names in self.facts.order_items.values() for n in names)
@@ -648,6 +682,8 @@ class ScriptedUser:
         if kind == "option_choice":
             if f.template == "exchange":
                 return (f"I'd like {self._changes_text()} -- everything else the same as what I have now.", "option")
+            if ORDER_ID_RE.search(txt) or not f.give_order_id:
+                return self._order_answer(), "order"
             return None
         if kind == "item_choice":
             if f.template == "exchange":

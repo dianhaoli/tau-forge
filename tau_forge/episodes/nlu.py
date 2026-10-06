@@ -449,7 +449,8 @@ def request_units(text: str) -> tuple[list[str], list[Unit]]:
             s0 = ps[i]
             all_sents.append(s0)
             header = bool(re.search(r"^[\w ]{0,30}\b(?:needed|required|info(?:rmation)? needed)\W*$", s0, re.I))
-            asking_intro = bool(re.search(r"\b(?:please|kindly|confirm|provide|could you|can you|let me know)\b", s0, re.I))
+            asking_intro = bool(re.search(r"\b(?:please|kindly|confirm|provide|could you|can you|let me know)\b", s0, re.I)) or bool(
+                re.search(r"\b(?:i|we)(?:'ll| will|'d| would)?(?: (?:just|also|first|still))? (?:need|require)\b(?! to)", s0, re.I))
             if (s0.endswith(":") or header) and (is_request(s0) or NEED_RE.search(s0) or header) and (
                     asking_intro or not _PLAN_INTRO_RE.search(s0)):
                 items = []
@@ -687,7 +688,9 @@ OWNERSHIP_STATEMENT_RE = re.compile(  # whose order it is, said declaratively
     r"(?:placed|made|owned) (?:by|under|through) (?:a different|another|someone|your|her|his|their)|"
     r"under (?:a different|another|someone else's|her|his|their) (?:account|user|name)|"
     r"(?:is|'s|isn't|is not) (?:registered|linked|associated) (?:to|with|under) (?:a different|another|someone)|"
-    r"(?:ask|tell) (?:your|her|him|them)\b[^.?!]{0,30}\bto contact us)",
+    r"(?:ask|tell) (?:your|her|him|them)\b[^.?!]{0,30}\bto contact us|"
+    r"belongs? to (?:the )?(?:user|customer|account)\b|(?:user ?id|account)\b[^.?!]{0,40}\b[a-z]+_[a-z]+_\d{4}|"
+    r"(?:different from|(?:does not|doesn't|do not|don't) match|not the same as) (?:your|the (?:one|account|user) you))",
     re.I,
 )
 OWNERSHIP_DENY_CTX_RE = re.compile(  # a sentence describing whose order it is -- needed with OWNERSHIP_OBJ for a refusal
@@ -721,6 +724,21 @@ CONSTRAINT_RE = re.compile(
     r"one (?:user|customer) per)\b",
     re.I,
 )
+# A stated RULE about where a refund / payment may go or what a balance allows. Unlike CONSTRAINT_RE (tuned
+# for the gold constraint_statement label), a plain description of the plan ("refund to the original payment
+# method") or a question about it is not one. Only these earn the payment fallback.
+PAY_RULE_RE = re.compile(
+    r"\b(?:must (?:be|go|either)|can only (?:be|go)|(?:can|could|will|may) only be (?:refunded|issued|sent|processed|returned|made|used)|"
+    r"only (?:be )?(?:refunded|issued|sent|processed|returned|used) (?:to|if|when)|either (?:the )?original|original payment method or|"
+    r"or (?:to )?(?:a|the|an existing|your) gift card|(?:refunds?|refunded) (?:are|is|will be|can be)? ?only|only (?:to|back to) the original|"
+    r"(?:not|isn't|aren't) (?:an )?(?:eligible|allowed|permitted|possible|supported)|"
+    r"(?:doesn't|does not|don't|do not) have (?:enough|sufficient)|insufficient|not enough|not sufficient|isn't enough|isn't sufficient|"
+    r"(?:not|doesn't|does not|won't|cannot|can't) (?:fully )?cover|less than|lower than|exceeds?|short of|only has|only have|"
+    r"too (?:low|small)|not (?:high|large|big) enough|policy|"
+    r"(?:can(?:no|')?t|cannot|unable to|not able to|won't be able to|wasn't able to|was not able to) (?:be )?(?:refund|use|send|process|switch|change|issue|put|go)\w*)\b"
+    r"|\$\s?[\d,.]+\s*<",
+    re.I,
+)
 CHECK_PLAN_RE = re.compile(
     r"\b(?:let me|i(?:'ll| will| am going to|'m going to)|allow me to|i need to|i have to|i'd like to|i will now|"
     r"one moment while i|while i)\b[^.?!]{0,30}\b(?:check|see|verify|look|confirm|find out|determine|review|pull up|look up)\b",
@@ -747,6 +765,12 @@ ORIGINAL_RE = re.compile(
     re.I,
 )
 CREDIT_RE = re.compile(r"\bcredit card\b", re.I)
+# "to be paid with X", "will be paid using X", "so it is paid with X": X is the method proposed, not the current one
+FUTURE_PAID_RE = re.compile(
+    r"\b(?:to be|will be|would be|shall be|should be|be|so (?:that )?it(?:'s| is)|it(?:'ll| will) be|instead) (?:now )?(?:paid|charged|covered|billed)"
+    r" (?:for )?(?:with|via|using|by|on|through|to)\W*(?:your |the |a |an |my )?$",
+    re.I,
+)
 NOT_PROPOSED_BEFORE_RE = re.compile(
     r"(?:\bfrom|\bcurrent(?:ly)?(?: payment(?: method)?)?(?: is| was|:)?|\bwas (?:paid|made|purchased|charged)(?: for)?(?: with| via| using| by| on| through)?|"
     r"\bpaid (?:for )?(?:with|via|using|by|on|through)|\bpurchased (?:with|using)|\binstead of|\brather than|\bnot|\bother than|"
@@ -809,8 +833,8 @@ def _negated_request(s: str) -> bool:
 
 CONSENT_RE = re.compile(
     r"\b(?:shall i\b(?! (?:transfer|connect|check|look|help|assist))|"
-    r"should i (?:go ahead|proceed|continue|cancel|exchange|return|change|update|process|modify|switch|submit|initiate|place|move|set)|"
-    r"(?:would|do|will) you (?:like|want|wish) me to (?!transfer|help|assist|check|look|search|provide|explain|guide|connect|find|"
+    r"should i (?:still )?(?:go ahead|proceed|continue|cancel|exchange|return|change|update|process|modify|switch|submit|initiate|place|move|set)|"
+    r"(?:would|do|will) you (?:still )?(?:like|want|wish) me to (?!transfer|help|assist|check|look|search|provide|explain|guide|connect|find|"
     r"verify|locate|pull|review|recommend|walk|send you|escalate|create|add)|"
     r"(?:would|do) you (?:like|want|wish) to (?:proceed|go ahead|continue)\b(?! with (?:a|another|other|different|one of|either|only|just))|"
     r"(?:if|whether) (?:you(?:'d| would| want| wish)?|you'd) (?:still )?(?:like|want|wish)? ?(?:me )?to (?:proceed|go ahead|continue|cancel|exchange|"
@@ -866,6 +890,8 @@ def _consent_clause(c: str) -> bool:
     if not CONSENT_RE.search(c):
         return False
     m0 = CONSENT_RE.search(c)
+    if re.match(r"^\W*(?:why|what|which|how|when|where|who)\b", c, re.I) and not re.search(r"\byes\b", c, re.I):
+        return False  # "Why do you want to cancel order #W1?" asks for information, not consent
     if re.search(r"\b(?:so (?:that )?(?:i|we) can|before (?:i|we)|(?:i|we) (?:can|will|'ll|could|need to))\s*$", c[:m0.start()], re.I):
         return False  # "so I can confirm the exchange": the agent confirming, not asking
     if CONSENT_ALT_RE.search(c) and not re.search(r"\byes\b", c, re.I):
@@ -968,7 +994,7 @@ def _resolve_pm_mentions(sent: str, facts: TaskFacts) -> list[_PMMention]:
         if re.search(r"\b(?:e\.g\.|for example|such as|like)\W*(?:\"|')?(?:[\w ,'\"]{0,30}\bor\b\W*)?$", before, re.I):
             x.proposed = False
             continue
-        if NOT_PROPOSED_BEFORE_RE.search(before):
+        if NOT_PROPOSED_BEFORE_RE.search(before) and not FUTURE_PAID_RE.search(before):
             x.proposed = False
         if re.search(r"\b(?:balance|has|have|only has)\b[^.?!]{0,10}$", before, re.I) and x.pm != "original":
             pass
@@ -1156,7 +1182,7 @@ def _analyze(text: str, facts: TaskFacts, state: NLUState) -> Semantics:
             status_hit = True
             continue
         if payish and (inab or re.search(r"\b(?:insufficient|not enough|not sufficient|(?:doesn't|does not|don't|do not) have (?:enough|sufficient)|less than|lower than|only has|only have|exceeds?|"
-                                          r"does not cover|doesn't cover|won't cover|cannot cover|can't cover|not (?:an )?eligible|"
+                                          r"does not cover|doesn't cover|won't cover|cannot cover|can't cover|not (?:an )?eligible|too (?:low|small)|not (?:high|large|big) enough|"
                                           r"must (?:go|be (?:refunded|issued|sent|processed|returned))|can only (?:go|be)|"
                                           r"only be (?:refunded|issued|sent|processed|returned))\b", sl)):
             if not re.search(r"\bcan(?:no|')?t (?:see|find|locate)\b", sl) or re.search(r"\b(?:paypal|card|payment method)\b", sl):
@@ -1203,13 +1229,14 @@ def _analyze(text: str, facts: TaskFacts, state: NLUState) -> Semantics:
         # constraint statements about the payment method (refund destination, balance) count for the fallback --
         # not a conditional rule announced before a check ("can only be used if ..., let me check")
         for s in sents:
-            if CONSTRAINT_RE.search(s) and PAYMENT_OBJ_RE.search(s) and not CHECK_PLAN_RE.search(s) and not (
+            if "?" not in s and PAY_RULE_RE.search(s) and PAYMENT_OBJ_RE.search(s) and not CHECK_PLAN_RE.search(s) and not (
                     checking and re.search(r"\b(?:if|as long as|provided|unless|once)\b", s, re.I)):
                 sem.constraint_about_payment = True
     sem.ownership_question = any(OWNERSHIP_OBJ_RE.search(s) for s in q_sents)
     for s in q_sents:
         named = {_canon_pm(m.pm, facts) for m in _resolve_pm_mentions(s, facts) if m.proposed}
-        if len(named) == 1 and re.search(r"\b(?:use|charge|refund|pay|put|go|send|bill|cover)\b", s, re.I) and not re.search(
+        if len(named) == 1 and re.search(r"\b(?:use|using|charge|refund|pay|put|go|send|bill|cover|proceed with)\b|"
+                                         r"\bfor the (?:price )?difference\b", s, re.I) and not re.search(
                 r"\b(?:or|which|what)\b", s, re.I):
             sem.payment_yesno_pm = next(iter(named))
     for s in sents:
@@ -1344,7 +1371,11 @@ def _proposed_action(full: str, sents: list[str], req_sents: list[str], facts: T
             pm_mentions.append((s, m))
     proposed_pms = [(_canon_pm(m.pm, facts), s, m) for s, m in pm_mentions if m.proposed
                     and m.pm not in ("credit_card", "gift_card", "unknown")
-                    and not (action == "modify_payment" and m.pm == "original")]
+                    and not (action == "modify_payment" and m.pm == "original")
+                    and not (action == "modify_payment" and re.search(r"\brefund", s, re.I))]
+    # a method the user does not own, proposed as the new one ("switch it to your gift card" with no gift card)
+    proposed_unknown = any(m.proposed and m.pm == "unknown" for s, m in pm_mentions
+                           if not (action == "modify_payment" and re.search(r"\brefund", s, re.I)))
     # "the original payment method (Mastercard ending 1111)": the parenthesised method is an alias of "original"
     # (for a payment change, the current method -- dropped with it)
     orig_spans = [(s, m) for s, m in pm_mentions if m.pm == "original"]
@@ -1409,7 +1440,9 @@ def _proposed_action(full: str, sents: list[str], req_sents: list[str], facts: T
             details["payment"] = _pm_label(pay_pm, facts)
             pa.payment_pm = pay_pm
         want = _expected_pm(facts, state, action)
-        if pay_pm is None:
+        if pay_pm is None and proposed_unknown:
+            mismatches.append("payment")
+        elif pay_pm is None:
             if action in ("exchange", "modify_payment", "return"):
                 missing.append("payment")
         elif want is not None:
@@ -1423,9 +1456,19 @@ def _proposed_action(full: str, sents: list[str], req_sents: list[str], facts: T
         wanted_items = facts.request_items if action == "return" else [n for n, _ in facts.wanted_targets(state)]
         if facts.template == "foreign_order_refusal":
             wanted_items = facts.request_items
+        whole = re.search(r"\b(?:(?:return|exchang\w*|send back|refund)\w*\s+(?:all (?:the |of the )?items|everything)|"
+                          r"(?:the )?(?:entire|whole) order|all (?:the |of the )?items in (?:the |your |this )?order)\b", low)
         if wanted_items and items_named:
-            if not all(n in items_named for n in wanted_items):
+            # extra items count only when named in a sentence that proposes the action itself, not in a listing
+            # of the order's contents ("the order contains the following items: ...")
+            act_rx = r"\b(?:return\w*|send(?:ing)? back|exchang\w*|swap\w*)\b"
+            prop_items = {n for s_ in sents if re.search(act_rx, s_, re.I) and not re.search(
+                r"\b(?:contains?|includes?|including|following items|other items|items in (?:the|your|this) order|"
+                r"currently|options?:|available)\b", s_, re.I) for n in items_named if n.lower() in s_.lower()}
+            if not all(n in items_named for n in wanted_items) or any(n not in wanted_items for n in prop_items):
                 mismatches.append("items")
+        elif wanted_items and whole and len(set(wanted_items)) < len(set(item_names)):
+            mismatches.append("items")
         elif wanted_items and not items_named:
             missing.append("items")
     # options (exchange)

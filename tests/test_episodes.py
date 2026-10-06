@@ -252,7 +252,8 @@ def test_scripted_user_is_deterministic(tasks):
         "Which order is this about? I need the order id.",
         "Which payment method would you like to use for the price difference?",
         f"To confirm, I will exchange items in order {t.target_order}. Shall I proceed?",
-        f"Updated: exchange in order {t.target_order}. Shall I proceed?",
+        # a recap has to name what is exchanged: items (or the new variants), not just the order
+        f"Updated: exchange the {' and the '.join(t.profile['recap_keys'][1:])} in order {t.target_order}. Shall I proceed?",
     ]
     a, b = ScriptedUser(t, seed=3), ScriptedUser(t, seed=3)
     ra = [a.reply(s) for s in script]
