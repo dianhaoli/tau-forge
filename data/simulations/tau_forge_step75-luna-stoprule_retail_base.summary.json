@@ -1,0 +1,71 @@
+{
+  "run": "tau_forge_step75-luna-stoprule_retail_base",
+  "baseline": "tau_forge_baseline-luna-stoprule_retail_base",
+  "policy": "ep-main checkpoint-75 (LoRA r=64 GRPO on Qwen/Qwen3-4B-Instruct-2507, merged bf16 via peft merge_and_unload; vLLM, hermes parser, agent temp 0.0)",
+  "checkpoint_selection": "synthetic val/mean_reward on data/episodes/pool_v2/val.jsonl (0.787 at step 75); tau2 not used for selection, only this checkpoint evaluated",
+  "user_simulator": "gpt-6-luna",
+  "user_temperature": 1.0,
+  "user_stop_rule": true,
+  "note": "Same user settings as the baseline incl. --user-stop-rule; default (prompt-parity) agent prompt.",
+  "split": "base",
+  "n_tasks": 114,
+  "num_trials": 4,
+  "n_sims": 456,
+  "max_concurrency": 48,
+  "user_num_retries": 10,
+  "seed": 300,
+  "vllm_env": "VLLM_USE_FLASHINFER_SAMPLER=0",
+  "pass^1": 0.6118,
+  "pass^2": 0.4868,
+  "pass^3": 0.4189,
+  "pass^4": 0.3684,
+  "termination": {
+    "user_stop": 456
+  },
+  "final_user_token": {
+    "STOP": 408,
+    "TRANSFER": 48
+  },
+  "infra_errors": 0,
+  "rate_limit_errors": 0,
+  "rate_limit_note": "11 log lines mention 429/rate limits; all absorbed by --user-num-retries 10, 0 user errors",
+  "context_overflow_retries": {
+    "sims_retried": 6,
+    "tasks": {
+      "98": 4,
+      "20": 2
+    },
+    "note": "agent prompt passed 16384 tokens; tau2 reran the sim (max_retries 3), all completed. Both tasks score 0/4 here and in the baseline, so pass^k is unaffected"
+  },
+  "confirm_and_stop_count": 0,
+  "confirm_and_stop_heuristic": "last user msg has ###STOP### + yes/proceed/go ahead, no thanks (same as baseline; scripts/summarize_tau2.py)",
+  "luna_tokens_total": 3303361,
+  "mean_conversation_minutes": 0.58,
+  "wall_clock_minutes": 22.2,
+  "timing_note": "1x H100 on RunPod, concurrency 48; baseline ran on different hardware at concurrency 32, so minutes are not comparable",
+  "vs_baseline": {
+    "pass^1": [
+      0.5307,
+      0.6118
+    ],
+    "pass^4": [
+      0.2895,
+      0.3684
+    ],
+    "successes": [
+      242,
+      279
+    ],
+    "tasks_more_successes": 40,
+    "tasks_fewer_successes": 18,
+    "tasks_same": 56,
+    "sign_test_p_two_sided": 0.0054
+  },
+  "pilot": {
+    "run": "tau_forge_step75-luna-stoprule-pilot_retail_base",
+    "tasks": "first 3 base tasks, 1 trial",
+    "tool_calls_parsed": 19,
+    "unparsed_tool_call_text": 0,
+    "endings": "3/3 user_stop with bare ###STOP###"
+  }
+}
