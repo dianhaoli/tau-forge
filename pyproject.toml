@@ -19,12 +19,16 @@ train = [
     "transformers>=4.46",
     # >=0.16 for GRPOConfig.scale_rewards / loss_type ("dr_grpo") / top_k --
     # grpo_train.filter_supported degrades loudly rather than crashing on older TRL.
-    "trl>=0.16",
+    # grpo_episodes touches TRL 1.12 private attributes (see docs/training_plan.md).
+    "trl>=1.12,<1.13",
     "deepspeed>=0.15",
     "accelerate>=1.0",
     "bitsandbytes>=0.44",
-    "vllm>=0.6",
+    # TRL 1.12 supports vLLM 0.19.0-0.27.1; 0.28 renamed the NCCL weight-transfer args.
+    "vllm>=0.19,<=0.27.1",
     "datasets>=3.0",
+    # --lora in tau_forge.train.grpo_episodes (1-GPU LoRA variant).
+    "peft>=0.13",
 ]
 
 [dependency-groups]
