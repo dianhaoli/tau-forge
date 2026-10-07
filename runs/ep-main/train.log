@@ -1,0 +1,57 @@
+2026-10-07 03:47:25.974 | INFO     | tau2.utils.utils:<module>:28 - Using data directory from source: /workspace/tau-forge/third_party/tau2-bench/data
+2026-10-07 03:47:47.786 | INFO     | tau2.utils.llm_utils:<module>:102 - LiteLLM: Cache is disabled
+2026-10-07 03:47:48.784 | DEBUG    | tau2.registry:<module>:281 - Registering default components...
+2026-10-07 03:47:48.833 | DEBUG    | tau2.registry:<module>:292 - Voice dependencies not installed, skipping voice user registration
+2026-10-07 03:47:48.833 | DEBUG    | tau2.registry:<module>:350 - Default components registered successfully. Registry info: {
+  "domains": [
+    "mock",
+    "airline",
+    "retail",
+    "telecom",
+    "telecom-workflow",
+    "banking_knowledge"
+  ],
+  "agents": [
+    "llm_agent",
+    "llm_agent_gt",
+    "llm_agent_solo",
+    "discrete_time_audio_native_agent"
+  ],
+  "users": [
+    "user_simulator",
+    "dummy_user"
+  ],
+  "task_sets": [
+    "mock",
+    "airline",
+    "retail",
+    "telecom_full",
+    "telecom_small",
+    "telecom",
+    "telecom-workflow",
+    "banking_knowledge"
+  ]
+}
+[grpo_episodes] tasks: pool=1410 train=1410 val=163
+[grpo_episodes] batch: P=16 x G=8 = 128 episodes/step over 1 rank(s), grad_accum=128, whole groups per rank: True
+[grpo_episodes] LoRA r=64 lr=1e-05 wd=0.0 beta=0.0 eps=0.2/0.28 loss=dapo scale_rewards=none steps=200
+[grpo_episodes] sampling: temperature=1.0 top_p=1.0 top_k=disabled max_new_tokens=512 max_turns=20 max_inflight=64 mask_flat_groups=True
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 3 files:   0%|          | 0/3 [00:00<?, ?it/s]Fetching 3 files: 100%|██████████| 3/3 [00:00<00:00, 404.10it/s]
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   0%|          | 1/398 [00:00<00:45,  8.66it/s]Loading weights:   5%|▌         | 20/398 [00:00<00:03, 107.59it/s]Loading weights:   9%|▉         | 36/398 [00:00<00:02, 128.27it/s]Loading weights:  15%|█▍        | 58/398 [00:00<00:02, 144.46it/s]Loading weights:  20%|██        | 81/398 [00:00<00:01, 168.02it/s]Loading weights:  26%|██▌       | 102/398 [00:00<00:01, 175.68it/s]Loading weights:  30%|███       | 120/398 [00:00<00:01, 158.00it/s]Loading weights:  37%|███▋      | 147/398 [00:00<00:01, 185.03it/s]Loading weights:  42%|████▏     | 168/398 [00:01<00:01, 187.31it/s]Loading weights:  47%|████▋     | 188/398 [00:01<00:01, 189.41it/s]Loading weights:  52%|█████▏    | 208/398 [00:01<00:01, 186.32it/s]Loading weights:  57%|█████▋    | 227/398 [00:01<00:00, 173.17it/s]Loading weights:  62%|██████▏   | 245/398 [00:01<00:00, 173.12it/s]Loading weights:  66%|██████▌   | 263/398 [00:01<00:00, 167.80it/s]Loading weights:  70%|███████   | 280/398 [00:01<00:00, 155.04it/s]Loading weights:  75%|███████▌  | 300/398 [00:01<00:00, 166.79it/s]Loading weights:  80%|███████▉  | 317/398 [00:01<00:00, 165.98it/s]Loading weights:  84%|████████▍ | 334/398 [00:02<00:00, 166.90it/s]Loading weights:  88%|████████▊ | 351/398 [00:02<00:00, 149.46it/s]Loading weights:  94%|█████████▍| 374/398 [00:02<00:00, 169.52it/s]Loading weights:  98%|█████████▊| 392/398 [00:02<00:00, 162.19it/s]Loading weights: 100%|██████████| 398/398 [00:02<00:00, 164.75it/s]
+Loading safetensors checkpoint shards:   0% Completed | 0/3 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  33% Completed | 1/3 [00:00<00:01,  1.27it/s]
+Loading safetensors checkpoint shards:  67% Completed | 2/3 [00:01<00:00,  1.10it/s]
+Loading safetensors checkpoint shards: 100% Completed | 3/3 [00:01<00:00,  1.77it/s]
+Loading safetensors checkpoint shards: 100% Completed | 3/3 [00:01<00:00,  1.55it/s]
+
+2026-10-07 03:52:27,277 - INFO - autotuner.py:829 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
+2026-10-07 03:52:27,294 - INFO - autotuner.py:852 - flashinfer.jit: [Autotuner]: Autotuning process ends
+2026-10-07 03:52:27,364 - INFO - autotuner.py:2269 - flashinfer.jit: [Autotuner]: Saved 0 configs to /root/.cache/vllm/flashinfer_autotune_cache/0.6.16.post3/90a/e84574a55970dee3f829976ae69dac8a231f8f3d1cf702f4c448f4ed77c24eae/autotune_configs.json (0 new, 0 from previous config)
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/35 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):   3%|▎         | 1/35 [00:00<00:04,  8.40it/s]Capturing CUDA graphs (PIECEWISE):   9%|▊         | 3/35 [00:00<00:03, 10.11it/s]Capturing CUDA graphs (PIECEWISE):  14%|█▍        | 5/35 [00:00<00:02, 10.62it/s]Capturing CUDA graphs (PIECEWISE):  20%|██        | 7/35 [00:00<00:02, 10.63it/s]Capturing CUDA graphs (PIECEWISE):  26%|██▌       | 9/35 [00:00<00:02, 11.17it/s]Capturing CUDA graphs (PIECEWISE):  31%|███▏      | 11/35 [00:00<00:02, 11.48it/s]Capturing CUDA graphs (PIECEWISE):  37%|███▋      | 13/35 [00:01<00:01, 11.67it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 15/35 [00:01<00:01, 11.95it/s]Capturing CUDA graphs (PIECEWISE):  49%|████▊     | 17/35 [00:01<00:01, 12.11it/s]Capturing CUDA graphs (PIECEWISE):  54%|█████▍    | 19/35 [00:01<00:01, 12.61it/s]Capturing CUDA graphs (PIECEWISE):  60%|██████    | 21/35 [00:01<00:01, 12.71it/s]Capturing CUDA graphs (PIECEWISE):  66%|██████▌   | 23/35 [00:01<00:00, 13.20it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████▏  | 25/35 [00:02<00:00, 13.53it/s]Capturing CUDA graphs (PIECEWISE):  77%|███████▋  | 27/35 [00:02<00:00, 14.09it/s]Capturing CUDA graphs (PIECEWISE):  83%|████████▎ | 29/35 [00:02<00:00, 14.65it/s]Capturing CUDA graphs (PIECEWISE):  89%|████████▊ | 31/35 [00:02<00:00, 15.32it/s]Capturing CUDA graphs (PIECEWISE):  94%|█████████▍| 33/35 [00:02<00:00, 15.75it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 35/35 [00:02<00:00, 16.68it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 35/35 [00:02<00:00, 13.20it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/19 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):  26%|██▋       | 5/19 [00:00<00:00, 48.88it/s]Capturing CUDA graphs (FULL):  53%|█████▎    | 10/19 [00:00<00:00, 48.70it/s]Capturing CUDA graphs (FULL):  84%|████████▍ | 16/19 [00:00<00:00, 50.50it/s]Capturing CUDA graphs (FULL): 100%|██████████| 19/19 [00:00<00:00, 50.82it/s]
+[transformers] The tokenizer has new PAD/BOS/EOS tokens that differ from the model config and generation config. The model config and generation config were aligned accordingly, being updated with the tokenizer's values. Updated tokens: {'bos_token_id': None, 'pad_token_id': 151643}.
+[grpo_episodes] val @ step 0: {"n": 163, "mean_reward": 0.6945, "success_rate": 0.7178}
+  0%|          | 0/200 [00:00<?, ?it/s]  0%|          | 1/200 [07:31<24:57:35, 451.54s/it]                                                   {'loss': '0.002937', 'grad_norm': '0.01953', 'learning_rate': '0', 'val/mean_reward': '0.6945', 'val/success_rate': '0.7178', 'val/cancel/mean_reward': '1', 'val/composite/mean_reward': '0.5658', 'val/exchange/mean_reward': '0.7286', 'val/foreign_order_refusal/mean_reward': '0.36', 'val/info/mean_reward': '0.9455', 'val/modify_address/mean_reward': '0.8812', 'val/modify_items/mean_reward': '0.7176', 'val/modify_payment/mean_reward': '0.775', 'val/modify_user_address/mean_reward': '0.7', 'val/return_fallback/mean_reward': '0.64', 'val/status_refusal/mean_reward': '0.9182', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '2', 'episodes/flat_group_share': '0.125', 'episodes/n_masked_flat_episodes': '16', 'episodes/mean_reward': '0.6705', 'episodes/success_rate': '0.6875', 'episodes/n_truncated': '0', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '40', 'episodes/n_engine_calls': '40', 'episodes/max_batch': '64', 'episodes/mean_turns': '11.67', 'episodes/mean_sampled_tokens': '912', 'episodes/mean_env_tokens': '2643', 'episodes/mean_prompt_tokens': '5123', 'episodes/mean_completion_tokens': '3554', 'episodes/max_sequence_tokens': '1.434e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '97.56', 'episodes/seconds_total': '102.4', 'episodes/end/user_stop': '0.9844', 'episodes/end/transfer': '0.01562', 'num_tokens': '7.703e+05', 'completions/mean_length': '894.7', 'completions/min_length': '0', 'completions/max_length': '3242', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '894.7', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3242', 'rewards/episode_reward_func/mean': '0.6705', 'rewards/episode_reward_func/std': '0.3737', 'reward': '0.6705', 'reward_std': '0.3737', 'frac_reward_zero_std': '0.125', 'sampling/sampling_logp_difference/mean': '0.007391', 'sampling/sampling_logp_difference/max': '4.422', 'sampling/importance_sampling_ratio/min': '0.01201', 'sampling/importance_sampling_ratio/mean': '1', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.05604', 'clip_ratio/low_mean': '0.001604', 'clip_ratio/high_mean': '0.0008972', 'clip_ratio/region_mean': '0.002501', 'clip_ratio/low_min': '0.001833', 'clip_ratio/high_max': '0.001025', 'step_time': '441.8', 'epoch': '0.01136'}
+  0%|          | 1/200 [07:31<24:57:35, 451.54s/it]  1%|          | 2/200 [13:52<22:33:13, 410.07s/it]                                                   {'loss': '-0.03146', 'grad_norm': '0.02621', 'learning_rate': '2e-06', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '4', 'episodes/flat_group_share': '0.25', 'episodes/n_masked_flat_episodes': '32', 'episodes/mean_reward': '0.6117', 'episodes/success_rate': '0.6797', 'episodes/n_truncated': '0', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '33', 'episodes/n_engine_calls': '33', 'episodes/max_batch': '64', 'episodes/mean_turns': '10.06', 'episodes/mean_sampled_tokens': '757.7', 'episodes/mean_env_tokens': '2042', 'episodes/mean_prompt_tokens': '5123', 'episodes/mean_completion_tokens': '2800', 'episodes/max_sequence_tokens': '1.389e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '56.51', 'episodes/seconds_total': '61.24', 'episodes/end/user_stop': '0.9922', 'episodes/end/max_turns': '0.007812', 'num_tokens': '1.507e+06', 'completions/mean_length': '636.3', 'completions/min_length': '0', 'completions/max_length': '3264', 'completions/clipped_ratio': '0', 'completions/mean_terminated_length': '636.3', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3264', 'rewards/episode_reward_func/mean': '0.6117', 'rewards/episode_reward_func/std': '0.3851', 'reward': '0.6117', 'reward_std': '0.3851', 'frac_reward_zero_std': '0.25', 'sampling/sampling_logp_difference/mean': '0.008589', 'sampling/sampling_logp_difference/max': '3.685', 'sampling/importance_sampling_ratio/min': '0.1227', 'sampling/importance_sampling_ratio/mean': '0.9998', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.06112', 'clip_ratio/low_mean': '0.001573', 'clip_ratio/high_mean': '0.001', 'clip_ratio/region_mean': '0.002573', 'clip_ratio/low_min': '0.002098', 'clip_ratio/high_max': '0.001334', 'step_time': '372.5', 'epoch': '0.02273'}
+  1%|          | 2/200 [13:52<22:33:13, 410.07s/it]
