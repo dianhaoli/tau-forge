@@ -70,7 +70,7 @@ for SUBNET in $(aws ec2 describe-subnets --region "$REGION" --filters "Name=vpc-
     case "$OUT" in
         *InsufficientInstanceCapacity*|*Unsupported*|*InvalidSubnet*) continue ;;
         *VcpuLimitExceeded*)
-            echo "Quota too low in $REGION: P instances need the "Running On-Demand P instances" quota, G instances "Running On-Demand G and VT instances"."; exit 1 ;;
+            echo "Quota too low in $REGION: P instances need the 'Running On-Demand P instances' quota, G instances 'Running On-Demand G and VT instances'."; exit 1 ;;
         *) echo "Not a capacity problem, stopping. Full error:"; echo "$OUT"; exit 1 ;;
     esac
 done
