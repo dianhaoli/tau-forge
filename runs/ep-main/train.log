@@ -130,4 +130,176 @@ Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF
  36%|███▋      | 73/200 [9:29:59<17:01:47, 482.73s/it] 37%|███▋      | 74/200 [9:37:27<16:31:52, 472.32s/it]                                                      {'loss': '-0.00333', 'grad_norm': '0.0257', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '7', 'episodes/flat_group_share': '0.4375', 'episodes/n_masked_flat_episodes': '56', 'episodes/mean_reward': '0.8262', 'episodes/success_rate': '0.8828', 'episodes/n_truncated': '1', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '28', 'episodes/n_engine_calls': '28', 'episodes/max_batch': '64', 'episodes/mean_turns': '10.68', 'episodes/mean_sampled_tokens': '977.4', 'episodes/mean_env_tokens': '2455', 'episodes/mean_prompt_tokens': '5121', 'episodes/mean_completion_tokens': '3432', 'episodes/max_sequence_tokens': '1.455e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '94.02', 'episodes/seconds_total': '99.04', 'episodes/end/user_stop': '0.9844', 'episodes/end/truncated': '0.007812', 'episodes/end/transfer': '0.007812', 'num_tokens': '5.617e+07', 'completions/mean_length': '671.8', 'completions/min_length': '0', 'completions/max_length': '3396', 'completions/clipped_ratio': '0.007812', 'completions/mean_terminated_length': '670.3', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3396', 'rewards/episode_reward_func/mean': '0.8262', 'rewards/episode_reward_func/std': '0.3035', 'reward': '0.8262', 'reward_std': '0.3035', 'frac_reward_zero_std': '0.4375', 'sampling/sampling_logp_difference/mean': '0.01422', 'sampling/sampling_logp_difference/max': '2.017', 'sampling/importance_sampling_ratio/min': '0.1331', 'sampling/importance_sampling_ratio/mean': '1', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.0696', 'clip_ratio/low_mean': '0.001001', 'clip_ratio/high_mean': '0.0006181', 'clip_ratio/region_mean': '0.001619', 'clip_ratio/low_min': '0.00178', 'clip_ratio/high_max': '0.001099', 'step_time': '439.1', 'epoch': '0.8409'}
  37%|███▋      | 74/200 [9:37:27<16:31:52, 472.32s/it][grpo_episodes] val @ step 75: {"n": 163, "mean_reward": 0.787, "success_rate": 0.8344}
  38%|███▊      | 75/200 [9:47:03<17:28:51, 503.45s/it]                                                      {'loss': '-0.05705', 'grad_norm': '0.02321', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '4', 'episodes/flat_group_share': '0.25', 'episodes/n_masked_flat_episodes': '32', 'episodes/mean_reward': '0.7824', 'episodes/success_rate': '0.8359', 'episodes/n_truncated': '8', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '37', 'episodes/n_engine_calls': '37', 'episodes/max_batch': '64', 'episodes/mean_turns': '11.15', 'episodes/mean_sampled_tokens': '868', 'episodes/mean_env_tokens': '2735', 'episodes/mean_prompt_tokens': '5111', 'episodes/mean_completion_tokens': '3603', 'episodes/max_sequence_tokens': '1.426e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '93.98', 'episodes/seconds_total': '98.64', 'episodes/end/user_stop': '0.9375', 'episodes/end/truncated': '0.0625', 'num_tokens': '5.692e+07', 'completions/mean_length': '709.9', 'completions/min_length': '0', 'completions/max_length': '3637', 'completions/clipped_ratio': '0.0625', 'completions/mean_terminated_length': '648.7', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '2681', 'rewards/episode_reward_func/mean': '0.7824', 'rewards/episode_reward_func/std': '0.3431', 'reward': '0.7824', 'reward_std': '0.3431', 'frac_reward_zero_std': '0.25', 'sampling/sampling_logp_difference/mean': '0.01257', 'sampling/sampling_logp_difference/max': '4.5', 'sampling/importance_sampling_ratio/min': '0.01111', 'sampling/importance_sampling_ratio/mean': '0.9999', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.07395', 'clip_ratio/low_mean': '0.0009557', 'clip_ratio/high_mean': '0.0008427', 'clip_ratio/region_mean': '0.001798', 'clip_ratio/low_min': '0.001274', 'clip_ratio/high_max': '0.001124', 'step_time': '433.8', 'val/mean_reward': '0.787', 'val/success_rate': '0.8344', 'val/cancel/mean_reward': '1', 'val/composite/mean_reward': '0.6838', 'val/exchange/mean_reward': '1', 'val/foreign_order_refusal/mean_reward': '0.3', 'val/info/mean_reward': '1', 'val/modify_address/mean_reward': '0.875', 'val/modify_items/mean_reward': '0.7824', 'val/modify_payment/mean_reward': '0.8', 'val/modify_user_address/mean_reward': '0.7', 'val/return_fallback/mean_reward': '0.7', 'val/status_refusal/mean_reward': '1', 'epoch': '0.8523'}
- 38%|███▊      | 75/200 [9:47:03<17:28:51, 503.45s/it]
+ 38%|███▊      | 75/200 [9:47:03<17:28:51, 503.45s/it] 38%|███▊      | 76/200 [9:53:46<16:18:40, 473.56s/it]                                                      {'loss': '-0.02969', 'grad_norm': '0.02673', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '5', 'episodes/flat_group_share': '0.3125', 'episodes/n_masked_flat_episodes': '40', 'episodes/mean_reward': '0.7166', 'episodes/success_rate': '0.75', 'episodes/n_truncated': '4', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '31', 'episodes/n_engine_calls': '31', 'episodes/max_batch': '64', 'episodes/mean_turns': '8.289', 'episodes/mean_sampled_tokens': '669.2', 'episodes/mean_env_tokens': '2030', 'episodes/mean_prompt_tokens': '5120', 'episodes/mean_completion_tokens': '2699', 'episodes/max_sequence_tokens': '1.349e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '68.47', 'episodes/seconds_total': '73.01', 'episodes/end/user_stop': '0.9688', 'episodes/end/truncated': '0.03125', 'num_tokens': '5.765e+07', 'completions/mean_length': '560.9', 'completions/min_length': '0', 'completions/max_length': '3072', 'completions/clipped_ratio': '0.03125', 'completions/mean_terminated_length': '537', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3072', 'rewards/episode_reward_func/mean': '0.7166', 'rewards/episode_reward_func/std': '0.4008', 'reward': '0.7166', 'reward_std': '0.4008', 'frac_reward_zero_std': '0.3125', 'sampling/sampling_logp_difference/mean': '0.01198', 'sampling/sampling_logp_difference/max': '5.007', 'sampling/importance_sampling_ratio/min': '0.006693', 'sampling/importance_sampling_ratio/mean': '1', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.07224', 'clip_ratio/low_mean': '0.0007336', 'clip_ratio/high_mean': '0.001084', 'clip_ratio/region_mean': '0.001818', 'clip_ratio/low_min': '0.001067', 'clip_ratio/high_max': '0.001577', 'step_time': '375.2', 'epoch': '0.8636'}
+ 38%|███▊      | 76/200 [9:53:46<16:18:40, 473.56s/it] 38%|███▊      | 77/200 [10:03:37<17:22:46, 508.67s/it]                                                       {'loss': '-0.04925', 'grad_norm': '0.01973', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '3', 'episodes/flat_group_share': '0.1875', 'episodes/n_masked_flat_episodes': '24', 'episodes/mean_reward': '0.6754', 'episodes/success_rate': '0.7266', 'episodes/n_truncated': '8', 'episodes/n_context_budget': '1', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '41', 'episodes/n_engine_calls': '41', 'episodes/max_batch': '64', 'episodes/mean_turns': '13.16', 'episodes/mean_sampled_tokens': '1348', 'episodes/mean_env_tokens': '3414', 'episodes/mean_prompt_tokens': '5127', 'episodes/mean_completion_tokens': '4761', 'episodes/max_sequence_tokens': '1.618e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '169.3', 'episodes/seconds_total': '175.3', 'episodes/end/user_stop': '0.9297', 'episodes/end/truncated': '0.0625', 'episodes/end/context_budget': '0.007812', 'num_tokens': '5.846e+07', 'completions/mean_length': '1231', 'completions/min_length': '0', 'completions/max_length': '3426', 'completions/clipped_ratio': '0.0625', 'completions/mean_terminated_length': '1188', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3426', 'rewards/episode_reward_func/mean': '0.6754', 'rewards/episode_reward_func/std': '0.3605', 'reward': '0.6754', 'reward_std': '0.3605', 'frac_reward_zero_std': '0.1875', 'sampling/sampling_logp_difference/mean': '0.01331', 'sampling/sampling_logp_difference/max': '4.44', 'sampling/importance_sampling_ratio/min': '0.0118', 'sampling/importance_sampling_ratio/mean': '0.9998', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.08543', 'clip_ratio/low_mean': '0.0008983', 'clip_ratio/high_mean': '0.0009395', 'clip_ratio/region_mean': '0.001838', 'clip_ratio/low_min': '0.001106', 'clip_ratio/high_max': '0.001156', 'step_time': '579.7', 'epoch': '0.875'}
+ 38%|███▊      | 77/200 [10:03:37<17:22:46, 508.67s/it] 39%|███▉      | 78/200 [10:12:10<17:16:49, 509.91s/it]                                                       {'loss': '-0.009422', 'grad_norm': '0.01775', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '3', 'episodes/flat_group_share': '0.1875', 'episodes/n_masked_flat_episodes': '24', 'episodes/mean_reward': '0.7246', 'episodes/success_rate': '0.7578', 'episodes/n_truncated': '4', 'episodes/n_context_budget': '1', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '33', 'episodes/n_engine_calls': '33', 'episodes/max_batch': '64', 'episodes/mean_turns': '10.81', 'episodes/mean_sampled_tokens': '1190', 'episodes/mean_env_tokens': '2467', 'episodes/mean_prompt_tokens': '5124', 'episodes/mean_completion_tokens': '3652', 'episodes/max_sequence_tokens': '1.589e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '121.5', 'episodes/seconds_total': '127', 'episodes/end/user_stop': '0.9375', 'episodes/end/transfer': '0.007812', 'episodes/end/truncated': '0.03125', 'episodes/end/context_budget': '0.007812', 'episodes/end/max_turns': '0.01562', 'num_tokens': '5.926e+07', 'completions/mean_length': '1137', 'completions/min_length': '0', 'completions/max_length': '4742', 'completions/clipped_ratio': '0.03125', 'completions/mean_terminated_length': '1115', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '4742', 'rewards/episode_reward_func/mean': '0.7246', 'rewards/episode_reward_func/std': '0.3806', 'reward': '0.7246', 'reward_std': '0.3806', 'frac_reward_zero_std': '0.1875', 'sampling/sampling_logp_difference/mean': '0.01308', 'sampling/sampling_logp_difference/max': '5.596', 'sampling/importance_sampling_ratio/min': '0.003714', 'sampling/importance_sampling_ratio/mean': '1', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.09144', 'clip_ratio/low_mean': '0.001292', 'clip_ratio/high_mean': '0.0009455', 'clip_ratio/region_mean': '0.002237', 'clip_ratio/low_min': '0.00159', 'clip_ratio/high_max': '0.001164', 'step_time': '503.3', 'epoch': '0.8864'}
+ 39%|███▉      | 78/200 [10:12:10<17:16:49, 509.91s/it] 40%|███▉      | 79/200 [10:19:54<16:40:21, 496.04s/it]                                                       {'loss': '-0.0277', 'grad_norm': '0.02319', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '6', 'episodes/flat_group_share': '0.375', 'episodes/n_masked_flat_episodes': '48', 'episodes/mean_reward': '0.7594', 'episodes/success_rate': '0.8125', 'episodes/n_truncated': '4', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '37', 'episodes/n_engine_calls': '37', 'episodes/max_batch': '64', 'episodes/mean_turns': '11.16', 'episodes/mean_sampled_tokens': '1047', 'episodes/mean_env_tokens': '3014', 'episodes/mean_prompt_tokens': '5118', 'episodes/mean_completion_tokens': '4061', 'episodes/max_sequence_tokens': '1.363e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '113.6', 'episodes/seconds_total': '119.4', 'episodes/end/user_stop': '0.9688', 'episodes/end/truncated': '0.03125', 'num_tokens': '6.001e+07', 'completions/mean_length': '756', 'completions/min_length': '0', 'completions/max_length': '3317', 'completions/clipped_ratio': '0.03125', 'completions/mean_terminated_length': '735', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3317', 'rewards/episode_reward_func/mean': '0.7594', 'rewards/episode_reward_func/std': '0.3302', 'reward': '0.7594', 'reward_std': '0.3302', 'frac_reward_zero_std': '0.375', 'sampling/sampling_logp_difference/mean': '0.01286', 'sampling/sampling_logp_difference/max': '5.624', 'sampling/importance_sampling_ratio/min': '0.003612', 'sampling/importance_sampling_ratio/mean': '1', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.06924', 'clip_ratio/low_mean': '0.0008059', 'clip_ratio/high_mean': '0.0007703', 'clip_ratio/region_mean': '0.001576', 'clip_ratio/low_min': '0.001289', 'clip_ratio/high_max': '0.001232', 'step_time': '453.7', 'epoch': '0.8977'}
+ 40%|███▉      | 79/200 [10:19:54<16:40:21, 496.04s/it] 40%|████      | 80/200 [10:29:01<17:02:37, 511.31s/it]                                                       {'loss': '-0.07111', 'grad_norm': '0.02587', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '5', 'episodes/flat_group_share': '0.3125', 'episodes/n_masked_flat_episodes': '40', 'episodes/mean_reward': '0.7004', 'episodes/success_rate': '0.6875', 'episodes/n_truncated': '14', 'episodes/n_context_budget': '6', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '28', 'episodes/n_engine_calls': '28', 'episodes/max_batch': '64', 'episodes/mean_turns': '11.68', 'episodes/mean_sampled_tokens': '1061', 'episodes/mean_env_tokens': '3307', 'episodes/mean_prompt_tokens': '5116', 'episodes/mean_completion_tokens': '4332', 'episodes/max_sequence_tokens': '1.635e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '138.7', 'episodes/seconds_total': '144.2', 'episodes/end/user_stop': '0.8438', 'episodes/end/truncated': '0.1094', 'episodes/end/context_budget': '0.04688', 'num_tokens': '6.078e+07', 'completions/mean_length': '901.4', 'completions/min_length': '0', 'completions/max_length': '2615', 'completions/clipped_ratio': '0.1094', 'completions/mean_terminated_length': '824.1', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '2615', 'rewards/episode_reward_func/mean': '0.7004', 'rewards/episode_reward_func/std': '0.407', 'reward': '0.7004', 'reward_std': '0.407', 'frac_reward_zero_std': '0.3125', 'sampling/sampling_logp_difference/mean': '0.01433', 'sampling/sampling_logp_difference/max': '3.858', 'sampling/importance_sampling_ratio/min': '0.02111', 'sampling/importance_sampling_ratio/mean': '0.9997', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.09253', 'clip_ratio/low_mean': '0.0009276', 'clip_ratio/high_mean': '0.0007863', 'clip_ratio/region_mean': '0.001714', 'clip_ratio/low_min': '0.001349', 'clip_ratio/high_max': '0.001144', 'step_time': '537.1', 'epoch': '0.9091'}
+ 40%|████      | 80/200 [10:29:01<17:02:37, 511.31s/it] 40%|████      | 81/200 [10:37:15<16:44:10, 506.31s/it]                                                       {'loss': '-0.002524', 'grad_norm': '0.02051', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '4', 'episodes/flat_group_share': '0.25', 'episodes/n_masked_flat_episodes': '32', 'episodes/mean_reward': '0.7676', 'episodes/success_rate': '0.8281', 'episodes/n_truncated': '5', 'episodes/n_context_budget': '3', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '33', 'episodes/n_engine_calls': '33', 'episodes/max_batch': '64', 'episodes/mean_turns': '10.32', 'episodes/mean_sampled_tokens': '981.9', 'episodes/mean_env_tokens': '2770', 'episodes/mean_prompt_tokens': '5128', 'episodes/mean_completion_tokens': '3737', 'episodes/max_sequence_tokens': '1.6e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '104.3', 'episodes/seconds_total': '109.9', 'episodes/end/user_stop': '0.9375', 'episodes/end/truncated': '0.03906', 'episodes/end/context_budget': '0.02344', 'num_tokens': '6.155e+07', 'completions/mean_length': '836.8', 'completions/min_length': '0', 'completions/max_length': '4355', 'completions/clipped_ratio': '0.03906', 'completions/mean_terminated_length': '811.8', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '4355', 'rewards/episode_reward_func/mean': '0.7676', 'rewards/episode_reward_func/std': '0.3169', 'reward': '0.7676', 'reward_std': '0.3169', 'frac_reward_zero_std': '0.25', 'sampling/sampling_logp_difference/mean': '0.01538', 'sampling/sampling_logp_difference/max': '9.615', 'sampling/importance_sampling_ratio/min': '6.675e-05', 'sampling/importance_sampling_ratio/mean': '0.9997', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.08294', 'clip_ratio/low_mean': '0.0009879', 'clip_ratio/high_mean': '0.0006956', 'clip_ratio/region_mean': '0.001683', 'clip_ratio/low_min': '0.001317', 'clip_ratio/high_max': '0.0009275', 'step_time': '485.3', 'epoch': '0.9205'}
+ 40%|████      | 81/200 [10:37:15<16:44:10, 506.31s/it] 41%|████      | 82/200 [10:44:50<16:05:27, 490.91s/it]                                                       {'loss': '0.09315', 'grad_norm': '0.0325', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '7', 'episodes/flat_group_share': '0.4375', 'episodes/n_masked_flat_episodes': '56', 'episodes/mean_reward': '0.8742', 'episodes/success_rate': '0.8906', 'episodes/n_truncated': '1', 'episodes/n_context_budget': '0', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '30', 'episodes/n_engine_calls': '30', 'episodes/max_batch': '64', 'episodes/mean_turns': '9.289', 'episodes/mean_sampled_tokens': '901.6', 'episodes/mean_env_tokens': '2182', 'episodes/mean_prompt_tokens': '5125', 'episodes/mean_completion_tokens': '3084', 'episodes/max_sequence_tokens': '1.546e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '87.42', 'episodes/seconds_total': '92.29', 'episodes/end/user_stop': '0.9609', 'episodes/end/max_turns': '0.03125', 'episodes/end/truncated': '0.007812', 'num_tokens': '6.228e+07', 'completions/mean_length': '634.1', 'completions/min_length': '0', 'completions/max_length': '6133', 'completions/clipped_ratio': '0.007812', 'completions/mean_terminated_length': '631.9', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '6133', 'rewards/episode_reward_func/mean': '0.8742', 'rewards/episode_reward_func/std': '0.2887', 'reward': '0.8742', 'reward_std': '0.2887', 'frac_reward_zero_std': '0.4375', 'sampling/sampling_logp_difference/mean': '0.01615', 'sampling/sampling_logp_difference/max': '8.993', 'sampling/importance_sampling_ratio/min': '0.0001242', 'sampling/importance_sampling_ratio/mean': '1', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.06638', 'clip_ratio/low_mean': '0.0004248', 'clip_ratio/high_mean': '0.001111', 'clip_ratio/region_mean': '0.001536', 'clip_ratio/low_min': '0.0007552', 'clip_ratio/high_max': '0.001975', 'step_time': '446.4', 'epoch': '0.9318'}
+ 41%|████      | 82/200 [10:44:50<16:05:27, 490.91s/it] 42%|████▏     | 83/200 [10:53:40<16:19:50, 502.48s/it]                                                       {'loss': '-0.04028', 'grad_norm': '0.02054', 'learning_rate': '1e-05', 'episodes/n_episodes': '128', 'episodes/n_groups': '16', 'episodes/n_complete_groups': '16', 'episodes/n_incomplete_groups': '0', 'episodes/n_flat_groups': '5', 'episodes/flat_group_share': '0.3125', 'episodes/n_masked_flat_episodes': '40', 'episodes/mean_reward': '0.8191', 'episodes/success_rate': '0.8281', 'episodes/n_truncated': '4', 'episodes/n_context_budget': '3', 'episodes/n_runner_errors': '0', 'episodes/n_rounds': '43', 'episodes/n_engine_calls': '43', 'episodes/max_batch': '64', 'episodes/mean_turns': '12.98', 'episodes/mean_sampled_tokens': '1095', 'episodes/mean_env_tokens': '3315', 'episodes/mean_prompt_tokens': '5116', 'episodes/mean_completion_tokens': '4391', 'episodes/max_sequence_tokens': '1.578e+04', 'episodes/n_appended_im_end': '0', 'episodes/seconds_engine': '129.7', 'episodes/seconds_total': '135.7', 'episodes/end/user_stop': '0.9297', 'episodes/end/truncated': '0.03125', 'episodes/end/context_budget': '0.02344', 'episodes/end/transfer': '0.007812', 'episodes/end/max_turns': '0.007812', 'num_tokens': '6.305e+07', 'completions/mean_length': '870.8', 'completions/min_length': '0', 'completions/max_length': '3202', 'completions/clipped_ratio': '0.03125', 'completions/mean_terminated_length': '851.8', 'completions/min_terminated_length': '0', 'completions/max_terminated_length': '3202', 'rewards/episode_reward_func/mean': '0.8191', 'rewards/episode_reward_func/std': '0.3314', 'reward': '0.8191', 'reward_std': '0.3314', 'frac_reward_zero_std': '0.3125', 'sampling/sampling_logp_difference/mean': '0.01337', 'sampling/sampling_logp_difference/max': '7.982', 'sampling/importance_sampling_ratio/min': '0.0003415', 'sampling/importance_sampling_ratio/mean': '0.9996', 'sampling/importance_sampling_ratio/max': '3', 'entropy': '0.06451', 'clip_ratio/low_mean': '0.0007472', 'clip_ratio/high_mean': '0.0009409', 'clip_ratio/region_mean': '0.001688', 'clip_ratio/low_min': '0.001087', 'clip_ratio/high_max': '0.001369', 'step_time': '519.2', 'epoch': '0.9432'}
+ 42%|████▏     | 83/200 [10:53:40<16:19:50, 502.48s/it]Traceback (most recent call last):
+  File "/workspace/tau-forge/.venv/bin/accelerate", line 10, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/accelerate/commands/accelerate_cli.py", line 50, in main
+    args.func(args)
+  File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/accelerate/commands/launch.py", line 1407, in launch_command
+    simple_launcher(args)
+  File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/accelerate/commands/launch.py", line 990, in simple_launcher
+    process.wait()
+  File "/usr/lib/python3.12/subprocess.py", line 1264, in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2053, in _wait
+    (pid, sts) = self._try_wait(0)
+                 ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2011, in _try_wait
+    (pid, sts) = os.waitpid(self.pid, wait_flags)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/workspace/tau-forge/tau_forge/train/grpo_episodes.py", line 598, in <module>
+[rank0]:     main()
+[rank0]:   File "/workspace/tau-forge/tau_forge/train/grpo_episodes.py", line 592, in main
+[rank0]:     trainer.train()
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1458, in train
+[rank0]:     return inner_training_loop(
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1540, in _inner_training_loop
+[rank0]:     self._run_epoch(
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1768, in _run_epoch
+[rank0]:     tr_loss_step = self.training_step(model, inputs, num_items_in_batch)
+[rank0]:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/trl/trainer/grpo_trainer.py", line 1565, in training_step
+[rank0]:     output = super().training_step(model, inputs, num_items_in_batch)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/trainer.py", line 1940, in training_step
+[rank0]:     loss = self.compute_loss(model, inputs, num_items_in_batch=num_items_in_batch)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/trl/extras/profiling.py", line 211, in wrapper
+[rank0]:     return func(self, *args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/trl/trainer/grpo_trainer.py", line 3031, in compute_loss
+[rank0]:     return self._compute_loss(model, inputs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/trl/trainer/grpo_trainer.py", line 3119, in _compute_loss
+[rank0]:     per_token_logps, entropies, aux_loss = self._get_per_token_logps_and_entropies(
+[rank0]:                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/trl/extras/profiling.py", line 211, in wrapper
+[rank0]:     return func(self, *args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/trl/trainer/grpo_trainer.py", line 1531, in _get_per_token_logps_and_entropies
+[rank0]:     outputs = model(**model_inputs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/accelerate/utils/operations.py", line 943, in forward
+[rank0]:     return model_forward(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/accelerate/utils/operations.py", line 931, in __call__
+[rank0]:     return convert_to_fp32(self.model_forward(*args, **kwargs))
+[rank0]:                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/amp/autocast_mode.py", line 44, in decorate_autocast
+[rank0]:     return func(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/peft/peft_model.py", line 2120, in forward
+[rank0]:     return self.base_model(
+[rank0]:            ^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/peft/tuners/tuners_utils.py", line 359, in forward
+[rank0]:     return self.model(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 939, in wrapper
+[rank0]:     output = func(self, *args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 482, in forward
+[rank0]:     outputs: BaseModelOutputWithPast = self.model(
+[rank0]:                                        ^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/utils/generic.py", line 1068, in wrapper
+[rank0]:     output = func(self, *args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/utils/output_capturing.py", line 262, in wrapper
+[rank0]:     outputs = func(self, *args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 413, in forward
+[rank0]:     hidden_states = decoder_layer(
+[rank0]:                     ^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/modeling_layers.py", line 113, in __call__
+[rank0]:     return self._gradient_checkpointing_func(partial(super().__call__, **kwargs), *args)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/_compile.py", line 54, in inner
+[rank0]:     return disable_fn(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1446, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/utils/checkpoint.py", line 522, in checkpoint
+[rank0]:     gen.throw(e)
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/utils/checkpoint.py", line 1706, in _checkpoint_without_reentrant_generator
+[rank0]:     yield
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/utils/checkpoint.py", line 519, in checkpoint
+[rank0]:     ret = function(*args, **kwargs)
+[rank0]:           ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 307, in forward
+[rank0]:     hidden_states, _ = self.self_attn(
+[rank0]:                        ^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py", line 253, in forward
+[rank0]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank0]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/peft/tuners/lora/layer.py", line 1088, in forward
+[rank0]:     result = self.base_layer(x, *args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/workspace/tau-forge/.venv/lib/python3.12/site-packages/torch/nn/modules/linear.py", line 134, in forward
+[rank0]:     return F.linear(input, self.weight, self.bias)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: KeyboardInterrupt
+[rank0]:[W1007 14:55:54.163891469 ProcessGroupNCCL.cpp:1624] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+EXIT 1
