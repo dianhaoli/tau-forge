@@ -88,6 +88,7 @@ for TYPE in $TYPES; do
             echo "  $AZ -> ${CODE:-$OUT}"
             case "$OUT" in
                 *VcpuLimitExceeded*) echo "  (quota for this family is too low in $R; skipping region)"; break ;;
+                *PendingVerification*) echo "  (AWS is still verifying your account for $R; usually minutes, up to 4 h. Rerun later.)"; break ;;
                 *InsufficientInstanceCapacity*|*Unsupported*) ;;
                 *) echo "  unexpected error: $OUT" ;;
             esac
