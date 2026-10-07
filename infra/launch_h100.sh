@@ -7,12 +7,13 @@
 # GPU PyTorch * (Amazon Linux 2023)".
 #
 # Usage: bash infra/launch_h100.sh [region]            (default: us-east-1)
+# Other GPUs: TYPE=g7e.2xlarge bash infra/launch_h100.sh  (1x RTX PRO 6000 96GB, G-family quota)
 # Override the auto-detection if needed:
 #   KEY_NAME=my-key SG_ID=sg-0123 bash infra/launch_h100.sh us-east-2
 set -uo pipefail
 
 REGION="${1:-us-east-1}"
-TYPE=p5.4xlarge
+TYPE="${TYPE:-p5.4xlarge}"   # e.g. TYPE=g7e.2xlarge or TYPE=g6e.xlarge
 NAME=tau-forge-h100
 
 aws sts get-caller-identity >/dev/null || { echo "AWS CLI is not logged in."; exit 1; }
@@ -69,10 +70,10 @@ for SUBNET in $(aws ec2 describe-subnets --region "$REGION" --filters "Name=vpc-
     case "$OUT" in
         *InsufficientInstanceCapacity*|*Unsupported*|*InvalidSubnet*) continue ;;
         *VcpuLimitExceeded*)
-            echo "Quota too low in $REGION: need 16 vCPUs of 'Running On-Demand P instances'."; exit 1 ;;
+            echo "Quota too low in $REGION: P instances need the "Running On-Demand P instances" quota, G instances "Running On-Demand G and VT instances"."; exit 1 ;;
         *) echo "Not a capacity problem, stopping. Full error:"; echo "$OUT"; exit 1 ;;
     esac
 done
-echo "No H100 capacity in any $REGION zone right now. Retry in a while, or try another region"
+echo "No $TYPE capacity in any $REGION zone right now. Retry in a while, or try another region"
 echo "(key pairs and security groups are per region, so pass KEY_NAME/SG_ID that exist there)."
 exit 1
