@@ -106,7 +106,7 @@ The core signal is τ²'s own: **1 if the final database state hashes equal to t
 **Refusal tasks:**
 - 1.0 for an unchanged database plus a denial made after authenticating and reading the order;
 - 0.4 for an unchecked denial;
-- 0.5 for a transfer to a human.
+- 0.3 for a transfer to a human.
 
 The intended ordering of these scores is pinned by scripted reference agents in `tests/`.
 
