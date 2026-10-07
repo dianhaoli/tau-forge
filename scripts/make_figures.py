@@ -10,7 +10,7 @@ runs/ep-main/{metrics,val_log}.jsonl.
 from __future__ import annotations
 
 import json
-from collections import Counter, defaultdict
+from collections import defaultdict
 from math import comb
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -340,11 +340,11 @@ def fig_results():
     metrics = [json.loads(l) for l in (RUN / "metrics.jsonl").open()]
     val = [json.loads(l) for l in (RUN / "val_log.jsonl").open()]
 
-    W, H = 1180, 380
+    W, H = 940, 380
     b = []
     # ---- (a) pass^k
     b.append(t(24, 28, "(a) τ²-bench retail, 114 tasks × 4 trials", 15, weight="bold"))
-    ox, oy, ph, pw = 64, 320, 240, 300
+    ox, oy, ph, pw = 64, 320, 240, 340
     for v in (0, 20, 40, 60):
         yy = oy - v / 70 * ph
         b.append(f'<line x1="{ox}" y1="{yy}" x2="{ox + pw}" y2="{yy}" stroke="{RULE}" stroke-width="{1 if v else 1.2}"/>')
@@ -366,38 +366,9 @@ def fig_results():
         b.append(t(lx + 18, yy, lab, 12, fill=INK2))
     b.append(t(ox, 360, "pass^1 +8.1 pts, paired-bootstrap 95% CI [+2.9, +13.4]", 12, fill=INK2))
 
-    # ---- (b) per-task change
-    b.append(t(410, 28, "(b) Change in successes per task (of 4)", 15, weight="bold"))
-    delta = Counter(ours[k] - base[k] for k in base)
-    ox2, pw2 = 440, 330
-    keys = list(range(-4, 5))
-    maxc = max(delta.values())
-    bw = pw2 / len(keys)
-    for v in (0, 20, 40, 60):
-        yy = oy - v / 60 * ph
-        b.append(f'<line x1="{ox2}" y1="{yy}" x2="{ox2 + pw2}" y2="{yy}" stroke="{RULE}" stroke-width="{1 if v else 1.2}"/>')
-        b.append(t(ox2 - 8, yy + 4, str(v), 11.5, "end", fill=MUTED))
-    for i, k in enumerate(keys):
-        c = delta.get(k, 0)
-        x = ox2 + i * bw + 5
-        w = bw - 10
-        if c:
-            hh = c / 60 * ph
-            col = OURS_C if k > 0 else NEG_C if k < 0 else ZERO_C
-            b.append(f'<path d="M{x},{oy} L{x},{oy - hh + 4} Q{x},{oy - hh} {x + 4},{oy - hh} L{x + w - 4},{oy - hh} '
-                     f'Q{x + w},{oy - hh} {x + w},{oy - hh + 4} L{x + w},{oy} Z" fill="{col}"/>')
-            b.append(t(x + w / 2, oy - hh - 5, str(c), 11, "middle", fill=INK2))
-        b.append(t(x + w / 2, oy + 18, f"{k:+d}" if k else "0", 12, "middle", fill=INK2))
-    up = sum(v for k, v in delta.items() if k > 0)
-    dn = sum(v for k, v in delta.items() if k < 0)
-    b.append(t(ox2 + pw2, 58, f"{up} tasks improved", 12.5, "end", "bold", OURS_C))
-    b.append(t(ox2 + pw2, 76, f"{dn} tasks got worse", 12.5, "end", "bold", NEG_C))
-    b.append(t(ox2 + pw2, 94, f"{delta.get(0, 0)} unchanged", 12.5, "end", fill=MUTED))
-    b.append(t(ox2, 360, "sign test p ≈ 0.005", 12, fill=INK2))
-
     # ---- (c) training curve
-    b.append(t(816, 28, "(c) Reward during training", 15, weight="bold"))
-    ox3, pw3 = 852, 300
+    b.append(t(464, 28, "(b) Reward during training", 15, weight="bold"))
+    ox3, pw3 = 504, 410
     steps = [m["step"] for m in metrics if m.get("episodes/mean_reward") is not None]
     rew = [m["episodes/mean_reward"] for m in metrics if m.get("episodes/mean_reward") is not None]
     lo, hi = 0.4, 1.0

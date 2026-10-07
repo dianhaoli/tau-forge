@@ -18,11 +18,10 @@ One LoRA GRPO checkpoint (step 75), evaluated once on all 114 real τ²-bench re
 | Successful conversations | 242 / 456 | 279 / 456 | +37 |
 | Tasks solved at least once | 87 / 114 | 95 / 114 | +8 |
 
-<p align="center"><img src="docs/figures/results.svg" alt="Results: pass^k bars, per-task change histogram, training reward curve" width="100%"/></p>
+<p align="center"><img src="docs/figures/results.svg" alt="Results: pass^k bars and training reward curve" width="100%"/></p>
 
-<p align="center"><sub><b>Figure 1.</b> (a) pass^k on τ²-bench retail, base vs step 75. (b) Change in successful trials per task:
-40 tasks improved, 18 got worse. (c) Reward during training; blue points are the synthetic validation set used to
-pick step 75.</sub></p>
+<p align="center"><sub><b>Figure 1.</b> (a) pass^k on τ²-bench retail, base vs step 75. (b) Reward during training; blue
+points are the synthetic validation set used to pick step 75.</sub></p>
 
 pass^k is the probability that all k independent trials of a task succeed (τ²'s reliability
 metric), averaged over tasks.
