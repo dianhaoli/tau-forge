@@ -14,9 +14,15 @@ One LoRA GRPO checkpoint (step 75), evaluated once on all 114 real τ²-bench re
 | **pass^1** | 53.1% | **61.2%** | **+8.1** |
 | pass^2 | 39.6% | 48.7% | +9.1 |
 | pass^3 | 32.7% | 41.9% | +9.2 |
-| **pass^4** | 29.0% | **36.8%** | **+7.9** |
+| **pass^4** | 28.9% | **36.8%** | **+7.9** |
 | Successful conversations | 242 / 456 | 279 / 456 | +37 |
 | Tasks solved at least once | 87 / 114 | 95 / 114 | +8 |
+
+<p align="center"><img src="docs/figures/results.svg" alt="Results: pass^k bars, per-task change histogram, training reward curve" width="100%"/></p>
+
+<p align="center"><sub><b>Figure 1.</b> (a) pass^k on τ²-bench retail, base vs step 75. (b) Change in successful trials per task:
+40 tasks improved, 18 got worse. (c) Reward during training; blue points are the synthetic validation set used to
+pick step 75.</sub></p>
 
 pass^k is the probability that all k independent trials of a task succeed (τ²'s reliability
 metric), averaged over tasks.
@@ -54,15 +60,11 @@ checkpoint selection.** That covers the full train + test split, not just test.
 
 ## Pipeline
 
-```
-db.json ──► episode generator ──► 1,410 train / 163 val synthetic tasks
-                                         │
-              scripted user + live RetailEnv + end-state reward
-                                         │
-                         GRPO (TRL + vLLM, LoRA) ──► checkpoint by synthetic val
-                                         │
-                       merge LoRA ──► vLLM serve ──► real τ²-bench retail eval
-```
+<p align="center"><img src="docs/figures/overview.svg" alt="Pipeline overview" width="100%"/></p>
+
+<p align="center"><sub><b>Figure 2.</b> Pipeline. Everything left of the red boundary sees only the retail database and
+synthetic tasks. The real benchmark is used once, for the final eval; its tasks only reach the generator as a
+reject-only filter.</sub></p>
 
 ### 1. Synthetic episodes (`tau_forge/episodes/`)
 
@@ -92,6 +94,12 @@ Each task is a whole conversation sampled from τ²'s retail database (500 users
   This makes rollouts cheap and reproducible: no LLM is in the training loop.
 
 ### 2. Reward (`tau_forge/episodes/reward.py`)
+
+<p align="center"><img src="docs/figures/episode.svg" alt="Example training episode and how it is graded" width="100%"/></p>
+
+<p align="center"><sub><b>Figure 3.</b> (a) A training episode: the policy authenticates, reads the order, proposes an
+exchange, is corrected by the scripted customer, and writes only after an explicit yes. (b) Grading compares the final
+database with the gold end state, then applies the consent and authentication gates.</sub></p>
 
 The core signal is τ²'s own: **1 if the final database state hashes equal to the gold end state**.
 
@@ -126,6 +134,12 @@ The intended ordering of these scores is pinned by scripted reference agents in 
 Multi-turn rollouts generate every assistant turn with the policy. Tool results and user turns
 are appended with a loss mask of 0, and prompts are built with τ²'s real system prompt and tool
 schemas, so training and eval see the same format.
+
+<p align="center"><img src="docs/figures/training.svg" alt="Token masking and GRPO group advantage" width="100%"/></p>
+
+<p align="center"><sub><b>Figure 4.</b> (a) A rollout as the trainer sees it: sampled tokens are kept verbatim and trained
+on; environment tokens are appended with mask 0. (b) Rewards within one group of 8 rollouts and the resulting
+advantages.</sub></p>
 
 Synthetic validation (163 held-out synthetic tasks):
 
@@ -201,7 +215,7 @@ first; it is the only valid point of comparison.
 | `data/episodes/pool_v2/` | the training and validation task pool used for this run |
 | `data/simulations/` | τ²-bench eval outputs |
 | `runs/ep-main/` | training metrics and logs |
-| `docs/` | design notes and the GPU runbook |
+| `docs/` | design notes, the GPU runbook, and README figures (`python scripts/make_figures.py`) |
 | `third_party/tau2-bench` | τ²-bench, pinned as a git submodule |
 
 Earlier stages are documented in detail in the README on the `claude/keen-dirac-3pocui` branch:
