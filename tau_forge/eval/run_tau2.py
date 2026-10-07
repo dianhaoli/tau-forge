@@ -117,6 +117,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--max-concurrency", type=int, default=4)
     p.add_argument("--seed", type=int, default=300)
     p.add_argument("--num-tasks", type=int, default=None, help="Run only the first N tasks (pilots).")
+    p.add_argument("--task-ids", nargs="+", default=None, help="Run only these task ids (pilots).")
     p.add_argument("--save-to", default=None, help="Defaults to a label/split/timestamp name.")
     p.add_argument(
         "--resume",
@@ -192,6 +193,7 @@ def build_run_config(args: argparse.Namespace):
         },
         task_split_name=args.task_split_name,
         num_tasks=args.num_tasks,
+        task_ids=args.task_ids,
         auto_resume=args.resume,
         num_trials=args.num_trials,
         max_steps=args.max_steps,

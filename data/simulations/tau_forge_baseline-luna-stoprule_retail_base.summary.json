@@ -1,0 +1,41 @@
+{
+  "run": "tau_forge_baseline-luna-stoprule_retail_base",
+  "supersedes": "tau_forge_baseline-luna_retail_base",
+  "policy": "Qwen/Qwen3-4B-Instruct-2507 (vLLM, hermes parser, agent temp 0.0)",
+  "user_simulator": "gpt-6-luna",
+  "user_temperature": 1.0,
+  "user_stop_rule": true,
+  "note": "Luna rejects temperature 0. Not comparable to gpt-4.1 runs or the tau2 leaderboard; every checkpoint eval must use the same user settings incl. --user-stop-rule.",
+  "split": "base",
+  "n_tasks": 114,
+  "num_trials": 4,
+  "n_sims": 456,
+  "max_concurrency": 32,
+  "user_num_retries": 10,
+  "seed": 300,
+  "vllm_env": "VLLM_USE_FLASHINFER_SAMPLER=0",
+  "pass^1": 0.5307,
+  "pass^2": 0.3962,
+  "pass^3": 0.3268,
+  "pass^4": 0.2895,
+  "termination": {
+    "user_stop": 456
+  },
+  "final_user_token": {
+    "STOP": 419,
+    "TRANSFER": 37
+  },
+  "infra_errors": 0,
+  "rate_limit_errors": 0,
+  "confirm_and_stop_count": 0,
+  "confirm_and_stop_heuristic": "last user msg has ###STOP### + yes/proceed/go ahead, no thanks (same as superseded run)",
+  "luna_tokens_total": 3097372,
+  "mean_conversation_minutes": 4.55,
+  "wall_clock_minutes": 68.5,
+  "pilot": {
+    "run": "tau_forge_luna-stoprule-pilot_retail_base",
+    "tasks": "the 41 tasks that hit confirm+STOP in the superseded run, 1 trial",
+    "confirm_and_stop_count": 0,
+    "pass^1": 0.5854
+  }
+}

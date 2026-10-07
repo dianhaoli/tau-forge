@@ -1,4 +1,7 @@
 {
+  "superseded": true,
+  "superseded_by": "tau_forge_baseline-luna-stoprule_retail_base",
+  "superseded_reason": "gpt-6-luna confirmed a pending write and emitted ###STOP### in the same message in 58/456 sims, ending episodes before the agent acted. Rerun with run_tau2 --user-stop-rule. Do not compare checkpoints against this run.",
   "run": "tau_forge_baseline-luna_retail_base",
   "policy": "Qwen/Qwen3-4B-Instruct-2507 (vLLM, hermes parser, agent temp 0.0)",
   "user_simulator": "gpt-6-luna",
